@@ -27,14 +27,68 @@ namespace tatami_chunked {
 template<typename Id_, typename Index_, class Slab_> 
 class OracleSlabCache {
     tatami::OracleStream<Index_> prediction_stream;
-    std::vector<std::pair<Id_, Index_> > predictions_made;
-    size_t predictions_fulfilled = 0;
     size_t max_predictions;
-
     size_t max_slabs;
-    std::unordered_map<Id_, Index_> cache_exists, next_cache_exists;
-    std::vector<Slab_> cache_data, next_cache_data;
-    std::vector<std::pair<Id_, Index_> > slabs_in_need; 
+
+public:
+    /**
+     * @brief A cached slab.
+     */
+    struct CachedSlab {
+        /**
+         * Identity of the slab.
+         */
+        Id_ self;
+
+        /**
+         * Contents of the slab.
+         */
+        Slab_ contents;
+
+        /**
+         * Indices inside the slab to be retrieved.
+         * If empty, all indices should be retrieved.
+         * If non-empty, this is guaranteed to be sorted and unique.
+         */
+        std::vector<Index_> indices;
+
+    public:
+        /**
+         * @cond
+         */
+        CachedSlab(Id_ s, Slab_ c) : self(s), contents(std::move(c)) {}
+        /**
+         * @endcond
+         */
+
+    private:
+        std::unordered_set<Index_> present;
+    };
+
+private:
+    std::list<CachedSlab> slab_cache;
+    std::list<CachedSlab> free_cache;
+    typedef typename std::list<CachedSlab>::iterator cache_iterator;
+    std::unordered_map<Id_, std::pair<cache_iterator, bool> > slab_exists;
+
+    std::list<CachedSlab> mock_slab_cache;
+    std::list<CachedSlab> mock_free_cache;
+
+    std::vector<std::pair<const Slab_*, Index_> > predictions_made;
+    size_t predictions_fulfilled = 0;
+
+    struct PredictionRound {
+        std::vector<std::pair<const Slab_*, Index_> > predictions_made;
+        std::vector<Id_> slabs_used;
+        void clear() {
+            slabs_used.clear();
+            predictions_made.clear();
+        }
+    };
+    std::list<PredictionRound> next_rounds;
+    std::list<CachedSlab> free_rounds;
+
+    std::vector<CachedSlab*> slabs_to_fill; 
 
 public:
     /**
@@ -45,11 +99,9 @@ public:
     OracleSlabCache(std::unique_ptr<tatami::Oracle<Index_> > oracle, size_t per_iteration, size_t num_slabs) :
         prediction_stream(std::move(oracle)), 
         max_predictions(per_iteration),
-        max_slabs(num_slabs), 
-        cache_data(max_slabs),
-        next_cache_data(max_slabs)
+        max_slabs(num_slabs)
     {
-        slabs_in_need.reserve(max_slabs);
+        slabs_to_fill.reserve(max_slabs);
     } 
 
     /**
@@ -66,8 +118,6 @@ public:
      * Fetch the next slab according to the stream of predictions provided by the `tatami::Oracle`.
      *
      * @tparam Ifunction_ Function to identify the slab containing each predicted row/column.
-     * @tparam Sfunction_ Function to swap two slabs' contents.
-     * @tparam Rfunction_ Function to determine whether a slab object is a non-mock instance.
      * @tparam Afunction_ Function to allocate memory to a mock slab, to turn it into a non-mock instance.
      * @tparam Pfunction_ Function to populate zero, one or more slabs with their contents.
      *
@@ -75,109 +125,114 @@ public:
      * This should return a pair containing (1) the identifier of the slab containing `i`, and (2) the index of row/column `i` inside that slab.
      * This is typically defined as the index of the slab on the iteration dimension.
      * For example, if each chunk takes up 10 rows, attempting to access row 21 would require retrieval of slab 2 and an offset of 1.
-     * @param swap Function that accepts two `Slab_&` and swaps their contents.
-     * @param ready Function that accepts a `const Slab_&` and returns a boolean indicating whether it has already been allocated.
-     * This should return `true` for objects that have been used in `allocate()`, and `false` otherwise.
-     * @param allocate Function that accepts a single default-initialized `Slab_` object,
-     * and allocates sufficient memory to it in order to hold a slab's contents when used in `populate()`.
-     * @param populate Function that accepts two arguments, `slabs_in_need` and `slab_data`.
-     * (1) `slabs_in_need` is a `const std::vector<std::pair<Id_, Index_> >&` specifying the slabs to be populated.
-     * The first `Id_` element of each pair contains the slab identifier, i.e., the first element returned by the `identify` function.
-     * The second `Index_` element specifies the index of the `Slab_` in `slab_data` in which to store the contents of each slab.
-     * (2) `slab_data` is a `std::vector<Slab_>&` containing the cached slab contents to be populated.
-     * This function should iterate over the `slabs_in_need` and populate the corresponding entries in `slab_data`.
+     * @param create Function that accepts no arguments and returns a `Slab_` object with sufficient memory to hold a slab's contents when used in `populate()`.
+     * @param populate Function that accepts a vector of `CachedSlab` pointers and fills them with the contents of the relevant slabs.
      *
      * @return Pair containing (1) a pointer to a slab's contents and (2) the index of the next predicted row/column inside the retrieved slab.
      */
     template<class Ifunction_, class Sfunction_, class Rfunction_, class Afunction_, class Pfunction_>
-    std::pair<const Slab_*, Index_> next(Ifunction_ identify, Sfunction_ swap, Rfunction_ ready, Afunction_ allocate, Pfunction_ populate) {
+    std::pair<const Slab_*, Index_> next(Ifunction_ identify, Afunction_ allocate, Pfunction_ populate) {
         if (predictions_made.size() > predictions_fulfilled) {
-            const auto& chosen = predictions_made[predictions_fulfilled++];
-            return std::make_pair(cache_data.data() + chosen.first, chosen.second);
+            return predictions_made[predictions_fulfilled++];
         }
 
-        next_cache_exists.clear();
-        slabs_in_need.clear();
-        size_t used = 0;
+        if (next_rounds.empty()) {
+            // If we're just starting, then we fill it up the first prediction round.
+            predictions_made.reserve(max_predictions);
+            next_rounds.resize(1);
+            auto& baseline = next_rounds.front().slabs_used;
+            size_t used = 0;
 
-        predictions_made.clear();
-        predictions_made.reserve(max_predictions);
-        for (size_t p = 0; p < max_predictions; ++p) {
-            Index_ current;
-            if (!prediction_stream.next(current)) {
-                break;
-            }
-
-            auto slab_id = identify(current);
-            auto curslab = slab_id.first;
-            auto curindex = slab_id.second;
-
-            auto it = next_cache_exists.find(curslab);
-            if (it == next_cache_exists.end()) {
-                if (used == max_slabs) {
-                    prediction_stream.back();
+            for (size_t p = 0; p < max_predictions; ++p) {
+                Index_ current;
+                if (!prediction_stream.next(current)) {
                     break;
                 }
 
-                next_cache_exists[curslab] = used;
-                predictions_made.emplace_back(used, curindex);
+                auto slab_id = identify(current);
+                auto curslab = slab_id.first;
+                auto curindex = slab_id.second;
 
-                auto it2 = cache_exists.find(curslab);
-                if (it2 != cache_exists.end()) {
-                    swap(next_cache_data[used], cache_data[it2->second]);
-                } else {
-                    slabs_in_need.emplace_back(curslab, used);
+                auto it = slab_exists.find(curslab);
+                if (it == slab_exists.end()) {
+                    if (used == max_slabs) {
+                        prediction_stream.back();
+                        break;
+                    }
+
+                    slab_cache.emplace_back(create());
+                    it = slab_cache.end();
+                    --it;
+                    slab_exists[curslab] = std::make_pair(scIt, true);
+                    baseline.push_back(curslab);
                 }
 
-                ++used;
-            } else {
-                predictions_made.emplace_back(it->second, curindex);
+                next_predictions_made.emplace_back(&(((it->second).first)->contents), curindex);
+            }
+
+        } else {
+            // Otherwise we cycle out the previous round's information and we move the next round's information in.
+            auto& previous_round = next_rounds.front();
+            for (auto x : previous_round.slabs_used) {
+                slab_exists[x].second = false;
+            }
+            previous_round.clear();
+            free_rounds.splice(free_rounds.end(), next_rounds, next_rounds.begin());
+
+            auto& current_round = next_rounds.front();
+            for (auto x : current_round.slabs_used) {
+                slab_exists[x].second = true;
+            }
+            predictions_made.swap(current_round.predictions_made);
+        }
+
+        constexpr int max_rounds = 10;
+        for (int round = 0; round < max_rounds; ++round) {
+            if (free_rounds.empty()) {
+                free_rounds.resize(1);
+            }
+            next_rounds.splice(next_rounds.end(), free_rounds, free_rounds.begin());
+            auto& next_baseline = next_rounds.front().slabs_used;
+            auto& next_predictions_made = next_rounds.front().predictions_made;
+            size_t used = 0;
+            bool overlaps = false;
+            bool finished = false;
+
+            for (size_t p = 0; p < max_predictions; ++p) {
+                Index_ current;
+                if (!prediction_stream.next(current)) {
+                    finished = true;
+                    break;
+                }
+
+                auto slab_id = identify(current);
+                auto curslab = slab_id.first;
+                auto curindex = slab_id.second;
+
+                auto it = slab_exists.find(curslab);
+                if (it == slab_exists.end()) {
+                    if (used == max_slabs) {
+                        prediction_stream.back();
+                        break;
+                    }
+
+                    slab_cache.emplace_back(create()); // OOPS. What do we do here?
+                    it = slab_cache.end();
+                    --it;
+                    slab_exists[curslab] = std::make_pair(scIt, false);
+                    next_baseline.push_back(curslab);
+                } else if (!overlaps) {
+                    overlaps = (it->second).second;
+                }
+
+                next_predictions_made.emplace_back(&(((it->second).first)->contents), curindex);
+            }
+
+            if (!overlaps || finished) {
+                break;
             }
         }
 
-        /**
-         * Doing a linear scan across slabs to find the allocated but unused cache
-         * elements. This is the simplest and safest approach; trying to keep
-         * track of the unused caches would require a scan to fill a map/set
-         * anyway, and deleting an iterator from cache_exists only works if
-         * cache_exists actually contains all cache elements, which it might
-         * not be if we reached max_predictions without filling up the cache.
-         *
-         * In any case, a linear scan should be pretty good for consecutive
-         * access; the first cache elements would be the oldest, so there
-         * wouldn't be any wasted iterations to find available cache elements.
-         */
-        size_t search = 0;
-        for (const auto& c : slabs_in_need) {
-            if (!ready(next_cache_data[c.second])) {
-                while (search < cache_data.size() && !ready(cache_data[search])) {
-                    ++search;
-                }
-                if (search < cache_data.size()) {
-                    swap(next_cache_data[c.second], cache_data[search]);
-                    ++search;
-                } else {
-                    /*
-                     * This should be called no more than 'max_slabs' times
-                     * across the lifetime of this Cache object. At any given
-                     * point in time, allocated slabs will be interspersed
-                     * between 'cache_data' and 'next_cache_data', so either
-                     * 'next_cache_data[c.second]' is already ready, or we'll
-                     * find a ready slab from the linear scan through
-                     * 'cache_data'.
-                     */
-                    allocate(next_cache_data[c.second]);
-                }
-            }
-        }
-
-        populate(slabs_in_need, next_cache_data);
-
-        cache_data.swap(next_cache_data);
-        cache_exists.swap(next_cache_exists);
-        predictions_fulfilled = 1; // well, because we just used one.
-        const auto& chosen = predictions_made.front(); // assuming at least one prediction was made, otherwise, why was this function even called?
-        return std::make_pair(cache_data.data() + chosen.first, chosen.second);
     }
 };
 
