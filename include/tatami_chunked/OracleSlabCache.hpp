@@ -146,9 +146,11 @@ public:
                     
                 } else {
                     if (free_cache.empty()) {
-                        // We defer the creation of new slabs because we might be able to recycle
-                        // some existing slabs from tmp_cache (but not at this moment, as we don't
-                        // know whether those slabs might be needed by later allocations). 
+                        // We might be able to recycle an existing slab from tmp_cache 
+                        // to populate 'curslab'... but we don't know if we can do so at
+                        // this moment, as those slabs might be needed by later predictions.
+                        // So we just defer the creation of a new slab until we've run 
+                        // through the set of predictions for this round.
                         auto ins = slab_exists.insert(std::make_pair(curslab, std::make_pair(used, slab_cache.end())));
                         unassigned_slabs.emplace_back(used, &(ins.first->second.second));
                         slab_pointers.push_back(NULL);

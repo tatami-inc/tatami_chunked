@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 #include "tatami_chunked/OracleSlabCache.hpp"
 
+#include <random>
+
 class OracleSlabCacheTest : public ::testing::Test {
 protected:
     struct TestSlab {
@@ -162,7 +164,10 @@ TEST_F(OracleSlabCacheTest, LimitedPredictions) {
         51, 
         32, 
         34, // Cycle 4 (forced by limited predictions)
-        15 
+        15,
+        12, 
+        23, // Cycle 5 (forced by limited predictions)
+        25
     };
 
     tatami_chunked::OracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedOracle<int> >(predictions.data(), predictions.size()), 3, 3);
@@ -224,6 +229,20 @@ TEST_F(OracleSlabCacheTest, LimitedPredictions) {
     EXPECT_EQ(out.first->populate_number, 5);
     EXPECT_EQ(out.second, 5);
 
+    out = next(cache, counter, nalloc); // fetching 12.
+    EXPECT_EQ(out.first->chunk_id, static_cast<unsigned char>(1));
+    EXPECT_EQ(out.first->populate_number, 5);
+    EXPECT_EQ(out.second, 2);
+
+    out = next(cache, counter, nalloc); // fetching 23.
+    EXPECT_EQ(out.first->chunk_id, static_cast<unsigned char>(2));
+    EXPECT_EQ(out.first->populate_number, 6);
+    EXPECT_EQ(out.second, 3);
+
+    out = next(cache, counter, nalloc); // fetching 25.
+    EXPECT_EQ(out.first->chunk_id, static_cast<unsigned char>(2));
+    EXPECT_EQ(out.first->populate_number, 6);
+    EXPECT_EQ(out.second, 5);
+
     EXPECT_EQ(nalloc, 3); // respects the max cache size.
 }
-
