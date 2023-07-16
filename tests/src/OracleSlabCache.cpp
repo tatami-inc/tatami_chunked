@@ -20,10 +20,11 @@ protected:
                 ++nalloc;
                 return TestSlab();
             },
-            [&](std::vector<std::pair<unsigned char, TestSlab*> >& chunks_in_need) -> void {
-                for (auto& x : chunks_in_need) {
-                    x.second->chunk_id = x.first;
-                    x.second->populate_number = counter++;
+            [&](std::vector<std::pair<unsigned char, int> >& in_need, std::vector<TestSlab*>& data) -> void {
+                for (auto& x : in_need) {
+                    auto& current = data[x.second];
+                    current->chunk_id = x.first;
+                    current->populate_number = counter++;
                 }
             }
         );

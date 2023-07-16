@@ -44,7 +44,6 @@ private:
 
     std::vector<std::pair<Index_, cache_iterator*> > unassigned_slabs;
     std::vector<std::pair<Id_, Index_> > slabs_to_populate; 
-    std::vector<std::pair<Id_, Slab_*> > slabs_to_populate2; 
 
 public:
     /**
@@ -65,7 +64,6 @@ public:
         slab_pointers.reserve(max_slabs);
         unassigned_slabs.reserve(max_slabs);
         slabs_to_populate.reserve(max_slabs);
-        slabs_to_populate2.reserve(max_slabs);
     } 
 
     /**
@@ -97,8 +95,12 @@ public:
      * For example, if each chunk takes up 10 rows, attempting to access row 21 would require retrieval of slab 2 and an offset of 1.
      * @param create Function that accepts no arguments and returns a `Slab_` object with sufficient memory to hold a slab's contents when used in `populate()`.
      * This may also return a default-constructed `Slab_` object if the allocation is done dynamically per slab in `populate()`.
-     * @param populate Function that accepts a `std::vector<std::pair<Id_, Slab_*> >&` and populates the slabs with their contents.
-     * The first element is the slab identifier and the second element is the pointer to a `Slab_` created with `create()` and the second element is the slab identifier.
+     * @param populate Function that accepts two arguments, `slabs_in_need` and `slab_data`.
+     * (1) `slabs_in_need` is a `const std::vector<std::pair<Id_, Index_> >&` specifying the slabs to be populated.
+     * The first `Id_` element of each pair contains the slab identifier, i.e., the first element returned by the `identify` function.
+     * The second `Index_` element specifies the index in `slab_data` in which to store the contents of each slab.
+     * (2) `slab_data` is a `std::vector<Slab_*>&` containing pointers to the cached slab contents to be populated.
+     * This function should iterate over the `slabs_in_need` and populate the corresponding entries in `slab_data`.
      *
      * @return Pair containing (1) a pointer to a slab's contents and (2) the index of the next predicted row/column inside the retrieved slab.
      */
@@ -200,11 +202,7 @@ public:
         }
 
         if (!slabs_to_populate.empty()) {
-            slabs_to_populate2.clear();
-            for (const auto& x : slabs_to_populate) {
-                slabs_to_populate2.emplace_back(x.first, slab_pointers[x.second]);
-            }
-            populate(slabs_to_populate2);
+            populate(slabs_to_populate, slab_pointers);
         }
 
         // Well, because we just used one.

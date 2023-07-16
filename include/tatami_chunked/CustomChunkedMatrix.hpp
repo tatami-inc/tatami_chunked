@@ -255,9 +255,9 @@ public:
                 /* create = */ [&]() -> Slab {
                     return Slab(alloc);
                 },
-                /* populate =*/ [&](std::vector<std::pair<Index_, Slab*> >& chunks_in_need) -> void {
-                    for (auto& p : chunks_in_need) {
-                        extract<accrow_, selection_, false>(p.first, /* no-op */ 0, *(p.second), ext);
+                /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, std::vector<Slab*>& data) -> void {
+                    for (const auto& p : in_need) {
+                        extract<accrow_, selection_, false>(p.first, /* no-op */ 0, *(data[p.second]), ext);
                     }
                 }
             );
