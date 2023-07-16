@@ -3,7 +3,7 @@
 
 #include <random>
 
-class OracleSlabCacheTest : public ::testing::Test {
+class OracleSlabCacheTestMethods {
 protected:
     struct TestSlab {
         unsigned char chunk_id;
@@ -30,6 +30,8 @@ protected:
         );
     }
 };
+
+class OracleSlabCacheTest : public ::testing::Test, public OracleSlabCacheTestMethods {};
 
 TEST_F(OracleSlabCacheTest, Consecutive) {
     std::vector<int> predictions{
@@ -247,3 +249,39 @@ TEST_F(OracleSlabCacheTest, LimitedPredictions) {
 
     EXPECT_EQ(nalloc, 3); // respects the max cache size.
 }
+
+class OracleSlabCacheStressTest : public ::testing::TestWithParam<std::tuple<int, int> >, public OracleSlabCacheTestMethods {};
+
+TEST_P(OracleSlabCacheStressTest, Stressed) {
+    auto param = GetParam();
+    auto max_pred = std::get<0>(param);
+    auto cache_size = std::get<1>(param);
+
+    std::mt19937_64 rng(max_pred * cache_size + cache_size + 1);
+    std::vector<int> predictions(10000);
+    for (size_t i = 0; i < predictions.size(); ++i) {
+        predictions[i] = rng() % 50 + 10;
+    }
+
+    // Using limited predictions to force more cache interations.
+    tatami_chunked::OracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedOracle<int> >(predictions.data(), predictions.size()), max_pred, cache_size);
+    int counter = 0;
+    int nalloc = 0;
+
+    for (size_t i = 0; i < predictions.size(); ++i) {
+        auto out = next(cache, counter, nalloc);
+        EXPECT_EQ(out.first->chunk_id, predictions[i] / 10);
+        EXPECT_EQ(out.second, predictions[i] % 10);
+    }
+
+    EXPECT_EQ(nalloc, std::min({ 5, max_pred, cache_size }));
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    OracleSlabCache,
+    OracleSlabCacheStressTest,
+    ::testing::Combine(
+        ::testing::Values(3, 5, 10), // max predictions
+        ::testing::Values(3, 5, 10)  // max cache size
+    )
+);
