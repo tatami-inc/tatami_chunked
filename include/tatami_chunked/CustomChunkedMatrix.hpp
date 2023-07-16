@@ -104,21 +104,13 @@ protected:
     struct SparseSlab {
         SparseSlab() = default;
         SparseSlab(size_t primary_dim) : indices(primary_dim), values(primary_dim) {}
+
         std::vector<std::vector<typename Chunk_::value_type> > values;
         std::vector<std::vector<typename Chunk_::index_type> > indices;
 
-        bool empty() const {
-            return values.empty();
-        }
-
-        void swap(SparseSlab& right) {
-            values.swap(right.values);
-            indices.swap(right.indices);
-        }
-
         void resize(size_t primary_dim) {
-            indices.resize(primary_dim);
             values.resize(primary_dim);
+            indices.resize(primary_dim);
         }
     };
 
@@ -260,18 +252,12 @@ public:
                 /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
                     return std::make_pair(i / primary_chunkdim, i % primary_chunkdim);
                 },
-                /* swap = */ [&](Slab& left, Slab& right) -> void {
-                    left.swap(right);
+                /* create = */ [&]() -> Slab {
+                    return Slab(alloc);
                 },
-                /* ready = */ [&](const Slab& slab) -> bool {
-                    return !slab.empty();
-                },
-                /* allocate = */ [&](Slab& slab) -> void {
-                    slab.resize(alloc);
-                },
-                /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& chunks_in_need, std::vector<Slab>& chunk_data) -> void {
-                    for (const auto& p : chunks_in_need) {
-                        extract<accrow_, selection_, false>(p.first, /* no-op */ 0, chunk_data[p.second], ext);
+                /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, std::vector<Slab*>& data) -> void {
+                    for (const auto& p : in_need) {
+                        extract<accrow_, selection_, false>(p.first, /* no-op */ 0, *(data[p.second]), ext);
                     }
                 }
             );
