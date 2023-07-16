@@ -118,8 +118,8 @@
       <type>std::pair&lt; const Slab_ *, Index_ &gt;</type>
       <name>next</name>
       <anchorfile>classtatami__chunked_1_1OracleSlabCache.html</anchorfile>
-      <anchor>a4857c8bf4e3591429a2d897279a67a05</anchor>
-      <arglist>(Ifunction_ identify, Sfunction_ swap, Rfunction_ ready, Afunction_ allocate, Pfunction_ populate)</arglist>
+      <anchor>a8a7fd554334053ebef56bdcb5d6c0321</anchor>
+      <arglist>(Ifunction_ identify, Cfunction_ create, Pfunction_ populate)</arglist>
     </member>
   </compound>
   <compound kind="struct">

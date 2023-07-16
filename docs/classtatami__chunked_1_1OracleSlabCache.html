@@ -91,9 +91,9 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ab2ec1decfa4cdbff71b673d1ef960488"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracleSlabCache.html#ab2ec1decfa4cdbff71b673d1ef960488">OracleSlabCache</a> (std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; oracle, size_t per_iteration, size_t num_slabs)</td></tr>
 <tr class="separator:ab2ec1decfa4cdbff71b673d1ef960488"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4857c8bf4e3591429a2d897279a67a05"><td class="memTemplParams" colspan="2">template&lt;class Ifunction_ , class Sfunction_ , class Rfunction_ , class Afunction_ , class Pfunction_ &gt; </td></tr>
-<tr class="memitem:a4857c8bf4e3591429a2d897279a67a05"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; const Slab_ *, Index_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracleSlabCache.html#a4857c8bf4e3591429a2d897279a67a05">next</a> (Ifunction_ identify, Sfunction_ swap, Rfunction_ ready, Afunction_ allocate, Pfunction_ populate)</td></tr>
-<tr class="separator:a4857c8bf4e3591429a2d897279a67a05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a7fd554334053ebef56bdcb5d6c0321"><td class="memTemplParams" colspan="2">template&lt;class Ifunction_ , class Cfunction_ , class Pfunction_ &gt; </td></tr>
+<tr class="memitem:a8a7fd554334053ebef56bdcb5d6c0321"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; const Slab_ *, Index_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracleSlabCache.html#a8a7fd554334053ebef56bdcb5d6c0321">next</a> (Ifunction_ identify, Cfunction_ create, Pfunction_ populate)</td></tr>
+<tr class="separator:a8a7fd554334053ebef56bdcb5d6c0321"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Id_, typename Index_, class Slab_&gt;<br />
@@ -161,15 +161,15 @@ template&lt;typename Id_ , typename Index_ , class Slab_ &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4857c8bf4e3591429a2d897279a67a05" name="a4857c8bf4e3591429a2d897279a67a05"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4857c8bf4e3591429a2d897279a67a05">&#9670;&#160;</a></span>next()</h2>
+<a id="a8a7fd554334053ebef56bdcb5d6c0321" name="a8a7fd554334053ebef56bdcb5d6c0321"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a7fd554334053ebef56bdcb5d6c0321">&#9670;&#160;</a></span>next()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Id_ , typename Index_ , class Slab_ &gt; </div>
 <div class="memtemplate">
-template&lt;class Ifunction_ , class Sfunction_ , class Rfunction_ , class Afunction_ , class Pfunction_ &gt; </div>
+template&lt;class Ifunction_ , class Cfunction_ , class Pfunction_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -183,20 +183,8 @@ template&lt;class Ifunction_ , class Sfunction_ , class Rfunction_ , class Afunc
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Sfunction_&#160;</td>
-          <td class="paramname"><em>swap</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Rfunction_&#160;</td>
-          <td class="paramname"><em>ready</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Afunction_&#160;</td>
-          <td class="paramname"><em>allocate</em>, </td>
+          <td class="paramtype">Cfunction_&#160;</td>
+          <td class="paramname"><em>create</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -220,9 +208,7 @@ template&lt;class Ifunction_ , class Sfunction_ , class Rfunction_ , class Afunc
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Ifunction_</td><td>Function to identify the slab containing each predicted row/column. </td></tr>
-    <tr><td class="paramname">Sfunction_</td><td>Function to swap two slabs' contents. </td></tr>
-    <tr><td class="paramname">Rfunction_</td><td>Function to determine whether a slab object is a non-mock instance. </td></tr>
-    <tr><td class="paramname">Afunction_</td><td>Function to allocate memory to a mock slab, to turn it into a non-mock instance. </td></tr>
+    <tr><td class="paramname">Cfunction_</td><td>Function to create a new slab. </td></tr>
     <tr><td class="paramname">Pfunction_</td><td>Function to populate zero, one or more slabs with their contents.</td></tr>
   </table>
   </dd>
@@ -230,16 +216,12 @@ template&lt;class Ifunction_ , class Sfunction_ , class Rfunction_ , class Afunc
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">identify</td><td>Function that accepts an <code>i</code>, an <code>Index_</code> containing the predicted row/column index. This should return a pair containing (1) the identifier of the slab containing <code>i</code>, and (2) the index of row/column <code>i</code> inside that slab. This is typically defined as the index of the slab on the iteration dimension. For example, if each chunk takes up 10 rows, attempting to access row 21 would require retrieval of slab 2 and an offset of 1. </td></tr>
-    <tr><td class="paramname">swap</td><td>Function that accepts two <code>Slab_&amp;</code> and swaps their contents. </td></tr>
-    <tr><td class="paramname">ready</td><td>Function that accepts a <code>const Slab_&amp;</code> and returns a boolean indicating whether it has already been allocated. This should return <code>true</code> for objects that have been used in <code>allocate()</code>, and <code>false</code> otherwise. </td></tr>
-    <tr><td class="paramname">allocate</td><td>Function that accepts a single default-initialized <code>Slab_</code> object, and allocates sufficient memory to it in order to hold a slab's contents when used in <code>populate()</code>. </td></tr>
-    <tr><td class="paramname">populate</td><td>Function that accepts two arguments, <code>slabs_in_need</code> and <code>slab_data</code>. (1) <code>slabs_in_need</code> is a <code>const std::vector&lt;std::pair&lt;Id_, Index_&gt; &gt;&amp;</code> specifying the slabs to be populated. The first <code>Id_</code> element of each pair contains the slab identifier, i.e., the first element returned by the <code>identify</code> function. The second <code>Index_</code> element specifies the index of the <code>Slab_</code> in <code>slab_data</code> in which to store the contents of each slab. (2) <code>slab_data</code> is a <code>std::vector&lt;Slab_&gt;&amp;</code> containing the cached slab contents to be populated. This function should iterate over the <code>slabs_in_need</code> and populate the corresponding entries in <code>slab_data</code>.</td></tr>
+    <tr><td class="paramname">create</td><td>Function that accepts no arguments and returns a <code>Slab_</code> object with sufficient memory to hold a slab's contents when used in <code>populate()</code>. This may also return a default-constructed <code>Slab_</code> object if the allocation is done dynamically per slab in <code>populate()</code>. </td></tr>
+    <tr><td class="paramname">populate</td><td>Function that accepts two arguments, <code>slabs_in_need</code> and <code>slab_data</code>. (1) <code>slabs_in_need</code> is a <code>const std::vector&lt;std::pair&lt;Id_, Index_&gt; &gt;&amp;</code> specifying the slabs to be populated. The first <code>Id_</code> element of each pair contains the slab identifier, i.e., the first element returned by the <code>identify</code> function. The second <code>Index_</code> element specifies the index in <code>slab_data</code> in which to store the contents of each slab. (2) <code>slab_data</code> is a <code>std::vector&lt;Slab_*&gt;&amp;</code> containing pointers to the cached slab contents to be populated. This function should iterate over the <code>slabs_in_need</code> and populate the corresponding entries in <code>slab_data</code>.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Pair containing (1) a pointer to a slab's contents and (2) the index of the next predicted row/column inside the retrieved slab. </dd></dl>
-<p >Doing a linear scan across slabs to find the allocated but unused cache elements. This is the simplest and safest approach; trying to keep track of the unused caches would require a scan to fill a map/set anyway, and deleting an iterator from cache_exists only works if cache_exists actually contains all cache elements, which it might not be if we reached max_predictions without filling up the cache.</p>
-<p >In any case, a linear scan should be pretty good for consecutive access; the first cache elements would be the oldest, so there wouldn't be any wasted iterations to find available cache elements.</p>
 
 </div>
 </div>
