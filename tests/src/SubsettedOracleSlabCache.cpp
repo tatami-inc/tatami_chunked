@@ -57,7 +57,7 @@ TEST_F(SubsettedOracleSlabCacheTest, Consecutive) {
         34,
         32,
         35,
-        
+
         44, // Cycle 2
         46,
         45,
@@ -171,6 +171,148 @@ TEST_F(SubsettedOracleSlabCacheTest, Consecutive) {
             EXPECT_EQ(out.first->subset.block_start, 7 + i);
             EXPECT_EQ(out.first->subset.block_length, 1);
         }
+    }
+
+    EXPECT_EQ(nalloc, 3); // respects the max cache size.
+}
+
+TEST_F(SubsettedOracleSlabCacheTest, FullFallback) {
+    std::vector<int> predictions{
+        11, // Cycle 1
+        22,
+        33,
+        12,
+        24,
+        36,
+
+        55, // Cycle 2
+        13, 
+        45,
+
+        28, // Cycle 3
+        29,
+        27,
+        40, 
+        56,
+        45
+    };
+
+    tatami_chunked::SubsettedOracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedOracle<int> >(predictions.data(), predictions.size()), 100, 3);
+    int counter = 0;
+    int nalloc = 0;
+
+    {
+        auto out = next(cache, counter, nalloc); // extracting 11.
+        EXPECT_EQ(out.first->contents.chunk_id, static_cast<unsigned char>(1));
+        EXPECT_EQ(out.first->contents.populate_number, 0);
+        EXPECT_EQ(out.second, 1);
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::SubsetSelection::FULL); // because it's used in the next cycle.
+    }
+
+    {
+        auto out = next(cache, counter, nalloc); // extracting 22.
+        EXPECT_EQ(out.first->contents.chunk_id, static_cast<unsigned char>(2));
+        EXPECT_EQ(out.first->contents.populate_number, 1);
+        EXPECT_EQ(out.second, 2);
+
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::SubsetSelection::INDEX);
+        std::vector<int> expected { 2, 4 };
+        EXPECT_EQ(out.first->subset.indices, expected);
+    }
+
+    {
+        auto out = next(cache, counter, nalloc); // extracting 33.
+        EXPECT_EQ(out.first->contents.chunk_id, static_cast<unsigned char>(3));
+        EXPECT_EQ(out.first->contents.populate_number, 2);
+        EXPECT_EQ(out.second, 3);
+
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::SubsetSelection::INDEX);
+        std::vector<int> expected { 3, 6 };
+        EXPECT_EQ(out.first->subset.indices, expected);
+    }
+
+    {
+        auto out = next(cache, counter, nalloc); // extracting 12.
+        EXPECT_EQ(out.first->contents.chunk_id, static_cast<unsigned char>(1));
+        EXPECT_EQ(out.first->contents.populate_number, 0);
+        EXPECT_EQ(out.second, 2);
+    }
+
+    {
+        auto out = next(cache, counter, nalloc); // extracting 24.
+        EXPECT_EQ(out.first->contents.chunk_id, static_cast<unsigned char>(2));
+        EXPECT_EQ(out.first->contents.populate_number, 1);
+        EXPECT_EQ(out.second, 4);
+    }
+
+    {
+        auto out = next(cache, counter, nalloc); // extracting 36.
+        EXPECT_EQ(out.first->contents.chunk_id, static_cast<unsigned char>(3));
+        EXPECT_EQ(out.first->contents.populate_number, 2);
+        EXPECT_EQ(out.second, 6);
+    }
+
+    {
+        auto out = next(cache, counter, nalloc); // extracting 55.
+        EXPECT_EQ(out.first->contents.chunk_id, static_cast<unsigned char>(5));
+        EXPECT_EQ(out.first->contents.populate_number, 3);
+        EXPECT_EQ(out.second, 5);
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::SubsetSelection::FULL); // used in the next cycle.
+    }
+
+    {
+        auto out = next(cache, counter, nalloc); // extracting 13.
+        EXPECT_EQ(out.first->contents.chunk_id, static_cast<unsigned char>(1));
+        EXPECT_EQ(out.first->contents.populate_number, 0);
+        EXPECT_EQ(out.second, 3);
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::SubsetSelection::FULL); // not used in the next cycle, but it's already there, so we don't reallocate.
+    }
+
+    {
+        auto out = next(cache, counter, nalloc); // extracting 45.
+        EXPECT_EQ(out.first->contents.chunk_id, static_cast<unsigned char>(4));
+        EXPECT_EQ(out.first->contents.populate_number, 4);
+        EXPECT_EQ(out.second, 5);
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::SubsetSelection::FULL); // used in the next cycle.
+    }
+
+    {
+        std::vector<int> offsets { 8, 9, 7 };
+        for (int i = 0; i < 3; ++i) { // extracting 28, 29, 27
+            auto out = next(cache, counter, nalloc); 
+            EXPECT_EQ(out.first->contents.chunk_id, static_cast<unsigned char>(2));
+            EXPECT_EQ(out.first->contents.populate_number, 5);
+            EXPECT_EQ(out.second, offsets[i]);
+
+            EXPECT_EQ(out.first->subset.selection, tatami_chunked::SubsetSelection::BLOCK);
+            EXPECT_EQ(out.first->subset.block_start, 7);
+            EXPECT_EQ(out.first->subset.block_length, 3);
+        }
+    }
+
+    {
+        auto out = next(cache, counter, nalloc); // extracting 40.
+        EXPECT_EQ(out.first->contents.chunk_id, static_cast<unsigned char>(4));
+        EXPECT_EQ(out.first->contents.populate_number, 4);
+        EXPECT_EQ(out.second, 0);
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::SubsetSelection::FULL); // not used in the next cycle, but it's already extracted.
+    }
+
+    {
+        auto out = next(cache, counter, nalloc); // extracting 56.
+        EXPECT_EQ(out.first->contents.chunk_id, static_cast<unsigned char>(5));
+        EXPECT_EQ(out.first->contents.populate_number, 3);
+        EXPECT_EQ(out.second, 6);
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::SubsetSelection::FULL); // not used in the next cycle, but it's already extracted.
+    }
+
+
+    {
+        auto out = next(cache, counter, nalloc); // extracting 40.
+        EXPECT_EQ(out.first->contents.chunk_id, static_cast<unsigned char>(4));
+        EXPECT_EQ(out.first->contents.populate_number, 4);
+        EXPECT_EQ(out.second, 5);
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::SubsetSelection::FULL); // not used in the next cycle, but it's already extracted.
     }
 
     EXPECT_EQ(nalloc, 3); // respects the max cache size.
