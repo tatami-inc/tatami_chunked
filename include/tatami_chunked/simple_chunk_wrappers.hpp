@@ -157,7 +157,7 @@ public:
         if constexpr(SimpleChunk_::row_major == accrow_) {
             size_t secondary_chunkdim = get_secondary_chunkdim<accrow_>(); // use size_t to avoid integer overflow with Index_.
             for (auto p : primary_indices) {
-                auto srcptr = work.data() + secondary_chunkdim + secondary_start;
+                auto srcptr = work.data() + p * secondary_chunkdim + secondary_start;
                 std::copy(srcptr, srcptr + secondary_length, output);
                 output += stride;
             }
@@ -499,7 +499,7 @@ private:
 
         refine_start(start, end, primary_indices.front(), work.indices);
 
-        auto p = 0, pend = primary_indices.size();
+        size_t p = 0, pend = primary_indices.size();
         for (size_t i = start; i < end; ++i) {
             while (p < pend && primary_indices[p] < work.indices[i]) {
                 ++p;
