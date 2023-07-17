@@ -60,11 +60,12 @@ var searchData=
   ['make_5fdelayedsubtractvectorhelper_57',['make_DelayedSubtractVectorHelper',['https://tatami-inc.github.io/tatami/namespacetatami.html#a800b92854282015d96308fb283aeb508',1,'tatami']]],
   ['make_5fdelayedtranspose_58',['make_DelayedTranspose',['https://tatami-inc.github.io/tatami/namespacetatami.html#afa35d8e9fe286967f327ec0eb6bd5005',1,'tatami']]],
   ['make_5fdelayedunaryisometricop_59',['make_DelayedUnaryIsometricOp',['https://tatami-inc.github.io/tatami/namespacetatami.html#a07b072944c766d85dc4ce4dc734e0b75',1,'tatami']]],
-  ['math_5fhelpers_2ehpp_60',['math_helpers.hpp',['https://tatami-inc.github.io/tatami/math__helpers_8hpp.html',1,'']]],
-  ['matrix_61',['Matrix',['https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html',1,'tatami']]],
-  ['matrix_2ehpp_62',['Matrix.hpp',['https://tatami-inc.github.io/tatami/Matrix_8hpp.html',1,'']]],
-  ['matrix_3c_20value_5f_2c_20index_5f_20_3e_63',['Matrix&lt; Value_, Index_ &gt;',['https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html',1,'tatami']]],
-  ['matrix_3c_20value_5fout_5f_2c_20index_5fout_5f_20_3e_64',['Matrix&lt; Value_out_, Index_out_ &gt;',['https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html',1,'tatami']]],
-  ['maximum_5fcache_5fsize_65',['maximum_cache_size',['../structtatami__chunked_1_1TypicalSlabCacheOptions.html#acb6a39320c2eccd7cf2231e8b29b13fc',1,'tatami_chunked::TypicalSlabCacheOptions']]],
-  ['medians_2ehpp_66',['medians.hpp',['https://tatami-inc.github.io/tatami/medians_8hpp.html',1,'']]]
+  ['mapping_60',['mapping',['../structtatami__chunked_1_1SubsettedOracleSlabCache_1_1SubsetDetails.html#a92222ed5250f12b0fcb58b7d7251658b',1,'tatami_chunked::SubsettedOracleSlabCache::SubsetDetails']]],
+  ['math_5fhelpers_2ehpp_61',['math_helpers.hpp',['https://tatami-inc.github.io/tatami/math__helpers_8hpp.html',1,'']]],
+  ['matrix_62',['Matrix',['https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html',1,'tatami']]],
+  ['matrix_2ehpp_63',['Matrix.hpp',['https://tatami-inc.github.io/tatami/Matrix_8hpp.html',1,'']]],
+  ['matrix_3c_20value_5f_2c_20index_5f_20_3e_64',['Matrix&lt; Value_, Index_ &gt;',['https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html',1,'tatami']]],
+  ['matrix_3c_20value_5fout_5f_2c_20index_5fout_5f_20_3e_65',['Matrix&lt; Value_out_, Index_out_ &gt;',['https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html',1,'tatami']]],
+  ['maximum_5fcache_5fsize_66',['maximum_cache_size',['../structtatami__chunked_1_1TypicalSlabCacheOptions.html#acb6a39320c2eccd7cf2231e8b29b13fc',1,'tatami_chunked::TypicalSlabCacheOptions']]],
+  ['medians_2ehpp_67',['medians.hpp',['https://tatami-inc.github.io/tatami/medians_8hpp.html',1,'']]]
 ];

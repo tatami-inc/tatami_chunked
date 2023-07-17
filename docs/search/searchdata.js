@@ -7,7 +7,7 @@ var indexSectionsWithContent =
   4: "abcdefilmnoprstuw",
   5: "bcfilmnoprsv",
   6: "bcdefinprsvw",
-  7: "dt",
+  7: "dst",
   8: "o",
   9: "t"
 };

@@ -33,6 +33,25 @@
     <namespace>tatami_chunked</namespace>
   </compound>
   <compound kind="file">
+    <name>SubsettedOracleSlabCache.hpp</name>
+    <path>/github/workspace/include/tatami_chunked/</path>
+    <filename>SubsettedOracleSlabCache_8hpp.html</filename>
+    <class kind="class">tatami_chunked::SubsettedOracleSlabCache</class>
+    <class kind="struct">tatami_chunked::SubsettedOracleSlabCache::SubsetDetails</class>
+    <class kind="struct">tatami_chunked::SubsettedOracleSlabCache::CachedSlab</class>
+    <namespace>tatami_chunked</namespace>
+    <member kind="enumeration">
+      <type></type>
+      <name>SubsetSelection</name>
+      <anchorfile>namespacetatami__chunked.html</anchorfile>
+      <anchor>a04acaabc7d3d46a03f1a2faca6dc8ff6</anchor>
+      <arglist></arglist>
+      <enumvalue file="namespacetatami__chunked.html" anchor="a04acaabc7d3d46a03f1a2faca6dc8ff6aba7de5bc6888294e5884b024a4c894f1">FULL</enumvalue>
+      <enumvalue file="namespacetatami__chunked.html" anchor="a04acaabc7d3d46a03f1a2faca6dc8ff6a4d34f53389ed7f28ca91fc31ea360a66">BLOCK</enumvalue>
+      <enumvalue file="namespacetatami__chunked.html" anchor="a04acaabc7d3d46a03f1a2faca6dc8ff6acb4ae3b37047fb4b2c0d16f8bf84f076">INDEX</enumvalue>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>tatami_chunked.hpp</name>
     <path>/github/workspace/include/tatami_chunked/</path>
     <filename>tatami__chunked_8hpp.html</filename>
@@ -45,6 +64,24 @@
     <class kind="struct">tatami_chunked::TypicalSlabCacheOptions</class>
     <class kind="struct">tatami_chunked::TypicalSlabCacheWorkspace</class>
     <namespace>tatami_chunked</namespace>
+  </compound>
+  <compound kind="struct">
+    <name>tatami_chunked::SubsettedOracleSlabCache::CachedSlab</name>
+    <filename>structtatami__chunked_1_1SubsettedOracleSlabCache_1_1CachedSlab.html</filename>
+    <member kind="variable">
+      <type>Slab_</type>
+      <name>contents</name>
+      <anchorfile>structtatami__chunked_1_1SubsettedOracleSlabCache_1_1CachedSlab.html</anchorfile>
+      <anchor>a4c00ff419ab443f384e9ee21139bcc10</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>SubsetDetails</type>
+      <name>subset</name>
+      <anchorfile>structtatami__chunked_1_1SubsettedOracleSlabCache_1_1CachedSlab.html</anchorfile>
+      <anchor>a3ccaae84918e9054d927a630cbf0e006</anchor>
+      <arglist></arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>tatami_chunked::CustomChunkedDenseMatrix</name>
@@ -218,6 +255,68 @@
     </member>
   </compound>
   <compound kind="struct">
+    <name>tatami_chunked::SubsettedOracleSlabCache::SubsetDetails</name>
+    <filename>structtatami__chunked_1_1SubsettedOracleSlabCache_1_1SubsetDetails.html</filename>
+    <member kind="variable">
+      <type>SubsetSelection</type>
+      <name>selection</name>
+      <anchorfile>structtatami__chunked_1_1SubsettedOracleSlabCache_1_1SubsetDetails.html</anchorfile>
+      <anchor>a65b521f2d14bc202f412da9d7f9ca92f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>Index_</type>
+      <name>block_start</name>
+      <anchorfile>structtatami__chunked_1_1SubsettedOracleSlabCache_1_1SubsetDetails.html</anchorfile>
+      <anchor>a8a338261ab5d0763da698ebc295704cd</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>Index_</type>
+      <name>block_length</name>
+      <anchorfile>structtatami__chunked_1_1SubsettedOracleSlabCache_1_1SubsetDetails.html</anchorfile>
+      <anchor>a98d7097252e23c52e81f07330dde84e6</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>std::vector&lt; Index_ &gt;</type>
+      <name>indices</name>
+      <anchorfile>structtatami__chunked_1_1SubsettedOracleSlabCache_1_1SubsetDetails.html</anchorfile>
+      <anchor>a9f8cd50f3419f1620b7765ec56ab9c27</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>std::unordered_map&lt; Index_, Index_ &gt;</type>
+      <name>mapping</name>
+      <anchorfile>structtatami__chunked_1_1SubsettedOracleSlabCache_1_1SubsetDetails.html</anchorfile>
+      <anchor>a92222ed5250f12b0fcb58b7d7251658b</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami_chunked::SubsettedOracleSlabCache</name>
+    <filename>classtatami__chunked_1_1SubsettedOracleSlabCache.html</filename>
+    <templarg>typename Id_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>class Slab_</templarg>
+    <class kind="struct">tatami_chunked::SubsettedOracleSlabCache::CachedSlab</class>
+    <class kind="struct">tatami_chunked::SubsettedOracleSlabCache::SubsetDetails</class>
+    <member kind="function">
+      <type></type>
+      <name>SubsettedOracleSlabCache</name>
+      <anchorfile>classtatami__chunked_1_1SubsettedOracleSlabCache.html</anchorfile>
+      <anchor>a4d007072fdee018b8cd075784759dc19</anchor>
+      <arglist>(std::unique_ptr&lt; tatami::Oracle&lt; Index_ &gt; &gt; oracle, size_t per_iteration, size_t num_slabs)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::pair&lt; const CachedSlab *, Index_ &gt;</type>
+      <name>next</name>
+      <anchorfile>classtatami__chunked_1_1SubsettedOracleSlabCache.html</anchorfile>
+      <anchor>ac64bbad23fe18047559614afac774728</anchor>
+      <arglist>(Ifunction_ identify, Cfunction_ create, Pfunction_ populate)</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
     <name>tatami_chunked::TypicalSlabCacheOptions</name>
     <filename>structtatami__chunked_1_1TypicalSlabCacheOptions.html</filename>
     <member kind="variable">
@@ -311,8 +410,19 @@
     <class kind="class">tatami_chunked::OracleSlabCache</class>
     <class kind="struct">tatami_chunked::SimpleDenseChunkWrapper</class>
     <class kind="struct">tatami_chunked::SimpleSparseChunkWrapper</class>
+    <class kind="class">tatami_chunked::SubsettedOracleSlabCache</class>
     <class kind="struct">tatami_chunked::TypicalSlabCacheOptions</class>
     <class kind="struct">tatami_chunked::TypicalSlabCacheWorkspace</class>
+    <member kind="enumeration">
+      <type></type>
+      <name>SubsetSelection</name>
+      <anchorfile>namespacetatami__chunked.html</anchorfile>
+      <anchor>a04acaabc7d3d46a03f1a2faca6dc8ff6</anchor>
+      <arglist></arglist>
+      <enumvalue file="namespacetatami__chunked.html" anchor="a04acaabc7d3d46a03f1a2faca6dc8ff6aba7de5bc6888294e5884b024a4c894f1">FULL</enumvalue>
+      <enumvalue file="namespacetatami__chunked.html" anchor="a04acaabc7d3d46a03f1a2faca6dc8ff6a4d34f53389ed7f28ca91fc31ea360a66">BLOCK</enumvalue>
+      <enumvalue file="namespacetatami__chunked.html" anchor="a04acaabc7d3d46a03f1a2faca6dc8ff6acb4ae3b37047fb4b2c0d16f8bf84f076">INDEX</enumvalue>
+    </member>
   </compound>
   <compound kind="page">
     <name>index</name>
