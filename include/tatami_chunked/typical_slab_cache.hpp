@@ -2,7 +2,10 @@
 #define TATAMI_CHUNKED_TYPICAL_SLAB_CACHE_HPP
 
 #include <memory>
+#include <type_traits>
+
 #include "OracleSlabCache.hpp"
+#include "SubsettedOracleSlabCache.hpp"
 #include "LruSlabCache.hpp"
 
 /**
@@ -44,8 +47,10 @@ struct TypicalSlabCacheOptions {
  *
  * @tparam Index_ Integer type for the row/column indices.
  * @tparam Slab_ Class that contains a single slab.
+ * @tparam subset_ Whether to report the requested subset from each slab.
+ * Only relevant when an oracle is available.
  */
-template<typename Index_, class Slab_>
+template<typename Index_, class Slab_, bool subset_ = false>
 struct TypicalSlabCacheWorkspace {
     /**
      * Default constructor.
@@ -98,10 +103,15 @@ public:
     std::unique_ptr<LruSlabCache<Index_, Slab_> > lru_cache;
 
     /**
+     * Type of the oracle slab cache, depending on whether `subset_ = true`.
+     */
+    typedef typename std::conditional<subset_, SubsettedOracleSlabCache<Index_, Index_, Slab_>, OracleSlabCache<Index_, Index_, Slab_> >::type OracleCache;
+
+    /**
      * Cache of to-be-used slabs, based on an `Oracle`'s predictions.
      * This may be NULL, see `set_oracle()` for more details.
      */
-    std::unique_ptr<OracleSlabCache<Index_, Index_, Slab_> > oracle_cache;
+    std::unique_ptr<OracleCache> oracle_cache;
 
 public:
     /**
@@ -117,7 +127,7 @@ public:
         // The oracle won't have any effect if fewer than one slab can be cached.
         if (num_slabs_in_cache > 1) {
             size_t max_predictions = static_cast<size_t>(num_slabs_in_cache) * primary_length * 2; // double the cache size, basically.
-            oracle_cache.reset(new OracleSlabCache<Index_, Index_, Slab_>(std::move(o), max_predictions, num_slabs_in_cache));
+            oracle_cache.reset(new OracleCache(std::move(o), max_predictions, num_slabs_in_cache));
             lru_cache.reset();
         }
     }
