@@ -1,5 +1,5 @@
-#ifndef TATAMI_CHUNKED_ORACLE_SLAB_CACHE_HPP
-#define TATAMI_CHUNKED_ORACLE_SLAB_CACHE_HPP
+#ifndef TATAMI_CHUNKED_SUBSETTED_ORACLE_SLAB_CACHE_HPP
+#define TATAMI_CHUNKED_SUBSETTED_ORACLE_SLAB_CACHE_HPP
 
 #include <unordered_map>
 #include <vector>
@@ -288,16 +288,18 @@ public:
 
                 auto& last = unassigned_slabs.back();
                 slab_pointers[last.first] = &(*it);
-                next_subset[last.first].swap(it->subset);
-
-                // Remember this is a pointer to an iterator, so this assignment changes the iterator in the map.
-                *(last.second) = it; 
+                *(last.second) = it; // Remember this is a pointer to an iterator, so this assignment changes the iterator in the map.
 
                 unassigned_slabs.pop_back();
             }
 
             while (!tmp_cache.empty()) {
                 free_cache.splice(free_cache.end(), tmp_cache, tmp_cache.begin());
+            }
+
+            // Updating subsets for all to-be-populated slabs.
+            for (const auto& x : slabs_to_populate) {
+                next_subset[x.second].swap(slab_pointers[x.second]->subset);
             }
 
         } else {
@@ -399,7 +401,7 @@ public:
                         slab_cache.splice(slab_cache.end(), free_cache, sIt);
                         next_slab_pointers.push_back(&(*sIt));
                         slab_exists[curslab] = std::make_pair(used, sIt);
-                        next_subset[used].add(curindex);
+                        next_subset[used].set(curindex);
                     }
 
                     next_slabs_to_populate.emplace_back(curslab, used);

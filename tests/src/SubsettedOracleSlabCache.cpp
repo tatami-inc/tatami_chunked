@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "tatami_chunked/SubsettedOracleSlabCache.hpp"
+#include "tatami_chunked/OracleSlabCache.hpp"
 
 #include <random>
 
@@ -175,38 +176,70 @@ TEST_F(SubsettedOracleSlabCacheTest, Consecutive) {
     EXPECT_EQ(nalloc, 3); // respects the max cache size.
 }
 
-//class SubsettedOracleSlabCacheStressTest : public ::testing::TestWithParam<std::tuple<int, int> >, public SubsettedOracleSlabCacheTestMethods {};
-//
-//TEST_P(SubsettedOracleSlabCacheStressTest, Stressed) {
-//    auto param = GetParam();
-//    auto max_pred = std::get<0>(param);
-//    auto cache_size = std::get<1>(param);
-//
-//    std::mt19937_64 rng(max_pred * cache_size + cache_size + 1);
-//    std::vector<int> predictions(10000);
-//    for (size_t i = 0; i < predictions.size(); ++i) {
-//        predictions[i] = rng() % 50 + 10;
-//    }
-//
-//    // Using limited predictions to force more cache interations.
-//    tatami_chunked::SubsettedOracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedSubsettedOracle<int> >(predictions.data(), predictions.size()), max_pred, cache_size);
-//    int counter = 0;
-//    int nalloc = 0;
-//
-//    for (size_t i = 0; i < predictions.size(); ++i) {
-//        auto out = next(cache, counter, nalloc);
-//        EXPECT_EQ(out.first->chunk_id, predictions[i] / 10);
-//        EXPECT_EQ(out.second, predictions[i] % 10);
-//    }
-//
-//    EXPECT_EQ(nalloc, std::min({ 5, max_pred, cache_size }));
-//}
-//
-//INSTANTIATE_TEST_SUITE_P(
-//    SubsettedOracleSlabCache,
-//    SubsettedOracleSlabCacheStressTest,
-//    ::testing::Combine(
-//        ::testing::Values(3, 5, 10), // max predictions
-//        ::testing::Values(3, 5, 10)  // max cache size
-//    )
-//);
+class SubsettedOracleSlabCacheStressTest : public ::testing::TestWithParam<std::tuple<int, int> >, public SubsettedOracleSlabCacheTestMethods {};
+
+TEST_P(SubsettedOracleSlabCacheStressTest, Stressed) {
+    auto param = GetParam();
+    auto max_pred = std::get<0>(param);
+    auto cache_size = std::get<1>(param);
+
+    std::mt19937_64 rng(max_pred * cache_size + cache_size + 1);
+    std::vector<int> predictions(10000);
+    for (size_t i = 0; i < predictions.size(); ++i) {
+        predictions[i] = rng() % 50 + 10;
+    }
+
+    // Using limited predictions to force more cache interations.
+    tatami_chunked::SubsettedOracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedOracle<int> >(predictions.data(), predictions.size()), max_pred, cache_size);
+    tatami_chunked::OracleSlabCache<unsigned char, int, TestSlab> simple(std::make_unique<tatami::FixedOracle<int> >(predictions.data(), predictions.size()), max_pred, cache_size);
+    int counter = 0, scounter = 0;
+    int nalloc = 0, snalloc = 0;
+
+    for (size_t i = 0; i < predictions.size(); ++i) {
+        auto out = next(cache, counter, nalloc);
+
+        auto ref = simple.next(
+            [](int i) -> std::pair<unsigned char, int> {
+                return std::make_pair<unsigned char, int>(i / 10, i % 10);
+            },
+            [&]() -> TestSlab {
+                ++snalloc;
+                return TestSlab();
+            },
+            [&](std::vector<std::pair<unsigned char, int> >& in_need, std::vector<TestSlab*>& data) -> void {
+                for (auto& x : in_need) {
+                    auto& current = data[x.second];
+                    current->chunk_id = x.first;
+                    current->populate_number = scounter++;
+                }
+            }
+        );
+
+        // Checking for consistency with a simple oracle cache.
+        EXPECT_EQ(out.first->contents.chunk_id, ref.first->chunk_id);
+        EXPECT_EQ(out.first->contents.populate_number, ref.first->populate_number);
+        EXPECT_EQ(out.second, ref.second);
+
+        // Checking the subset.
+        const auto& sub = out.first->subset;
+        if (sub.selection == tatami_chunked::SubsetSelection::BLOCK) {
+            EXPECT_TRUE(out.second >= sub.block_start);
+            EXPECT_TRUE(out.second < sub.block_start + sub.block_length);
+        } else if (sub.selection == tatami_chunked::SubsetSelection::INDEX) {
+            confirm_mapping_integrity(sub);
+            EXPECT_TRUE(sub.mapping.find(out.second) != sub.mapping.end());
+        } 
+    }
+
+    EXPECT_EQ(nalloc, std::min({ 5, max_pred, cache_size }));
+    EXPECT_EQ(nalloc, snalloc);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    SubsettedOracleSlabCache,
+    SubsettedOracleSlabCacheStressTest,
+    ::testing::Combine(
+        ::testing::Values(3, 5, 10), // max predictions
+        ::testing::Values(3, 5, 10)  // max cache size
+    )
+);
