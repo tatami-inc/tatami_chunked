@@ -17,10 +17,11 @@ var searchData=
   ['options_14',['Options',['https://tatami-inc.github.io/tatami/structtatami_1_1Options.html',1,'tatami']]],
   ['options_2ehpp_15',['Options.hpp',['https://tatami-inc.github.io/tatami/Options_8hpp.html',1,'']]],
   ['oracle_16',['Oracle',['https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html',1,'tatami']]],
-  ['oracle_5fcache_17',['oracle_cache',['../structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a9edf66abbcc4d3c07cd3bee543da2598',1,'tatami_chunked::TypicalSlabCacheWorkspace']]],
-  ['oracles_2ehpp_18',['Oracles.hpp',['https://tatami-inc.github.io/tatami/Oracles_8hpp.html',1,'']]],
-  ['oracleslabcache_19',['OracleSlabCache',['../classtatami__chunked_1_1OracleSlabCache.html#ab2ec1decfa4cdbff71b673d1ef960488',1,'tatami_chunked::OracleSlabCache::OracleSlabCache()'],['../classtatami__chunked_1_1OracleSlabCache.html',1,'tatami_chunked::OracleSlabCache&lt; Id_, Index_, Slab_ &gt;']]],
-  ['oracleslabcache_2ehpp_20',['OracleSlabCache.hpp',['../OracleSlabCache_8hpp.html',1,'']]],
-  ['oraclestream_21',['OracleStream',['https://tatami-inc.github.io/tatami/structtatami_1_1OracleStream.html#a293c82567a7c94b9dc86e39110b30688',1,'tatami::OracleStream::OracleStream()=default'],['https://tatami-inc.github.io/tatami/structtatami_1_1OracleStream.html#abac31a84479939fec89f7037a5dd8f06',1,'tatami::OracleStream::OracleStream(std::unique_ptr&lt; Oracle&lt; Index_ &gt; &gt; o)'],['https://tatami-inc.github.io/tatami/structtatami_1_1OracleStream.html',1,'tatami::OracleStream&lt; typename Index_ &gt;']]],
-  ['oraclestream_3c_20index_5f_20_3e_22',['OracleStream&lt; Index_ &gt;',['https://tatami-inc.github.io/tatami/structtatami_1_1OracleStream.html',1,'tatami']]]
+  ['oracle_5fcache_17',['oracle_cache',['../structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a9dc2bab8876b8d7be33337de133ca8a7',1,'tatami_chunked::TypicalSlabCacheWorkspace']]],
+  ['oraclecache_18',['OracleCache',['../structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a6a4fa7d2a4fc66947a3646ea9a50948c',1,'tatami_chunked::TypicalSlabCacheWorkspace']]],
+  ['oracles_2ehpp_19',['Oracles.hpp',['https://tatami-inc.github.io/tatami/Oracles_8hpp.html',1,'']]],
+  ['oracleslabcache_20',['OracleSlabCache',['../classtatami__chunked_1_1OracleSlabCache.html#ab2ec1decfa4cdbff71b673d1ef960488',1,'tatami_chunked::OracleSlabCache::OracleSlabCache()'],['../classtatami__chunked_1_1OracleSlabCache.html',1,'tatami_chunked::OracleSlabCache&lt; Id_, Index_, Slab_ &gt;']]],
+  ['oracleslabcache_2ehpp_21',['OracleSlabCache.hpp',['../OracleSlabCache_8hpp.html',1,'']]],
+  ['oraclestream_22',['OracleStream',['https://tatami-inc.github.io/tatami/structtatami_1_1OracleStream.html#a293c82567a7c94b9dc86e39110b30688',1,'tatami::OracleStream::OracleStream()=default'],['https://tatami-inc.github.io/tatami/structtatami_1_1OracleStream.html#abac31a84479939fec89f7037a5dd8f06',1,'tatami::OracleStream::OracleStream(std::unique_ptr&lt; Oracle&lt; Index_ &gt; &gt; o)'],['https://tatami-inc.github.io/tatami/structtatami_1_1OracleStream.html',1,'tatami::OracleStream&lt; typename Index_ &gt;']]],
+  ['oraclestream_3c_20index_5f_20_3e_23',['OracleStream&lt; Index_ &gt;',['https://tatami-inc.github.io/tatami/structtatami_1_1OracleStream.html',1,'tatami']]]
 ];

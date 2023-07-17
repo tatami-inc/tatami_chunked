@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.5"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami_chunked: tatami_chunked::TypicalSlabCacheWorkspace&lt; Index_, Slab_ &gt; Struct Template Reference</title>
+<title>tatami_chunked: tatami_chunked::TypicalSlabCacheWorkspace&lt; Index_, Slab_, subset_ &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -76,10 +76,11 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structtatami__chunked_1_1TypicalSlabCacheWorkspace-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">tatami_chunked::TypicalSlabCacheWorkspace&lt; Index_, Slab_ &gt; Struct Template Reference</div></div>
+  <div class="headertitle"><div class="title">tatami_chunked::TypicalSlabCacheWorkspace&lt; Index_, Slab_, subset_ &gt; Struct Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -88,53 +89,77 @@ $(function() {
 
 <p><code>#include &lt;<a class="el" href="typical__slab__cache_8hpp_source.html">typical_slab_cache.hpp</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a6a4fa7d2a4fc66947a3646ea9a50948c"><td class="memItemLeft" align="right" valign="top">typedef std::conditional&lt; subset_, <a class="el" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html">SubsettedOracleSlabCache</a>&lt; Index_, Index_, Slab_ &gt;, <a class="el" href="classtatami__chunked_1_1OracleSlabCache.html">OracleSlabCache</a>&lt; Index_, Index_, Slab_ &gt; &gt;::type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a6a4fa7d2a4fc66947a3646ea9a50948c">OracleCache</a></td></tr>
+<tr class="separator:a6a4fa7d2a4fc66947a3646ea9a50948c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab99537bf021828325a9c9d78cf6f9458"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#ab99537bf021828325a9c9d78cf6f9458">TypicalSlabCacheWorkspace</a> ()=default</td></tr>
-<tr class="separator:ab99537bf021828325a9c9d78cf6f9458"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a116dd3a78cd0ab9f43e99425f43bfa69"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a116dd3a78cd0ab9f43e99425f43bfa69">TypicalSlabCacheWorkspace</a> (Index_ <a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a46f8deb0af915ddaa539da64efa0010d">primary_length</a>, Index_ secondary_length, size_t cache_size_in_elements, bool require_minimum_cache)</td></tr>
-<tr class="separator:a116dd3a78cd0ab9f43e99425f43bfa69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64e99c4866ed080bfbf7dd63ac112474"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a64e99c4866ed080bfbf7dd63ac112474">set_oracle</a> (std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; o)</td></tr>
-<tr class="separator:a64e99c4866ed080bfbf7dd63ac112474"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac27a71aa118a875f1f915e7dfc0dfbd7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#ac27a71aa118a875f1f915e7dfc0dfbd7">TypicalSlabCacheWorkspace</a> ()=default</td></tr>
+<tr class="separator:ac27a71aa118a875f1f915e7dfc0dfbd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a347e990db1a0471ea42a1f27702d4117"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a347e990db1a0471ea42a1f27702d4117">TypicalSlabCacheWorkspace</a> (Index_ <a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#aa1f492cff84927346fe0c2da318f1e0c">primary_length</a>, Index_ secondary_length, size_t cache_size_in_elements, bool require_minimum_cache)</td></tr>
+<tr class="separator:a347e990db1a0471ea42a1f27702d4117"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44ac93763f6c372657867e410f0dc80b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a44ac93763f6c372657867e410f0dc80b">set_oracle</a> (std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; o)</td></tr>
+<tr class="separator:a44ac93763f6c372657867e410f0dc80b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a46f8deb0af915ddaa539da64efa0010d"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a46f8deb0af915ddaa539da64efa0010d">primary_length</a></td></tr>
-<tr class="separator:a46f8deb0af915ddaa539da64efa0010d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a799cf52c298fefc718bf8a8137139933"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a799cf52c298fefc718bf8a8137139933">slab_size_in_elements</a></td></tr>
-<tr class="separator:a799cf52c298fefc718bf8a8137139933"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4db6804025caf7a08ffcce71ac9c36d6"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a4db6804025caf7a08ffcce71ac9c36d6">num_slabs_in_cache</a></td></tr>
-<tr class="separator:a4db6804025caf7a08ffcce71ac9c36d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a064f91ff40a9b14db716b17098061515"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami__chunked_1_1LruSlabCache.html">LruSlabCache</a>&lt; Index_, Slab_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a064f91ff40a9b14db716b17098061515">lru_cache</a></td></tr>
-<tr class="separator:a064f91ff40a9b14db716b17098061515"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9edf66abbcc4d3c07cd3bee543da2598"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami__chunked_1_1OracleSlabCache.html">OracleSlabCache</a>&lt; Index_, Index_, Slab_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a9edf66abbcc4d3c07cd3bee543da2598">oracle_cache</a></td></tr>
-<tr class="separator:a9edf66abbcc4d3c07cd3bee543da2598"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1f492cff84927346fe0c2da318f1e0c"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#aa1f492cff84927346fe0c2da318f1e0c">primary_length</a></td></tr>
+<tr class="separator:aa1f492cff84927346fe0c2da318f1e0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95f2fbaa94e3c78264b4ad6b742e3dd0"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a95f2fbaa94e3c78264b4ad6b742e3dd0">slab_size_in_elements</a></td></tr>
+<tr class="separator:a95f2fbaa94e3c78264b4ad6b742e3dd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b01d451085734c970f4c6f985443cbf"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a9b01d451085734c970f4c6f985443cbf">num_slabs_in_cache</a></td></tr>
+<tr class="separator:a9b01d451085734c970f4c6f985443cbf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af21e3f5737b73c1155ef12a7a9896269"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami__chunked_1_1LruSlabCache.html">LruSlabCache</a>&lt; Index_, Slab_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#af21e3f5737b73c1155ef12a7a9896269">lru_cache</a></td></tr>
+<tr class="separator:af21e3f5737b73c1155ef12a7a9896269"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9dc2bab8876b8d7be33337de133ca8a7"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a6a4fa7d2a4fc66947a3646ea9a50948c">OracleCache</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a9dc2bab8876b8d7be33337de133ca8a7">oracle_cache</a></td></tr>
+<tr class="separator:a9dc2bab8876b8d7be33337de133ca8a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;typename Index_, class Slab_&gt;<br />
-struct tatami_chunked::TypicalSlabCacheWorkspace&lt; Index_, Slab_ &gt;</div><p >Workspace for typical slab extraction. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename Index_, class Slab_, bool subset_ = false&gt;<br />
+struct tatami_chunked::TypicalSlabCacheWorkspace&lt; Index_, Slab_, subset_ &gt;</div><p >Workspace for typical slab extraction. </p>
 <p >Implements a workspace to initialize the slab caches (i.e., the <code><a class="el" href="classtatami__chunked_1_1LruSlabCache.html" title="Least-recently-used cache for slabs.">LruSlabCache</a></code> and <code><a class="el" href="classtatami__chunked_1_1OracleSlabCache.html" title="Oracle-aware cache for slabs.">OracleSlabCache</a></code>) for extraction from a chunked matrix representation. This is intended to be a member of an <code>Extractor</code> class, allowing extraction to switch between different caches, e.g., when <code>ExtractorBase::set_oracle()</code> is called. It also handles the calculation of various cache size statistics.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Index_</td><td>Integer type for the row/column indices. </td></tr>
     <tr><td class="paramname">Slab_</td><td>Class that contains a single slab. </td></tr>
+    <tr><td class="paramname">subset_</td><td>Whether to report the requested subset from each slab. Only relevant when an oracle is available. </td></tr>
   </table>
   </dd>
 </dl>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ab99537bf021828325a9c9d78cf6f9458" name="ab99537bf021828325a9c9d78cf6f9458"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab99537bf021828325a9c9d78cf6f9458">&#9670;&#160;</a></span>TypicalSlabCacheWorkspace() <span class="overload">[1/2]</span></h2>
+</div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="a6a4fa7d2a4fc66947a3646ea9a50948c" name="a6a4fa7d2a4fc66947a3646ea9a50948c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6a4fa7d2a4fc66947a3646ea9a50948c">&#9670;&#160;</a></span>OracleCache</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Index_ , class Slab_ &gt; </div>
+template&lt;typename Index_ , class Slab_ , bool subset_ = false&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef std::conditional&lt;subset_,<a class="el" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html">SubsettedOracleSlabCache</a>&lt;Index_,Index_,Slab_&gt;,<a class="el" href="classtatami__chunked_1_1OracleSlabCache.html">OracleSlabCache</a>&lt;Index_,Index_,Slab_&gt;&gt;::type <a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_, subset_ &gt;::OracleCache</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Type of the oracle slab cache, depending on whether <code>subset_ = true</code>. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="ac27a71aa118a875f1f915e7dfc0dfbd7" name="ac27a71aa118a875f1f915e7dfc0dfbd7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac27a71aa118a875f1f915e7dfc0dfbd7">&#9670;&#160;</a></span>TypicalSlabCacheWorkspace() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Index_ , class Slab_ , bool subset_ = false&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_ &gt;::TypicalSlabCacheWorkspace </td>
+          <td class="memname"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_, subset_ &gt;::TypicalSlabCacheWorkspace </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -150,19 +175,19 @@ template&lt;typename Index_ , class Slab_ &gt; </div>
 
 </div>
 </div>
-<a id="a116dd3a78cd0ab9f43e99425f43bfa69" name="a116dd3a78cd0ab9f43e99425f43bfa69"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a116dd3a78cd0ab9f43e99425f43bfa69">&#9670;&#160;</a></span>TypicalSlabCacheWorkspace() <span class="overload">[2/2]</span></h2>
+<a id="a347e990db1a0471ea42a1f27702d4117" name="a347e990db1a0471ea42a1f27702d4117"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a347e990db1a0471ea42a1f27702d4117">&#9670;&#160;</a></span>TypicalSlabCacheWorkspace() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Index_ , class Slab_ &gt; </div>
+template&lt;typename Index_ , class Slab_ , bool subset_ = false&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_ &gt;::TypicalSlabCacheWorkspace </td>
+          <td class="memname"><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_, subset_ &gt;::TypicalSlabCacheWorkspace </td>
           <td>(</td>
           <td class="paramtype">Index_&#160;</td>
           <td class="paramname"><em>primary_length</em>, </td>
@@ -210,19 +235,19 @@ template&lt;typename Index_ , class Slab_ &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a64e99c4866ed080bfbf7dd63ac112474" name="a64e99c4866ed080bfbf7dd63ac112474"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a64e99c4866ed080bfbf7dd63ac112474">&#9670;&#160;</a></span>set_oracle()</h2>
+<a id="a44ac93763f6c372657867e410f0dc80b" name="a44ac93763f6c372657867e410f0dc80b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44ac93763f6c372657867e410f0dc80b">&#9670;&#160;</a></span>set_oracle()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Index_ , class Slab_ &gt; </div>
+template&lt;typename Index_ , class Slab_ , bool subset_ = false&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_ &gt;::set_oracle </td>
+          <td class="memname">void <a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_, subset_ &gt;::set_oracle </td>
           <td>(</td>
           <td class="paramtype">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt;&#160;</td>
           <td class="paramname"><em>o</em></td><td>)</td>
@@ -246,16 +271,16 @@ template&lt;typename Index_ , class Slab_ &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a46f8deb0af915ddaa539da64efa0010d" name="a46f8deb0af915ddaa539da64efa0010d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a46f8deb0af915ddaa539da64efa0010d">&#9670;&#160;</a></span>primary_length</h2>
+<a id="aa1f492cff84927346fe0c2da318f1e0c" name="aa1f492cff84927346fe0c2da318f1e0c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1f492cff84927346fe0c2da318f1e0c">&#9670;&#160;</a></span>primary_length</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Index_ , class Slab_ &gt; </div>
+template&lt;typename Index_ , class Slab_ , bool subset_ = false&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">Index_ <a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_ &gt;::primary_length</td>
+          <td class="memname">Index_ <a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_, subset_ &gt;::primary_length</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -263,16 +288,16 @@ template&lt;typename Index_ , class Slab_ &gt; </div>
 
 </div>
 </div>
-<a id="a799cf52c298fefc718bf8a8137139933" name="a799cf52c298fefc718bf8a8137139933"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a799cf52c298fefc718bf8a8137139933">&#9670;&#160;</a></span>slab_size_in_elements</h2>
+<a id="a95f2fbaa94e3c78264b4ad6b742e3dd0" name="a95f2fbaa94e3c78264b4ad6b742e3dd0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a95f2fbaa94e3c78264b4ad6b742e3dd0">&#9670;&#160;</a></span>slab_size_in_elements</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Index_ , class Slab_ &gt; </div>
+template&lt;typename Index_ , class Slab_ , bool subset_ = false&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_ &gt;::slab_size_in_elements</td>
+          <td class="memname">size_t <a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_, subset_ &gt;::slab_size_in_elements</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -280,16 +305,16 @@ template&lt;typename Index_ , class Slab_ &gt; </div>
 
 </div>
 </div>
-<a id="a4db6804025caf7a08ffcce71ac9c36d6" name="a4db6804025caf7a08ffcce71ac9c36d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4db6804025caf7a08ffcce71ac9c36d6">&#9670;&#160;</a></span>num_slabs_in_cache</h2>
+<a id="a9b01d451085734c970f4c6f985443cbf" name="a9b01d451085734c970f4c6f985443cbf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b01d451085734c970f4c6f985443cbf">&#9670;&#160;</a></span>num_slabs_in_cache</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Index_ , class Slab_ &gt; </div>
+template&lt;typename Index_ , class Slab_ , bool subset_ = false&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_ &gt;::num_slabs_in_cache</td>
+          <td class="memname">size_t <a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_, subset_ &gt;::num_slabs_in_cache</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -297,16 +322,16 @@ template&lt;typename Index_ , class Slab_ &gt; </div>
 
 </div>
 </div>
-<a id="a064f91ff40a9b14db716b17098061515" name="a064f91ff40a9b14db716b17098061515"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a064f91ff40a9b14db716b17098061515">&#9670;&#160;</a></span>lru_cache</h2>
+<a id="af21e3f5737b73c1155ef12a7a9896269" name="af21e3f5737b73c1155ef12a7a9896269"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af21e3f5737b73c1155ef12a7a9896269">&#9670;&#160;</a></span>lru_cache</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Index_ , class Slab_ &gt; </div>
+template&lt;typename Index_ , class Slab_ , bool subset_ = false&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt;<a class="el" href="classtatami__chunked_1_1LruSlabCache.html">LruSlabCache</a>&lt;Index_, Slab_&gt; &gt; <a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_ &gt;::lru_cache</td>
+          <td class="memname">std::unique_ptr&lt;<a class="el" href="classtatami__chunked_1_1LruSlabCache.html">LruSlabCache</a>&lt;Index_, Slab_&gt; &gt; <a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_, subset_ &gt;::lru_cache</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -314,20 +339,20 @@ template&lt;typename Index_ , class Slab_ &gt; </div>
 
 </div>
 </div>
-<a id="a9edf66abbcc4d3c07cd3bee543da2598" name="a9edf66abbcc4d3c07cd3bee543da2598"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9edf66abbcc4d3c07cd3bee543da2598">&#9670;&#160;</a></span>oracle_cache</h2>
+<a id="a9dc2bab8876b8d7be33337de133ca8a7" name="a9dc2bab8876b8d7be33337de133ca8a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9dc2bab8876b8d7be33337de133ca8a7">&#9670;&#160;</a></span>oracle_cache</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Index_ , class Slab_ &gt; </div>
+template&lt;typename Index_ , class Slab_ , bool subset_ = false&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt;<a class="el" href="classtatami__chunked_1_1OracleSlabCache.html">OracleSlabCache</a>&lt;Index_, Index_, Slab_&gt; &gt; <a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_ &gt;::oracle_cache</td>
+          <td class="memname">std::unique_ptr&lt;<a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a6a4fa7d2a4fc66947a3646ea9a50948c">OracleCache</a>&gt; <a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html">tatami_chunked::TypicalSlabCacheWorkspace</a>&lt; Index_, Slab_, subset_ &gt;::oracle_cache</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Cache of to-be-used slabs, based on an <code>Oracle</code>'s predictions. This may be NULL, see <code><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a64e99c4866ed080bfbf7dd63ac112474">set_oracle()</a></code> for more details. </p>
+<p >Cache of to-be-used slabs, based on an <code>Oracle</code>'s predictions. This may be NULL, see <code><a class="el" href="structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#a44ac93763f6c372657867e410f0dc80b">set_oracle()</a></code> for more details. </p>
 
 </div>
 </div>

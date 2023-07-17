@@ -339,60 +339,68 @@
     <filename>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</filename>
     <templarg>typename Index_</templarg>
     <templarg>class Slab_</templarg>
+    <templarg>bool subset_</templarg>
+    <member kind="typedef">
+      <type>std::conditional&lt; subset_, SubsettedOracleSlabCache&lt; Index_, Index_, Slab_ &gt;, OracleSlabCache&lt; Index_, Index_, Slab_ &gt; &gt;::type</type>
+      <name>OracleCache</name>
+      <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
+      <anchor>a6a4fa7d2a4fc66947a3646ea9a50948c</anchor>
+      <arglist></arglist>
+    </member>
     <member kind="function">
       <type></type>
       <name>TypicalSlabCacheWorkspace</name>
       <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>ab99537bf021828325a9c9d78cf6f9458</anchor>
+      <anchor>ac27a71aa118a875f1f915e7dfc0dfbd7</anchor>
       <arglist>()=default</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>TypicalSlabCacheWorkspace</name>
       <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a116dd3a78cd0ab9f43e99425f43bfa69</anchor>
+      <anchor>a347e990db1a0471ea42a1f27702d4117</anchor>
       <arglist>(Index_ primary_length, Index_ secondary_length, size_t cache_size_in_elements, bool require_minimum_cache)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>set_oracle</name>
       <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a64e99c4866ed080bfbf7dd63ac112474</anchor>
+      <anchor>a44ac93763f6c372657867e410f0dc80b</anchor>
       <arglist>(std::unique_ptr&lt; tatami::Oracle&lt; Index_ &gt; &gt; o)</arglist>
     </member>
     <member kind="variable">
       <type>Index_</type>
       <name>primary_length</name>
       <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a46f8deb0af915ddaa539da64efa0010d</anchor>
+      <anchor>aa1f492cff84927346fe0c2da318f1e0c</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
       <name>slab_size_in_elements</name>
       <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a799cf52c298fefc718bf8a8137139933</anchor>
+      <anchor>a95f2fbaa94e3c78264b4ad6b742e3dd0</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
       <name>num_slabs_in_cache</name>
       <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a4db6804025caf7a08ffcce71ac9c36d6</anchor>
+      <anchor>a9b01d451085734c970f4c6f985443cbf</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>std::unique_ptr&lt; LruSlabCache&lt; Index_, Slab_ &gt; &gt;</type>
       <name>lru_cache</name>
       <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a064f91ff40a9b14db716b17098061515</anchor>
+      <anchor>af21e3f5737b73c1155ef12a7a9896269</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>std::unique_ptr&lt; OracleSlabCache&lt; Index_, Index_, Slab_ &gt; &gt;</type>
+      <type>std::unique_ptr&lt; OracleCache &gt;</type>
       <name>oracle_cache</name>
       <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a9edf66abbcc4d3c07cd3bee543da2598</anchor>
+      <anchor>a9dc2bab8876b8d7be33337de133ca8a7</anchor>
       <arglist></arglist>
     </member>
   </compound>
