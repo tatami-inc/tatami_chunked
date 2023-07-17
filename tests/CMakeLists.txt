@@ -14,6 +14,7 @@ add_executable(
     libtest 
     src/LruSlabCache.cpp
     src/OracleSlabCache.cpp
+    src/SubsettedOracleSlabCache.cpp
     src/simple_chunk_wrappers.cpp
     src/CustomChunkedMatrix.cpp
 )
