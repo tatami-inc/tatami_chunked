@@ -76,29 +76,29 @@ protected:
         // Row-major row extraction.
         if (r_len && c2_len) {
             if constexpr(sparse_) {
-                std::vector<std::vector<double> > out_values(r_len);
-                std::vector<std::vector<int> > out_indices(r_len);
+                std::vector<std::vector<double> > out_values(dim.first);
+                std::vector<std::vector<int> > out_indices(dim.first);
                 chunk.template extract<true>(r_first, r_len, c2_first, c2_len, work, out_values, out_indices, 7);
 
                 auto ext = this->ref->sparse_row(c2_first, c2_len);
                 for (int r = r_first; r < r_last; ++r) {
                     auto refrow = ext->fetch(r);
-                    EXPECT_EQ(refrow.value, out_values[r - r_first]);
+                    EXPECT_EQ(refrow.value, out_values[r]);
                     for (auto& i : refrow.index) {
                         i += 7;
                     }
-                    EXPECT_EQ(refrow.index, out_indices[r - r_first]);
+                    EXPECT_EQ(refrow.index, out_indices[r]);
                 }
 
             } else {
                 int stride = 100;
-                std::vector<double> buffer(r_len * stride);
+                std::vector<double> buffer(dim.first * stride);
                 chunk.template extract<true>(r_first, r_len, c2_first, c2_len, work, buffer.data(), stride);
 
                 auto ext = ref->dense_row(c2_first, c2_len);
                 for (int r = r_first; r < r_last; ++r) {
                     auto refrow = ext->fetch(r);
-                    auto bptr = buffer.data() + static_cast<size_t>(r - r_first) * stride;
+                    auto bptr = buffer.data() + static_cast<size_t>(r) * stride;
                     EXPECT_EQ(refrow, std::vector<double>(bptr, bptr + c2_len));
                 }
             }
@@ -107,29 +107,29 @@ protected:
         // Row-major column extraction. 
         if (c_len && r2_len) {
             if constexpr(sparse_) {
-                std::vector<std::vector<double> > out_values(c_len);
-                std::vector<std::vector<int> > out_indices(c_len);
+                std::vector<std::vector<double> > out_values(dim.second);
+                std::vector<std::vector<int> > out_indices(dim.second);
                 chunk.template extract<false>(c_first, c_len, r2_first, r2_len, work, out_values, out_indices, 8);
 
                 auto ext = this->ref->sparse_column(r2_first, r2_len);
                 for (int c = c_first; c < c_last; ++c) {
                     auto refcol = ext->fetch(c);
-                    EXPECT_EQ(refcol.value, out_values[c - c_first]);
+                    EXPECT_EQ(refcol.value, out_values[c]);
                     for (auto& i : refcol.index) {
                         i += 8;
                     }
-                    EXPECT_EQ(refcol.index, out_indices[c - c_first]);
+                    EXPECT_EQ(refcol.index, out_indices[c]);
                 }
 
             } else {
                 int stride = 98;
-                std::vector<double> buffer(c_len * stride);
+                std::vector<double> buffer(dim.second * stride);
                 chunk.template extract<false>(c_first, c_len, r2_first, r2_len, work, buffer.data(), stride);
 
                 auto ext = ref->dense_column(r2_first, r2_len);
                 for (int c = c_first; c < c_last; ++c) {
                     auto refcol = ext->fetch(c);
-                    auto bptr = buffer.data() + static_cast<size_t>(c - c_first) * stride;
+                    auto bptr = buffer.data() + static_cast<size_t>(c) * stride;
                     EXPECT_EQ(refcol, std::vector<double>(bptr, bptr + r2_len));
                 }
             }
@@ -200,13 +200,13 @@ protected:
         // Row-major row extraction.
         if (r_len && c2_len) {
             if constexpr(sparse_) {
-                std::vector<std::vector<double> > out_values(r_len);
-                std::vector<std::vector<int> > out_indices(r_len);
+                std::vector<std::vector<double> > out_values(dim.first);
+                std::vector<std::vector<int> > out_indices(dim.first);
                 chunk.template extract<true>(r_indices, c2_first, c2_len, work, out_values, out_indices, 7);
 
                 auto ext = this->ref->sparse_row(c2_first, c2_len);
-                for (size_t r = 0; r < r_indices.size(); ++r) {
-                    auto refrow = ext->fetch(r_indices[r]);
+                for (auto r : r_indices) {
+                    auto refrow = ext->fetch(r);
                     EXPECT_EQ(refrow.value, out_values[r]);
                     for (auto& i : refrow.index) {
                         i += 7;
@@ -216,12 +216,12 @@ protected:
 
             } else {
                 int stride = 100;
-                std::vector<double> buffer(r_len * stride);
+                std::vector<double> buffer(dim.first * stride);
                 chunk.template extract<true>(r_indices, c2_first, c2_len, work, buffer.data(), stride);
 
                 auto ext = ref->dense_row(c2_first, c2_len);
-                for (size_t r = 0; r < r_indices.size(); ++r) {
-                    auto refrow = ext->fetch(r_indices[r]);
+                for (auto r : r_indices) {
+                    auto refrow = ext->fetch(r);
                     auto bptr = buffer.data() + static_cast<size_t>(r) * stride;
                     EXPECT_EQ(refrow, std::vector<double>(bptr, bptr + c2_len));
                 }
@@ -231,13 +231,13 @@ protected:
         // Row-major column extraction. 
         if (c_len && r2_len) {
             if constexpr(sparse_) {
-                std::vector<std::vector<double> > out_values(c_len);
-                std::vector<std::vector<int> > out_indices(c_len);
+                std::vector<std::vector<double> > out_values(dim.second);
+                std::vector<std::vector<int> > out_indices(dim.second);
                 chunk.template extract<false>(c_indices, r2_first, r2_len, work, out_values, out_indices, 8);
 
                 auto ext = this->ref->sparse_column(r2_first, r2_len);
-                for (int c = 0; c < c_indices.size(); ++c) {
-                    auto refcol = ext->fetch(c_indices[c]);
+                for (auto c : c_indices) {
+                    auto refcol = ext->fetch(c);
                     EXPECT_EQ(refcol.value, out_values[c]);
                     for (auto& i : refcol.index) {
                         i += 8;
@@ -247,12 +247,12 @@ protected:
 
             } else {
                 int stride = 98;
-                std::vector<double> buffer(c_len * stride);
+                std::vector<double> buffer(dim.second * stride);
                 chunk.template extract<false>(c_indices, r2_first, r2_len, work, buffer.data(), stride);
 
                 auto ext = ref->dense_column(r2_first, r2_len);
-                for (int c = 0; c < c_indices.size(); ++c) {
-                    auto refcol = ext->fetch(c_indices[c]);
+                for (auto c : c_indices) {
+                    auto refcol = ext->fetch(c);
                     auto bptr = buffer.data() + static_cast<size_t>(c) * stride;
                     EXPECT_EQ(refcol, std::vector<double>(bptr, bptr + r2_len));
                 }
@@ -323,29 +323,29 @@ protected:
         // Row-major row extraction.
         if (r_len && c2_indices.size()) {
             if constexpr(sparse_) {
-                std::vector<std::vector<double> > out_values(r_len);
-                std::vector<std::vector<int> > out_indices(r_len);
+                std::vector<std::vector<double> > out_values(dim.first);
+                std::vector<std::vector<int> > out_indices(dim.first);
                 chunk.template extract<true>(r_first, r_len, c2_indices, work, out_values, out_indices, 2);
 
                 auto ext = this->ref->sparse_row(c2_indices);
                 for (int r = r_first; r < r_last; ++r) {
                     auto refrow = ext->fetch(r);
-                    EXPECT_EQ(refrow.value, out_values[r - r_first]);
+                    EXPECT_EQ(refrow.value, out_values[r]);
                     for (auto& i : refrow.index) {
                         i += 2;
                     }
-                    EXPECT_EQ(refrow.index, out_indices[r - r_first]);
+                    EXPECT_EQ(refrow.index, out_indices[r]);
                 }
 
             } else {
                 int stride = 100;
-                std::vector<double> buffer(r_len * stride);
+                std::vector<double> buffer(dim.first * stride);
                 chunk.template extract<true>(r_first, r_len, c2_indices, work, buffer.data(), stride);
 
                 auto ext = ref->dense_row(c2_indices);
                 for (int r = r_first; r < r_last; ++r) {
                     auto refrow = ext->fetch(r);
-                    auto bptr = buffer.data() + static_cast<size_t>(r - r_first) * stride;
+                    auto bptr = buffer.data() + static_cast<size_t>(r) * stride;
                     EXPECT_EQ(refrow, std::vector<double>(bptr, bptr + c2_indices.size()));
                 }
             }
@@ -354,29 +354,29 @@ protected:
         // Row-major column extraction. 
         if (c_len && r2_indices.size()) {
             if constexpr(sparse_) {
-                std::vector<std::vector<double> > out_values(c_len);
-                std::vector<std::vector<int> > out_indices(c_len);
+                std::vector<std::vector<double> > out_values(dim.second);
+                std::vector<std::vector<int> > out_indices(dim.second);
                 chunk.template extract<false>(c_first, c_len, r2_indices, work, out_values, out_indices, 13);
 
                 auto ext = this->ref->sparse_column(r2_indices);
                 for (int c = c_first; c < c_last; ++c) {
                     auto refcol = ext->fetch(c);
-                    EXPECT_EQ(refcol.value, out_values[c - c_first]);
+                    EXPECT_EQ(refcol.value, out_values[c]);
                     for (auto& i : refcol.index) {
                         i += 13;
                     }
-                    EXPECT_EQ(refcol.index, out_indices[c - c_first]);
+                    EXPECT_EQ(refcol.index, out_indices[c]);
                 }
 
             } else {
                 int stride = 98;
-                std::vector<double> buffer(c_len * stride);
+                std::vector<double> buffer(dim.second * stride);
                 chunk.template extract<false>(c_first, c_len, r2_indices, work, buffer.data(), stride);
 
                 auto ext = ref->dense_column(r2_indices);
                 for (int c = c_first; c < c_last; ++c) {
                     auto refcol = ext->fetch(c);
-                    auto bptr = buffer.data() + static_cast<size_t>(c - c_first) * stride;
+                    auto bptr = buffer.data() + static_cast<size_t>(c) * stride;
                     EXPECT_EQ(refcol, std::vector<double>(bptr, bptr + r2_indices.size()));
                 }
             }
@@ -446,13 +446,13 @@ protected:
         // Row-major row extraction.
         if (r_len && c2_indices.size()) {
             if constexpr(sparse_) {
-                std::vector<std::vector<double> > out_values(r_len);
-                std::vector<std::vector<int> > out_indices(r_len);
+                std::vector<std::vector<double> > out_values(dim.first);
+                std::vector<std::vector<int> > out_indices(dim.first);
                 chunk.template extract<true>(r_indices, c2_indices, work, out_values, out_indices, 2);
 
                 auto ext = this->ref->sparse_row(c2_indices);
-                for (int r = 0; r < r_indices.size(); ++r) {
-                    auto refrow = ext->fetch(r_indices[r]);
+                for (auto r : r_indices) {
+                    auto refrow = ext->fetch(r);
                     EXPECT_EQ(refrow.value, out_values[r]);
                     for (auto& i : refrow.index) {
                         i += 2;
@@ -462,12 +462,12 @@ protected:
 
             } else {
                 int stride = 100;
-                std::vector<double> buffer(r_len * stride);
+                std::vector<double> buffer(dim.first * stride);
                 chunk.template extract<true>(r_indices, c2_indices, work, buffer.data(), stride);
 
                 auto ext = ref->dense_row(c2_indices);
-                for (int r = 0; r < r_indices.size(); ++r) {
-                    auto refrow = ext->fetch(r_indices[r]);
+                for (auto r : r_indices) {
+                    auto refrow = ext->fetch(r);
                     auto bptr = buffer.data() + static_cast<size_t>(r) * stride;
                     EXPECT_EQ(refrow, std::vector<double>(bptr, bptr + c2_indices.size()));
                 }
@@ -477,13 +477,13 @@ protected:
         // Row-major column extraction. 
         if (c_len && r2_indices.size()) {
             if constexpr(sparse_) {
-                std::vector<std::vector<double> > out_values(c_len);
-                std::vector<std::vector<int> > out_indices(c_len);
+                std::vector<std::vector<double> > out_values(dim.second);
+                std::vector<std::vector<int> > out_indices(dim.second);
                 chunk.template extract<false>(c_indices, r2_indices, work, out_values, out_indices, 13);
 
                 auto ext = this->ref->sparse_column(r2_indices);
-                for (int c = 0; c < c_indices.size(); ++c) {
-                    auto refcol = ext->fetch(c_indices[c]);
+                for (auto c : c_indices) {
+                    auto refcol = ext->fetch(c);
                     EXPECT_EQ(refcol.value, out_values[c]);
                     for (auto& i : refcol.index) {
                         i += 13;
@@ -493,12 +493,12 @@ protected:
 
             } else {
                 int stride = 98;
-                std::vector<double> buffer(c_len * stride);
+                std::vector<double> buffer(dim.second * stride);
                 chunk.template extract<false>(c_indices, r2_indices, work, buffer.data(), stride);
 
                 auto ext = ref->dense_column(r2_indices);
-                for (int c = 0; c < c_indices.size(); ++c) {
-                    auto refcol = ext->fetch(c_indices[c]);
+                for (auto c : c_indices) {
+                    auto refcol = ext->fetch(c);
                     auto bptr = buffer.data() + static_cast<size_t>(c) * stride;
                     EXPECT_EQ(refcol, std::vector<double>(bptr, bptr + r2_indices.size()));
                 }
