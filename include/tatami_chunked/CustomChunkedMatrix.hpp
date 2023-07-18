@@ -294,20 +294,17 @@ public:
         auto& cache_workspace = ext->cache_workspace;
 
         if (cache_workspace.oracle_cache) {
-            return cache_workspace.oracle_cache->next(
-                /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
-                    return std::make_pair(i / primary_chunkdim, i % primary_chunkdim);
-                },
-                /* create = */ [&]() -> Slab {
-                    return Slab(alloc);
-                },
-                /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
-                    for (const auto& p : in_need) {
-                        auto& ptr = data[p.second];
-                        if constexpr(!use_subsetted_oracle_) {
-                            extract<accrow_, selection_>(p.first, *ptr, ext, false, false);
-
-                        } else {
+            if constexpr(use_subsetted_oracle_) {
+                auto out = cache_workspace.oracle_cache->next(
+                    /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
+                        return std::make_pair(i / primary_chunkdim, i % primary_chunkdim);
+                    },
+                    /* create = */ [&]() -> Slab {
+                        return Slab(alloc);
+                    },
+                    /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
+                        for (const auto& p : in_need) {
+                            auto ptr = data[p.second];
                             switch (ptr->subset.selection) {
                                 case SubsetSelection::FULL:
                                     extract<accrow_, selection_>(p.first, ptr->contents, ext, false, false);
@@ -321,8 +318,24 @@ public:
                             }
                         }
                     }
-                }
-            );
+                );
+                return std::make_pair(&(out.first->contents), out.second);
+
+            } else {
+                return cache_workspace.oracle_cache->next(
+                    /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
+                        return std::make_pair(i / primary_chunkdim, i % primary_chunkdim);
+                    },
+                    /* create = */ [&]() -> Slab {
+                        return Slab(alloc);
+                    },
+                    /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
+                        for (const auto& p : in_need) {
+                            extract<accrow_, selection_>(p.first, *(data[p.second]), ext, false, false);
+                        }
+                    }
+                );
+            }
 
         } else {
             auto chunk_id = i / primary_chunkdim;
@@ -487,7 +500,7 @@ private:
         void initialize_cache() {
             auto len = tatami::extracted_length<selection_, Index_>(*this);
 
-            cache_workspace = TypicalSlabCacheWorkspace<Index_, Slab>(
+            cache_workspace = TypicalSlabCacheWorkspace<Index_, Slab, use_subsetted_oracle_>(
                 accrow_ ? parent->chunk_nrow : parent->chunk_ncol,
                 len,
                 parent->cache_size_in_elements,
@@ -700,11 +713,11 @@ private:
 
         typedef typename CustomChunkedMatrixMethods<Index_, true, Chunk_>::Slab Slab;
         typename Chunk_::Workspace chunk_workspace;
-        TypicalSlabCacheWorkspace<Index_, Slab> cache_workspace;
+        TypicalSlabCacheWorkspace<Index_, Slab, use_subsetted_oracle_> cache_workspace;
         Slab solo;
 
         void initialize_cache() {
-            cache_workspace = TypicalSlabCacheWorkspace<Index_, Slab>(
+            cache_workspace = TypicalSlabCacheWorkspace<Index_, Slab, use_subsetted_oracle_>(
                 accrow_ ? parent->chunk_nrow : parent->chunk_ncol,
                 tatami::extracted_length<selection_, Index_>(*this),
                 parent->cache_size_in_elements,
