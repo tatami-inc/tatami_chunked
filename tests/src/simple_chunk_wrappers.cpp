@@ -80,6 +80,9 @@ protected:
                 std::vector<std::vector<int> > out_indices(dim.first);
                 chunk.template extract<true>(r_first, r_len, c2_first, c2_len, work, out_values, out_indices, 7);
 
+                std::vector<double> single_values;
+                std::vector<int> single_indices;
+
                 auto ext = this->ref->sparse_row(c2_first, c2_len);
                 for (int r = r_first; r < r_last; ++r) {
                     auto refrow = ext->fetch(r);
@@ -88,6 +91,12 @@ protected:
                         i += 7;
                     }
                     EXPECT_EQ(refrow.index, out_indices[r]);
+
+                    single_values.clear();
+                    single_indices.clear();
+                    chunk.template extract<true>(r, c2_first, c2_len, work, single_values, single_indices, 7);
+                    EXPECT_EQ(refrow.value, single_values);
+                    EXPECT_EQ(refrow.index, single_indices);
                 }
 
             } else {
@@ -95,11 +104,16 @@ protected:
                 std::vector<double> buffer(dim.first * stride);
                 chunk.template extract<true>(r_first, r_len, c2_first, c2_len, work, buffer.data(), stride);
 
+                std::vector<double> single_buffer(c2_len);
+
                 auto ext = ref->dense_row(c2_first, c2_len);
                 for (int r = r_first; r < r_last; ++r) {
                     auto refrow = ext->fetch(r);
                     auto bptr = buffer.data() + static_cast<size_t>(r) * stride;
                     EXPECT_EQ(refrow, std::vector<double>(bptr, bptr + c2_len));
+
+                    chunk.template extract<true>(r, c2_first, c2_len, work, single_buffer.data());
+                    EXPECT_EQ(refrow, single_buffer);
                 }
             }
         }
@@ -111,6 +125,9 @@ protected:
                 std::vector<std::vector<int> > out_indices(dim.second);
                 chunk.template extract<false>(c_first, c_len, r2_first, r2_len, work, out_values, out_indices, 8);
 
+                std::vector<double> single_values;
+                std::vector<int> single_indices;
+
                 auto ext = this->ref->sparse_column(r2_first, r2_len);
                 for (int c = c_first; c < c_last; ++c) {
                     auto refcol = ext->fetch(c);
@@ -119,6 +136,12 @@ protected:
                         i += 8;
                     }
                     EXPECT_EQ(refcol.index, out_indices[c]);
+
+                    single_values.clear();
+                    single_indices.clear();
+                    chunk.template extract<false>(c, r2_first, r2_len, work, single_values, single_indices, 8);
+                    EXPECT_EQ(refcol.value, single_values);
+                    EXPECT_EQ(refcol.index, single_indices);
                 }
 
             } else {
@@ -126,11 +149,16 @@ protected:
                 std::vector<double> buffer(dim.second * stride);
                 chunk.template extract<false>(c_first, c_len, r2_first, r2_len, work, buffer.data(), stride);
 
+                std::vector<double> single_buffer(r2_len);
+
                 auto ext = ref->dense_column(r2_first, r2_len);
                 for (int c = c_first; c < c_last; ++c) {
                     auto refcol = ext->fetch(c);
                     auto bptr = buffer.data() + static_cast<size_t>(c) * stride;
                     EXPECT_EQ(refcol, std::vector<double>(bptr, bptr + r2_len));
+
+                    chunk.template extract<false>(c, r2_first, r2_len, work, single_buffer.data());
+                    EXPECT_EQ(refcol, single_buffer);
                 }
             }
         }
@@ -327,6 +355,9 @@ protected:
                 std::vector<std::vector<int> > out_indices(dim.first);
                 chunk.template extract<true>(r_first, r_len, c2_indices, work, out_values, out_indices, 2);
 
+                std::vector<double> single_values;
+                std::vector<int> single_indices;
+
                 auto ext = this->ref->sparse_row(c2_indices);
                 for (int r = r_first; r < r_last; ++r) {
                     auto refrow = ext->fetch(r);
@@ -335,6 +366,12 @@ protected:
                         i += 2;
                     }
                     EXPECT_EQ(refrow.index, out_indices[r]);
+
+                    single_values.clear();
+                    single_indices.clear();
+                    chunk.template extract<true>(r, c2_indices, work, single_values, single_indices, 2);
+                    EXPECT_EQ(refrow.value, single_values);
+                    EXPECT_EQ(refrow.index, single_indices);
                 }
 
             } else {
@@ -342,11 +379,16 @@ protected:
                 std::vector<double> buffer(dim.first * stride);
                 chunk.template extract<true>(r_first, r_len, c2_indices, work, buffer.data(), stride);
 
+                std::vector<double> single_buffer(c2_indices.size());
+
                 auto ext = ref->dense_row(c2_indices);
                 for (int r = r_first; r < r_last; ++r) {
                     auto refrow = ext->fetch(r);
                     auto bptr = buffer.data() + static_cast<size_t>(r) * stride;
                     EXPECT_EQ(refrow, std::vector<double>(bptr, bptr + c2_indices.size()));
+
+                    chunk.template extract<true>(r, c2_indices, work, single_buffer.data());
+                    EXPECT_EQ(refrow, single_buffer);
                 }
             }
         }
@@ -358,6 +400,9 @@ protected:
                 std::vector<std::vector<int> > out_indices(dim.second);
                 chunk.template extract<false>(c_first, c_len, r2_indices, work, out_values, out_indices, 13);
 
+                std::vector<double> single_values;
+                std::vector<int> single_indices;
+
                 auto ext = this->ref->sparse_column(r2_indices);
                 for (int c = c_first; c < c_last; ++c) {
                     auto refcol = ext->fetch(c);
@@ -366,6 +411,12 @@ protected:
                         i += 13;
                     }
                     EXPECT_EQ(refcol.index, out_indices[c]);
+
+                    single_values.clear();
+                    single_indices.clear();
+                    chunk.template extract<false>(c, r2_indices, work, single_values, single_indices, 13);
+                    EXPECT_EQ(refcol.value, single_values);
+                    EXPECT_EQ(refcol.index, single_indices);
                 }
 
             } else {
@@ -373,11 +424,16 @@ protected:
                 std::vector<double> buffer(dim.second * stride);
                 chunk.template extract<false>(c_first, c_len, r2_indices, work, buffer.data(), stride);
 
+                std::vector<double> single_buffer(r2_indices.size());
+
                 auto ext = ref->dense_column(r2_indices);
                 for (int c = c_first; c < c_last; ++c) {
                     auto refcol = ext->fetch(c);
                     auto bptr = buffer.data() + static_cast<size_t>(c) * stride;
                     EXPECT_EQ(refcol, std::vector<double>(bptr, bptr + r2_indices.size()));
+
+                    chunk.template extract<false>(c, r2_indices, work, single_buffer.data());
+                    EXPECT_EQ(refcol, single_buffer);
                 }
             }
         }
