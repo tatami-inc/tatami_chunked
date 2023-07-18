@@ -89,12 +89,13 @@
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>typename Chunk_</templarg>
+    <templarg>bool use_subsetted_oracle_</templarg>
     <base>VirtualDenseMatrix&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>CustomChunkedDenseMatrix</name>
       <anchorfile>classtatami__chunked_1_1CustomChunkedDenseMatrix.html</anchorfile>
-      <anchor>a22c435aa278294be2af18f81878cea51</anchor>
+      <anchor>a105e52c23a1e46681369e0ea48afc591</anchor>
       <arglist>(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector&lt; Chunk_ &gt; chunks, bool row_major, const CustomChunkedOptions &amp;opt)</arglist>
     </member>
   </compound>
@@ -109,12 +110,13 @@
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>typename Chunk_</templarg>
+    <templarg>bool use_subsetted_oracle_</templarg>
     <base>Matrix&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>CustomChunkedSparseMatrix</name>
       <anchorfile>classtatami__chunked_1_1CustomChunkedSparseMatrix.html</anchorfile>
-      <anchor>ade92e3332c338cfb65f0ba366d2eaa14</anchor>
+      <anchor>a398ed1cddde3ac16a7ba701a4a4eedc1</anchor>
       <arglist>(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector&lt; Chunk_ &gt; chunks, bool row_major, const CustomChunkedOptions &amp;opt)</arglist>
     </member>
   </compound>
@@ -195,6 +197,20 @@
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</anchorfile>
+      <anchor>ad9ed0914c50251a78a0566f2f0a166ca</anchor>
+      <arglist>(Index_ primary, Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, Output_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</anchorfile>
+      <anchor>ace0d720292d4b4bad6acd2b219addbf8</anchor>
+      <arglist>(Index_ primary, const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, Output_ *output) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</anchorfile>
       <anchor>a429fbb4e5588ee5a67256222f42a3dd7</anchor>
       <arglist>(Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, Output_ *output, size_t stride) const</arglist>
     </member>
@@ -204,6 +220,20 @@
       <anchorfile>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</anchorfile>
       <anchor>a7f06978c01dc2de3e8ba10b42b8c91d6</anchor>
       <arglist>(Index_ primary_start, Index_ primary_length, const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, Output_ *output, size_t stride) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</anchorfile>
+      <anchor>a00faab69eadbc9c2a5850f3f96b4f00f</anchor>
+      <arglist>(const std::vector&lt; Index_ &gt; &amp;primary_indices, Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, Output_ *output, size_t stride) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</anchorfile>
+      <anchor>a86a4ffdad8a474113d04941dab9e201f</anchor>
+      <arglist>(const std::vector&lt; Index_ &gt; &amp;primary_indices, const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, Output_ *output, size_t stride) const</arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -243,6 +273,20 @@
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</anchorfile>
+      <anchor>a8a062c1bf9cea336bf0dda0e91f6067e</anchor>
+      <arglist>(Index_ primary, Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, std::vector&lt; OutputValue_ &gt; &amp;output_values, std::vector&lt; OutputIndex_ &gt; &amp;output_indices, OutputIndex_ shift) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</anchorfile>
+      <anchor>aa27a8fa69e1c6400d38585f2b0e5a361</anchor>
+      <arglist>(Index_ primary, const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, std::vector&lt; OutputValue_ &gt; &amp;output_values, std::vector&lt; OutputIndex_ &gt; &amp;output_indices, OutputIndex_ shift) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</anchorfile>
       <anchor>a928e327793a4ed9fccc3e18eebdb23c7</anchor>
       <arglist>(Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, std::vector&lt; std::vector&lt; OutputValue_ &gt; &gt; &amp;output_values, std::vector&lt; std::vector&lt; OutputIndex_ &gt; &gt; &amp;output_indices, OutputIndex_ shift) const</arglist>
     </member>
@@ -252,6 +296,20 @@
       <anchorfile>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</anchorfile>
       <anchor>a458cd60cd17c81407366041ff2fa9569</anchor>
       <arglist>(Index_ primary_start, Index_ primary_length, const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, std::vector&lt; std::vector&lt; OutputValue_ &gt; &gt; &amp;output_values, std::vector&lt; std::vector&lt; OutputIndex_ &gt; &gt; &amp;output_indices, OutputIndex_ shift) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</anchorfile>
+      <anchor>a21aeb9076df2cb030520052b14b5bae7</anchor>
+      <arglist>(const std::vector&lt; Index_ &gt; &amp;primary_indices, Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, std::vector&lt; std::vector&lt; OutputValue_ &gt; &gt; &amp;output_values, std::vector&lt; std::vector&lt; OutputIndex_ &gt; &gt; &amp;output_indices, OutputIndex_ shift) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</anchorfile>
+      <anchor>a5c746e76474d14e55c7bcdabd06dfd50</anchor>
+      <arglist>(const std::vector&lt; Index_ &gt; &amp;primary_indices, const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, std::vector&lt; std::vector&lt; OutputValue_ &gt; &gt; &amp;output_values, std::vector&lt; std::vector&lt; OutputIndex_ &gt; &gt; &amp;output_indices, OutputIndex_ shift) const</arglist>
     </member>
   </compound>
   <compound kind="struct">

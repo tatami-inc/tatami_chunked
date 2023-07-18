@@ -1,5 +1,5 @@
-<map id="tatami_chunked::CustomChunkedDenseMatrix&lt; Value_, Index_, Chunk_ &gt;" name="tatami_chunked::CustomChunkedDenseMatrix&lt; Value_, Index_, Chunk_ &gt;">
-<area shape="rect" id="node1" title="Matrix of custom dense chunks." alt="" coords="5,181,221,236"/>
-<area shape="rect" id="node2" href="/github/workspace/docs/tatami.tag$classtatami_1_1VirtualDenseMatrix.html" title=" " alt="" coords="27,93,200,133"/>
-<area shape="rect" id="node3" href="/github/workspace/docs/tatami.tag$classtatami_1_1Matrix.html" title=" " alt="" coords="23,5,203,45"/>
+<map id="tatami_chunked::CustomChunkedDenseMatrix&lt; Value_, Index_, Chunk_, use_subsetted_oracle_ &gt;" name="tatami_chunked::CustomChunkedDenseMatrix&lt; Value_, Index_, Chunk_, use_subsetted_oracle_ &gt;">
+<area shape="rect" id="node1" title="Matrix of custom dense chunks." alt="" coords="5,181,237,236"/>
+<area shape="rect" id="node2" href="/github/workspace/docs/tatami.tag$classtatami_1_1VirtualDenseMatrix.html" title=" " alt="" coords="35,93,208,133"/>
+<area shape="rect" id="node3" href="/github/workspace/docs/tatami.tag$classtatami_1_1Matrix.html" title=" " alt="" coords="31,5,211,45"/>
 </map>
