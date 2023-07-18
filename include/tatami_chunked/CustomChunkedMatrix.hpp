@@ -117,8 +117,8 @@ protected:
     typedef typename std::conditional<sparse_, SparseSlab, DenseSlab>::type Slab;
 
 protected:
-    template<bool accrow_, tatami::DimensionSelectionType selection_, bool exact_, class Extractor_>
-    void extract(Index_ chunk_id, Index_ chunk_offset, Slab& slab, Extractor_* ext) const {
+    template<bool accrow_, tatami::DimensionSelectionType selection_, class Extractor_, class SubsetArg1_, class SubsetArg2_>
+    void extract(Index_ chunk_id, Slab& slab, Extractor_* ext, const SubsetArg1_& primary_subset1, const SubsetArg2_& primary_subset2) const {
         auto primary_chunkdim = get_primary_chunkdim<accrow_>();
         auto secondary_chunkdim = get_secondary_chunkdim<accrow_>();
 
@@ -144,11 +144,11 @@ protected:
         Index_ primary_dim = get_primary_dim<accrow_>();
         Index_ secondary_dim = get_secondary_dim<accrow_>();
 
+        constexpr bool use_full = std::is_same<SubsetArg1_, bool>::value;
+        constexpr bool use_block = std::is_same<SubsetArg1_, Index_>::value && std::is_same<SubsetArg2_, Index_>::value;
+        constexpr bool use_index = std::is_same<SubsetArg1_, std::vector<Index_> >::value;
         Index_ primary_start_pos, primary_len;
-        if constexpr(exact_) {
-            primary_start_pos = chunk_offset;
-            primary_len = 1;
-        } else {
+        if constexpr(use_full) {
             primary_start_pos = 0;
             primary_len = std::min(primary_chunkdim, primary_dim - chunk_id * primary_chunkdim); // avoid running off the end.
         }
@@ -187,10 +187,33 @@ protected:
                     }
 
                     if (!ext->chunk_indices.empty()) {
-                        if constexpr(sparse_) {
-                            chunk.template extract<accrow_>(primary_start_pos, primary_len, ext->chunk_indices, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
+                        if constexpr(use_full) {
+                            if constexpr(sparse_) {
+                                chunk.template extract<accrow_>(primary_start_pos, primary_len, ext->chunk_indices, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
+                            } else {
+                                chunk.template extract<accrow_>(primary_start_pos, primary_len, ext->chunk_indices, ext->chunk_workspace, slab_ptr, ext->indices.size());
+                            }
+
+                        } else if constexpr(use_block) {
+                            if constexpr(sparse_) {
+                                chunk.template extract<accrow_>(primary_subset1, primary_subset2, ext->chunk_indices, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
+                            } else {
+                                chunk.template extract<accrow_>(primary_subset1, primary_subset2, ext->chunk_indices, ext->chunk_workspace, slab_ptr, ext->indices.size());
+                            }
+
+                        } else if constexpr(use_index) {
+                            if constexpr(sparse_) {
+                                chunk.template extract<accrow_>(primary_subset1, ext->chunk_indices, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
+                            } else {
+                                chunk.template extract<accrow_>(primary_subset1, ext->chunk_indices, ext->chunk_workspace, slab_ptr, ext->indices.size());
+                            }
+
                         } else {
-                            chunk.template extract<accrow_>(primary_start_pos, primary_len, ext->chunk_indices, ext->chunk_workspace, slab_ptr, ext->indices.size());
+                            if constexpr(sparse_) {
+                                chunk.template extract<accrow_>(primary_subset1, ext->chunk_indices, ext->chunk_workspace, slab.values[0], slab.indices[0], secondary_start_pos);
+                            } else {
+                                chunk.template extract<accrow_>(primary_subset1, ext->chunk_indices, ext->chunk_workspace, slab_ptr);
+                            }
                         }
                     }
 
@@ -225,10 +248,33 @@ protected:
 
                 // No need to protect against a zero length, as it should be impossible
                 // here (otherwise, start_chunk_index == end_chunk_index and we'd never iterate).
-                if constexpr(sparse_) {
-                    chunk.template extract<accrow_>(primary_start_pos, primary_len, from, to - from, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
+                if constexpr(use_full) {
+                    if constexpr(sparse_) {
+                        chunk.template extract<accrow_>(primary_start_pos, primary_len, from, to - from, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
+                    } else {
+                        chunk.template extract<accrow_>(primary_start_pos, primary_len, from, to - from, ext->chunk_workspace, slab_ptr, len);
+                    }
+
+                } else if constexpr(use_block) {
+                    if constexpr(sparse_) {
+                        chunk.template extract<accrow_>(primary_subset1, primary_subset2, from, to - from, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
+                    } else {
+                        chunk.template extract<accrow_>(primary_subset1, primary_subset2, from, to - from, ext->chunk_workspace, slab_ptr, len);
+                    }
+
+                } else if constexpr(use_index) {
+                    if constexpr(sparse_) {
+                        chunk.template extract<accrow_>(primary_subset1, from, to - from, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
+                    } else {
+                        chunk.template extract<accrow_>(primary_subset1, from, to - from, ext->chunk_workspace, slab_ptr, len);
+                    }
+
                 } else {
-                    chunk.template extract<accrow_>(primary_start_pos, primary_len, from, to - from, ext->chunk_workspace, slab_ptr, len);
+                    if constexpr(sparse_) {
+                        chunk.template extract<accrow_>(primary_subset1, from, to - from, ext->chunk_workspace, slab.values[0], slab.indices[0], secondary_start_pos);
+                    } else {
+                        chunk.template extract<accrow_>(primary_subset1, from, to - from, ext->chunk_workspace, slab_ptr);
+                    }
                 }
 
                 secondary_start_pos += secondary_chunkdim;
@@ -257,7 +303,7 @@ public:
                 },
                 /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, std::vector<Slab*>& data) -> void {
                     for (const auto& p : in_need) {
-                        extract<accrow_, selection_, false>(p.first, /* no-op */ 0, *(data[p.second]), ext);
+                        extract<accrow_, selection_>(p.first, *(data[p.second]), ext, false, false);
                     }
                 }
             );
@@ -267,7 +313,7 @@ public:
             auto chunk_offset = i % primary_chunkdim;
 
             if (cache_workspace.num_slabs_in_cache == 0) {
-                extract<accrow_, selection_, true>(chunk_id, chunk_offset, ext->solo, ext);
+                extract<accrow_, selection_>(chunk_id, ext->solo, ext, chunk_offset, false);
                 return std::make_pair(&(ext->solo), static_cast<Index_>(0));
 
             } else {
@@ -277,7 +323,7 @@ public:
                         return Slab(alloc);
                     },
                     /* populate = */ [&](Index_ id, Slab& slab) -> void {
-                        extract<accrow_, selection_, false>(id, /* no-op */ 0, slab, ext);
+                        extract<accrow_, selection_>(id, slab, ext, false, false);
                     }
                 );
                 return std::make_pair(&cache, chunk_offset);
