@@ -117,8 +117,8 @@ protected:
     typedef typename std::conditional<sparse_, SparseSlab, DenseSlab>::type Slab;
 
 protected:
-    template<bool accrow_, tatami::DimensionSelectionType selection_, bool exact_, class Extractor_>
-    void extract(Index_ chunk_id, Index_ chunk_offset, Slab& slab, Extractor_* ext) const {
+    template<bool accrow_, tatami::DimensionSelectionType selection_, class Extractor_, class SubsetArg1_, class SubsetArg2_>
+    void extract(Index_ chunk_id, Slab& slab, Extractor_* ext, const SubsetArg1_& primary_subset1, const SubsetArg2_& primary_subset2) const {
         auto primary_chunkdim = get_primary_chunkdim<accrow_>();
         auto secondary_chunkdim = get_secondary_chunkdim<accrow_>();
 
@@ -144,11 +144,11 @@ protected:
         Index_ primary_dim = get_primary_dim<accrow_>();
         Index_ secondary_dim = get_secondary_dim<accrow_>();
 
+        constexpr bool use_full = std::is_same<SubsetArg1_, bool>::value;
+        constexpr bool use_block = std::is_same<SubsetArg1_, Index_>::value && std::is_same<SubsetArg2_, Index_>::value;
+        constexpr bool use_index = std::is_same<SubsetArg1_, std::vector<Index_> >::value;
         Index_ primary_start_pos, primary_len;
-        if constexpr(exact_) {
-            primary_start_pos = chunk_offset;
-            primary_len = 1;
-        } else {
+        if constexpr(use_full) {
             primary_start_pos = 0;
             primary_len = std::min(primary_chunkdim, primary_dim - chunk_id * primary_chunkdim); // avoid running off the end.
         }
@@ -187,10 +187,33 @@ protected:
                     }
 
                     if (!ext->chunk_indices.empty()) {
-                        if constexpr(sparse_) {
-                            chunk.template extract<accrow_>(primary_start_pos, primary_len, ext->chunk_indices, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
+                        if constexpr(use_full) {
+                            if constexpr(sparse_) {
+                                chunk.template extract<accrow_>(primary_start_pos, primary_len, ext->chunk_indices, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
+                            } else {
+                                chunk.template extract<accrow_>(primary_start_pos, primary_len, ext->chunk_indices, ext->chunk_workspace, slab_ptr, ext->indices.size());
+                            }
+
+                        } else if constexpr(use_block) {
+                            if constexpr(sparse_) {
+                                chunk.template extract<accrow_>(primary_subset1, primary_subset2, ext->chunk_indices, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
+                            } else {
+                                chunk.template extract<accrow_>(primary_subset1, primary_subset2, ext->chunk_indices, ext->chunk_workspace, slab_ptr, ext->indices.size());
+                            }
+
+                        } else if constexpr(use_index) {
+                            if constexpr(sparse_) {
+                                chunk.template extract<accrow_>(primary_subset1, ext->chunk_indices, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
+                            } else {
+                                chunk.template extract<accrow_>(primary_subset1, ext->chunk_indices, ext->chunk_workspace, slab_ptr, ext->indices.size());
+                            }
+
                         } else {
-                            chunk.template extract<accrow_>(primary_start_pos, primary_len, ext->chunk_indices, ext->chunk_workspace, slab_ptr, ext->indices.size());
+                            if constexpr(sparse_) {
+                                chunk.template extract<accrow_>(primary_subset1, ext->chunk_indices, ext->chunk_workspace, slab.values[0], slab.indices[0], secondary_start_pos);
+                            } else {
+                                chunk.template extract<accrow_>(primary_subset1, ext->chunk_indices, ext->chunk_workspace, slab_ptr);
+                            }
                         }
                     }
 
@@ -225,10 +248,33 @@ protected:
 
                 // No need to protect against a zero length, as it should be impossible
                 // here (otherwise, start_chunk_index == end_chunk_index and we'd never iterate).
-                if constexpr(sparse_) {
-                    chunk.template extract<accrow_>(primary_start_pos, primary_len, from, to - from, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
+                if constexpr(use_full) {
+                    if constexpr(sparse_) {
+                        chunk.template extract<accrow_>(primary_start_pos, primary_len, from, to - from, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
+                    } else {
+                        chunk.template extract<accrow_>(primary_start_pos, primary_len, from, to - from, ext->chunk_workspace, slab_ptr, len);
+                    }
+
+                } else if constexpr(use_block) {
+                    if constexpr(sparse_) {
+                        chunk.template extract<accrow_>(primary_subset1, primary_subset2, from, to - from, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
+                    } else {
+                        chunk.template extract<accrow_>(primary_subset1, primary_subset2, from, to - from, ext->chunk_workspace, slab_ptr, len);
+                    }
+
+                } else if constexpr(use_index) {
+                    if constexpr(sparse_) {
+                        chunk.template extract<accrow_>(primary_subset1, from, to - from, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
+                    } else {
+                        chunk.template extract<accrow_>(primary_subset1, from, to - from, ext->chunk_workspace, slab_ptr, len);
+                    }
+
                 } else {
-                    chunk.template extract<accrow_>(primary_start_pos, primary_len, from, to - from, ext->chunk_workspace, slab_ptr, len);
+                    if constexpr(sparse_) {
+                        chunk.template extract<accrow_>(primary_subset1, from, to - from, ext->chunk_workspace, slab.values[0], slab.indices[0], secondary_start_pos);
+                    } else {
+                        chunk.template extract<accrow_>(primary_subset1, from, to - from, ext->chunk_workspace, slab_ptr);
+                    }
                 }
 
                 secondary_start_pos += secondary_chunkdim;
@@ -241,33 +287,62 @@ protected:
     }
 
 public:
-    template<bool accrow_, tatami::DimensionSelectionType selection_, class Extractor_>
+    template<bool accrow_, tatami::DimensionSelectionType selection_, bool use_subsetted_oracle_, class Extractor_>
     std::pair<const Slab*, Index_> fetch_cache(Index_ i, Extractor_* ext) const {
         Index_ primary_chunkdim = get_primary_chunkdim<accrow_>();
         size_t alloc = sparse_ ? primary_chunkdim : primary_chunkdim * static_cast<size_t>(tatami::extracted_length<selection_, Index_>(*ext)); // use size_t to avoid integer overflow.
         auto& cache_workspace = ext->cache_workspace;
 
         if (cache_workspace.oracle_cache) {
-            return cache_workspace.oracle_cache->next(
-                /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
-                    return std::make_pair(i / primary_chunkdim, i % primary_chunkdim);
-                },
-                /* create = */ [&]() -> Slab {
-                    return Slab(alloc);
-                },
-                /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, std::vector<Slab*>& data) -> void {
-                    for (const auto& p : in_need) {
-                        extract<accrow_, selection_, false>(p.first, /* no-op */ 0, *(data[p.second]), ext);
+            if constexpr(use_subsetted_oracle_) {
+                auto out = cache_workspace.oracle_cache->next(
+                    /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
+                        return std::make_pair(i / primary_chunkdim, i % primary_chunkdim);
+                    },
+                    /* create = */ [&]() -> Slab {
+                        return Slab(alloc);
+                    },
+                    /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
+                        for (const auto& p : in_need) {
+                            auto ptr = data[p.second];
+                            switch (ptr->subset.selection) {
+                                case SubsetSelection::FULL:
+                                    extract<accrow_, selection_>(p.first, ptr->contents, ext, false, false);
+                                    break;
+                                case SubsetSelection::BLOCK:
+                                    extract<accrow_, selection_>(p.first, ptr->contents, ext, ptr->subset.block_start, ptr->subset.block_length);
+                                    break;
+                                case SubsetSelection::INDEX:
+                                    extract<accrow_, selection_>(p.first, ptr->contents, ext, ptr->subset.indices, false);
+                                    break;
+                            }
+                        }
                     }
-                }
-            );
+                );
+                return std::make_pair(&(out.first->contents), out.second);
+
+            } else {
+                return cache_workspace.oracle_cache->next(
+                    /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
+                        return std::make_pair(i / primary_chunkdim, i % primary_chunkdim);
+                    },
+                    /* create = */ [&]() -> Slab {
+                        return Slab(alloc);
+                    },
+                    /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
+                        for (const auto& p : in_need) {
+                            extract<accrow_, selection_>(p.first, *(data[p.second]), ext, false, false);
+                        }
+                    }
+                );
+            }
 
         } else {
             auto chunk_id = i / primary_chunkdim;
             auto chunk_offset = i % primary_chunkdim;
 
             if (cache_workspace.num_slabs_in_cache == 0) {
-                extract<accrow_, selection_, true>(chunk_id, chunk_offset, ext->solo, ext);
+                extract<accrow_, selection_>(chunk_id, ext->solo, ext, chunk_offset, false);
                 return std::make_pair(&(ext->solo), static_cast<Index_>(0));
 
             } else {
@@ -277,7 +352,7 @@ public:
                         return Slab(alloc);
                     },
                     /* populate = */ [&](Index_ id, Slab& slab) -> void {
-                        extract<accrow_, selection_, false>(id, /* no-op */ 0, slab, ext);
+                        extract<accrow_, selection_>(id, slab, ext, false, false);
                     }
                 );
                 return std::make_pair(&cache, chunk_offset);
@@ -295,6 +370,7 @@ public:
  * @tparam Value_ Numeric type for the matrix value.
  * @tparam Index_ Integer type for the row/column indices.
  * @tparam Chunk_ Class of the chunk.
+ * @tparam use_subsetted_oracle_ Whether to extract a subset of the primary dimension from each chunk during oracle predictions.
  *
  * Implements a `Matrix` subclass where data is contained in dense rectangular chunks.
  * These chunks are typically compressed in some manner to reduce memory usage;
@@ -304,19 +380,36 @@ public:
  * - A `typedef value_type` specifying the type of the decompressed chunk data.
  * - A nested `Workspace` class that allocates memory for decompression.
  *   This should be default-constructible and may be re-used for decompressing multiple chunks.
- * - A `void extract(Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, Workspace& work, Output_* output, size_t stride) const` method,
- *   which extracts contiguous ranges from the chunk and stores them in `output`.
- *   See `SimpleDenseChunkWrapper::extract()` for an example that describes the expected layout of the output.
- * - A `void extract(Index_ primary_start, Index_ primary_length, const std::vector<Index_>& secondary_indices, Workspace& work, Output_* output, size_t stride) const` method.
- *   which extracts an indexed subset from the chunk and stores them in `output`.
- *   See `SimpleDenseChunkWrapper::extract()` for an example that describes the expected layout of the output.
+ * - A `void extract<accrow_>(Index_ primary, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, Workspace& work, Output_* output) const` method,
+ *   which extracts a single primary element from the chunk and stores it in `output`.
+ *   See `SimpleDenseChunkWrapper::extract()` for more details.
+ * - A `void extract<accrow_>(Index_ primary, const std::vector<Index_>& secondary_indices, Workspace& work, Output_* output, size_t stride) const` method,
+ *   which extracts a single primary element from the chunk and stores it in `output`.
+ *   See `SimpleDenseChunkWrapper::extract()` for more details.
+ * - A `void extract<accrow_>(Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, Workspace& work, Output_* output, size_t stride) const` method,
+ *   which extracts a contiguous block of primary elements from the chunk and stores them in `output`.
+ *   See `SimpleDenseChunkWrapper::extract()` for more details.
+ * - A `void extract<accrow_>(Index_ primary_start, Index_ primary_length, const std::vector<Index_>& secondary_indices, Workspace& work, Output_* output, size_t stride) const` method,
+ *   which extracts a contiguous block of primary elements from the chunk and stores them in `output`.
+ *   See `SimpleDenseChunkWrapper::extract()` for more details.
+ * 
+ * If `use_subsetted_oracle_ = true`, this class will use a `SubsettedOracleCache` to extract subsets of the primary dimension for each chunk when an `Oracle` is supplied.
+ * This may improve performance if the chunk is capable of providing optimized access to subsets along the primary dimension.
+ * In such cases, we expect the following additional methods:
+ *
+ * - A `void extract<accrow_>(const std::vector<Index_>& primary_indices, Index_ secondary_start, Index_ secondary_length, Workspace& work, Output_* output, size_t stride) const` method,
+ *   which extracts an indexed subset of primary elements from the chunk and stores them in `output`.
+ *   See `SimpleDenseChunkWrapper::extract()` for more details.
+ * - A `void extract<accrow_>(const std::vector<Index_>& primary_indices, const std::vector<Index_>& secondary_indices, Workspace& work, Output_* output, size_t stride) const` method,
+ *   which extracts an indexed subset of primary elements from the chunk and stores them in `output`.
+ *   See `SimpleDenseChunkWrapper::extract()` for more details.
  *
  * All chunks should have the same dimensions, i.e., covering the same shape/area of the matrix.
  * The matrix should be partitioned at regular intervals starting from zero -
  * the first chunk should start at (0, 0), the next chunk should be immediately adjacent in one of the dimensions, and so on.
  * The exception is for chunks at the non-zero boundaries of the matrix dimensions, which may be truncated.
  */
-template<typename Value_, typename Index_, typename Chunk_>
+template<typename Value_, typename Index_, typename Chunk_, bool use_subsetted_oracle_ = false>
 class CustomChunkedDenseMatrix : public tatami::VirtualDenseMatrix<Value_, Index_>, public CustomChunkedMatrixMethods<Index_, false, Chunk_> {
 public:
     /**
@@ -401,13 +494,13 @@ private:
 
         typedef typename CustomChunkedMatrixMethods<Index_, false, Chunk_>::Slab Slab;
         typename Chunk_::Workspace chunk_workspace;
-        TypicalSlabCacheWorkspace<Index_, Slab> cache_workspace;
+        TypicalSlabCacheWorkspace<Index_, Slab, use_subsetted_oracle_> cache_workspace;
         Slab solo;
 
         void initialize_cache() {
             auto len = tatami::extracted_length<selection_, Index_>(*this);
 
-            cache_workspace = TypicalSlabCacheWorkspace<Index_, Slab>(
+            cache_workspace = TypicalSlabCacheWorkspace<Index_, Slab, use_subsetted_oracle_>(
                 accrow_ ? parent->chunk_nrow : parent->chunk_ncol,
                 len,
                 parent->cache_size_in_elements,
@@ -437,7 +530,7 @@ private:
         friend class CustomChunkedMatrixMethods<Index_, false, Chunk_>;
 
         const Value_* fetch(Index_ i, Value_* buffer) {
-            auto fetched = parent->template fetch_cache<accrow_, selection_>(i, this);
+            auto fetched = parent->template fetch_cache<accrow_, selection_, use_subsetted_oracle_>(i, this);
             size_t len = tatami::extracted_length<selection_, Index_>(*this); // size_t to avoid overflow.
             auto ptr = fetched.first->data() + fetched.second * len;
             std::copy(ptr, ptr + len, buffer);
@@ -483,6 +576,7 @@ public:
  * @tparam Value_ Numeric type for the matrix value.
  * @tparam Index_ Integer type for the row/column indices.
  * @tparam Chunk_ Class of the chunk.
+ * @tparam use_subsetted_oracle_ Whether to report the subset of each chunk during oracle predictions, see `SubsettedOracleCache` for details.
  *
  * Implements a `Matrix` subclass where data is contained in sparse rectangular chunks.
  * These chunks are typically compressed in some manner to reduce memory usage;
@@ -493,21 +587,40 @@ public:
  * - A `typedef index_type` specifying the type of the indices in the decompressed chunk.
  * - A nested `Workspace` class that allocates memory for decompression.
  *   This should be default-constructible and may be re-used for decompressing multiple chunks.
+ * - A `void extract<accrow_>(Index_ primary, Index_ secondary_start, Index_ secondary_length, Workspace& work, std::vector<value_type>& output_values, std::vector<index_type>& output_indices) const` method,
+ *   which extracts a single primary element from the chunk and stores it in `output_values` and `output_indices`.
+ *   See `SimpleSparseChunkWrapper::extract()` for more details.
+ * - A `void extract<accrow_>(Index_ primary, const std::vector<Index_>& secondary_indices, Workspace& work, std::vector<value_type>& output_values, std::vector<index_type>& output_indices) const` method,
+ *   which extracts a single primary element from the chunk and stores it in `output_values` and `output_indices`.
+ *   See `SimpleSparseChunkWrapper::extract()` for more details.
  * - A `void extract(Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, Workspace& work, 
  *   std::vector<std::vector<value_type> >& output_values, std::vector<std::vector<index_type> >& output_indices) const` method,
  *   which extracts contiguous ranges from the chunk and stores them in `output_values` and `output_indices`.
- *   See `SimpleSparseChunkWrapper::extract()` for an example that describes the expected layout of the output.
+ *   See `SimpleSparseChunkWrapper::extract()` for more details.
  * - A `void extract(Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, Workspace& work, 
  *   std::vector<std::vector<value_type> >& output_values, std::vector<std::vector<index_type> >& output_indices) const` method,
  *   which extracts an indexed subset from the chunk and stores them in `output_values` and `output_indices`.
- *   See `SimpleSparseChunkWrapper::extract()` for an example that describes the expected layout of the output.
+ *   See `SimpleSparseChunkWrapper::extract()` for more details.
+ *
+ * If `use_subsetted_oracle_ = true`, this class will use a `SubsettedOracleCache` to extract subsets of the primary dimension for each chunk when an `Oracle` is supplied.
+ * This may improve performance if the chunk is capable of providing optimized access to subsets along the primary dimension.
+ * In such cases, we expect the following additional methods:
+ *
+ * - A `void extract<accrow_>(const std::vector<Index_>& primary_indices, Index_ secondary_start, Index_ secondary_length, Workspace& work,
+ *   std::vector<std::vector<value_type> >& output_values, std::vector<std::vector<index_type> >& output_indices) const` method,
+ *   which extracts an indexed subset of primary elements from the chunk and stores them in `output_values` and `output_indices`.
+ *   See `SimpleSparseChunkWrapper::extract()` for more details.
+ * - A `void extract<accrow_>(const std::vector<Index_>& primary_indices, const std::vector<Index_>& secondary_indices, Workspace& work,
+ *   std::vector<std::vector<value_type> >& output_values, std::vector<std::vector<index_type> >& output_indices) const` method,
+ *   which extracts an indexed subset of primary elements from the chunk and stores them in `output_values` and `output_indices`.
+ *   See `SimpleSparseChunkWrapper::extract()` for more details.
  *
  * All chunks should have the same dimensions, i.e., covering the same shape/area of the matrix.
  * The matrix should be partitioned at regular intervals starting from zero -
  * the first chunk should start at (0, 0), the next chunk should be immediately adjacent in one of the dimensions, and so on.
  * The exception is for chunks at the non-zero boundaries of the matrix dimensions, which may be truncated.
  */
-template<typename Value_, typename Index_, typename Chunk_>
+template<typename Value_, typename Index_, typename Chunk_, bool use_subsetted_oracle_ = false>
 class CustomChunkedSparseMatrix : public tatami::Matrix<Value_, Index_>, public CustomChunkedMatrixMethods<Index_, true, Chunk_> {
 public:
     /**
@@ -600,11 +713,11 @@ private:
 
         typedef typename CustomChunkedMatrixMethods<Index_, true, Chunk_>::Slab Slab;
         typename Chunk_::Workspace chunk_workspace;
-        TypicalSlabCacheWorkspace<Index_, Slab> cache_workspace;
+        TypicalSlabCacheWorkspace<Index_, Slab, use_subsetted_oracle_> cache_workspace;
         Slab solo;
 
         void initialize_cache() {
-            cache_workspace = TypicalSlabCacheWorkspace<Index_, Slab>(
+            cache_workspace = TypicalSlabCacheWorkspace<Index_, Slab, use_subsetted_oracle_>(
                 accrow_ ? parent->chunk_nrow : parent->chunk_ncol,
                 tatami::extracted_length<selection_, Index_>(*this),
                 parent->cache_size_in_elements,
@@ -652,7 +765,7 @@ private:
 
     public:
         const Value_* fetch(Index_ i, Value_* buffer) {
-            auto contents = this->parent->template fetch_cache<accrow_, selection_>(i, this);
+            auto contents = this->parent->template fetch_cache<accrow_, selection_, use_subsetted_oracle_>(i, this);
             const auto& values = contents.first->values[contents.second];
             const auto& indices = contents.first->indices[contents.second];
 
@@ -725,7 +838,7 @@ private:
 
     public:
         tatami::SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-            auto contents = this->parent->template fetch_cache<accrow_, selection_>(i, this);
+            auto contents = this->parent->template fetch_cache<accrow_, selection_, use_subsetted_oracle_>(i, this);
             const auto& values = contents.first->values[contents.second];
             const auto& indices = contents.first->indices[contents.second];
 
