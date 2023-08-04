@@ -84,7 +84,7 @@ public:
         } else {
             size_t primary_chunkdim = get_primary_chunkdim<accrow_>(); // use size_t to avoid integer overflow with Index_.
             auto srcptr = work.data() + secondary_start * primary_chunkdim + primary;
-            for (size_t s = 0; s < secondary_length; ++s) {
+            for (Index_ s = 0; s < secondary_length; ++s) {
                 *output = *srcptr;
                 ++output;
                 srcptr += primary_chunkdim;
@@ -187,7 +187,7 @@ public:
         if constexpr(SimpleChunk_::row_major == accrow_) {
             size_t secondary_chunkdim = get_secondary_chunkdim<accrow_>(); // use size_t to avoid integer overflow with Index_.
             auto srcptr = work.data() + primary_start * secondary_chunkdim + secondary_start;
-            for (size_t p = 0; p < primary_length; ++p) {
+            for (Index_ p = 0; p < primary_length; ++p) {
                 std::copy(srcptr, srcptr + secondary_length, output);
                 srcptr += secondary_chunkdim;
                 output += stride;
@@ -196,10 +196,10 @@ public:
         } else {
             size_t primary_chunkdim = get_primary_chunkdim<accrow_>(); // use size_t to avoid integer overflow with Index_.
             auto srcptr = work.data() + secondary_start * primary_chunkdim + primary_start;
-            for (size_t p = 0; p < primary_length; ++p) {
+            for (Index_ p = 0; p < primary_length; ++p) {
                 auto copy_srcptr = srcptr;
                 auto copy_output = output;
-                for (size_t s = 0; s < secondary_length; ++s) {
+                for (Index_ s = 0; s < secondary_length; ++s) {
                     *copy_output = *copy_srcptr;
                     ++copy_output;
                     copy_srcptr += primary_chunkdim;
@@ -241,7 +241,7 @@ public:
         if constexpr(SimpleChunk_::row_major == accrow_) {
             size_t secondary_chunkdim = get_secondary_chunkdim<accrow_>(); // use size_t to avoid integer overflow with Index_.
             auto srcptr = work.data() + primary_start * secondary_chunkdim;
-            for (size_t p = 0; p < primary_length; ++p) {
+            for (Index_ p = 0; p < primary_length; ++p) {
                 auto copy_output = output;
                 for (auto x : secondary_indices) {
                     *copy_output = srcptr[x];
@@ -254,7 +254,7 @@ public:
         } else {
             size_t primary_chunkdim = get_primary_chunkdim<accrow_>(); // use size_t to avoid integer overflow with Index_.
             auto srcptr = work.data() + primary_start;
-            for (size_t p = 0; p < primary_length; ++p) {
+            for (Index_ p = 0; p < primary_length; ++p) {
                 auto copy_output = output;
                 for (auto x : secondary_indices) {
                     *copy_output = srcptr[x * primary_chunkdim];
@@ -307,7 +307,7 @@ public:
             for (auto p : primary_indices) {
                 auto copy_srcptr = srcptr + p;
                 auto copy_output = output + p * stride;
-                for (size_t s = 0; s < secondary_length; ++s) {
+                for (Index_ s = 0; s < secondary_length; ++s) {
                     *copy_output = *copy_srcptr;
                     ++copy_output;
                     copy_srcptr += primary_chunkdim;

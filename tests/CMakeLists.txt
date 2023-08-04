@@ -25,6 +25,8 @@ if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_link_options(libtest PRIVATE --coverage)
 endif()
 
+target_compile_options(libtest PRIVATE -Wall -Wextra -Wpedantic -Werror)
+
 target_link_libraries(libtest tatami_chunked gtest_main)
 
 # Making the tests discoverable.

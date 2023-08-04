@@ -103,7 +103,7 @@ protected:
 
     struct SparseSlab {
         SparseSlab() = default;
-        SparseSlab(size_t primary_dim) : indices(primary_dim), values(primary_dim) {}
+        SparseSlab(size_t primary_dim) : values(primary_dim), indices(primary_dim) {}
 
         std::vector<std::vector<typename Chunk_::value_type> > values;
         std::vector<std::vector<typename Chunk_::index_type> > indices;
@@ -539,32 +539,32 @@ private:
     };
 
 public:
-    std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> > dense_row(const tatami::Options& opt) const {
+    std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> > dense_row(const tatami::Options& ) const {
         auto ptr = new CustomExtractor<true, tatami::DimensionSelectionType::FULL>(this);
         return std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const tatami::Options& opt) const {
+    std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const tatami::Options& ) const {
         auto ptr = new CustomExtractor<true, tatami::DimensionSelectionType::BLOCK>(this, block_start, block_length);
         return std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const tatami::Options& opt) const {
+    std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const tatami::Options& ) const {
         auto ptr = new CustomExtractor<true, tatami::DimensionSelectionType::INDEX>(this, std::move(indices));
         return std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> > dense_column(const tatami::Options& opt) const {
+    std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> > dense_column(const tatami::Options& ) const {
         auto ptr = new CustomExtractor<false, tatami::DimensionSelectionType::FULL>(this);
         return std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const tatami::Options& opt) const {
+    std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const tatami::Options& ) const {
         auto ptr = new CustomExtractor<false, tatami::DimensionSelectionType::BLOCK>(this, block_start, block_length);
         return std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const tatami::Options& opt) const {
+    std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const tatami::Options& ) const {
         auto ptr = new CustomExtractor<false, tatami::DimensionSelectionType::INDEX>(this, std::move(indices));
         return std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> >(ptr);
     }
@@ -795,32 +795,32 @@ private:
     };
 
 public:
-    std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> > dense_row(const tatami::Options& opt) const {
+    std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> > dense_row(const tatami::Options&) const {
         auto ptr = new CustomDenseExtractor<true, tatami::DimensionSelectionType::FULL>(this);
         return std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const tatami::Options& opt) const {
+    std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const tatami::Options&) const {
         auto ptr = new CustomDenseExtractor<true, tatami::DimensionSelectionType::BLOCK>(this, block_start, block_length);
         return std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const tatami::Options& opt) const {
+    std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const tatami::Options&) const {
         auto ptr = new CustomDenseExtractor<true, tatami::DimensionSelectionType::INDEX>(this, std::move(indices));
         return std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> > dense_column(const tatami::Options& opt) const {
+    std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> > dense_column(const tatami::Options&) const {
         auto ptr = new CustomDenseExtractor<false, tatami::DimensionSelectionType::FULL>(this);
         return std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const tatami::Options& opt) const {
+    std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const tatami::Options&) const {
         auto ptr = new CustomDenseExtractor<false, tatami::DimensionSelectionType::BLOCK>(this, block_start, block_length);
         return std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const tatami::Options& opt) const {
+    std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const tatami::Options&) const {
         auto ptr = new CustomDenseExtractor<false, tatami::DimensionSelectionType::INDEX>(this, std::move(indices));
         return std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> >(ptr);
     }
