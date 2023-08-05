@@ -18,7 +18,7 @@ jobs:
 
     - name: Install tatami
       run: |
-        git clone https://github.com/tatami-inc/tatami-inc dep-tatami --depth=1
+        git clone https://github.com/tatami-inc/tatami dep-tatami --depth=1
         cd dep-tatami
         cmake -S . -B build -DTATAMI_TESTS=OFF
         sudo cmake --install build
