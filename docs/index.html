@@ -83,6 +83,7 @@ $(function() {
 <p >In simple cases, chunk extraction is "atomic", i.e., the entire chunk must be unpacked to extract a subset of data. Developers can then use the <code>SimpleDenseChunkWrapper</code> and <code>SimpleSparseChunkWrapper</code> to wrap these simple chunks for use in the <code>CustomChunked*Matrix</code> classes. These wrappers only need a method to inflate the entire chunk; they will automatically handle the extraction of the desired block/subset from each chunk. (More advanced developers may prefer to write their own extraction methods that avoid inflating the entire chunk, in which case these wrappers are not necessary.)</p>
 <p >Still confused? Read the <a href="https://tatami-inc.github.io/tatami_chunked">documentation</a>.</p>
 <h1>Building with CMake</h1>
+<h2>CMake using <code>FetchContent</code></h2>
 <p >If you're using CMake, you just need to add something like this to your <code>CMakeLists.txt</code>:</p>
 <div class="fragment"><div class="line">include(FetchContent)</div>
 <div class="line"> </div>
@@ -99,7 +100,16 @@ $(function() {
 <div class="line"> </div>
 <div class="line"># For libaries</div>
 <div class="line">target_link_libraries(mylib INTERFACE tatami_chunked)</div>
-</div><!-- fragment --><p >If you're not using CMake, the simple approach is to just copy the files - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's <code>-I</code>. This will also require the core <a href="https://github.com/tatami-inc/tatami"><b>tatami</b></a> library. </p>
+</div><!-- fragment --><h2>CMake using <code>find_package()</code></h2>
+<p >You can install the library by cloning a suitable version of this repository and running the following commands:</p>
+<div class="fragment"><div class="line">mkdir build &amp;&amp; cd build</div>
+<div class="line">cmake .. -DTATAMI_CHUNKED=OFF</div>
+<div class="line">cmake --build . --target install</div>
+</div><!-- fragment --><p >Then you can use <code>find_package()</code> as usual:</p>
+<div class="fragment"><div class="line">find_package(tatami_tatami_chunked CONFIG REQUIRED)</div>
+<div class="line">target_link_libraries(mylib INTERFACE tatami::tatami_chunked)</div>
+</div><!-- fragment --><h2>Manual</h2>
+<p >If you're not using CMake, the simple approach is to just copy the files the <code>include/</code> subdirectory - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's <code>-I</code>. This will also require the core <a href="https://github.com/tatami-inc/tatami"><b>tatami</b></a> library. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
