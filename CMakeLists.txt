@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 3.14)
 
 project(tatami_chunked
-    VERSION 1.0.0
+    VERSION 1.0.1
     DESCRIPTION "tatami bindings for chunked matrices"
     LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 
 add_library(tatami_chunked INTERFACE)
+add_library(tatami::tatami_chunked ALIAS tatami_chunked)
 
 option(TATAMI_CHUNKED_FETCH_EXTERN "Automatically fetch tatami_chunked's external dependencies." ON)
 if(TATAMI_CHUNKED_FETCH_EXTERN)
@@ -24,7 +25,7 @@ include(GNUInstallDirs)
 target_include_directories(tatami_chunked 
     INTERFACE 
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/tatami_chunked>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/tatami_tatami_chunked>"
 )
 
 # Building the test-related machinery, if we are compiling this library directly.
@@ -45,7 +46,7 @@ endif()
 include(CMakePackageConfigHelpers)
 
 install(DIRECTORY include/
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/tatami_chunked)
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/tatami_tatami_chunked)
 
 install(TARGETS tatami_chunked 
     EXPORT tatami_chunkedTargets)
