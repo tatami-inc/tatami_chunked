@@ -103,13 +103,13 @@ $(function() {
 </div><!-- fragment --><h2>CMake using <code>find_package()</code></h2>
 <p >You can install the library by cloning a suitable version of this repository and running the following commands:</p>
 <div class="fragment"><div class="line">mkdir build &amp;&amp; cd build</div>
-<div class="line">cmake .. -DTATAMI_CHUNKED=OFF</div>
+<div class="line">cmake .. -DTATAMI_CHUNKED_TESTS=OFF</div>
 <div class="line">cmake --build . --target install</div>
 </div><!-- fragment --><p >Then you can use <code>find_package()</code> as usual:</p>
 <div class="fragment"><div class="line">find_package(tatami_tatami_chunked CONFIG REQUIRED)</div>
 <div class="line">target_link_libraries(mylib INTERFACE tatami::tatami_chunked)</div>
 </div><!-- fragment --><h2>Manual</h2>
-<p >If you're not using CMake, the simple approach is to just copy the files the <code>include/</code> subdirectory - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's <code>-I</code>. This will also require the core <a href="https://github.com/tatami-inc/tatami"><b>tatami</b></a> library. </p>
+<p >If you're not using CMake, the simple approach is to just copy the files the <code>include/</code> subdirectory - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's <code>-I</code>. This will also require the dependencies listed in the <a href="extern/CMakeLists.txt"><code>extern/CMakeLists.txt</code></a> file, namely the core <a href="https://github.com/tatami-inc/tatami"><b>tatami</b></a> library. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
