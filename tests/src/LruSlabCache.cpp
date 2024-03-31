@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "tatami_chunked/tatami_chunked.hpp"
+#include "tatami_chunked/LruSlabCache.hpp"
 
 TEST(LruSlabCache, Basic) {
     tatami_chunked::LruSlabCache<int, std::pair<int, int> > cache(3);

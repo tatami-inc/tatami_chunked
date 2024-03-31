@@ -27,9 +27,10 @@ namespace tatami_chunked {
  */
 template<typename Id_, typename Index_, class Slab_> 
 class OracleSlabCache {
-    tatami::OracleStream<Index_> prediction_stream;
+    std::shared_ptr<const tatami::Oracle<Index_> > oracle;
     size_t max_predictions;
     size_t max_slabs;
+    size_t counter = 0;
 
 private:
     std::list<Slab_> slab_cache, tmp_cache, free_cache;
@@ -51,9 +52,9 @@ public:
      * @param per_iteration Maximum number of predictions to make per iteration.
      * @param num_slabs Maximum number of slabs to store.
      */
-    OracleSlabCache(std::unique_ptr<tatami::Oracle<Index_> > oracle, size_t per_iteration, size_t num_slabs) :
-        prediction_stream(std::move(oracle)), 
-        max_predictions(per_iteration),
+    OracleSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > ora, [[maybe_unused]] size_t per_iteration, size_t num_slabs) :
+        oracle(std::move(ora)), 
+        max_predictions(oracle->total()),
         max_slabs(num_slabs)
     {
         slab_exists.reserve(max_slabs);
@@ -124,11 +125,8 @@ public:
         unassigned_slabs.clear();
         slabs_to_populate.clear();
 
-        for (size_t p = 0; p < max_predictions; ++p) {
-            Index_ current;
-            if (!prediction_stream.next(current)) {
-                break;
-            }
+        while (counter < max_predictions) {
+            Index_ current = oracle->get(counter++);
 
             auto slab_id = identify(current);
             auto curslab = slab_id.first;
@@ -171,7 +169,7 @@ public:
                 ++used;
 
             } else {
-                prediction_stream.back();
+                --counter;
                 break;
             }
         }

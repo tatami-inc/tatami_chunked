@@ -36,9 +36,10 @@ enum class SubsetSelection : char { FULL, BLOCK, INDEX };
  */
 template<typename Id_, typename Index_, class Slab_> 
 class SubsettedOracleSlabCache {
-    tatami::OracleStream<Index_> prediction_stream;
+    std::shared_ptr<const tatami::Oracle<Index_> > oracle;
     size_t max_predictions;
     size_t max_slabs;
+    size_t counter = 0;
 
 public:
     /**
@@ -196,9 +197,9 @@ public:
      * @param per_iteration Maximum number of predictions to make per iteration.
      * @param num_slabs Maximum number of slabs to store.
      */
-    SubsettedOracleSlabCache(std::unique_ptr<tatami::Oracle<Index_> > oracle, size_t per_iteration, size_t num_slabs) :
-        prediction_stream(std::move(oracle)), 
-        max_predictions(per_iteration),
+    SubsettedOracleSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > ora, [[maybe_unused]] size_t per_iteration, size_t num_slabs) :
+        oracle(std::move(ora)), 
+        max_predictions(oracle->total()),
         max_slabs(num_slabs)
     {
         slab_exists.reserve(max_slabs);
@@ -305,11 +306,8 @@ public:
         } else {
             // This is the first run, so we can freely allocate here.
             size_t used = 0;
-            for (size_t p = 0; p < max_predictions; ++p) {
-                Index_ current;
-                if (!prediction_stream.next(current)) {
-                    break;
-                }
+            while (counter < max_predictions) {
+                Index_ current = oracle->get(counter++);
 
                 auto slab_id = identify(current);
                 auto curslab = slab_id.first;
@@ -334,7 +332,7 @@ public:
                     ++used;
 
                 } else {
-                    prediction_stream.back();
+                    --counter;
                     break;
                 }
             }
@@ -352,11 +350,8 @@ public:
         past_exists.swap(slab_exists);
         slab_exists.clear();
 
-        for (size_t p = 0; p < max_predictions; ++p) {
-            Index_ current;
-            if (!prediction_stream.next(current)) {
-                break;
-            }
+        while (counter < max_predictions) {
+            Index_ current = oracle->get(counter++);
 
             auto slab_id = identify(current);
             auto curslab = slab_id.first;
@@ -411,7 +406,7 @@ public:
                 ++used;
 
             } else {
-                prediction_stream.back();
+                --counter;
                 break;
             }
         }

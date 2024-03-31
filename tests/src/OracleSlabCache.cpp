@@ -46,7 +46,7 @@ TEST_F(OracleSlabCacheTest, Consecutive) {
         99
     };
 
-    tatami_chunked::OracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedOracle<int> >(predictions.data(), predictions.size()), 100, 3);
+    tatami_chunked::OracleSlabCache<unsigned char, int, TestSlab> cache(std::make_shared<tatami::FixedVectorOracle<int> >(std::move(predictions)), 100, 3);
     int counter = 0;
     int nalloc = 0;
 
@@ -78,7 +78,7 @@ TEST_F(OracleSlabCacheTest, AllPredictions) {
         15
     };
 
-    tatami_chunked::OracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedOracle<int> >(predictions.data(), predictions.size()), 100, 3);
+    tatami_chunked::OracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedVectorOracle<int> >(std::move(predictions)), 100, 3);
     int counter = 0;
     int nalloc = 0;
 
@@ -173,7 +173,7 @@ TEST_F(OracleSlabCacheTest, LimitedPredictions) {
         25
     };
 
-    tatami_chunked::OracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedOracle<int> >(predictions.data(), predictions.size()), 3, 3);
+    tatami_chunked::OracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedVectorOracle<int> >(std::move(predictions)), 3, 3);
     int counter = 0;
     int nalloc = 0;
 
@@ -264,7 +264,7 @@ TEST_P(OracleSlabCacheStressTest, Stressed) {
     }
 
     // Using limited predictions to force more cache interations.
-    tatami_chunked::OracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedOracle<int> >(predictions.data(), predictions.size()), max_pred, cache_size);
+    tatami_chunked::OracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedViewOracle<int> >(predictions.data(), predictions.size()), max_pred, cache_size);
     int counter = 0;
     int nalloc = 0;
 
@@ -274,7 +274,7 @@ TEST_P(OracleSlabCacheStressTest, Stressed) {
         EXPECT_EQ(out.second, predictions[i] % 10);
     }
 
-    EXPECT_EQ(nalloc, std::min({ 5, max_pred, cache_size }));
+    EXPECT_EQ(nalloc, std::min({ 5, cache_size }));
 }
 
 INSTANTIATE_TEST_SUITE_P(

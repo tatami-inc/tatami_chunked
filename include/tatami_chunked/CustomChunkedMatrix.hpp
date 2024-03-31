@@ -21,6 +21,8 @@ struct CustomChunkedOptions : public TypicalSlabCacheOptions {};
 /**
  * @cond
  */
+namespace CustomChunkedMatrix_internal {
+
 template<typename Index_, bool sparse_, class Chunk_>
 class CustomChunkedMatrixMethods {
 protected:
@@ -360,6 +362,65 @@ public:
         }
     }
 };
+
+template<bool oracle_, typename Value_, typename Index_>
+struct Dense : public tatami::DenseExtractor<oracle_, Value_, Index_> {
+    CustomExtractor(const CustomChunkedDenseMatrix* p) : parent(p) {
+        auto len = tatami::extracted_length<selection_, Index_>(*this);
+
+        cache_workspace = TypicalSlabCacheWorkspace<Index_, Slab, use_subsetted_oracle_>(
+            accrow_ ? parent->chunk_nrow : parent->chunk_ncol,
+            len,
+            parent->cache_size_in_elements,
+            parent->require_minimum_cache
+        );
+
+        if (cache_workspace.num_slabs_in_cache == 0) {
+            solo.resize(len);
+        }
+    }
+
+    CustomExtractor(const CustomChunkedDenseMatrix* p, Index_ bs, Index_ bl) : parent(p) {
+        if constexpr(selection_ == tatami::DimensionSelectionType::BLOCK) {
+            this->block_start = bs;
+            this->block_length = bl;
+        }
+        initialize_cache();
+    }
+
+    CustomExtractor(const CustomChunkedDenseMatrix* p, std::vector<Index_> idx) : parent(p) {
+        if constexpr(selection_ == tatami::DimensionSelectionType::INDEX) {
+            indices = std::move(idx);
+            this->index_length = indices.size();
+        }
+        initialize_cache();
+    }
+
+private:
+    const CustomChunkedDenseMatrix* parent;
+
+    typedef typename CustomChunkedMatrixMethods<Index_, false, Chunk_>::Slab Slab;
+    typename Chunk_::Workspace chunk_workspace;
+    TypicalSlabCacheWorkspace<Index_, Slab, use_subsetted_oracle_> cache_workspace;
+    Slab solo;
+
+    void initialize_cache() {
+        }
+    }
+
+public:
+    friend class CustomChunkedMatrixMethods<Index_, false, Chunk_>;
+
+    const Value_* fetch(Index_ i, Value_* buffer) {
+        auto fetched = parent->template fetch_cache<accrow_, selection_, use_subsetted_oracle_>(i, this);
+        size_t len = tatami::extracted_length<selection_, Index_>(*this); // size_t to avoid overflow.
+        auto ptr = fetched.first->data() + fetched.second * len;
+        std::copy(ptr, ptr + len, buffer);
+        return buffer;
+    }
+};
+
+}
 /**
  * @endcond
  */
@@ -462,82 +523,6 @@ public:
     using tatami::Matrix<Value_, Index_>::sparse_column;
 
 private:
-    template<bool accrow_, tatami::DimensionSelectionType selection_>
-    struct CustomExtractor : public tatami::Extractor<selection_, false, Value_, Index_> {
-        CustomExtractor(const CustomChunkedDenseMatrix* p) : parent(p) {
-            if constexpr(selection_ == tatami::DimensionSelectionType::FULL) {
-                this->full_length = parent->template get_secondary_dim<accrow_>();
-            }
-            initialize_cache();
-        }
-
-        CustomExtractor(const CustomChunkedDenseMatrix* p, Index_ bs, Index_ bl) : parent(p) {
-            if constexpr(selection_ == tatami::DimensionSelectionType::BLOCK) {
-                this->block_start = bs;
-                this->block_length = bl;
-            }
-            initialize_cache();
-        }
-
-        CustomExtractor(const CustomChunkedDenseMatrix* p, std::vector<Index_> idx) : parent(p) {
-            if constexpr(selection_ == tatami::DimensionSelectionType::INDEX) {
-                indices = std::move(idx);
-                this->index_length = indices.size();
-            }
-            initialize_cache();
-        }
-
-    private:
-        const CustomChunkedDenseMatrix* parent;
-        typename std::conditional<selection_ == tatami::DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type indices;
-        typename std::conditional<selection_ == tatami::DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type chunk_indices;
-
-        typedef typename CustomChunkedMatrixMethods<Index_, false, Chunk_>::Slab Slab;
-        typename Chunk_::Workspace chunk_workspace;
-        TypicalSlabCacheWorkspace<Index_, Slab, use_subsetted_oracle_> cache_workspace;
-        Slab solo;
-
-        void initialize_cache() {
-            auto len = tatami::extracted_length<selection_, Index_>(*this);
-
-            cache_workspace = TypicalSlabCacheWorkspace<Index_, Slab, use_subsetted_oracle_>(
-                accrow_ ? parent->chunk_nrow : parent->chunk_ncol,
-                len,
-                parent->cache_size_in_elements,
-                parent->require_minimum_cache
-            );
-
-            if (cache_workspace.num_slabs_in_cache == 0) {
-                solo.resize(len);
-            }
-        }
-
-    public:
-        const Index_* index_start() const {
-            if constexpr(selection_ == tatami::DimensionSelectionType::INDEX) {
-                return indices.data();
-            } else {
-                return NULL;
-            }
-        }
-
-        void set_oracle(std::unique_ptr<tatami::Oracle<Index_> > o) {
-            cache_workspace.set_oracle(std::move(o));
-            return;
-        }
-
-    public:
-        friend class CustomChunkedMatrixMethods<Index_, false, Chunk_>;
-
-        const Value_* fetch(Index_ i, Value_* buffer) {
-            auto fetched = parent->template fetch_cache<accrow_, selection_, use_subsetted_oracle_>(i, this);
-            size_t len = tatami::extracted_length<selection_, Index_>(*this); // size_t to avoid overflow.
-            auto ptr = fetched.first->data() + fetched.second * len;
-            std::copy(ptr, ptr + len, buffer);
-            return buffer;
-        }
-    };
-
 public:
     std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> > dense_row(const tatami::Options& ) const {
         auto ptr = new CustomExtractor<true, tatami::DimensionSelectionType::FULL>(this);
