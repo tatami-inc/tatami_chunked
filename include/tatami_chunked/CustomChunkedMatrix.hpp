@@ -24,15 +24,17 @@ struct CustomChunkedOptions : public TypicalSlabCacheOptions {};
 namespace CustomChunkedMatrix_internal {
 
 template<typename Index_, bool sparse_, class Chunk_>
-class CustomChunkedMatrixMethods {
+class ChunkCoordinator {
 protected:
-    CustomChunkedMatrixMethods(Index_ mat_nr, Index_ mat_nc, Index_ chunk_nr, Index_ chunk_nc, std::vector<Chunk_> chunks, bool rm) :
+    ChunkCoordinator(Index_ mat_nr, Index_ mat_nc, Index_ chunk_nr, Index_ chunk_nc, std::vector<Chunk_> chunks, bool rm) :
         mat_nrow(mat_nr),
         mat_ncol(mat_nc),
         chunk_nrow(chunk_nr), 
         chunk_ncol(chunk_nc),
         num_chunks_per_row(integer_ceil(mat_ncol, chunk_ncol)),
         num_chunks_per_column(integer_ceil(mat_nrow, chunk_nrow)),
+        last_row_chunk_rows(mat_nrow ? (mat_nrow - (num_chunks_per_column - 1) * chunk_nrow) : 0),
+        last_column_chunk_cols(mat_ncol ? (mat_ncol - (num_chunks_per_row - 1) * chunk_ncol) : 0),
         chunk_array(std::move(chunks)),
         row_major(rm)
     {}
@@ -41,6 +43,8 @@ protected:
     Index_ mat_nrow, mat_ncol;
     Index_ chunk_nrow, chunk_ncol;
     Index_ num_chunks_per_row, num_chunks_per_column;
+    Index_ leftover_chunks_per_row, leftover_chunks_per_column;
+
     std::vector<Chunk_> chunk_array;
     bool row_major;
 
@@ -87,11 +91,33 @@ protected:
     }
 
     template<bool accrow_>
+    Index_ get_primary_num_chunks() const {
+        if constexpr(accrow_) {
+            return num_chunks_per_column;
+        } else {
+            return num_chunks_per_row;
+        }
+    }
+
+    template<bool accrow_>
     Index_ get_secondary_num_chunks() const {
         if constexpr(accrow_) {
             return num_chunks_per_row;
         } else {
             return num_chunks_per_column;
+        }
+    }
+
+    template<bool accrow_>
+    Index_ get_primary_chunkdim(Index_ chunk_id) {
+        if (chunk_id + 1 == get_primary_num_chunks<accrow_>()) {
+            if constexpr(accrow_) {
+                return last_row_chunk_rows;
+            } else {
+                return last_column_chunk_cols;
+            }
+        } else {
+            return get_primary_chunkdim<accrow_>();
         }
     }
 
@@ -101,14 +127,17 @@ protected:
     }
 
 protected:
-    typedef std::vector<typename Chunk_::value_type> DenseSlab;
+    typedef typename Chunk_::value_type ChunkValue;
+    typedef typename Chunk_::index_type ChunkIndex;
+
+    typedef std::vector<ChunkValue> DenseSlab;
 
     struct SparseSlab {
         SparseSlab() = default;
         SparseSlab(size_t primary_dim) : values(primary_dim), indices(primary_dim) {}
 
-        std::vector<std::vector<typename Chunk_::value_type> > values;
-        std::vector<std::vector<typename Chunk_::index_type> > indices;
+        std::vector<std::vector<ChunkValue> > values;
+        std::vector<std::vector<ChunkIndex> > indices;
 
         void resize(size_t primary_dim) {
             values.resize(primary_dim);
@@ -119,181 +148,280 @@ protected:
     typedef typename std::conditional<sparse_, SparseSlab, DenseSlab>::type Slab;
 
 protected:
-    template<bool accrow_, tatami::DimensionSelectionType selection_, class Extractor_, class SubsetArg1_, class SubsetArg2_>
-    void extract(Index_ chunk_id, Slab& slab, Extractor_* ext, const SubsetArg1_& primary_subset1, const SubsetArg2_& primary_subset2) const {
-        auto primary_chunkdim = get_primary_chunkdim<accrow_>();
-        auto secondary_chunkdim = get_secondary_chunkdim<accrow_>();
-
-        size_t offset, increment; // use size_t to avoid overflow.
+    template<bool accrow_>
+    std::pair<size_t, size_t> offset_and_increment(Index_ chunk_id) const {
         if (row_major) {
             if constexpr(accrow_) {
-                offset = chunk_id * num_chunks_per_row;
-                increment = 1;
+                return std::pair<size_t, size_t>(static_cast<size_t>(chunk_id) * num_chunks_per_row, 1);
             } else {
-                offset = chunk_id;
-                increment = num_chunks_per_row;
+                return std::pair<size_t, size_t>(chunk_id, num_chunks_per_row);
             }
         } else {
             if constexpr(accrow_) {
-                offset = chunk_id;
-                increment = num_chunks_per_column;
+                return std::pair<size_t, size_t>(chunk_id, num_chunks_per_column);
             } else {
-                offset = chunk_id * num_chunks_per_column;
-                increment = 1;
+                return std::pair<size_t, size_t>(static_cast<size_t>(chunk_id) * num_chunks_per_column, 1);
             }
         }
+    }
 
-        Index_ primary_dim = get_primary_dim<accrow_>();
-        Index_ secondary_dim = get_secondary_dim<accrow_>();
-
-        constexpr bool use_full = std::is_same<SubsetArg1_, bool>::value;
-        constexpr bool use_block = std::is_same<SubsetArg1_, Index_>::value && std::is_same<SubsetArg2_, Index_>::value;
-        constexpr bool use_index = std::is_same<SubsetArg1_, std::vector<Index_> >::value;
-        Index_ primary_start_pos, primary_len;
-        if constexpr(use_full) {
-            primary_start_pos = 0;
-            primary_len = std::min(primary_chunkdim, primary_dim - chunk_id * primary_chunkdim); // avoid running off the end.
-        }
-
-        auto slab_ptr = [&]{
-            if constexpr(!sparse_) {
-                return slab.data();
-            } else {
-                for (auto& x : slab.indices) {
-                    x.clear();
-                }
-                for (auto& x : slab.values) {
-                    x.clear();
-                }
-                return false;
-            }
-        }();
-
-        if constexpr(selection_ == tatami::DimensionSelectionType::INDEX) {
-            if (!ext->indices.empty()) {
-                auto secondary_num_chunks = get_secondary_num_chunks<accrow_>();
-                Index_ start_chunk_index = ext->indices.front() / secondary_chunkdim; // 'indices' is guaranteed to be non-empty at this point.
-                offset += static_cast<size_t>(start_chunk_index) * increment; // use size_t to avoid integer overflow.
-                Index_ secondary_start_pos = start_chunk_index * secondary_chunkdim;
-
-                auto iIt = ext->indices.begin();
-                auto iEnd = ext->indices.end();
-                for (Index_ c = start_chunk_index; c < secondary_num_chunks; ++c) {
-                    const auto& chunk = chunk_array[offset];
-
-                    Index_ secondary_end_pos = std::min(secondary_dim - secondary_start_pos, secondary_chunkdim) + secondary_start_pos; // avoid overflow.
-                    ext->chunk_indices.clear();
-                    while (iIt != iEnd && *iIt < secondary_end_pos) {
-                        ext->chunk_indices.push_back(*iIt - secondary_start_pos);
-                        ++iIt;
-                    }
-
-                    if (!ext->chunk_indices.empty()) {
-                        if constexpr(use_full) {
-                            if constexpr(sparse_) {
-                                chunk.template extract<accrow_>(primary_start_pos, primary_len, ext->chunk_indices, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
-                            } else {
-                                chunk.template extract<accrow_>(primary_start_pos, primary_len, ext->chunk_indices, ext->chunk_workspace, slab_ptr, ext->indices.size());
-                            }
-
-                        } else if constexpr(use_block) {
-                            if constexpr(sparse_) {
-                                chunk.template extract<accrow_>(primary_subset1, primary_subset2, ext->chunk_indices, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
-                            } else {
-                                chunk.template extract<accrow_>(primary_subset1, primary_subset2, ext->chunk_indices, ext->chunk_workspace, slab_ptr, ext->indices.size());
-                            }
-
-                        } else if constexpr(use_index) {
-                            if constexpr(sparse_) {
-                                chunk.template extract<accrow_>(primary_subset1, ext->chunk_indices, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
-                            } else {
-                                chunk.template extract<accrow_>(primary_subset1, ext->chunk_indices, ext->chunk_workspace, slab_ptr, ext->indices.size());
-                            }
-
-                        } else {
-                            if constexpr(sparse_) {
-                                chunk.template extract<accrow_>(primary_subset1, ext->chunk_indices, ext->chunk_workspace, slab.values[0], slab.indices[0], secondary_start_pos);
-                            } else {
-                                chunk.template extract<accrow_>(primary_subset1, ext->chunk_indices, ext->chunk_workspace, slab_ptr);
-                            }
-                        }
-                    }
-
-                    secondary_start_pos += secondary_chunkdim; 
-                    offset += increment;
-                    if constexpr(!sparse_) {
-                        slab_ptr += ext->chunk_indices.size();
-                    }
-                }
-            }
-
+    static auto configure_slab(Slab& slab) {
+        if constexpr(!sparse_) {
+            return slab.data();
         } else {
-            Index_ start, len;
-            if constexpr(selection_ == tatami::DimensionSelectionType::BLOCK) {
-                start = ext->block_start;
-                len = ext->block_length;
-            } else {
-                start = 0;
-                len = ext->full_length;
+            for (auto& x : slab.indices) {
+                x.clear();
             }
-            Index_ end = start + len;
+            for (auto& x : slab.values) {
+                x.clear();
+            }
+            return false;
+        }
+    }
 
-            Index_ start_chunk_index = start / secondary_chunkdim;
-            Index_ secondary_start_pos = start_chunk_index * secondary_chunkdim;
-            Index_ end_chunk_index = integer_ceil(end, secondary_chunkdim);
-            offset += increment * static_cast<size_t>(start_chunk_index); // size_t to avoid integer overflow.
+    template<bool accrow_, class ExtractFunction_>
+    void extract_secondary_block(
+        Index_ chunk_id, 
+        Index_ secondary_block_start, 
+        Index_ secondary_block_length, 
+        Slab& slab, 
+        ExtractFunction_ extract)
+    const {
+        auto slab_ptr = configure_slab();
 
-            for (Index_ c = start_chunk_index; c < end_chunk_index; ++c) {
-                const auto& chunk = chunk_array[offset];
-                Index_ from = (c == start_chunk_index ? start - secondary_start_pos : 0);
-                Index_ to = (c + 1 == end_chunk_index ? end - secondary_start_pos : secondary_chunkdim);
+        auto secondary_chunkdim = get_secondary_chunkdim<accrow_>();
+        Index_ start_chunk_index = secondary_block_start / secondary_chunkdim;
+        Index_ secondary_start_pos = start_chunk_index * secondary_chunkdim;
+        Index_ secondary_block_end = secondary_block_start + secondary_block_length;
+        Index_ end_chunk_index = integer_ceil(block_end, secondary_chunkdim);
 
-                // No need to protect against a zero length, as it should be impossible
-                // here (otherwise, start_chunk_index == end_chunk_index and we'd never iterate).
-                if constexpr(use_full) {
-                    if constexpr(sparse_) {
-                        chunk.template extract<accrow_>(primary_start_pos, primary_len, from, to - from, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
-                    } else {
-                        chunk.template extract<accrow_>(primary_start_pos, primary_len, from, to - from, ext->chunk_workspace, slab_ptr, len);
-                    }
+        auto oi = offset_and_increment(chunk_id);
+        auto offset = std::get<0>(oi);
+        auto increment = std::get<1>(oi);
+        offset += increment * static_cast<size_t>(start_chunk_index); // size_t to avoid integer overflow.
 
-                } else if constexpr(use_block) {
-                    if constexpr(sparse_) {
-                        chunk.template extract<accrow_>(primary_subset1, primary_subset2, from, to - from, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
-                    } else {
-                        chunk.template extract<accrow_>(primary_subset1, primary_subset2, from, to - from, ext->chunk_workspace, slab_ptr, len);
-                    }
+        for (Index_ c = start_chunk_index; c < end_chunk_index; ++c) {
+            const auto& chunk = chunk_array[offset];
+            Index_ from = (c == start_chunk_index ? secondary_block_start - secondary_start_pos : 0);
+            Index_ to = (c + 1 == end_chunk_index ? secondary_block_end - secondary_start_pos : secondary_chunkdim);
 
-                } else if constexpr(use_index) {
-                    if constexpr(sparse_) {
-                        chunk.template extract<accrow_>(primary_subset1, from, to - from, ext->chunk_workspace, slab.values, slab.indices, secondary_start_pos);
-                    } else {
-                        chunk.template extract<accrow_>(primary_subset1, from, to - from, ext->chunk_workspace, slab_ptr, len);
-                    }
+            // No need to protect against a zero length, as it should be impossible
+            // here (otherwise, start_chunk_index == end_chunk_index and we'd never iterate).
+            if constexpr(sparse_) {
+                extract(from, to - from, slab.values, slab.indices, secondary_start_pos);
+            } else {
+                extract(from, to - from, slab_ptr);
+            }
 
+            secondary_start_pos += secondary_chunkdim;
+            offset += increment;
+            if constexpr(!sparse_) {
+                slab_ptr += (to - from);
+            }
+        }
+    }
+
+    template<bool accrow_, class ExtractFunction_>
+    void extract_secondary_index(
+        Index_ chunk_id, 
+        const std::vector<Index_>& secondary_indices, 
+        typename Chunk_::Workspace& workspace, 
+        std::vector<Index_>& chunk_indices, 
+        Slab& slab, 
+        ExtractFunction_ extract)
+    const {
+        auto slab_ptr = configure_slab();
+        if (secondary_indices.empty()) {
+            return;
+        }
+
+        auto secondary_num_chunks = get_secondary_num_chunks<accrow_>();
+        Index_ start_chunk_index = ext->indices.front() / secondary_chunkdim; // 'indices' is guaranteed to be non-empty at this point.
+        offset += static_cast<size_t>(start_chunk_index) * increment; // use size_t to avoid integer overflow.
+        Index_ secondary_start_pos = start_chunk_index * secondary_chunkdim;
+
+        auto oi = offset_and_increment(chunk_id);
+        auto offset = std::get<0>(oi);
+        auto increment = std::get<1>(oi);
+        offset += increment * static_cast<size_t>(start_chunk_index); // size_t to avoid integer overflow.
+
+        auto iIt = secondary_indices.begin();
+        auto iEnd = secondary_indices.end();
+        for (Index_ c = start_chunk_index; c < secondary_num_chunks; ++c) {
+            const auto& chunk = chunk_array[offset];
+
+            Index_ secondary_end_pos = std::min(secondary_dim - secondary_start_pos, secondary_chunkdim) + secondary_start_pos; // avoid overflow.
+            chunk_indices.clear();
+            while (iIt != iEnd && *iIt < secondary_end_pos) {
+                chunk_indices.push_back(*iIt - secondary_start_pos);
+                ++iIt;
+            }
+
+            if (!chunk_indices.empty()) {
+                if constexpr(sparse_) {
+                    extract(chunk, from, to - from, slab.values, slab.indices, secondary_start_pos);
                 } else {
-                    if constexpr(sparse_) {
-                        chunk.template extract<accrow_>(primary_subset1, from, to - from, ext->chunk_workspace, slab.values[0], slab.indices[0], secondary_start_pos);
-                    } else {
-                        chunk.template extract<accrow_>(primary_subset1, from, to - from, ext->chunk_workspace, slab_ptr);
-                    }
-                }
-
-                secondary_start_pos += secondary_chunkdim;
-                offset += increment;
-                if constexpr(!sparse_) {
-                    slab_ptr += (to - from);
+                    extract(chunk, from, to - from, slab_ptr);
                 }
             }
         }
     }
 
+protected:
+    // Extract a single element of the primary dimension, using a contiguous block on the secondary dimension.
+    template<bool accrow_>
+    void extract_single_and_block(Index_ chunk_id, Index_ chunk_offset, Index_ secondary_block_start, Index_ secondary_block_length, Slab& slab, typename Chunk_::Workspace& chunk_workspace) const {
+        if constexpr(sparse_) {
+            extract_secondary_block<accrow_>(
+                chunk_id, secondary_block_start, secondary_block_length, slab,
+                [&](const Chunk_& chunk, Index_ from, Index_ len, std::vector<ChunkValue>& slab_values, std::vector<ChunkIndex>& slab_indices, Index_ secondary_start_pos) {
+                    chunk.template extract<accrow_>(chunk_offset, from, len, chunk_workspace, slab_values, slab_indices, secondary_start_pos);
+                }
+            );
+        } else {
+            extract_secondary_block<accrow_>(
+                chunk_id, secondary_block_start, secondary_block_length, slab,
+                [&](const Chunk_& chunk, Index_ from, Index_ len, ChunkValue* slab_ptr) {
+                    chunk.template extract<accrow_>(chunk_offset, from, len, chunk_workspace, slab_ptr, secondary_block_length);
+                }
+            );
+        }
+    }
+
+    // Extract a single element of the primary dimension, using an indexed subset on the secondary dimension.
+    template<bool accrow_>
+    void extract_single_and_index(Index_ chunk_id, Index_ chunk_offset, const std::vector<Index_>& secondary_indices, Slab& slab, typename Chunk_::Workspace& chunk_workspace) const {
+        if constexpr(sparse_) {
+            extract_secondary_index<accrow_>(
+                chunk_id, secondary_indices, slab,
+                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices, std::vector<ChunkValue>& slab_values, std::vector<ChunkIndex>& slab_indices, Index_ secondary_start_pos) {
+                    chunk.template extract<accrow_>(chunk_offset, chunk_indices, chunk_workspace, slab_values, slab_indices, secondary_start_pos);
+                }
+            );
+        } else {
+            extract_secondary_index<accrow_>(
+                chunk_id, secondary_indices, slab,
+                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices, ChunkValue* slab_ptr) {
+                    chunk.template extract<accrow_>(chunk_offset, chunk_indices, chunk_workspace, slab_ptr, secondary_indices.size());
+                }
+            );
+        }
+    }
+
+    // Extract a contiguous block of the primary dimension, using a contiguous block on the secondary dimension.
+    template<bool accrow_>
+    void extract_block_and_block(
+        Index_ chunk_id,
+        Index_ primary_block_start, 
+        Index_ primary_block_length, 
+        Index_ secondary_block_start, 
+        Index_ secondary_block_length, 
+        Slab& slab, 
+        typename Chunk_::Workspace& chunk_workspace) 
+    const {
+        if constexpr(sparse_) {
+            extract_secondary_block<accrow_>(
+                chunk_id, secondary_block_start, secondary_block_length, slab,
+                [&](const Chunk_& chunk, Index_ from, Index_ len, std::vector<ChunkValue>& slab_values, std::vector<ChunkIndex>& slab_indices, Index_ secondary_start_pos) {
+                    chunk.template extract<accrow_>(primary_block_start, primary_block_length, from, len, chunk_workspace, slab_values, slab_indices, secondary_start_pos);
+                }
+            );
+        } else {
+            extract_secondary_block<accrow_>(
+                chunk_id, secondary_block_start, secondary_block_length, slab,
+                [&](const Chunk_& chunk, Index_ from, Index_ len, ChunkValue* slab_ptr) {
+                    chunk.template extract<accrow_>(primary_block_start, primary_block_length, from, len, chunk_workspace, slab_ptr, secondary_block_length);
+                }
+            );
+        }
+    }
+
+    // Extract a contiguous block of the primary dimension, using an indexed subset on the secondary dimension.
+    template<bool accrow_>
+    void extract_block_and_index(
+        Index_ chunk_id,
+        Index_ primary_block_start, 
+        Index_ primary_block_length, 
+        const std::vector<Index_>& secondary_indices,
+        Slab& slab, 
+        typename Chunk_::Workspace& chunk_workspace) 
+    const {
+        if constexpr(sparse_) {
+            extract_secondary_index<accrow_>(
+                chunk_id, secondary_indices, slab,
+                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices, std::vector<ChunkValue>& slab_values, std::vector<ChunkIndex>& slab_indices, Index_ secondary_start_pos) {
+                    chunk.template extract<accrow_>(primary_block_start, primary_block_length, chunk_indices, chunk_workspace, slab_values, slab_indices, secondary_start_pos);
+                }
+            );
+        } else {
+            extract_secondary_index<accrow_>(
+                chunk_id, secondary_indices, slab,
+                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices, ChunkValue* slab_ptr) {
+                    chunk.template extract<accrow_>(primary_block_start, primary_block_length, chunk_indices, chunk_workspace, slab_ptr, secondary_indices.size());
+                }
+            );
+        }
+    }
+
+    // Extract an indexed subset of the primary dimension, using a contiguous block on the secondary dimension.
+    template<bool accrow_>
+    void extract_index_and_block(
+        Index_ chunk_id,
+        const std::vector<Index_>& primary_indices, 
+        Index_ secondary_block_start, 
+        Index_ secondary_block_length, 
+        Slab& slab, 
+        typename Chunk_::Workspace& chunk_workspace) 
+    const {
+        if constexpr(sparse_) {
+            extract_secondary_block<accrow_>(
+                chunk_id, secondary_block_start, secondary_block_length, slab,
+                [&](const Chunk_& chunk, Index_ from, Index_ len, std::vector<ChunkValue>& slab_values, std::vector<ChunkIndex>& slab_indices, Index_ secondary_start_pos) {
+                    chunk.template extract<accrow_>(primary_indices, from, len, chunk_workspace, slab_values, slab_indices, secondary_start_pos);
+                }
+            );
+        } else {
+            extract_secondary_block<accrow_>(
+                chunk_id, secondary_block_start, secondary_block_length, slab,
+                [&](const Chunk_& chunk, Index_ from, Index_ len, ChunkValue* slab_ptr) {
+                    chunk.template extract<accrow_>(primary_indices, from, len, chunk_workspace, slab_ptr, secondary_block_length);
+                }
+            );
+        }
+    }
+
+    // Extract an indexed subset of the primary dimension, using an indexed subset on the secondary dimension.
+    template<bool accrow_>
+    void extract_index_and_index(
+        Index_ chunk_id,
+        const std::vector<Index_>& primary_indices,
+        const std::vector<Index_>& secondary_indices,
+        Slab& slab, 
+        typename Chunk_::Workspace& chunk_workspace) 
+    const {
+        if constexpr(sparse_) {
+            extract_secondary_index<accrow_>(
+                chunk_id, secondary_indices, slab,
+                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices, std::vector<ChunkValue>& slab_values, std::vector<ChunkIndex>& slab_indices, Index_ secondary_start_pos) {
+                    chunk.template extract<accrow_>(primary_indices, chunk_indices, chunk_workspace, slab_values, slab_indices, secondary_start_pos);
+                }
+            );
+        } else {
+            extract_secondary_index<accrow_>(
+                chunk_id, secondary_indices, slab,
+                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices, ChunkValue* slab_ptr) {
+                    chunk.template extract<accrow_>(primary_indices, chunk_indices, chunk_workspace, slab_ptr, secondary_indices.size());
+                }
+            );
+        }
+    }
+
 public:
-    template<bool accrow_, tatami::DimensionSelectionType selection_, bool use_subsetted_oracle_, class Extractor_>
-    std::pair<const Slab*, Index_> fetch_cache(Index_ i, Extractor_* ext) const {
+    // Obtain the slab containing the 'i'-th element of the primary dimension and a contiguous block on the secondary dimension.
+    template<bool accrow_, bool use_subsetted_oracle_>
+    std::pair<const Slab*, Index_> fetch_block(Index_ i, Index_ block_start, Index_ block_length, typename Chunk_::Workspace& chunk_workspace) const {
         Index_ primary_chunkdim = get_primary_chunkdim<accrow_>();
-        size_t alloc = sparse_ ? primary_chunkdim : primary_chunkdim * static_cast<size_t>(tatami::extracted_length<selection_, Index_>(*ext)); // use size_t to avoid integer overflow.
-        auto& cache_workspace = ext->cache_workspace;
+        size_t alloc = sparse_ ? primary_chunkdim : primary_chunkdim * static_cast<size_t>(block_length); // use size_t to avoid integer overflow.
 
         if (cache_workspace.oracle_cache) {
             if constexpr(use_subsetted_oracle_) {
@@ -309,13 +437,13 @@ public:
                             auto ptr = data[p.second];
                             switch (ptr->subset.selection) {
                                 case SubsetSelection::FULL:
-                                    extract<accrow_, selection_>(p.first, ptr->contents, ext, false, false);
+                                    extract_block_and_block(p.first, 0, get_primary_chunkdim<accrow_>(p.first), block_start, block_length, ptr->contents, chunk_workspace);
                                     break;
                                 case SubsetSelection::BLOCK:
-                                    extract<accrow_, selection_>(p.first, ptr->contents, ext, ptr->subset.block_start, ptr->subset.block_length);
+                                    extract_block_and_block(p.first, ptr->subset.block_start, ptr->subset.block_length, block_start, block_length, ptr->contents, chunk_workspace);
                                     break;
                                 case SubsetSelection::INDEX:
-                                    extract<accrow_, selection_>(p.first, ptr->contents, ext, ptr->subset.indices, false);
+                                    extract_index_and_block(p.first, ptr->subset.indices, block_start, block_length, ptr->contents, chunk_workspace);
                                     break;
                             }
                         }
@@ -333,7 +461,7 @@ public:
                     },
                     /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
                         for (const auto& p : in_need) {
-                            extract<accrow_, selection_>(p.first, *(data[p.second]), ext, false, false);
+                            extract_block_and_block(p.first, 0, get_primary_chunkdim<accrow_>(p.first), block_start, block_length, p.second->contents, chunk_workspace);
                         }
                     }
                 );
@@ -344,7 +472,7 @@ public:
             auto chunk_offset = i % primary_chunkdim;
 
             if (cache_workspace.num_slabs_in_cache == 0) {
-                extract<accrow_, selection_>(chunk_id, ext->solo, ext, chunk_offset, false);
+                extract_single_and_block(chunk_id, chunk_offset, block-start, block_length, ptr->contents, chunk_workspace);
                 return std::make_pair(&(ext->solo), static_cast<Index_>(0));
 
             } else {
@@ -354,7 +482,80 @@ public:
                         return Slab(alloc);
                     },
                     /* populate = */ [&](Index_ id, Slab& slab) -> void {
-                        extract<accrow_, selection_>(id, slab, ext, false, false);
+                        extract_block_and_block(id, 0, get_primary_chunkdim<accrow_>(id), block_start, block_length, slab, chunk_workspace);
+                    }
+                );
+                return std::make_pair(&cache, chunk_offset);
+            }
+        }
+    }
+
+    // Obtain the slab containing the 'i'-th element of the primary dimension and an indexed subset on the secondary dimension.
+    template<bool accrow_, bool use_subsetted_oracle_>
+    std::pair<const Slab*, Index_> fetch_block(Index_ i, const std::vector<Index_>& indices, typename Chunk_::Workspace& chunk_workspace) const {
+        Index_ primary_chunkdim = get_primary_chunkdim<accrow_>();
+        size_t alloc = sparse_ ? primary_chunkdim : primary_chunkdim * static_cast<size_t>(indices.size()); // use size_t to avoid integer overflow.
+
+        if (cache_workspace.oracle_cache) {
+            if constexpr(use_subsetted_oracle_) {
+                auto out = cache_workspace.oracle_cache->next(
+                    /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
+                        return std::make_pair(i / primary_chunkdim, i % primary_chunkdim);
+                    },
+                    /* create = */ [&]() -> Slab {
+                        return Slab(alloc);
+                    },
+                    /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
+                        for (const auto& p : in_need) {
+                            auto ptr = data[p.second];
+                            switch (ptr->subset.selection) {
+                                case SubsetSelection::FULL:
+                                    extract_block_and_index(p.first, 0, get_primary_chunkdim<accrow_>(p.first), indices, ptr->contents, chunk_workspace);
+                                    break;
+                                case SubsetSelection::BLOCK:
+                                    extract_block_and_index(p.first, ptr->subset.block_start, ptr->subset.block_length, indices, ptr->contents, chunk_workspace);
+                                    break;
+                                case SubsetSelection::INDEX:
+                                    extract_index_and_index(p.first, ptr->subset.indices, indices, ptr->contents, chunk_workspace);
+                                    break;
+                            }
+                        }
+                    }
+                );
+                return std::make_pair(&(out.first->contents), out.second);
+
+            } else {
+                return cache_workspace.oracle_cache->next(
+                    /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
+                        return std::make_pair(i / primary_chunkdim, i % primary_chunkdim);
+                    },
+                    /* create = */ [&]() -> Slab {
+                        return Slab(alloc);
+                    },
+                    /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
+                        for (const auto& p : in_need) {
+                            extract_block_and_index(p.first, 0, get_primary_chunkdim<accrow_>(p.first), indices, p.second->contents, chunk_workspace);
+                        }
+                    }
+                );
+            }
+
+        } else {
+            auto chunk_id = i / primary_chunkdim;
+            auto chunk_offset = i % primary_chunkdim;
+
+            if (cache_workspace.num_slabs_in_cache == 0) {
+                extract_single_and_index(chunk_id, chunk_offset, indices, ptr->contents, chunk_workspace);
+                return std::make_pair(&(ext->solo), static_cast<Index_>(0));
+
+            } else {
+                auto& cache = cache_workspace.lru_cache->find(
+                    chunk_id,
+                    /* create = */ [&]() -> Slab {
+                        return Slab(alloc);
+                    },
+                    /* populate = */ [&](Index_ id, Slab& slab) -> void {
+                        extract_block_and_index(id, 0, get_primary_chunkdim<accrow_>(id), indices, slab, chunk_workspace);
                     }
                 );
                 return std::make_pair(&cache, chunk_offset);
@@ -470,8 +671,8 @@ public:
  * the first chunk should start at (0, 0), the next chunk should be immediately adjacent in one of the dimensions, and so on.
  * The exception is for chunks at the non-zero boundaries of the matrix dimensions, which may be truncated.
  */
-template<typename Value_, typename Index_, typename Chunk_, bool use_subsetted_oracle_ = false>
-class CustomChunkedDenseMatrix : public tatami::VirtualDenseMatrix<Value_, Index_>, public CustomChunkedMatrixMethods<Index_, false, Chunk_> {
+template<bool use_subsetted_oracle_ = false, typename Value_, typename Index_, typename Chunk_>
+class CustomChunkedDenseMatrix : public tatami::Matrix<Value_, Index_> {
 public:
     /**
      * @param mat_nrow Number of rows in the matrix.

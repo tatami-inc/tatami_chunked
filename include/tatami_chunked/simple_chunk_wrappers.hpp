@@ -104,7 +104,6 @@ public:
      * This is guaranteed to be non-empty with unique and sorted indices.
      * @param work Re-usable workspace for extraction from one or more chunks.
      * @param[out] output Pointer to an output array of length no less than `secondary_indices.size()`.
-     * @param stride Stride separating corresponding values from consecutive elements on the primary dimension.
      *
      * This method extracts the specified values from the chunk into `output`.
      * For example, if `accrow_ = true`, we would extract a rows `primary` and columns in `secondary_indices`.
@@ -171,7 +170,7 @@ public:
      * This is guaranteed to be positive.
      * @param work Re-usable workspace for extraction from one or more chunks.
      * @param[out] output Pointer to an output array of length no less than `stride * (primary_start + primary_length)`.
-     * @param stride Stride separating corresponding values from consecutive elements on the primary dimension.
+     * @param stride Distance between corresponding values from consecutive primary dimension elements when stored in `output`.
      * This is guaranteed to be greater than or equal to `secondary_length`.
      *
      * This method extracts the specified values from the chunk into `output`.
@@ -225,7 +224,7 @@ public:
      * This is guaranteed to be non-empty with unique and sorted indices.
      * @param work Re-usable workspace for extraction from one or more chunks.
      * @param[out] output Pointer to an output array of length no less than `stride * (primary_start + primary_length)`.
-     * @param stride Stride separating corresponding values from consecutive elements on the primary dimension.
+     * @param stride Distance between corresponding values from consecutive primary dimension elements when stored in `output`.
      * This is guaranteed to be greater than or equal to `secondary_indices.size()`.
      *
      * This method extracts the specified values from the chunk into `output`.
@@ -282,7 +281,7 @@ public:
      * This is guaranteed to be positive.
      * @param work Re-usable workspace for extraction from one or more chunks.
      * @param[out] output Pointer to an output array of length no less than `stride * (primary_indices.back() + 1)`.
-     * @param stride Stride separating corresponding values from consecutive elements on the primary dimension.
+     * @param stride Distance between corresponding values from consecutive primary dimension elements when stored in `output`.
      * This is guaranteed to be greater than or equal to `secondary_length`.
      *
      * This method extracts the specified values from the chunk into `output`.
@@ -330,7 +329,7 @@ public:
      * This is guaranteed to be non-empty with unique and sorted indices.
      * @param work Re-usable workspace for extraction from one or more chunks.
      * @param[out] output Pointer to an output array of length no less than `stride * (primary_indices.back() + 1)`.
-     * @param stride Stride separating corresponding values from consecutive elements on the primary dimension.
+     * @param stride Distance between corresponding values from consecutive primary dimension elements when stored in `output`.
      * This is guaranteed to be greater than or equal to `secondary_indices.size()`.
      *
      * This method extracts the specified values from the chunk into `output`.
