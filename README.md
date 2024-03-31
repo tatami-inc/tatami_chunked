@@ -69,7 +69,7 @@ You can install the library by cloning a suitable version of this repository and
 
 ```sh
 mkdir build && cd build
-cmake .. -DTATAMI_CHUNKED=OFF
+cmake .. -DTATAMI_CHUNKED_TESTS=OFF
 cmake --build . --target install
 ```
 
@@ -84,4 +84,4 @@ target_link_libraries(mylib INTERFACE tatami::tatami_chunked)
 
 If you're not using CMake, the simple approach is to just copy the files the `include/` subdirectory -
 either directly or with Git submodules - and include their path during compilation with, e.g., GCC's `-I`.
-This will also require the core [**tatami**](https://github.com/tatami-inc/tatami) library.
+This will also require the dependencies listed in the [`extern/CMakeLists.txt`](extern/CMakeLists.txt) file, namely the core [**tatami**](https://github.com/tatami-inc/tatami) library.
