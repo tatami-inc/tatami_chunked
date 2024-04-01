@@ -50,10 +50,11 @@ struct TypicalSlabCacheOptions {
  * @tparam subset_ Whether to report the requested subset from each slab.
  * Only relevant when an oracle is available.
  */
-template<typename Index_, class Slab_, bool subset_ = false>
+template<bool oracle_, bool subset_, typename Index_, class Slab_>
 struct TypicalSlabCacheWorkspace {
     /**
      * Default constructor.
+     * Instances constructed in this manner should only be used for copy/move-assignment from instances created with the other constructor.
      */
     TypicalSlabCacheWorkspace() = default;
 
@@ -66,26 +67,31 @@ struct TypicalSlabCacheWorkspace {
      * @param cache_size_in_elements Total size of the cache in terms of the number of elements.
      * This is usually derived from `TypicalSlabCacheOptions::maximum_cache_size` and the size of each element.
      * @param require_minimum_cache Whether to enforce a minimum size of the cache for efficient extraction, see `TypicalSlabCacheOptions` for details.
+     * @param oracle Oracle containing the predicted accesses.
+     * Only relevant if `oracle_ = true`, otherwise a bool should be passed in (which is ignored).
      */
-    TypicalSlabCacheWorkspace(Index_ primary_length, Index_ secondary_length, size_t cache_size_in_elements, bool require_minimum_cache) : primary_length(primary_length) {
+    TypicalSlabCacheWorkspace(Index_ primary_length, Index_ secondary_length, size_t cache_size_in_elements, bool require_minimum_cache, tatami::MaybeOracle<oracle_, Index_> oracle) {
         slab_size_in_elements = static_cast<size_t>(primary_length) * static_cast<size_t>(secondary_length);
-        num_slabs_in_cache = (slab_size_in_elements ? cache_size_in_elements / slab_size_in_elements : 1);
 
-        if (num_slabs_in_cache == 0 && require_minimum_cache) {
-            num_slabs_in_cache = 1;
+        if (!slab_size_in_elements) {
+            num_slabs_in_cache = 0;
+        } else {
+            num_slabs_in_cache = (slab_size_in_elements ? cache_size_in_elements / slab_size_in_elements : 1);
+            if (num_slabs_in_cache == 0 && require_minimum_cache) {
+                num_slabs_in_cache = 1;
+            }
         }
 
-        if (num_slabs_in_cache) {
-            lru_cache.reset(new LruSlabCache<Index_, Slab_>(num_slabs_in_cache));
+        if constexpr(!oracle_) {
+            cache = LruSlabCache<Index_, Slab_>(num_slabs_in_cache);
+        } else if constexpr(!subset_) {
+            cache = OracleSlabCache<Index_, Index_, Slab_>(std::move(oracle), 10000, num_slabs_in_cache);
+        } else {
+            cache = SubsettedOracleSlabCache<Index_, Index_, Slab_>(std::move(oracle), 10000, num_slabs_in_cache);
         }
     }
 
 public:
-    /**
-     * Length of the primary dimension of each slab.
-     */
-    Index_ primary_length;
-
     /**
      * Size of each slab, in terms of the number of elements.
      */
@@ -97,40 +103,23 @@ public:
     size_t num_slabs_in_cache;
 
     /**
-     * Cache of least recently used slabs.
-     * This is only allocated if `num_slabs_in_cache` is positive and `oracle_cache` is NULL.
+     * Type of the slab cache, depending on `oracle_` and `subset_`.
      */
-    std::unique_ptr<LruSlabCache<Index_, Slab_> > lru_cache;
-
-    /**
-     * Type of the oracle slab cache, depending on whether `subset_ = true`.
-     */
-    typedef typename std::conditional<subset_, SubsettedOracleSlabCache<Index_, Index_, Slab_>, OracleSlabCache<Index_, Index_, Slab_> >::type OracleCache;
+    typedef typename std::conditional<
+        oracle_,
+        LruSlabCache<Index_, Slab_>,
+        typename std::conditional<
+            subset_, 
+            SubsettedOracleSlabCache<Index_, Index_, Slab_>, 
+            OracleSlabCache<Index_, Index_, Slab_> 
+        >::type
+    >::type SlabCache;
 
     /**
      * Cache of to-be-used slabs, based on an `Oracle`'s predictions.
      * This may be NULL, see `set_oracle()` for more details.
      */
-    std::unique_ptr<OracleCache> oracle_cache;
-
-public:
-    /**
-     * Set up the oracle cache.
-     * This will only have an effect if the number of slabs in the cache is greater than 1,
-     * otherwise the predictions have no effect on the choice of slab to retain.
-     * Callers should check for a non-NULL `oracle_cache` before attempting to use it,
-     * otherwise they should use the `lru_cache` (provided `num_slabs_in_cache > 0`).
-     *
-     * @param o Oracle to provide predictions for subsequent accesses on the primary dimension.
-     */
-    void set_oracle(std::unique_ptr<tatami::Oracle<Index_> > o) {
-        // The oracle won't have any effect if fewer than one slab can be cached.
-        if (num_slabs_in_cache > 1) {
-            size_t max_predictions = static_cast<size_t>(num_slabs_in_cache) * primary_length * 2; // double the cache size, basically.
-            oracle_cache.reset(new OracleCache(std::move(o), max_predictions, num_slabs_in_cache));
-            lru_cache.reset();
-        }
-    }
+    SlabCache cache;
 };
 
 }

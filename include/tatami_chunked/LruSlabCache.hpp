@@ -28,13 +28,13 @@ private:
     typedef std::pair<Slab_, Id_> Element;
     std::list<Element> cache_data;
     std::unordered_map<Id_, typename std::list<Element>::iterator> cache_exists;
-    size_t max_slabs; 
+    size_t max_slabs = 0;
 
 public:
     /**
      * @param m Maximum number of slabs to store.
      */
-    LruSlabCache(size_t m) : max_slabs(m) {}
+    LruSlabCache(size_t m = 1) : max_slabs(m) {}
 
 public:
     /**

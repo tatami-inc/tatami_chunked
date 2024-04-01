@@ -23,9 +23,9 @@ struct CustomChunkedOptions : public TypicalSlabCacheOptions {};
  */
 namespace CustomChunkedMatrix_internal {
 
-template<typename Index_, bool sparse_, class Chunk_>
+template<typename Index_, class Chunk_>
 class ChunkCoordinator {
-protected:
+public:
     ChunkCoordinator(Index_ mat_nr, Index_ mat_nc, Index_ chunk_nr, Index_ chunk_nc, std::vector<Chunk_> chunks, bool rm) :
         mat_nrow(mat_nr),
         mat_ncol(mat_nc),
@@ -39,21 +39,29 @@ protected:
         row_major(rm)
     {}
 
-protected:
+private:
     Index_ mat_nrow, mat_ncol;
     Index_ chunk_nrow, chunk_ncol;
     Index_ num_chunks_per_row, num_chunks_per_column;
-    Index_ leftover_chunks_per_row, leftover_chunks_per_column;
+    Index_ last_row_chunk_rows, last_column_chunk_cols; // number of rows in the chunks overlapping the last row, or columns in the chunks overlapping the last column.
 
     std::vector<Chunk_> chunk_array;
     bool row_major;
+
+public:
+    Index_ get_nrow() const {
+        return mat_nrow;
+    }
+
+    Index_ get_ncol() const {
+        return mat_ncol;
+    }
 
     bool prefer_rows_internal() const {
         // Prefer rows if we have to extract fewer chunks per row.
         return num_chunks_per_column > num_chunks_per_row; 
     }
 
-protected:
     template<bool accrow_>
     Index_ get_primary_dim() const {
         if constexpr(accrow_) {
@@ -108,6 +116,7 @@ protected:
         }
     }
 
+    // Overload that handles the truncated chunk at the bottom/right edges of each matrix.
     template<bool accrow_>
     Index_ get_primary_chunkdim(Index_ chunk_id) {
         if (chunk_id + 1 == get_primary_num_chunks<accrow_>()) {
@@ -129,6 +138,7 @@ protected:
 protected:
     typedef typename Chunk_::value_type ChunkValue;
     typedef typename Chunk_::index_type ChunkIndex;
+    typedef typename Chunk_::Workspace ChunkWork;
 
     typedef std::vector<ChunkValue> DenseSlab;
 
@@ -145,7 +155,8 @@ protected:
         }
     };
 
-    typedef typename std::conditional<sparse_, SparseSlab, DenseSlab>::type Slab;
+    template<bool sparse_>
+    using Slab = typename std::conditional<sparse_, SparseSlab, DenseSlab>::type;
 
 protected:
     template<bool accrow_>
@@ -165,7 +176,8 @@ protected:
         }
     }
 
-    static auto configure_slab(Slab& slab) {
+    template<bool sparse_>
+    static auto configure_slab(Slab<sparse_>& slab) {
         if constexpr(!sparse_) {
             return slab.data();
         } else {
@@ -179,21 +191,21 @@ protected:
         }
     }
 
-    template<bool accrow_, class ExtractFunction_>
+    template<bool accrow_, bool sparse_, class ExtractFunction_>
     void extract_secondary_block(
         Index_ chunk_id, 
         Index_ secondary_block_start, 
         Index_ secondary_block_length, 
-        Slab& slab, 
+        Slab<sparse_>& slab, 
         ExtractFunction_ extract)
     const {
-        auto slab_ptr = configure_slab();
+        auto slab_ptr = configure_slab<sparse_>();
 
         auto secondary_chunkdim = get_secondary_chunkdim<accrow_>();
         Index_ start_chunk_index = secondary_block_start / secondary_chunkdim;
         Index_ secondary_start_pos = start_chunk_index * secondary_chunkdim;
         Index_ secondary_block_end = secondary_block_start + secondary_block_length;
-        Index_ end_chunk_index = integer_ceil(block_end, secondary_chunkdim);
+        Index_ end_chunk_index = integer_ceil(secondary_block_end, secondary_chunkdim);
 
         auto oi = offset_and_increment(chunk_id);
         auto offset = std::get<0>(oi);
@@ -204,40 +216,40 @@ protected:
             const auto& chunk = chunk_array[offset];
             Index_ from = (c == start_chunk_index ? secondary_block_start - secondary_start_pos : 0);
             Index_ to = (c + 1 == end_chunk_index ? secondary_block_end - secondary_start_pos : secondary_chunkdim);
+            Index_ len = to - from;
 
             // No need to protect against a zero length, as it should be impossible
             // here (otherwise, start_chunk_index == end_chunk_index and we'd never iterate).
             if constexpr(sparse_) {
-                extract(from, to - from, slab.values, slab.indices, secondary_start_pos);
+                extract(from, len, slab.values, slab.indices, secondary_start_pos);
             } else {
-                extract(from, to - from, slab_ptr);
+                extract(from, len, slab_ptr);
             }
 
-            secondary_start_pos += secondary_chunkdim;
+            secondary_start_pos += len;
             offset += increment;
             if constexpr(!sparse_) {
-                slab_ptr += (to - from);
+                slab_ptr += len;
             }
         }
     }
 
-    template<bool accrow_, class ExtractFunction_>
+    template<bool accrow_, bool sparse_, class ExtractFunction_>
     void extract_secondary_index(
         Index_ chunk_id, 
         const std::vector<Index_>& secondary_indices, 
         typename Chunk_::Workspace& workspace, 
         std::vector<Index_>& chunk_indices, 
-        Slab& slab, 
+        Slab<sparse_>& slab, 
         ExtractFunction_ extract)
     const {
-        auto slab_ptr = configure_slab();
+        auto slab_ptr = configure_slab<sparse_>();
         if (secondary_indices.empty()) {
             return;
         }
 
-        auto secondary_num_chunks = get_secondary_num_chunks<accrow_>();
-        Index_ start_chunk_index = ext->indices.front() / secondary_chunkdim; // 'indices' is guaranteed to be non-empty at this point.
-        offset += static_cast<size_t>(start_chunk_index) * increment; // use size_t to avoid integer overflow.
+        auto secondary_chunkdim = get_secondary_chunkdim<accrow_>();
+        Index_ start_chunk_index = secondary_indices.front() / secondary_chunkdim; // 'secondary_indices' is guaranteed to be non-empty at this point.
         Index_ secondary_start_pos = start_chunk_index * secondary_chunkdim;
 
         auto oi = offset_and_increment(chunk_id);
@@ -245,9 +257,10 @@ protected:
         auto increment = std::get<1>(oi);
         offset += increment * static_cast<size_t>(start_chunk_index); // size_t to avoid integer overflow.
 
+        auto secondary_dim = get_secondary_dim<accrow_>();
         auto iIt = secondary_indices.begin();
         auto iEnd = secondary_indices.end();
-        for (Index_ c = start_chunk_index; c < secondary_num_chunks; ++c) {
+        while (iIt != iEnd) {
             const auto& chunk = chunk_array[offset];
 
             Index_ secondary_end_pos = std::min(secondary_dim - secondary_start_pos, secondary_chunkdim) + secondary_start_pos; // avoid overflow.
@@ -259,18 +272,31 @@ protected:
 
             if (!chunk_indices.empty()) {
                 if constexpr(sparse_) {
-                    extract(chunk, from, to - from, slab.values, slab.indices, secondary_start_pos);
+                    extract(chunk, chunk_indices, slab.values, slab.indices, secondary_start_pos);
                 } else {
-                    extract(chunk, from, to - from, slab_ptr);
+                    extract(chunk, chunk_indices, slab_ptr);
                 }
+            }
+
+            secondary_start_pos = secondary_end_pos;
+            offset += increment;
+            if constexpr(!sparse_) {
+                slab_ptr += chunk_indices.size();
             }
         }
     }
 
 protected:
     // Extract a single element of the primary dimension, using a contiguous block on the secondary dimension.
-    template<bool accrow_>
-    void extract_single_and_block(Index_ chunk_id, Index_ chunk_offset, Index_ secondary_block_start, Index_ secondary_block_length, Slab& slab, typename Chunk_::Workspace& chunk_workspace) const {
+    template<bool accrow_, bool sparse_>
+    void extract_single(
+        Index_ chunk_id, 
+        Index_ chunk_offset, 
+        Index_ secondary_block_start, 
+        Index_ secondary_block_length, 
+        Slab<sparse_>& slab, 
+        ChunkWork& chunk_workspace)
+    const {
         if constexpr(sparse_) {
             extract_secondary_block<accrow_>(
                 chunk_id, secondary_block_start, secondary_block_length, slab,
@@ -289,8 +315,14 @@ protected:
     }
 
     // Extract a single element of the primary dimension, using an indexed subset on the secondary dimension.
-    template<bool accrow_>
-    void extract_single_and_index(Index_ chunk_id, Index_ chunk_offset, const std::vector<Index_>& secondary_indices, Slab& slab, typename Chunk_::Workspace& chunk_workspace) const {
+    template<bool accrow_, bool sparse_>
+    void extract_single(
+        Index_ chunk_id, 
+        Index_ chunk_offset, 
+        const std::vector<Index_>& secondary_indices, 
+        Slab<sparse_>& slab, 
+        ChunkWork& chunk_workspace) 
+    const {
         if constexpr(sparse_) {
             extract_secondary_index<accrow_>(
                 chunk_id, secondary_indices, slab,
@@ -309,69 +341,69 @@ protected:
     }
 
     // Extract a contiguous block of the primary dimension, using a contiguous block on the secondary dimension.
-    template<bool accrow_>
-    void extract_block_and_block(
-        Index_ chunk_id,
-        Index_ primary_block_start, 
-        Index_ primary_block_length, 
+    template<bool accrow_, bool sparse_>
+    void extract_block(
+        Index_ chunk_id, 
+        Index_ chunk_offset, 
+        Index_ chunk_length, 
         Index_ secondary_block_start, 
         Index_ secondary_block_length, 
-        Slab& slab, 
-        typename Chunk_::Workspace& chunk_workspace) 
+        Slab<sparse_>& slab, 
+        ChunkWork& chunk_workspace) 
     const {
         if constexpr(sparse_) {
             extract_secondary_block<accrow_>(
                 chunk_id, secondary_block_start, secondary_block_length, slab,
                 [&](const Chunk_& chunk, Index_ from, Index_ len, std::vector<ChunkValue>& slab_values, std::vector<ChunkIndex>& slab_indices, Index_ secondary_start_pos) {
-                    chunk.template extract<accrow_>(primary_block_start, primary_block_length, from, len, chunk_workspace, slab_values, slab_indices, secondary_start_pos);
+                    chunk.template extract<accrow_>(chunk_offset, chunk_length, from, len, chunk_workspace, slab_values, slab_indices, secondary_start_pos);
                 }
             );
         } else {
             extract_secondary_block<accrow_>(
                 chunk_id, secondary_block_start, secondary_block_length, slab,
                 [&](const Chunk_& chunk, Index_ from, Index_ len, ChunkValue* slab_ptr) {
-                    chunk.template extract<accrow_>(primary_block_start, primary_block_length, from, len, chunk_workspace, slab_ptr, secondary_block_length);
+                    chunk.template extract<accrow_>(chunk_offset, chunk_length, from, len, chunk_workspace, slab_ptr, secondary_block_length);
                 }
             );
         }
     }
 
     // Extract a contiguous block of the primary dimension, using an indexed subset on the secondary dimension.
-    template<bool accrow_>
-    void extract_block_and_index(
-        Index_ chunk_id,
-        Index_ primary_block_start, 
-        Index_ primary_block_length, 
-        const std::vector<Index_>& secondary_indices,
-        Slab& slab, 
-        typename Chunk_::Workspace& chunk_workspace) 
+    template<bool accrow_, bool sparse_>
+    void extract_block(
+        Index_ chunk_id, 
+        Index_ chunk_offset, 
+        Index_ chunk_length, 
+        const std::vector<Index_>& secondary_indices, 
+        Slab<sparse_>& slab, 
+        ChunkWork& chunk_workspace) 
     const {
         if constexpr(sparse_) {
             extract_secondary_index<accrow_>(
                 chunk_id, secondary_indices, slab,
                 [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices, std::vector<ChunkValue>& slab_values, std::vector<ChunkIndex>& slab_indices, Index_ secondary_start_pos) {
-                    chunk.template extract<accrow_>(primary_block_start, primary_block_length, chunk_indices, chunk_workspace, slab_values, slab_indices, secondary_start_pos);
+                    chunk.template extract<accrow_>(chunk_offset, chunk_length, chunk_indices, chunk_workspace, slab_values, slab_indices, secondary_start_pos);
                 }
             );
         } else {
             extract_secondary_index<accrow_>(
                 chunk_id, secondary_indices, slab,
                 [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices, ChunkValue* slab_ptr) {
-                    chunk.template extract<accrow_>(primary_block_start, primary_block_length, chunk_indices, chunk_workspace, slab_ptr, secondary_indices.size());
+                    chunk.template extract<accrow_>(chunk_offset, chunk_length, chunk_indices, chunk_workspace, slab_ptr, secondary_indices.size());
                 }
             );
         }
     }
 
     // Extract an indexed subset of the primary dimension, using a contiguous block on the secondary dimension.
-    template<bool accrow_>
-    void extract_index_and_block(
+    template<bool accrow_, bool sparse_>
+    void extract_index(
         Index_ chunk_id,
         const std::vector<Index_>& primary_indices, 
         Index_ secondary_block_start, 
         Index_ secondary_block_length, 
-        Slab& slab, 
-        typename Chunk_::Workspace& chunk_workspace) 
+        Slab<sparse_>& slab, 
+        ChunkWork& chunk_workspace) 
     const {
         if constexpr(sparse_) {
             extract_secondary_block<accrow_>(
@@ -391,13 +423,13 @@ protected:
     }
 
     // Extract an indexed subset of the primary dimension, using an indexed subset on the secondary dimension.
-    template<bool accrow_>
-    void extract_index_and_index(
+    template<bool accrow_, bool sparse_>
+    void extract_index(
         Index_ chunk_id,
         const std::vector<Index_>& primary_indices,
         const std::vector<Index_>& secondary_indices,
-        Slab& slab, 
-        typename Chunk_::Workspace& chunk_workspace) 
+        Slab<sparse_>& slab, 
+        ChunkWork& chunk_workspace) 
     const {
         if constexpr(sparse_) {
             extract_secondary_index<accrow_>(
@@ -417,208 +449,236 @@ protected:
     }
 
 public:
-    // Obtain the slab containing the 'i'-th element of the primary dimension and a contiguous block on the secondary dimension.
-    template<bool accrow_, bool use_subsetted_oracle_>
-    std::pair<const Slab*, Index_> fetch_block(Index_ i, Index_ block_start, Index_ block_length, typename Chunk_::Workspace& chunk_workspace) const {
+    // Obtain the slab containing the 'i'-th element of the primary dimension.
+    // The 'args...' determines whether a contiguous block or indexed subset is
+    // used on the secondary dimension.
+    template<bool accrow_, bool sparse_, bool oracle_, bool subset_, typename ... Args_>
+    std::pair<const Slab<sparse_>*, Index_> fetch(
+        Index_ i, 
+        typename Chunk_::Workspace& chunk_workspace,
+        TypicalSlabCacheWorkspace<oracle_, subset_, Index_, Slab<sparse_> >& cache_workspace,
+        Slab<sparse_>& solo,
+        Index_ secondary_length,
+        const Args_& ... args) 
+    const {
         Index_ primary_chunkdim = get_primary_chunkdim<accrow_>();
-        size_t alloc = sparse_ ? primary_chunkdim : primary_chunkdim * static_cast<size_t>(block_length); // use size_t to avoid integer overflow.
+        size_t alloc = sparse_ ? primary_chunkdim : primary_chunkdim * static_cast<size_t>(secondary_length); // use size_t to avoid integer overflow.
 
-        if (cache_workspace.oracle_cache) {
-            if constexpr(use_subsetted_oracle_) {
-                auto out = cache_workspace.oracle_cache->next(
-                    /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
-                        return std::make_pair(i / primary_chunkdim, i % primary_chunkdim);
-                    },
-                    /* create = */ [&]() -> Slab {
-                        return Slab(alloc);
-                    },
-                    /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
-                        for (const auto& p : in_need) {
-                            auto ptr = data[p.second];
-                            switch (ptr->subset.selection) {
-                                case SubsetSelection::FULL:
-                                    extract_block_and_block(p.first, 0, get_primary_chunkdim<accrow_>(p.first), block_start, block_length, ptr->contents, chunk_workspace);
-                                    break;
-                                case SubsetSelection::BLOCK:
-                                    extract_block_and_block(p.first, ptr->subset.block_start, ptr->subset.block_length, block_start, block_length, ptr->contents, chunk_workspace);
-                                    break;
-                                case SubsetSelection::INDEX:
-                                    extract_index_and_block(p.first, ptr->subset.indices, block_start, block_length, ptr->contents, chunk_workspace);
-                                    break;
-                            }
-                        }
-                    }
-                );
-                return std::make_pair(&(out.first->contents), out.second);
-
-            } else {
-                return cache_workspace.oracle_cache->next(
-                    /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
-                        return std::make_pair(i / primary_chunkdim, i % primary_chunkdim);
-                    },
-                    /* create = */ [&]() -> Slab {
-                        return Slab(alloc);
-                    },
-                    /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
-                        for (const auto& p : in_need) {
-                            extract_block_and_block(p.first, 0, get_primary_chunkdim<accrow_>(p.first), block_start, block_length, p.second->contents, chunk_workspace);
-                        }
-                    }
-                );
-            }
-
-        } else {
+        if constexpr(!oracle_) {
             auto chunk_id = i / primary_chunkdim;
             auto chunk_offset = i % primary_chunkdim;
 
             if (cache_workspace.num_slabs_in_cache == 0) {
-                extract_single_and_block(chunk_id, chunk_offset, block-start, block_length, ptr->contents, chunk_workspace);
-                return std::make_pair(&(ext->solo), static_cast<Index_>(0));
+                extract_single<accrow_, sparse_>(chunk_id, chunk_offset, args..., solo, chunk_workspace);
+                return std::make_pair(&solo, static_cast<Index_>(0));
 
             } else {
-                auto& cache = cache_workspace.lru_cache->find(
+                auto& cache = cache_workspace.cache->find(
                     chunk_id,
-                    /* create = */ [&]() -> Slab {
-                        return Slab(alloc);
+                    /* create = */ [&]() -> Slab<sparse_> {
+                        return Slab<sparse_>(alloc);
                     },
-                    /* populate = */ [&](Index_ id, Slab& slab) -> void {
-                        extract_block_and_block(id, 0, get_primary_chunkdim<accrow_>(id), block_start, block_length, slab, chunk_workspace);
+                    /* populate = */ [&](Index_ id, Slab<sparse_>& slab) -> void {
+                        extract_block<accrow_, sparse_>(id, 0, get_primary_chunkdim<accrow_>(id), args..., slab, chunk_workspace);
                     }
                 );
                 return std::make_pair(&cache, chunk_offset);
             }
-        }
-    }
 
-    // Obtain the slab containing the 'i'-th element of the primary dimension and an indexed subset on the secondary dimension.
-    template<bool accrow_, bool use_subsetted_oracle_>
-    std::pair<const Slab*, Index_> fetch_block(Index_ i, const std::vector<Index_>& indices, typename Chunk_::Workspace& chunk_workspace) const {
-        Index_ primary_chunkdim = get_primary_chunkdim<accrow_>();
-        size_t alloc = sparse_ ? primary_chunkdim : primary_chunkdim * static_cast<size_t>(indices.size()); // use size_t to avoid integer overflow.
-
-        if (cache_workspace.oracle_cache) {
-            if constexpr(use_subsetted_oracle_) {
-                auto out = cache_workspace.oracle_cache->next(
-                    /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
-                        return std::make_pair(i / primary_chunkdim, i % primary_chunkdim);
-                    },
-                    /* create = */ [&]() -> Slab {
-                        return Slab(alloc);
-                    },
-                    /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
-                        for (const auto& p : in_need) {
-                            auto ptr = data[p.second];
-                            switch (ptr->subset.selection) {
-                                case SubsetSelection::FULL:
-                                    extract_block_and_index(p.first, 0, get_primary_chunkdim<accrow_>(p.first), indices, ptr->contents, chunk_workspace);
-                                    break;
-                                case SubsetSelection::BLOCK:
-                                    extract_block_and_index(p.first, ptr->subset.block_start, ptr->subset.block_length, indices, ptr->contents, chunk_workspace);
-                                    break;
-                                case SubsetSelection::INDEX:
-                                    extract_index_and_index(p.first, ptr->subset.indices, indices, ptr->contents, chunk_workspace);
-                                    break;
-                            }
+        } else if constexpr(!subset_) {
+            auto out = cache_workspace.cache->next(
+                /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
+                    return std::make_pair(i / primary_chunkdim, i % primary_chunkdim);
+                },
+                /* create = */ [&]() -> Slab<sparse_> {
+                    return Slab<sparse_>(alloc);
+                },
+                /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
+                    for (const auto& p : in_need) {
+                        auto ptr = data[p.second];
+                        switch (ptr->subset.selection) {
+                            case SubsetSelection::FULL:
+                                extract_block<accrow_, sparse_>(p.first, 0, get_primary_chunkdim<accrow_>(p.first), args..., ptr->contents, chunk_workspace);
+                                break;
+                            case SubsetSelection::BLOCK:
+                                extract_block<accrow_, sparse_>(p.first, ptr->subset.block_start, ptr->subset.block_length, args..., ptr->contents, chunk_workspace);
+                                break;
+                            case SubsetSelection::INDEX:
+                                extract_index<accrow_, sparse_>(p.first, ptr->subset.indices, args..., ptr->contents, chunk_workspace);
+                                break;
                         }
                     }
-                );
-                return std::make_pair(&(out.first->contents), out.second);
-
-            } else {
-                return cache_workspace.oracle_cache->next(
-                    /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
-                        return std::make_pair(i / primary_chunkdim, i % primary_chunkdim);
-                    },
-                    /* create = */ [&]() -> Slab {
-                        return Slab(alloc);
-                    },
-                    /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
-                        for (const auto& p : in_need) {
-                            extract_block_and_index(p.first, 0, get_primary_chunkdim<accrow_>(p.first), indices, p.second->contents, chunk_workspace);
-                        }
-                    }
-                );
-            }
+                }
+            );
+            return std::make_pair(&(out.first->contents), out.second);
 
         } else {
-            auto chunk_id = i / primary_chunkdim;
-            auto chunk_offset = i % primary_chunkdim;
-
-            if (cache_workspace.num_slabs_in_cache == 0) {
-                extract_single_and_index(chunk_id, chunk_offset, indices, ptr->contents, chunk_workspace);
-                return std::make_pair(&(ext->solo), static_cast<Index_>(0));
-
-            } else {
-                auto& cache = cache_workspace.lru_cache->find(
-                    chunk_id,
-                    /* create = */ [&]() -> Slab {
-                        return Slab(alloc);
-                    },
-                    /* populate = */ [&](Index_ id, Slab& slab) -> void {
-                        extract_block_and_index(id, 0, get_primary_chunkdim<accrow_>(id), indices, slab, chunk_workspace);
+            return cache_workspace.cache->next(
+                /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
+                    return std::make_pair(i / primary_chunkdim, i % primary_chunkdim);
+                },
+                /* create = */ [&]() -> Slab<sparse_> {
+                    return Slab<sparse_>(alloc);
+                },
+                /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
+                    for (const auto& p : in_need) {
+                        extract_block<accrow_, sparse_>(p.first, 0, get_primary_chunkdim<accrow_>(p.first), args..., p.second->contents, chunk_workspace);
                     }
-                );
-                return std::make_pair(&cache, chunk_offset);
-            }
+                }
+            );
         }
     }
 };
 
-template<bool oracle_, typename Value_, typename Index_>
-struct Dense : public tatami::DenseExtractor<oracle_, Value_, Index_> {
-    CustomExtractor(const CustomChunkedDenseMatrix* p) : parent(p) {
-        auto len = tatami::extracted_length<selection_, Index_>(*this);
+}
+/**
+ * @endcond
+ */
 
-        cache_workspace = TypicalSlabCacheWorkspace<Index_, Slab, use_subsetted_oracle_>(
-            accrow_ ? parent->chunk_nrow : parent->chunk_ncol,
-            len,
-            parent->cache_size_in_elements,
-            parent->require_minimum_cache
-        );
+/**
+ * @cond
+ */
+namespace CustomChunkedMatrix_internal {
 
+template<bool accrow_, bool oracle_, bool subset_, typename Value_, typename Index_, typename Chunk_>
+struct DenseBase {
+protected:
+    const ChunkCoordinator<Index_, Chunk_>& coordinator;
+    typename Chunk_::Workspace chunk_workspace;
+    typedef typename ChunkCoordinator<Index_, Chunk_>::DenseSlab Slab;
+    TypicalSlabCacheWorkspace<oracle_, subset_, Index_, Slab> cache_workspace;
+    Slab solo;
+
+public:
+    DenseBase(
+        const ChunkCoordinator<Index_, Chunk_>& coordinator, 
+        size_t cache_size_in_elements, 
+        bool require_minimum_cache, 
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        Index_ secondary_length) : 
+        coordinator(coordinator),
+        cache_workspace(
+            coordinator.template get_primary_chunkdim<accrow_>(), 
+            secondary_length, 
+            cache_size_in_elements, 
+            require_minimum_cache, 
+            std::move(oracle)
+        )
+    {
         if (cache_workspace.num_slabs_in_cache == 0) {
-            solo.resize(len);
+            solo.resize(secondary_length);
         }
     }
 
-    CustomExtractor(const CustomChunkedDenseMatrix* p, Index_ bs, Index_ bl) : parent(p) {
-        if constexpr(selection_ == tatami::DimensionSelectionType::BLOCK) {
-            this->block_start = bs;
-            this->block_length = bl;
-        }
-        initialize_cache();
+protected:
+    const Value_* process_dense_slab(const std::pair<const Slab*, Index_>& fetched, Value_* buffer, size_t secondary_length) {
+        auto ptr = fetched.first->data() + fetched.second * secondary_length; // already cast to size_t to avoid overflow.
+        std::copy_n(ptr, secondary_length, buffer);
+        return buffer;
     }
+};
 
-    CustomExtractor(const CustomChunkedDenseMatrix* p, std::vector<Index_> idx) : parent(p) {
-        if constexpr(selection_ == tatami::DimensionSelectionType::INDEX) {
-            indices = std::move(idx);
-            this->index_length = indices.size();
-        }
-        initialize_cache();
+template<bool accrow_, bool oracle_, bool subset_, typename Value_, typename Index_, typename Chunk_>
+struct DenseFull : public tatami::DenseExtractor<oracle_, Value_, Index_>, public DenseBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_> {
+    DenseFull(
+        const ChunkCoordinator<Index_, Chunk_>& coordinator, 
+        size_t cache_size_in_elements, 
+        bool require_minimum_cache, 
+        tatami::MaybeOracle<oracle_, Index_> oracle) :
+        DenseBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_>(
+            coordinator, 
+            cache_size_in_elements, 
+            require_minimum_cache, 
+            std::move(oracle), 
+            coordinator.template get_secondary_dim()
+        )
+    {}
+
+    const Value_* fetch(Index_ i, Value_* buffer) {
+        auto secondary_len = this->coordinator.template get_secondary_dim();
+        auto fetched = this->coordinator->template fetch<accrow_, false, oracle_, subset_>(
+            i, 
+            this->chunk_workspace, 
+            this->cache_workspace, 
+            this->solo, 
+            secondary_len, 
+            0, 
+            secondary_len
+        );
+        return this->process_dense_slab(fetched, buffer, secondary_len);
+    }
+};
+
+template<bool accrow_, bool oracle_, bool subset_, typename Value_, typename Index_, typename Chunk_>
+struct DenseBlock : public tatami::DenseExtractor<oracle_, Value_, Index_>, public DenseBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_> {
+    DenseBlock(
+        const ChunkCoordinator<Index_, Chunk_>& coordinator, 
+        size_t cache_size_in_elements, 
+        bool require_minimum_cache, 
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        Index_ block_start, 
+        Index_ block_length) : 
+        DenseBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_>(
+            coordinator, 
+            cache_size_in_elements, 
+            require_minimum_cache, 
+            std::move(oracle), 
+            block_length
+        ),
+        block_start(block_start),
+        block_length(block_length)
+    {}
+
+    const Value_* fetch(Index_ i, Value_* buffer) {
+        auto fetched = this->coordinator->template fetch<accrow_, false, oracle_, subset_>(
+            i, 
+            this->chunk_workspace, 
+            this->cache_workspace, 
+            this->solo, 
+            block_length, 
+            block_start, 
+            block_length
+        );
+        return this->process_dense_slab(fetched, buffer, block_length);
     }
 
 private:
-    const CustomChunkedDenseMatrix* parent;
+    Index_ block_start, block_length;
+};
 
-    typedef typename CustomChunkedMatrixMethods<Index_, false, Chunk_>::Slab Slab;
-    typename Chunk_::Workspace chunk_workspace;
-    TypicalSlabCacheWorkspace<Index_, Slab, use_subsetted_oracle_> cache_workspace;
-    Slab solo;
-
-    void initialize_cache() {
-        }
-    }
-
-public:
-    friend class CustomChunkedMatrixMethods<Index_, false, Chunk_>;
+template<bool accrow_, bool oracle_, bool subset_, typename Value_, typename Index_, typename Chunk_>
+struct DenseIndex : public tatami::DenseExtractor<oracle_, Value_, Index_>, public DenseBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_> {
+    DenseIndex(
+        const ChunkCoordinator<Index_, Chunk_>& coordinator, 
+        size_t cache_size_in_elements, 
+        bool require_minimum_cache, 
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        tatami::VectorPtr<Index_> idx_ptr) :
+        DenseBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_>(
+            coordinator, 
+            cache_size_in_elements, 
+            require_minimum_cache, 
+            std::move(oracle), 
+            idx_ptr->size()
+        ),
+        indices_ptr(std::move(idx_ptr))
+    {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto fetched = parent->template fetch_cache<accrow_, selection_, use_subsetted_oracle_>(i, this);
-        size_t len = tatami::extracted_length<selection_, Index_>(*this); // size_t to avoid overflow.
-        auto ptr = fetched.first->data() + fetched.second * len;
-        std::copy(ptr, ptr + len, buffer);
-        return buffer;
+        auto nidx = indices_ptr->size();
+        auto fetched = this->coordinator->template fetch_index<accrow_, false, oracle_, subset_>(
+            i, 
+            this->chunk_workspace, 
+            this->cache_workspace, 
+            this->solo, 
+            nidx, 
+            *indices_ptr
+        );
+        return this->process_dense_slab(fetched, buffer, nidx);
     }
+
+private:
+    tatami::VectorPtr<Index_> indices_ptr;
 };
 
 }
@@ -671,7 +731,7 @@ public:
  * the first chunk should start at (0, 0), the next chunk should be immediately adjacent in one of the dimensions, and so on.
  * The exception is for chunks at the non-zero boundaries of the matrix dimensions, which may be truncated.
  */
-template<bool use_subsetted_oracle_ = false, typename Value_, typename Index_, typename Chunk_>
+template<bool use_subsetted_oracle_, typename Value_, typename Index_, typename Chunk_>
 class CustomChunkedDenseMatrix : public tatami::Matrix<Value_, Index_> {
 public:
     /**
@@ -685,7 +745,7 @@ public:
      * @param opt Further options for chunked extraction.
      */
     CustomChunkedDenseMatrix(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector<Chunk_> chunks, bool row_major, const CustomChunkedOptions& opt) : 
-        CustomChunkedMatrixMethods<Index_, false, Chunk_>(mat_nrow, mat_ncol, chunk_nrow, chunk_ncol, std::move(chunks), row_major),
+        coordinator(mat_nrow, mat_ncol, chunk_nrow, chunk_ncol, std::move(chunks), row_major),
         cache_size_in_elements(opt.maximum_cache_size / sizeof(typename Chunk_::value_type)),
         require_minimum_cache(opt.require_minimum_cache)
     {
@@ -695,6 +755,7 @@ public:
     }
 
 private:
+    CustomChunkedMatrix_internal::ChunkCoordinator<Index_, Chunk_> coordinator;
     size_t cache_size_in_elements;
     bool require_minimum_cache;
 
@@ -715,46 +776,530 @@ public:
         return static_cast<double>(this->prefer_rows_internal());
     }
 
-    using tatami::Matrix<Value_, Index_>::dense_row;
+    using tatami::Matrix<Value_, Index_>::dense;
 
-    using tatami::Matrix<Value_, Index_>::dense_column;
+    using tatami::Matrix<Value_, Index_>::sparse;
 
-    using tatami::Matrix<Value_, Index_>::sparse_row;
 
-    using tatami::Matrix<Value_, Index_>::sparse_column;
-
-private:
+    /********************
+     *** Myopic dense ***
+     ********************/
 public:
-    std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> > dense_row(const tatami::Options& ) const {
-        auto ptr = new CustomExtractor<true, tatami::DimensionSelectionType::FULL>(this);
-        return std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> >(ptr);
+    template<bool oracle_>
+    std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > dense_internal(
+        bool row, 
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        const tatami::Options&) 
+    const {
+        if (row) {
+            return std::make_unique<CustomChunkedMatrix_internal::DenseFull<true, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                coordinator,
+                cache_size_in_elements,
+                require_minimum_cache,
+                std::move(oracle)
+            );
+        } else {
+            return std::make_unique<CustomChunkedMatrix_internal::DenseFull<false, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                coordinator,
+                cache_size_in_elements,
+                require_minimum_cache,
+                std::move(oracle)
+            );
+        }
     }
 
-    std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const tatami::Options& ) const {
-        auto ptr = new CustomExtractor<true, tatami::DimensionSelectionType::BLOCK>(this, block_start, block_length);
-        return std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> >(ptr);
+    template<bool oracle_>
+    std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > dense_internal(
+        bool row, 
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        Index_ block_start, 
+        Index_ block_length, 
+        const tatami::Options&) 
+    const {
+        if (row) {
+            return std::make_unique<CustomChunkedMatrix_internal::DenseBlock<true, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                coordinator,
+                cache_size_in_elements,
+                require_minimum_cache,
+                std::move(oracle), 
+                block_start, 
+                block_length
+            );
+        } else {
+            return std::make_unique<CustomChunkedMatrix_internal::DenseBlock<false, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                coordinator,
+                cache_size_in_elements,
+                require_minimum_cache,
+                std::move(oracle),
+                block_start, 
+                block_length
+            );
+        }
     }
 
-    std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const tatami::Options& ) const {
-        auto ptr = new CustomExtractor<true, tatami::DimensionSelectionType::INDEX>(this, std::move(indices));
-        return std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> >(ptr);
+    template<bool oracle_>
+    std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > dense_internal(
+        bool row, 
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        tatami::VectorPtr<Index_> indices_ptr, 
+        const tatami::Options&) 
+    const {
+        if (row) {
+            return std::make_unique<CustomChunkedMatrix_internal::DenseIndex<true, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                coordinator,
+                cache_size_in_elements,
+                require_minimum_cache,
+                std::move(oracle), 
+                std::move(indices_ptr)
+            );
+        } else {
+            return std::make_unique<CustomChunkedMatrix_internal::DenseIndex<false, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                coordinator,
+                cache_size_in_elements,
+                require_minimum_cache,
+                std::move(oracle), 
+                std::move(indices_ptr)
+            );
+        }
     }
 
-    std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> > dense_column(const tatami::Options& ) const {
-        auto ptr = new CustomExtractor<false, tatami::DimensionSelectionType::FULL>(this);
-        return std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> >(ptr);
+public:
+    std::unique_ptr<tatami::MyopicDenseExtractor<Value_, Index_> > dense(bool row, const tatami::Options& opt) const {
+        return dense_internal<false>(row, false, opt);
     }
 
-    std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const tatami::Options& ) const {
-        auto ptr = new CustomExtractor<false, tatami::DimensionSelectionType::BLOCK>(this, block_start, block_length);
-        return std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> >(ptr);
+    std::unique_ptr<tatami::MyopicDenseExtractor<Value_, Index_> > dense(bool row, Index_ block_start, Index_ block_length, const tatami::Options& opt) const {
+        return dense_internal<false>(row, false, block_start, block_length, opt);
     }
 
-    std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const tatami::Options& ) const {
-        auto ptr = new CustomExtractor<false, tatami::DimensionSelectionType::INDEX>(this, std::move(indices));
-        return std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> >(ptr);
+    std::unique_ptr<tatami::MyopicDenseExtractor<Value_, Index_> > dense(bool row, tatami::VectorPtr<Index_> indices_ptr, const tatami::Options& opt) const {
+        return dense_internal<false>(row, false, std::move(indices_ptr), opt);
+    }
+
+    /**********************
+     *** Oracular dense ***
+     **********************/
+public:
+    std::unique_ptr<tatami::OracularDenseExtractor<Value_, Index_> > dense(
+        bool row, 
+        std::shared_ptr<tatami::Oracle<Index_> > oracle, 
+        const tatami::Options& opt) 
+    const {
+        return dense_internal<true>(row, std::move(oracle), opt);
+    }
+
+    std::unique_ptr<tatami::OracularDenseExtractor<Value_, Index_> > dense(
+        bool row, 
+        std::shared_ptr<tatami::Oracle<Index_> > oracle, 
+        Index_ block_start, 
+        Index_ block_length, 
+        const tatami::Options& opt) 
+    const {
+        return dense_internal<true>(row, std::move(oracle), block_start, block_length, opt);
+    }
+
+    std::unique_ptr<tatami::OracularDenseExtractor<Value_, Index_> > dense(
+        bool row, 
+        std::shared_ptr<tatami::Oracle<Index_> > oracle, 
+        tatami::VectorPtr<Index_> indices_ptr, 
+        const tatami::Options& opt) 
+    const {
+        return dense_internal<true>(row, std::move(oracle), std::move(indices_ptr), opt);
+    }
+
+    /*********************
+     *** Myopic sparse ***
+     *********************/
+public:
+    std::unique_ptr<tatami::MyopicSparseExtractor<Value_, Index_> > sparse(bool row, const tatami::Options& opt) const {
+        return tatami::FullSparsifiedWrapper<false, Value_, Index_>(dense(row, opt), row ? this->ncol : this->nrow, opt);
+    }
+
+    std::unique_ptr<tatami::MyopicSparseExtractor<Value_, Index_> > sparse(bool row, Index_ block_start, Index_ block_length, const tatami::Options& opt) const {
+        return tatami::BlockSparsifiedWrapper<false, Value_, Index_>(dense(row, block_start, block_length, opt), block_start, block_length, opt);
+    }
+
+    std::unique_ptr<tatami::MyopicSparseExtractor<Value_, Index_> > sparse(bool row, tatami::VectorPtr<Index_> indices_ptr, const tatami::Options& opt) const {
+        auto d = dense(row, indices_ptr, opt);
+        return tatami::IndexSparsifiedWrapper<false, Value_, Index_>(std::move(d), std::move(indices_ptr), opt);
+    }
+
+    /***********************
+     *** Oracular sparse ***
+     ***********************/
+public:
+    std::unique_ptr<tatami::MyopicSparseExtractor<Value_, Index_> > sparse(
+        bool row, 
+        std::shared_ptr<tatami::Oracle<Index_> > oracle, 
+        const tatami::Options& opt)
+    const {
+        return tatami::FullSparsifiedWrapper<true, Value_, Index_>(dense(row, std::move(oracle), opt), row ? this->ncol : this->nrow, opt);
+    }
+
+    std::unique_ptr<tatami::MyopicSparseExtractor<Value_, Index_> > sparse(
+        bool row, 
+        std::shared_ptr<tatami::Oracle<Index_> > oracle, 
+        Index_ block_start, 
+        Index_ block_length, 
+        const tatami::Options& opt) 
+    const {
+        return tatami::BlockSparsifiedWrapper<true, Value_, Index_>(dense(row, std::move(oracle), block_start, block_length, opt), block_start, block_length, opt);
+    }
+
+    std::unique_ptr<tatami::MyopicSparseExtractor<Value_, Index_> > sparse(
+        bool row, 
+        std::shared_ptr<tatami::Oracle<Index_> > oracle, 
+        tatami::VectorPtr<Index_> indices_ptr, 
+        const tatami::Options& opt)
+    const {
+        auto d = dense(row, std::move(oracle), indices_ptr, opt);
+        return tatami::IndexSparsifiedWrapper<true, Value_, Index_>(std::move(d), std::move(indices_ptr), opt);
     }
 };
+
+/**
+ * @cond
+ */
+namespace CustomChunkedMatrix_internal {
+
+template<bool accrow_, bool oracle_, bool subset_, typename Value_, typename Index_, typename Chunk_>
+struct SparseBase {
+protected:
+    const ChunkCoordinator<Index_, Chunk_>& coordinator;
+    typename Chunk_::Workspace chunk_workspace;
+    typedef typename ChunkCoordinator<Index_, Chunk_>::SparseSlab Slab;
+    TypicalSlabCacheWorkspace<oracle_, subset_, Index_, Slab> cache_workspace;
+    bool needs_value, needs_index;
+    Slab solo;
+
+public:
+    SparseBase(
+        const ChunkCoordinator<Index_, Chunk_>& coordinator, 
+        size_t cache_size_in_elements,
+        bool require_minimum_cache,
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        Index_ secondary_length, 
+        const tatami::Options& opt) : 
+        coordinator(coordinator),
+        cache_workspace(
+            coordinator.template get_primary_chunkdim<accrow_>(), 
+            secondary_length, 
+            cache_size_in_elements, 
+            require_minimum_cache, 
+            std::move(oracle)
+        ),
+        needs_value(opt.sparse_extract_value),
+        needs_index(opt.sparse_extract_index)
+    {
+        if (cache_workspace.num_slabs_in_cache == 0) {
+            solo.resize(1);
+        }
+    }
+
+protected:
+    tatami::SparseRange<Value_, Index_> process_sparse_slab(const std::pair<const Slab*, Index_>& fetched, Value_* vbuffer, Index_* ibuffer) {
+        const auto& values = fetched.first->values[fetched.second];
+        const auto& indices = fetched.first->indices[fetched.second];
+
+        if (needs_value) {
+            std::copy(values.begin(), values.end(), vbuffer);
+        } else {
+            vbuffer = NULL;
+        }
+
+        if (needs_index) {
+            std::copy(indices.begin(), indices.end(), ibuffer);
+        } else {
+            ibuffer = NULL;
+        }
+
+        return tatami::SparseRange<Value_, Index_>(values.size(), vbuffer, ibuffer);
+    }
+};
+
+template<bool accrow_, bool oracle_, bool subset_, typename Value_, typename Index_, typename Chunk_>
+struct SparseFull : public tatami::SparseExtractor<oracle_, Value_, Index_>, public SparseBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_> {
+    SparseFull(
+        const ChunkCoordinator<Index_, Chunk_>& coordinator, 
+        size_t cache_size_in_elements,
+        bool require_minimum_cache, 
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        const tatami::Options& opt) : 
+        SparseBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_>(
+            coordinator, 
+            cache_size_in_elements, 
+            require_minimum_cache, 
+            std::move(oracle), 
+            coordinator.template get_secondary_dim<accrow_>(),
+            opt
+        )
+    {}
+
+    tatami::SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+        auto secondary_len = this->coordinator.template get_secondary_dim<accrow_>();
+        auto contents = this->coordinator->template fetch<accrow_, true, oracle_, subset_>(
+            i, 
+            this->chunk_workspace, 
+            this->cache_workspace, 
+            this->solo, 
+            secondary_len, 
+            0, 
+            secondary_len
+        );
+        return this->process_sparse_slab(contents, vbuffer, ibuffer); 
+    }
+};
+
+template<bool accrow_, bool oracle_, bool subset_, typename Value_, typename Index_, typename Chunk_>
+struct SparseBlock : public tatami::SparseExtractor<oracle_, Value_, Index_>, public SparseBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_> {
+    SparseBlock(
+        const ChunkCoordinator<Index_, Chunk_>& coordinator, 
+        size_t cache_size_in_elements,
+        bool require_minimum_cache, 
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        Index_ block_start, 
+        Index_ block_length, 
+        const tatami::Options& opt) :
+        SparseBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_>(
+            coordinator, 
+            cache_size_in_elements, 
+            require_minimum_cache, 
+            std::move(oracle), 
+            block_length, 
+            opt
+        ),
+        block_start(block_start),
+        block_length(block_length)
+    {}
+
+    tatami::SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+        auto contents = this->coordinator->template fetch<accrow_, true, oracle_, subset_>(
+            i, 
+            this->chunk_workspace, 
+            this->cache_workspace, 
+            this->solo, 
+            block_length, 
+            block_start, 
+            block_length
+        );
+        return this->process_sparse_slab(contents, vbuffer, ibuffer);
+    }
+
+private:
+    Index_ block_start, block_length;
+};
+
+template<bool accrow_, bool oracle_, bool subset_, typename Value_, typename Index_, typename Chunk_>
+struct SparseIndex : public tatami::SparseExtractor<oracle_, Value_, Index_>, public SparseBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_> {
+    SparseIndex(
+        const ChunkCoordinator<Index_, Chunk_>& coordinator, 
+        size_t cache_size_in_elements,
+        bool require_minimum_cache, 
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        tatami::VectorPtr<Index_> idx_ptr, 
+        const tatami::Options& opt) :
+        SparseBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_>(
+            coordinator, 
+            cache_size_in_elements, 
+            require_minimum_cache,
+            std::move(oracle), 
+            idx_ptr->size(),
+            opt
+        ),
+        indices_ptr(std::move(idx_ptr))
+    {}
+
+    tatami::SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+        auto contents = this->coordinator->template fetch<accrow_, true, oracle_, subset_>(
+            i, 
+            this->chunk_workspace, 
+            this->cache_workspace, 
+            this->solo, 
+            indices_ptr->size(), 
+            *indices_ptr
+        );
+        return this->process_sparse_slab(contents, vbuffer, ibuffer);
+    }
+
+private:
+    tatami::VectorPtr<Index_> indices_ptr;
+};
+
+template<bool accrow_, bool oracle_, bool subset_, typename Value_, typename Index_, typename Chunk_>
+struct DensifiedBase {
+protected:
+    const ChunkCoordinator<Index_, Chunk_>& coordinator;
+    typename Chunk_::Workspace chunk_workspace;
+    typedef typename ChunkCoordinator<Index_, Chunk_>::SparseSlab Slab;
+    TypicalSlabCacheWorkspace<oracle_, subset_, Index_, Slab> cache_workspace;
+    Slab solo;
+
+public:
+    DensifiedBase(
+        const ChunkCoordinator<Index_, Chunk_>& coordinator, 
+        size_t cache_size_in_elements,
+        bool require_minimum_cache, 
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        Index_ secondary_length) : 
+        coordinator(coordinator),
+        cache_workspace(
+            coordinator.template get_primary_chunkdim<accrow_>(), 
+            secondary_length, 
+            cache_size_in_elements, 
+            require_minimum_cache, 
+            std::move(oracle)
+        )
+    {
+        if (cache_workspace.num_slabs_in_cache == 0) {
+            solo.resize(1);
+        }
+    }
+};
+
+template<bool accrow_, bool oracle_, bool subset_, typename Value_, typename Index_, typename Chunk_>
+struct DensifiedFull : public tatami::DenseExtractor<oracle_, Value_, Index_>, public DensifiedBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_> {
+    DensifiedFull(
+        const ChunkCoordinator<Index_, Chunk_>& coordinator, 
+        size_t cache_size_in_elements,
+        bool require_minimum_cache, 
+        tatami::MaybeOracle<oracle_, Index_> oracle) : 
+        DensifiedBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_>(
+            coordinator, 
+            cache_size_in_elements, 
+            require_minimum_cache, 
+            std::move(oracle),
+            coordinator.template get_secondary_dim<accrow_>()
+        )
+    {}
+
+    const Value_* fetch(Index_ i, Value_* buffer) {
+        auto contents = this->coordinator->template fetch<accrow_, true, oracle_, subset_>(
+            i, 
+            this->chunk_workspace, 
+            this->cache_workspace, 
+            this->solo, 
+            secondary_length, 
+            0, 
+            secondary_length
+        );
+
+        const auto& values = contents.first->values[contents.second];
+        const auto& indices = contents.first->indices[contents.second];
+        std::fill_n(buffer, secondary_length, 0);
+        for (size_t i = 0, end = indices.size(); i < end; ++i) {
+            buffer[indices[i]] = values[i];
+        }
+        return buffer;
+    }
+
+private:
+    Index_ secondary_length;
+};
+
+template<bool accrow_, bool oracle_, bool subset_, typename Value_, typename Index_, typename Chunk_>
+struct DensifiedBlock : public tatami::DenseExtractor<oracle_, Value_, Index_>, public DensifiedBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_> {
+    DensifiedBlock(
+        const ChunkCoordinator<Index_, Chunk_>& coordinator, 
+        size_t cache_size_in_elements,
+        bool require_minimum_cache, 
+        tatami::MaybeOracle<oracle_, Index_> oracle,
+        Index_ block_start, 
+        Index_ block_length) : 
+        DensifiedBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_>(
+            coordinator, 
+            cache_size_in_elements, 
+            require_minimum_cache, 
+            std::move(oracle), 
+            block_length
+        ),
+        block_start(block_start),
+        block_length(block_length)
+    {}
+
+    const Value_* fetch(Index_ i, Value_* buffer) {
+        auto contents = this->coordinator->template fetch<accrow_, true, oracle_, subset_>(
+            i, 
+            this->chunk_workspace, 
+            this->cache_workspace, 
+            this->solo, 
+            block_length, 
+            block_start, 
+            block_length
+        );
+
+        const auto& values = contents.first->values[contents.second];
+        const auto& indices = contents.first->indices[contents.second];
+        std::fill_n(buffer, block_length, 0);
+        for (size_t i = 0, end = indices.size(); i < end; ++i) {
+            buffer[indices[i] - block_start] = values[i];
+        }
+        return buffer;
+    }
+
+private:
+    Index_ block_start, block_length;
+};
+
+template<bool accrow_, bool oracle_, bool subset_, typename Value_, typename Index_, typename Chunk_>
+struct DensifiedIndex : public tatami::SparseExtractor<oracle_, Value_, Index_>, public DensifiedBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_> {
+    DensifiedIndex(
+        const ChunkCoordinator<Index_, Chunk_>& coordinator, 
+        size_t cache_size_in_elements,
+        bool require_minimum_cache, 
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        tatami::VectorPtr<Index_> idx_ptr) :
+        DensifiedBase<accrow_, oracle_, subset_, Value_, Index_, Chunk_>(
+            coordinator, 
+            cache_size_in_elements, 
+            require_minimum_cache, 
+            std::move(oracle), 
+            idx_ptr->size()
+        ),
+        indices_ptr(std::move(idx_ptr))
+    {
+        const auto& indices = *indices_ptr;
+        if (!indices.empty()) {
+            remap_offset = indices.front();
+            size_t alloc = indices.back() - remap_offset + 1;
+            remap.resize(alloc);
+            Index_ counter = 0;
+            for (auto i : indices) {
+                remap[i - remap_offset] = counter;
+                ++counter;
+            }
+        }
+    }
+
+    const Value_* fetch(Index_ i, Value_* buffer) {
+        auto nidx = indices_ptr->size();
+        auto contents = this->coordinator->template fetch<accrow_, true, oracle_, subset_>(
+            i, 
+            this->chunk_workspace, 
+            this->cache_workspace, 
+            this->solo, 
+            nidx, 
+            *indices_ptr
+        );
+
+        const auto& values = contents.first->values[contents.second];
+        const auto& indices = contents.first->indices[contents.second];
+        std::fill_n(buffer, nidx, 0);
+        for (size_t i = 0, end = indices.size(); i < end; ++i) {
+            buffer[remap[indices[i] - remap_offset]] = values[i];
+        }
+        return buffer;
+    }
+
+private:
+    tatami::VectorPtr<Index_> indices_ptr;
+    Index_ remap_offset = 0;
+    std::vector<Index_> remap;
+};
+
+}
+/**
+ * @endcond
+ */
 
 /**
  * @brief Matrix of custom sparse chunks.
@@ -807,7 +1352,7 @@ public:
  * The exception is for chunks at the non-zero boundaries of the matrix dimensions, which may be truncated.
  */
 template<typename Value_, typename Index_, typename Chunk_, bool use_subsetted_oracle_ = false>
-class CustomChunkedSparseMatrix : public tatami::Matrix<Value_, Index_>, public CustomChunkedMatrixMethods<Index_, true, Chunk_> {
+class CustomChunkedSparseMatrix : public tatami::Matrix<Value_, Index_> {
 public:
     /**
      * @param mat_nrow Number of rows in the matrix.
@@ -820,7 +1365,7 @@ public:
      * @param opt Further options for chunked extraction.
      */
     CustomChunkedSparseMatrix(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector<Chunk_> chunks, bool row_major, const CustomChunkedOptions& opt) : 
-        CustomChunkedMatrixMethods<Index_, true, Chunk_>(mat_nrow, mat_ncol, chunk_nrow, chunk_ncol, std::move(chunks), row_major),
+        coordinator(mat_nrow, mat_ncol, chunk_nrow, chunk_ncol, std::move(chunks), row_major),
         cache_size_in_elements(opt.maximum_cache_size / (sizeof(typename Chunk_::value_type) + sizeof(typename Chunk_::index_type))),
         require_minimum_cache(opt.require_minimum_cache)
     {
@@ -830,6 +1375,7 @@ public:
     }
 
 private:
+    CustomChunkedMatrix_internal::ChunkCoordinator<Index_, Chunk_> coordinator;
     size_t cache_size_in_elements;
     bool require_minimum_cache;
 
@@ -858,224 +1404,254 @@ public:
         return 1;
     }
 
-    using tatami::Matrix<Value_, Index_>::dense_row;
+    using tatami::Matrix<Value_, Index_>::dense;
 
-    using tatami::Matrix<Value_, Index_>::dense_column;
+    using tatami::Matrix<Value_, Index_>::sparse;
 
-    using tatami::Matrix<Value_, Index_>::sparse_row;
-
-    using tatami::Matrix<Value_, Index_>::sparse_column;
-
-private:
-    template<bool accrow_, bool sparse_, tatami::DimensionSelectionType selection_>
-    struct CustomExtractorBase : public tatami::Extractor<selection_, sparse_, Value_, Index_> {
-        CustomExtractorBase(const CustomChunkedSparseMatrix* p) : parent(p) {
-            if constexpr(selection_ == tatami::DimensionSelectionType::FULL) {
-                this->full_length = parent->template get_secondary_dim<accrow_>();
-            }
-            initialize_cache();
-        }
-
-        CustomExtractorBase(const CustomChunkedSparseMatrix* p, Index_ bs, Index_ bl) : parent(p) {
-            if constexpr(selection_ == tatami::DimensionSelectionType::BLOCK) {
-                this->block_start = bs;
-                this->block_length = bl;
-            }
-            initialize_cache();
-        }
-
-        CustomExtractorBase(const CustomChunkedSparseMatrix* p, std::vector<Index_> idx) : parent(p) {
-            if constexpr(selection_ == tatami::DimensionSelectionType::INDEX) {
-                indices = std::move(idx);
-                this->index_length = indices.size();
-            }
-            initialize_cache();
-        }
-
-    protected:
-        const CustomChunkedSparseMatrix* parent;
-        typename std::conditional<selection_ == tatami::DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type indices;
-        typename std::conditional<selection_ == tatami::DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type chunk_indices;
-
-        typedef typename CustomChunkedMatrixMethods<Index_, true, Chunk_>::Slab Slab;
-        typename Chunk_::Workspace chunk_workspace;
-        TypicalSlabCacheWorkspace<Index_, Slab, use_subsetted_oracle_> cache_workspace;
-        Slab solo;
-
-        void initialize_cache() {
-            cache_workspace = TypicalSlabCacheWorkspace<Index_, Slab, use_subsetted_oracle_>(
-                accrow_ ? parent->chunk_nrow : parent->chunk_ncol,
-                tatami::extracted_length<selection_, Index_>(*this),
-                parent->cache_size_in_elements,
-                parent->require_minimum_cache
+    /********************
+     *** Myopic dense ***
+     ********************/
+public:
+    template<bool oracle_>
+    std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > dense_internal(
+        bool row,
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        const tatami::Options& opt) 
+    const {
+        if (row) {
+            return std::make_unique<CustomChunkedMatrix_internal::DensifiedFull<true, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                coordinator,
+                cache_size_in_elements,
+                require_minimum_cache,
+                std::move(oracle)
             );
-
-            if (cache_workspace.num_slabs_in_cache == 0) {
-                solo.resize(1);
-            }
+        } else {
+            return std::make_unique<CustomChunkedMatrix_internal::DensifiedFull<false, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                coordinator,
+                cache_size_in_elements,
+                require_minimum_cache,
+                std::move(oracle)
+            );
         }
+    }
 
-    public:
-        const Index_* index_start() const {
-            if constexpr(selection_ == tatami::DimensionSelectionType::INDEX) {
-                return indices.data();
-            } else {
-                return NULL;
-            }
+    template<bool oracle_>
+    std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > dense_internal(
+        bool row,
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        Index_ block_start, 
+        Index_ block_length, 
+        const tatami::Options&) 
+    const {
+        if (row) {
+            return std::make_unique<CustomChunkedMatrix_internal::DensifiedBlock<true, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                coordinator,
+                cache_size_in_elements,
+                require_minimum_cache,
+                std::move(oracle), 
+                block_start, 
+                block_length
+            );
+        } else {
+            return std::make_unique<CustomChunkedMatrix_internal::DenseBlock<false, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                coordinator,
+                cache_size_in_elements,
+                require_minimum_cache,
+                std::move(oracle), 
+                block_start, 
+                block_length
+            );
         }
+    }
 
-        void set_oracle(std::unique_ptr<tatami::Oracle<Index_> > o) {
-            cache_workspace.set_oracle(std::move(o));
-            return;
+    template<bool oracle_>
+    std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > sparse_internal(
+        bool row, 
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        tatami::VectorPtr<Index_> indices_ptr, 
+        const tatami::Options&) 
+    const {
+        if (row) {
+            return std::make_unique<CustomChunkedMatrix_internal::DenseIndex<true, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                coordinator,
+                cache_size_in_elements,
+                require_minimum_cache,
+                std::move(oracle), 
+                std::move(indices_ptr)
+            );
+        } else {
+            return std::make_unique<CustomChunkedMatrix_internal::DenseIndex<false, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                coordinator,
+                cache_size_in_elements,
+                require_minimum_cache,
+                std::move(oracle), 
+                std::move(indices_ptr)
+            );
         }
-
-        friend class CustomChunkedMatrixMethods<Index_, true, Chunk_>;
-    };
-
-private:
-    template<bool accrow_, tatami::DimensionSelectionType selection_>
-    struct CustomDenseExtractor : public CustomExtractorBase<accrow_, false, selection_> {
-    public:
-        template<typename ... Args_>
-        CustomDenseExtractor(const CustomChunkedSparseMatrix* p, Args_&& ... args) : CustomExtractorBase<accrow_, false, selection_>(p, std::forward<Args_>(args)...) {
-            if constexpr(selection_ == tatami::DimensionSelectionType::INDEX) {
-                const auto& indices = this->indices;
-                if (!indices.empty()) {
-                    remap.resize(indices.back() + 1);
-                    for (Index_ i = 0, end = indices.size(); i < end; ++i) {
-                        remap[indices[i]] = i;
-                    }
-                }
-            }
-        }
-
-    public:
-        const Value_* fetch(Index_ i, Value_* buffer) {
-            auto contents = this->parent->template fetch_cache<accrow_, selection_, use_subsetted_oracle_>(i, this);
-            const auto& values = contents.first->values[contents.second];
-            const auto& indices = contents.first->indices[contents.second];
-
-            auto len = tatami::extracted_length<selection_, Index_>(*this);
-            std::fill(buffer, buffer + len, 0);
-
-            if constexpr(selection_ == tatami::DimensionSelectionType::INDEX) {
-                for (size_t i = 0, end = indices.size(); i < end; ++i) {
-                    buffer[remap[indices[i]]] = values[i];
-                }
-            } else {
-                Index_ start = 0;
-                if constexpr(selection_ == tatami::DimensionSelectionType::BLOCK) {
-                    start = this->block_start;
-                }
-
-                for (size_t i = 0, end = indices.size(); i < end; ++i) {
-                    buffer[indices[i] - start] = values[i];
-                }
-            }
-
-            return buffer;
-        }
-
-    private:
-        typename std::conditional<selection_ == tatami::DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type remap;
-    };
+    }
 
 public:
-    std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> > dense_row(const tatami::Options&) const {
-        auto ptr = new CustomDenseExtractor<true, tatami::DimensionSelectionType::FULL>(this);
-        return std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> >(ptr);
+    std::unique_ptr<tatami::MyopicDenseExtractor<Value_, Index_> > dense(bool row, const tatami::Options& opt) const {
+        return dense_internal<false>(row, false, opt);
     }
 
-    std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const tatami::Options&) const {
-        auto ptr = new CustomDenseExtractor<true, tatami::DimensionSelectionType::BLOCK>(this, block_start, block_length);
-        return std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> >(ptr);
+    std::unique_ptr<tatami::MyopicDenseExtractor<Value_, Index_> > dense(bool row, Index_ block_start, Index_ block_length, const tatami::Options& opt) const {
+        return dense_internal<false>(row, false, block_start, block_length, opt);
     }
 
-    std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const tatami::Options&) const {
-        auto ptr = new CustomDenseExtractor<true, tatami::DimensionSelectionType::INDEX>(this, std::move(indices));
-        return std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> >(ptr);
+    std::unique_ptr<tatami::MyopicDenseExtractor<Value_, Index_> > dense(bool row, tatami::VectorPtr<Index_> indices_ptr, const tatami::Options& opt) const {
+        return dense_internal<false>(row, false, std::move(indices_ptr), opt);
     }
 
-    std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> > dense_column(const tatami::Options&) const {
-        auto ptr = new CustomDenseExtractor<false, tatami::DimensionSelectionType::FULL>(this);
-        return std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> >(ptr);
+    /***********************
+     *** Oracular dense ***
+     ***********************/
+public:
+    std::unique_ptr<tatami::OracularDenseExtractor<Value_, Index_> > dense(
+        bool row, 
+        std::shared_ptr<tatami::Oracle<Index_> > oracle, 
+        const tatami::Options& opt) 
+    const {
+        return dense_internal<true>(row, std::move(oracle), opt);
     }
 
-    std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const tatami::Options&) const {
-        auto ptr = new CustomDenseExtractor<false, tatami::DimensionSelectionType::BLOCK>(this, block_start, block_length);
-        return std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> >(ptr);
+    std::unique_ptr<tatami::OracularDenseExtractor<Value_, Index_> > dense(
+        bool row, 
+        std::shared_ptr<tatami::Oracle<Index_> > oracle, 
+        Index_ block_start, 
+        Index_ block_length, 
+        const tatami::Options& opt) 
+    const {
+        return dense_internal<true>(row, std::move(oracle), block_start, block_length, opt);
     }
 
-    std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const tatami::Options&) const {
-        auto ptr = new CustomDenseExtractor<false, tatami::DimensionSelectionType::INDEX>(this, std::move(indices));
-        return std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> >(ptr);
+    std::unique_ptr<tatami::OracularDenseExtractor<Value_, Index_> > dense(
+        bool row, 
+        std::shared_ptr<tatami::Oracle<Index_> > oracle, 
+        tatami::VectorPtr<Index_> indices_ptr, 
+        const tatami::Options& opt) 
+    const {
+        return dense_internal<true>(row, std::move(oracle), std::move(indices_ptr), opt);
     }
 
-private:
-    template<bool accrow_, tatami::DimensionSelectionType selection_>
-    struct CustomSparseExtractor : public CustomExtractorBase<accrow_, true, selection_> {
-    public:
-        template<typename ... Args_>
-        CustomSparseExtractor(const CustomChunkedSparseMatrix* p, bool ev, bool ei, Args_&& ... args) : 
-            CustomExtractorBase<accrow_, true, selection_>(p, std::forward<Args_>(args)...), 
-            extract_value(ev), 
-            extract_index(ei)
-        {}
-
-    public:
-        tatami::SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-            auto contents = this->parent->template fetch_cache<accrow_, selection_, use_subsetted_oracle_>(i, this);
-            const auto& values = contents.first->values[contents.second];
-            const auto& indices = contents.first->indices[contents.second];
-
-            if (extract_value) {
-                std::copy(values.begin(), values.end(), vbuffer);
-            } else {
-                vbuffer = NULL;
-            }
-
-            if (extract_index) {
-                std::copy(indices.begin(), indices.end(), ibuffer);
-            } else {
-                ibuffer = NULL;
-            }
-
-            return tatami::SparseRange<Value_, Index_>(values.size(), vbuffer, ibuffer);
+    /*********************
+     *** Myopic sparse ***
+     *********************/
+public:
+    template<bool oracle_>
+    std::unique_ptr<tatami::SparseExtractor<oracle_, Value_, Index_> > sparse_internal(
+        bool row, 
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        const tatami::Options& opt) 
+    const {
+        if (row) {
+            return std::make_unique<CustomChunkedMatrix_internal::SparseFull<true, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                this, 
+                std::move(oracle), 
+                opt
+            );
+        } else {
+            return std::make_unique<CustomChunkedMatrix_internal::SparseFull<false, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                this, 
+                std::move(oracle), 
+                opt
+            );
         }
+    }
 
-    private:
-        bool extract_value, extract_index;
-    };
+    template<bool oracle_>
+    std::unique_ptr<tatami::SparseExtractor<oracle_, Value_, Index_> > sparse_internal(
+        bool row, 
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        Index_ block_start, 
+        Index_ block_length, 
+        const tatami::Options& opt) 
+    const {
+        if (row) {
+            return std::make_unique<CustomChunkedMatrix_internal::SparseBlock<true, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                this, 
+                std::move(oracle), 
+                block_start, 
+                block_length, 
+                opt
+            );
+        } else {
+            return std::make_unique<CustomChunkedMatrix_internal::SparseBlock<false, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                this, 
+                std::move(oracle), 
+                block_start, 
+                block_length, 
+                opt
+            );
+        }
+    }
+
+    template<bool oracle_>
+    std::unique_ptr<tatami::SparseExtractor<oracle_, Value_, Index_> > sparse_internal(
+        bool row, 
+        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        tatami::VectorPtr<Index_> indices_ptr, 
+        const tatami::Options& opt) 
+    const {
+        if (row) {
+            return std::make_unique<CustomChunkedMatrix_internal::SparseIndex<true, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                this, 
+                std::move(oracle),
+                std::move(indices_ptr), 
+                opt
+            );
+        } else {
+            return std::make_unique<CustomChunkedMatrix_internal::SparseIndex<false, oracle_, use_subsetted_oracle_, Value_, Index_, Chunk_> >(
+                this, 
+                std::move(oracle),
+                std::move(indices_ptr), 
+                opt
+            );
+        }
+    }
 
 public:
-    std::unique_ptr<tatami::FullSparseExtractor<Value_, Index_> > sparse_row(const tatami::Options& opt) const {
-        auto ptr = new CustomSparseExtractor<true, tatami::DimensionSelectionType::FULL>(this, opt.sparse_extract_value, opt.sparse_extract_index);
-        return std::unique_ptr<tatami::FullSparseExtractor<Value_, Index_> >(ptr);
+    std::unique_ptr<tatami::MyopicSparseExtractor<Value_, Index_> > sparse(bool row, const tatami::Options& opt) const {
+        return sparse_internal<false>(row, false, opt);
     }
 
-    std::unique_ptr<tatami::BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const tatami::Options& opt) const {
-        auto ptr = new CustomSparseExtractor<true, tatami::DimensionSelectionType::BLOCK>(this, opt.sparse_extract_value, opt.sparse_extract_index, block_start, block_length);
-        return std::unique_ptr<tatami::BlockSparseExtractor<Value_, Index_> >(ptr);
+    std::unique_ptr<tatami::MyopicSparseExtractor<Value_, Index_> > sparse(bool row, Index_ block_start, Index_ block_length, const tatami::Options& opt) const {
+        return sparse_internal<false>(row, false, block_start, block_length, opt);
     }
 
-    std::unique_ptr<tatami::IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const tatami::Options& opt) const {
-        auto ptr = new CustomSparseExtractor<true, tatami::DimensionSelectionType::INDEX>(this, opt.sparse_extract_value, opt.sparse_extract_index, std::move(indices));
-        return std::unique_ptr<tatami::IndexSparseExtractor<Value_, Index_> >(ptr);
+    std::unique_ptr<tatami::MyopicSparseExtractor<Value_, Index_> > sparse(bool row, tatami::VectorPtr<Index_> indices_ptr, const tatami::Options& opt) const {
+        return sparse_internal<false>(row, false, std::move(indices_ptr), opt);
     }
 
-    std::unique_ptr<tatami::FullSparseExtractor<Value_, Index_> > sparse_column(const tatami::Options& opt) const {
-        auto ptr = new CustomSparseExtractor<false, tatami::DimensionSelectionType::FULL>(this, opt.sparse_extract_value, opt.sparse_extract_index);
-        return std::unique_ptr<tatami::FullSparseExtractor<Value_, Index_> >(ptr);
+    /***********************
+     *** Oracular sparse ***
+     ***********************/
+public:
+    std::unique_ptr<tatami::OracularSparseExtractor<Value_, Index_> > sparse(
+        bool row, 
+        std::shared_ptr<tatami::Oracle<Index_> > oracle, 
+        const tatami::Options& opt) 
+    const {
+        return sparse_internal<true>(row, std::move(oracle), opt);
     }
 
-    std::unique_ptr<tatami::BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const tatami::Options& opt) const {
-        auto ptr = new CustomSparseExtractor<false, tatami::DimensionSelectionType::BLOCK>(this, opt.sparse_extract_value, opt.sparse_extract_index, block_start, block_length);
-        return std::unique_ptr<tatami::BlockSparseExtractor<Value_, Index_> >(ptr);
+    std::unique_ptr<tatami::OracularSparseExtractor<Value_, Index_> > sparse(
+        bool row, 
+        std::shared_ptr<tatami::Oracle<Index_> > oracle, 
+        Index_ block_start, 
+        Index_ block_length, 
+        const tatami::Options& opt) 
+    const {
+        return sparse_internal<true>(row, std::move(oracle), block_start, block_length, opt);
     }
 
-    std::unique_ptr<tatami::IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const tatami::Options& opt) const {
-        auto ptr = new CustomSparseExtractor<false, tatami::DimensionSelectionType::INDEX>(this, opt.sparse_extract_value, opt.sparse_extract_index, std::move(indices));
-        return std::unique_ptr<tatami::IndexSparseExtractor<Value_, Index_> >(ptr);
+    std::unique_ptr<tatami::OracularSparseExtractor<Value_, Index_> > sparse(
+        bool row, 
+        std::shared_ptr<tatami::Oracle<Index_> > oracle, 
+        tatami::VectorPtr<Index_> indices_ptr, 
+        const tatami::Options& opt) 
+    const {
+        return sparse_internal<true>(row, std::move(oracle), std::move(indices_ptr), opt);
     }
 };
 
