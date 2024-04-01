@@ -107,12 +107,12 @@ public:
      */
     typedef typename std::conditional<
         oracle_,
-        LruSlabCache<Index_, Slab_>,
         typename std::conditional<
             subset_, 
             SubsettedOracleSlabCache<Index_, Index_, Slab_>, 
             OracleSlabCache<Index_, Index_, Slab_> 
-        >::type
+        >::type,
+        LruSlabCache<Index_, Slab_>
     >::type SlabCache;
 
     /**
