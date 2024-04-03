@@ -26,6 +26,9 @@ private:
 
     typedef typename Blob_::value_type value_type;
 
+    typedef typename Blob_::Workspace Workspace;
+
+public:
     template<bool accrow_>
     auto get_primary_chunkdim() const {
         if constexpr(accrow_) {
@@ -167,8 +170,11 @@ public:
 
 struct MockBlob {
     MockBlob(std::vector<double> c, size_t nr, size_t nc) : data(std::move(c)), NR(nr), NC(nc) {}
+    MockBlob() = default;
 
     typedef double value_type;
+
+    typedef std::vector<double> Workspace;
 
     static constexpr bool row_major = true;
 
@@ -215,7 +221,7 @@ struct MockSimpleDenseChunk {
 
     /**
      * Temporary workspace for extracting data from the chunk.
-     * This will be re-used in multiple `extract()` calls for the same or even different chunks.
+     * One instance of this workspace will be re-used in multiple `extract()` calls for the same or even different chunks.
      */
     typedef std::vector<value_type> Workspace;
 
@@ -231,13 +237,13 @@ public:
      */
     // You can construct this however you like, I don't care.
     MockSimpleDenseChunk() = default;
-    MockSimpleDenseChunk(std::vector<double> c, size_t nr, size_t nc) : core(MockDenseChunk_internal::Blob(std::move(c), nr, nc)) {}
+    MockSimpleDenseChunk(std::vector<double> c, size_t nr, size_t nc) : core(MockDenseChunk_internal::MockBlob(std::move(c), nr, nc)) {}
     /**
      * @endcond
      */
 
 private:
-    MockDenseChunk_internal::Core<MockDenseChunk_internal::Blob> core;
+    MockDenseChunk_internal::Core<MockDenseChunk_internal::MockBlob> core;
 
 public:
     /**
@@ -265,7 +271,7 @@ public:
      */
     template<bool accrow_, typename Index_>
     void extract(Index_ secondary_start, Index_ secondary_length, Workspace& work, value_type* output, size_t stride) const {
-        core.template extract_block<accrow_>(0, core.template get_primary_chunkdim<accrow_>(), secondary_start, secondary_length, work, output, stride);
+        core.template extract<accrow_, Index_>(0, core.template get_primary_chunkdim<accrow_>(), secondary_start, secondary_length, work, output, stride);
     }
 
     /**
@@ -291,7 +297,7 @@ public:
      */
     template<bool accrow_, typename Index_>
     void extract(const std::vector<Index_>& secondary_indices, Workspace& work, value_type* output, size_t stride) const {
-        core.template extract_block<accrow_>(0, core.template get_primary_chunkdim<accrow_>(), secondary_indices, work, output, stride);
+        core.template extract<accrow_, Index_>(0, core.template get_primary_chunkdim<accrow_>(), secondary_indices, work, output, stride);
     }
 };
 
@@ -321,7 +327,7 @@ struct SimpleDenseChunkWrapper {
      */
     typedef typename Blob_::value_type value_type;
 
-    typedef std::vector<value_type> Workspace;
+    typedef typename Blob_::Workspace Workspace;
 
     static constexpr bool use_subset = false;
 
@@ -341,12 +347,12 @@ public:
      */
     template<bool accrow_, typename Index_>
     void extract(Index_ secondary_start, Index_ secondary_length, Workspace& work, value_type* output, size_t stride) const {
-        core.template extract_block<accrow_>(0, core.template get_primary_chunkdim<accrow_>(), secondary_start, secondary_length, work, output, stride);
+        core.template extract<accrow_>(0, core.template get_primary_chunkdim<accrow_>(), secondary_start, secondary_length, work, output, stride);
     }
 
     template<bool accrow_, typename Index_>
     void extract(const std::vector<Index_>& secondary_indices, Workspace& work, value_type* output, size_t stride) const {
-        core.template extract_block<accrow_>(0, core.template get_primary_chunkdim<accrow_>(), secondary_indices, work, output, stride);
+        core.template extract<accrow_>(0, core.template get_primary_chunkdim<accrow_>(), secondary_indices, work, output, stride);
     }
     /**
      * @endcond
@@ -367,12 +373,13 @@ public:
 struct MockSubsetDenseChunk {
     /**
      * Type of the value stored in this chunk.
+     * Implementations can use any numeric type. 
      */
     typedef double value_type;
 
     /**
      * Workspace for chunk extraction.
-     * This can be used in multiple `fetch()` calls, possibly across different chunks.
+     * One instance of this workspace will be re-used in multiple `extract()` calls for the same or even different chunks.
      */
     typedef std::vector<value_type> Workspace;
 
@@ -387,13 +394,13 @@ public:
      * @cond
      */
     MockSubsetDenseChunk() = default;
-    MockSubsetDenseChunk(std::vector<double> c, size_t nr, size_t nc) : core(MockDenseChunk_internal::Blob(std::move(c), nr, nc)) {}
+    MockSubsetDenseChunk(std::vector<double> c, size_t nr, size_t nc) : core(MockDenseChunk_internal::MockBlob(std::move(c), nr, nc)) {}
     /**
      * @endcond
      */
 
 private:
-    MockDenseChunk_internal::Core<MockDenseChunk_internal::Blob> core;
+    MockDenseChunk_internal::Core<MockDenseChunk_internal::MockBlob> core;
 
 public:
     /**
@@ -425,7 +432,7 @@ public:
      */
     template<bool accrow_, typename Index_>
     void extract(Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, Workspace& work, value_type* output, size_t stride) const {
-        core.template extract_block<accrow_>(primary_start, primary_length, secondary_start, secondary_length, work, output, stride);
+        core.template extract<accrow_>(primary_start, primary_length, secondary_start, secondary_length, work, output, stride);
     }
 
     /**
@@ -455,7 +462,7 @@ public:
      */
     template<bool accrow_, typename Index_>
     void extract(Index_ primary_start, Index_ primary_length, const std::vector<Index_>& secondary_indices, Workspace& work, value_type* output, size_t stride) const {
-        core.template extract_block<accrow_>(primary_start, primary_length, secondary_indices, work, output, stride);
+        core.template extract<accrow_>(primary_start, primary_length, secondary_indices, work, output, stride);
     }
 
 public:
@@ -486,7 +493,7 @@ public:
      */
     template<bool accrow_, typename Index_>
     void extract(const std::vector<Index_>& primary_indices, Index_ secondary_start, Index_ secondary_length, Workspace& work, value_type* output, size_t stride) const {
-        core.template extract_block<accrow_>(primary_indices, secondary_start, secondary_length, work, output, stride);
+        core.template extract<accrow_>(primary_indices, secondary_start, secondary_length, work, output, stride);
     }
 
     /**
@@ -514,7 +521,7 @@ public:
      */
     template<bool accrow_, typename Index_>
     void extract(const std::vector<Index_>& primary_indices, const std::vector<Index_>& secondary_indices, Workspace& work, value_type* output, size_t stride) const {
-        core.template extract_block<accrow_>(primary_indices, secondary_indices, work, output, stride);
+        core.template extract<accrow_>(primary_indices, secondary_indices, work, output, stride);
     }
 };
 
