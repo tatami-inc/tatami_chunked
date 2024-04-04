@@ -36,7 +36,6 @@ template<bool row_major_>
 struct MockSparseBlob {
     typedef int index_type;
     typedef double value_type;
-    typedef bool Workspace;
     static constexpr bool row_major = row_major_;
 
 private:
