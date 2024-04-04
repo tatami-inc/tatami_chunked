@@ -7,7 +7,6 @@
 template<bool row_major_>
 struct MockDenseBlob {
     typedef double value_type;
-    typedef std::vector<double> Workspace;
     static constexpr bool row_major = row_major_;
 
 private:

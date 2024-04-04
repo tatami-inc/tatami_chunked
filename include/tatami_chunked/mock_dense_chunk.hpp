@@ -26,7 +26,7 @@ private:
 
     typedef typename Blob_::value_type value_type;
 
-    typedef typename Blob_::Workspace Workspace;
+    typedef std::vector<double> Workspace;
 
 public:
     template<bool accrow_>
@@ -173,8 +173,6 @@ struct MockBlob {
     MockBlob() = default;
 
     typedef double value_type;
-
-    typedef std::vector<double> Workspace;
 
     static constexpr bool row_major = true;
 
@@ -327,7 +325,7 @@ struct SimpleDenseChunkWrapper {
      */
     typedef typename Blob_::value_type value_type;
 
-    typedef typename Blob_::Workspace Workspace;
+    typedef std::vector<value_type> Workspace;
 
     static constexpr bool use_subset = false;
 
