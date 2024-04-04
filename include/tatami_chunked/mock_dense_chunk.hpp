@@ -220,6 +220,7 @@ struct MockSimpleDenseChunk {
     /**
      * Temporary workspace for extracting data from the chunk.
      * One instance of this workspace will be re-used in multiple `extract()` calls for the same or even different chunks.
+     * Implementations may use any data structure here.
      */
     typedef std::vector<value_type> Workspace;
 
@@ -246,7 +247,7 @@ private:
 public:
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the chunk.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedDenseMatrix`.
      *
      * @param secondary_start Index of the first element on the secondary dimension to be extracted.
      * If `accrow_ = true`, this is the first column, otherwise it is the first row.
@@ -274,7 +275,7 @@ public:
 
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the chunk.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedDenseMatrix`.
      *
      * @param secondary_indices Indices of the elements on the secondary dimension to be extracted.
      * If `accrow_ = true`, these are column indices, otherwise these are row indices.
@@ -378,6 +379,7 @@ struct MockSubsetDenseChunk {
     /**
      * Workspace for chunk extraction.
      * One instance of this workspace will be re-used in multiple `extract()` calls for the same or even different chunks.
+     * Implementations may use any data structure here.
      */
     typedef std::vector<value_type> Workspace;
 
@@ -403,7 +405,7 @@ private:
 public:
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the chunk.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedDenseMatrix`.
      *
      * @param primary_start Index of the first element on the primary dimension to be extracted.
      * If `accrow_ = true`, this is the first row, otherwise it is the first column.
@@ -435,7 +437,7 @@ public:
 
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the chunk.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedDenseMatrix`.
      *
      * @param primary_start Index of the first element on the primary dimension to be extracted.
      * If `accrow_ = true`, this is the first row, otherwise it is the first column.
@@ -466,7 +468,7 @@ public:
 public:
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the chunk.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedDenseMatrix`.
      *
      * @param primary_indices Indices of the elements on the primary dimension to be extracted.
      * If `accrow_ = true`, these are row indices, otherwise these are column indices.
@@ -496,7 +498,7 @@ public:
 
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the chunk.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedDenseMatrix`.
      *
      * @param primary_indices Indices of the elements on the primary dimension to be extracted.
      * If `accrow_ = true`, these are row indices, otherwise these are column indices.
@@ -522,7 +524,6 @@ public:
         core.template extract<accrow_>(primary_indices, secondary_indices, work, output, stride);
     }
 };
-
 
 }
 
