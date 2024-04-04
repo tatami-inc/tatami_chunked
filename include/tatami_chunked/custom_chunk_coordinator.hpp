@@ -438,26 +438,26 @@ public:
         Index_ primary_chunkdim = get_primary_chunkdim<accrow_>();
         size_t alloc = sparse_ ? primary_chunkdim : primary_chunkdim * static_cast<size_t>(secondary_length); // use size_t to avoid integer overflow.
 
-        if constexpr(!oracle_) {
+        if (cache_workspace.num_slabs_in_cache == 0) {
+            if constexpr(oracle_) {
+                i = cache_workspace.cache.next();
+            }
+            fetch_block(i / primary_chunkdim, i % primary_chunkdim, 1, solo);
+            return std::make_pair(&solo, static_cast<Index_>(0));
+
+        } else if constexpr(!oracle_) {
             auto chunk_id = i / primary_chunkdim;
             auto chunk_offset = i % primary_chunkdim;
-
-            if (cache_workspace.num_slabs_in_cache == 0) {
-                fetch_block(chunk_id, chunk_offset, 1, solo);
-                return std::make_pair(&solo, static_cast<Index_>(0));
-
-            } else {
-                auto& cache = cache_workspace.cache.find(
-                    chunk_id,
-                    /* create = */ [&]() -> Slab {
-                        return Slab(alloc);
-                    },
-                    /* populate = */ [&](Index_ id, Slab& slab) -> void {
-                        fetch_block(id, 0, get_primary_chunkdim<accrow_>(id), slab);
-                    }
-                );
-                return std::make_pair(&cache, chunk_offset);
-            }
+            auto& cache = cache_workspace.cache.find(
+                chunk_id,
+                /* create = */ [&]() -> Slab {
+                    return Slab(alloc);
+                },
+                /* populate = */ [&](Index_ id, Slab& slab) -> void {
+                    fetch_block(id, 0, get_primary_chunkdim<accrow_>(id), slab);
+                }
+            );
+            return std::make_pair(&cache, chunk_offset);
 
         } else if constexpr(Chunk_::use_subset) {
             auto out = cache_workspace.cache.next(
