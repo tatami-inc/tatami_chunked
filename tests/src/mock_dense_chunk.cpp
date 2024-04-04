@@ -44,7 +44,7 @@ protected:
 
     static inline std::pair<int, int> last_params;
 
-    void assemble(const std::pair<int, int>& params) {
+    static void assemble(const std::pair<int, int>& params) {
         if (ref && last_params == params) {
             return;
         }
@@ -250,7 +250,7 @@ protected:
 
     static inline std::pair<int, int> last_params;
 
-    void assemble(const std::pair<int, int>& params) {
+    static void assemble(const std::pair<int, int>& params) {
         if (ref && last_params == params) {
             return;
         }
