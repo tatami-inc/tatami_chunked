@@ -16,29 +16,6 @@
 namespace tatami_chunked {
 
 /**
- * @brief Typical options for cached slab extraction.
- *
- * These options are usually relevant to any matrix representation that stores its data in a regular grid of rectangular chunks.
- * We define a "slab" as the set of chunks required to read a row/column (or a contiguous block/indexed subset thereof) during a `tatami::DenseExtractor::fetch()` or `tatami::SparseExtractor::Fetch()` call.
- * We aim to cache one or more complete slabs; this means that we can re-use the cached chunks when adjacent rows/columns are requested, rather than re-reading them (e.g., from disk).
- */
-struct TypicalSlabCacheOptions {
-    /**
-     * Size of the in-memory cache in bytes.
-     * Larger caches improve access speed at the cost of memory usage.
-     * Small values may be ignored if `require_minimum_cache` is `true`.
-     */
-    size_t maximum_cache_size = 100000000;
-
-    /**
-     * Whether to automatically enforce a minimum size for the cache, regardless of `maximum_cache_size`.
-     * This minimum is chosen to ensure that a single slab can be retained in memory,
-     * so that the same chunks are not repeatedly re-read when iterating over consecutive rows/columns of the matrix.
-     */
-    bool require_minimum_cache = true;
-};
-
-/**
  * @brief Workspace for typical slab extraction.
  *
  * Implements a workspace to initialize the slab caches (i.e., the `LruSlabCache` and `OracleSlabCache`) for extraction from a chunked matrix representation.
@@ -64,9 +41,8 @@ struct TypicalSlabCacheWorkspace {
      * For example, if we were iterating through rows of a matrix, `primary_length` would be the number of rows spanned by each slab.
      * @param secondary_length Length of the secondary dimension of each slab.
      * This is the dimension that is not the primary, e.g., if we were iterating through matrix rows, the `secondary_length` would be the number of columns spanned by each slab.
-     * @param cache_size_in_elements Total size of the cache in terms of the number of elements.
-     * This is usually derived from `TypicalSlabCacheOptions::maximum_cache_size` and the size of each element.
-     * @param require_minimum_cache Whether to enforce a minimum size of the cache for efficient extraction, see `TypicalSlabCacheOptions` for details.
+     * @param cache_size_in_elements Total size of the cache, in terms of the number of elements.
+     * @param require_minimum_cache Whether to enforce a minimum size of the cache for efficient extraction of consecutive dimension elements, even if it exceeds `cache_size_in_cache`.
      * @param oracle Oracle containing the predicted accesses.
      * Only relevant if `oracle_ = true`, otherwise a bool should be passed in (which is ignored).
      */
