@@ -5,7 +5,7 @@
 
 /**
  * @file mock_dense_chunk.hpp
- * @brief Dense chunk interface to use in a `CustomChunkedDenseMatrix`.
+ * @brief Dense chunk interface to use in a `CustomDenseChunkedMatrix`.
  */
 
 namespace tatami_chunked {
@@ -202,9 +202,9 @@ public:
  */
 
 /**
- * @brief Mock a simple dense chunk for a `CustomChunkedDenseMatrix`.
+ * @brief Mock a simple dense chunk for a `CustomDenseChunkedMatrix`.
  *
- * Mock a simple dense chunk for use inside a `CustomChunkedDenseMatrix`.
+ * Mock a simple dense chunk for use inside a `CustomDenseChunkedMatrix`.
  * Each chunk should represent a 2-dimensional array of numeric values.
  * The interface is "simple" as extraction of any data involves realization of the entire blob along the primary dimension
  * (i.e., the dimension used to create instances of the various `tatami::DenseExtractor` classes),
@@ -247,7 +247,7 @@ private:
 public:
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedDenseMatrix`.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomDenseChunkedMatrix`.
      *
      * @param secondary_start Index of the first element on the secondary dimension to be extracted.
      * If `accrow_ = true`, this is the first column, otherwise it is the first row.
@@ -263,10 +263,10 @@ public:
      * If `accrow_ = true`, we would extract data for all rows and a block of columns `[secondary_start, secondary_start + secondary_length)`;
      * conversely, if `accrow_ = false`, we would extract data for all columns and a block of rows.
      * For a primary dimension index `p` and secondary dimension index `secondary_start + i`, the value from the chunk should be stored in `output[p * stride + i]`.
-     * The `stride` option allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedDenseMatrix`.
+     * The `stride` option allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomDenseChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomChunkedDenseMatrix`.
+     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomDenseChunkedMatrix`.
      */
     template<bool accrow_, typename Index_>
     void extract(Index_ secondary_start, Index_ secondary_length, Workspace& work, value_type* output, size_t stride) const {
@@ -275,7 +275,7 @@ public:
 
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedDenseMatrix`.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomDenseChunkedMatrix`.
      *
      * @param secondary_indices Indices of the elements on the secondary dimension to be extracted.
      * If `accrow_ = true`, these are column indices, otherwise these are row indices.
@@ -289,10 +289,10 @@ public:
      * If `accrow_ = true`, we would extract all rows and a subset of columns in `secondary_indices`;
      * conversely, if `accrow_ = false`, we would extract data for all columns and a subset of rows.
      * For a primary dimension index `p` and secondary dimension index `secondary_indices[i]`, the value from the chunk should be stored in `output[p * stride + i]`.
-     * The `stride` option allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedDenseMatrix`.
+     * The `stride` option allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomDenseChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomChunkedDenseMatrix`.
+     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomDenseChunkedMatrix`.
      */
     template<bool accrow_, typename Index_>
     void extract(const std::vector<Index_>& secondary_indices, Workspace& work, value_type* output, size_t stride) const {
@@ -301,9 +301,9 @@ public:
 };
 
 /**
- * @brief Create a dense chunk for a `CustomChunkedDenseMatrix`.
+ * @brief Create a dense chunk for a `CustomDenseChunkedMatrix`.
  *
- * Wraps a dense blob in a simple chunk interface for use inside a `CustomChunkedDenseMatrix`.
+ * Wraps a dense blob in a simple chunk interface for use inside a `CustomDenseChunkedMatrix`.
  * Each blob should hold a (possibly compressed) 2-dimensional array of numeric values.
  * The wrapper satisfies the `MockSimpleDenseChunk` interface, but is even simpler;
  * extraction of any data involves realization of the entire blob, with no optimization for subsets of interest along either dimension.
@@ -359,9 +359,9 @@ public:
 };
 
 /**
- * @brief Mock a subsettable dense chunk for a `CustomChunkedDenseMatrix`.
+ * @brief Mock a subsettable dense chunk for a `CustomDenseChunkedMatrix`.
  *
- * Mock a subsettable dense chunk for use inside a `CustomChunkedDenseMatrix`.
+ * Mock a subsettable dense chunk for use inside a `CustomDenseChunkedMatrix`.
  * Each chunk should represent a (possible compressed) 2-dimensional array of numeric values.
  * The interface is smarter as it only extracts elements of interest along the primary dimension
  * (i.e., the dimension used to create instances of the various `tatami::DenseExtractor` classes).
@@ -405,7 +405,7 @@ private:
 public:
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedDenseMatrix`.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomDenseChunkedMatrix`.
      *
      * @param primary_start Index of the first element on the primary dimension to be extracted.
      * If `accrow_ = true`, this is the first row, otherwise it is the first column.
@@ -428,7 +428,7 @@ public:
      * This layout allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomChunkedDenseMatrix`.
+     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomDenseChunkedMatrix`.
      */
     template<bool accrow_, typename Index_>
     void extract(Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, Workspace& work, value_type* output, size_t stride) const {
@@ -437,7 +437,7 @@ public:
 
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedDenseMatrix`.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomDenseChunkedMatrix`.
      *
      * @param primary_start Index of the first element on the primary dimension to be extracted.
      * If `accrow_ = true`, this is the first row, otherwise it is the first column.
@@ -458,7 +458,7 @@ public:
      * This layout allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomChunkedDenseMatrix`.
+     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomDenseChunkedMatrix`.
      */
     template<bool accrow_, typename Index_>
     void extract(Index_ primary_start, Index_ primary_length, const std::vector<Index_>& secondary_indices, Workspace& work, value_type* output, size_t stride) const {
@@ -468,7 +468,7 @@ public:
 public:
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedDenseMatrix`.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomDenseChunkedMatrix`.
      *
      * @param primary_indices Indices of the elements on the primary dimension to be extracted.
      * If `accrow_ = true`, these are row indices, otherwise these are column indices.
@@ -489,7 +489,7 @@ public:
      * This layout allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomChunkedDenseMatrix`.
+     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomDenseChunkedMatrix`.
      */
     template<bool accrow_, typename Index_>
     void extract(const std::vector<Index_>& primary_indices, Index_ secondary_start, Index_ secondary_length, Workspace& work, value_type* output, size_t stride) const {
@@ -498,7 +498,7 @@ public:
 
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedDenseMatrix`.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomDenseChunkedMatrix`.
      *
      * @param primary_indices Indices of the elements on the primary dimension to be extracted.
      * If `accrow_ = true`, these are row indices, otherwise these are column indices.
@@ -517,7 +517,7 @@ public:
      * This layout allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomChunkedDenseMatrix`.
+     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomDenseChunkedMatrix`.
      */
     template<bool accrow_, typename Index_>
     void extract(const std::vector<Index_>& primary_indices, const std::vector<Index_>& secondary_indices, Workspace& work, value_type* output, size_t stride) const {

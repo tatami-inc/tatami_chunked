@@ -5,7 +5,7 @@
 
 /**
  * @file mock_sparse_chunk.hpp
- * @brief Sparse chunk interface to use in a `CustomChunkedSparseMatrix`.
+ * @brief Sparse chunk interface to use in a `CustomSparseChunkedMatrix`.
  */
 
 namespace tatami_chunked {
@@ -336,9 +336,9 @@ public:
  */
 
 /**
- * @brief Mock a simple sparse chunk for a `CustomChunkedSparseMatrix`.
+ * @brief Mock a simple sparse chunk for a `CustomSparseChunkedMatrix`.
  *
- * Mock a simple sparse chunk for use inside a `CustomChunkedSparseMatrix`.
+ * Mock a simple sparse chunk for use inside a `CustomSparseChunkedMatrix`.
  * Each chunk should represent a 2-dimensional array of numeric values.
  * The interface is "simple" as extraction of any data involves realization of the entire blob along the primary dimension
  * (i.e., the dimension used to create instances of the various `tatami::SparseExtractor` classes),
@@ -398,7 +398,7 @@ private:
 public:
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedSparseMatrix`.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomSparseChunkedMatrix`.
      *
      * @param secondary_start Index of the first element on the secondary dimension to be extracted.
      * If `accrow_ = true`, this is the first column, otherwise it is the first row.
@@ -417,10 +417,10 @@ public:
      * For a non-zero entry in primary dimension index `p`, the value from the chunk should be appended to `output_values[p]`.
      * The secondary index for this non-zero entry should be increased by `shift` and then appended to `output_indices[p]`.
      * The method should maintain a strictly increasing order among the appended secondary indices.
-     * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomChunkedSparseMatrix`.
+     * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomChunkedSparseMatrix`.
+     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomSparseChunkedMatrix`.
      */
     template<bool accrow_, typename Index_>
     void extract(
@@ -445,7 +445,7 @@ public:
 
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedSparseMatrix`.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomSparseChunkedMatrix`.
      *
      * @param secondary_indices Indices of the elements on the secondary dimension to be extracted.
      * If `accrow_ = true`, these are column indices, otherwise these are row indices.
@@ -462,10 +462,10 @@ public:
      * For a non-zero entry in primary dimension index `p`, the value from the chunk should be appended to `output_values[p]`.
      * The secondary index for this non-zero entry should be increased by `shift` and then appended to `output_indices[p]`.
      * The method should maintain a strictly increasing order among the appended secondary indices.
-     * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomChunkedSparseMatrix`.
+     * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomChunkedSparseMatrix`.
+     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomSparseChunkedMatrix`.
      */
     template<bool accrow_, typename Index_>
     void extract(
@@ -488,9 +488,9 @@ public:
 };
 
 /**
- * @brief Create a sparse chunk for a `CustomChunkedSparseMatrix`.
+ * @brief Create a sparse chunk for a `CustomSparseChunkedMatrix`.
  *
- * Wraps a sparse blob in a simple chunk interface for use inside a `CustomChunkedSparseMatrix`.
+ * Wraps a sparse blob in a simple chunk interface for use inside a `CustomSparseChunkedMatrix`.
  * Each blob should hold a (possibly compressed) 2-dimensional sparse array of numeric values.
  * The wrapper satisfies the `MockSimpleSparseChunk` interface, but is even simpler;
  * extraction of any data involves realization of the entire blob, with no optimization for subsets of interest along either dimension.
@@ -584,9 +584,9 @@ public:
 };
 
 /**
- * @brief Mock a subsettable sparse chunk for a `CustomChunkedSparseMatrix`.
+ * @brief Mock a subsettable sparse chunk for a `CustomSparseChunkedMatrix`.
  *
- * Mock a subsettable sparse chunk for use inside a `CustomChunkedSparseMatrix`.
+ * Mock a subsettable sparse chunk for use inside a `CustomSparseChunkedMatrix`.
  * Each chunk should represent a (possible compressed) 2-dimensional array of numeric values.
  * The interface is smarter as it only extracts elements of interest along the primary dimension
  * (i.e., the dimension used to create instances of the various `tatami::SparseExtractor` classes).
@@ -647,7 +647,7 @@ private:
 public:
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedSparseMatrix`.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomSparseChunkedMatrix`.
      *
      * @param primary_start Index of the first element on the primary dimension to be extracted.
      * If `accrow_ = true`, this is the first row, otherwise it is the first column.
@@ -671,10 +671,10 @@ public:
      * For a non-zero entry in primary dimension index `p`, the value from the chunk should be appended to `output_values[p]`.
      * The secondary index for this non-zero entry should be increased by `shift` and then appended to `output_indices[p]`.
      * The method should maintain a strictly increasing order among the appended secondary indices.
-     * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomChunkedSparseMatrix`.
+     * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomChunkedSparseMatrix`.
+     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomSparseChunkedMatrix`.
      */
     template<bool accrow_, typename Index_>
     void extract(
@@ -701,7 +701,7 @@ public:
 
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedSparseMatrix`.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomSparseChunkedMatrix`.
      *
      * @param primary_start Index of the first element on the primary dimension to be extracted.
      * If `accrow_ = true`, this is the first row, otherwise it is the first column.
@@ -723,10 +723,10 @@ public:
      * For a non-zero entry in primary dimension index `p`, the value from the chunk should be appended to `output_values[p]`.
      * The secondary index for this non-zero entry should be increased by `shift` and then appended to `output_indices[p]`.
      * The method should maintain a strictly increasing order among the appended secondary indices.
-     * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomChunkedSparseMatrix`.
+     * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomChunkedSparseMatrix`.
+     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomSparseChunkedMatrix`.
      */
     template<bool accrow_, typename Index_>
     void extract(
@@ -752,7 +752,7 @@ public:
 public:
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedSparseMatrix`.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomSparseChunkedMatrix`.
      *
      * @param primary_indices Indices of the elements on the primary dimension to be extracted.
      * If `accrow_ = true`, these are row indices, otherwise these are column indices.
@@ -774,10 +774,10 @@ public:
      * For a non-zero entry in primary dimension index `p`, the value from the chunk should be appended to `output_values[p]`.
      * The secondary index for this non-zero entry should be increased by `shift` and then appended to `output_indices[p]`.
      * The method should maintain a strictly increasing order among the appended secondary indices.
-     * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomChunkedSparseMatrix`.
+     * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomChunkedSparseMatrix`.
+     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomSparseChunkedMatrix`.
      */
     template<bool accrow_, typename Index_>
     void extract(
@@ -802,7 +802,7 @@ public:
 
     /**
      * @tparam accrow_ Whether the rows are the primary dimension.
-     * @tparam Index_ Integer type for the row/column indices of the `CustomChunkedSparseMatrix`.
+     * @tparam Index_ Integer type for the row/column indices of the `CustomSparseChunkedMatrix`.
      *
      * @param primary_indices Indices of the elements on the primary dimension to be extracted.
      * If `accrow_ = true`, these are row indices, otherwise these are column indices.
@@ -822,10 +822,10 @@ public:
      * For a non-zero entry in primary dimension index `p`, the value from the chunk should be appended to `output_values[p]`.
      * The secondary index for this non-zero entry should be increased by `shift` and then appended to `output_indices[p]`.
      * The method should maintain a strictly increasing order among the appended secondary indices.
-     * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomChunkedSparseMatrix`.
+     * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomChunkedSparseMatrix`.
+     * Only the `accrow_` template parameter is explicitly passed when this method is called by `CustomSparseChunkedMatrix`.
      */
     template<bool accrow_, typename Index_>
     void extract(
