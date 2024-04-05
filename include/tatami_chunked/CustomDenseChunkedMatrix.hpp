@@ -260,7 +260,7 @@ public:
     /********************
      *** Myopic dense ***
      ********************/
-public:
+private:
     template<bool oracle_>
     std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > dense_internal(
         bool row, 

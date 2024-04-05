@@ -193,7 +193,7 @@ private:
 
 public:
     /**
-     * @param oracle Pointer to an `tatami::Oracle` to be used for predictions.
+     * @param ora Pointer to an `tatami::Oracle` to be used for predictions.
      * @param per_iteration Maximum number of predictions to make per iteration.
      * @param num_slabs Maximum number of slabs to store.
      */

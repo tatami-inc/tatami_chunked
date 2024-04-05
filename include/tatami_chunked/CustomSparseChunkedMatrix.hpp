@@ -457,7 +457,7 @@ public:
     /********************
      *** Myopic dense ***
      ********************/
-public:
+private:
     template<bool oracle_>
     std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > dense_internal(
         bool row,
@@ -583,7 +583,7 @@ public:
     /*********************
      *** Myopic sparse ***
      *********************/
-public:
+private:
     template<bool oracle_>
     std::unique_ptr<tatami::SparseExtractor<oracle_, Value_, Index_> > sparse_internal(
         bool row, 
