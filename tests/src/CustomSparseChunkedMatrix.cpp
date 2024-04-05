@@ -2,12 +2,13 @@
 #include "tatami/tatami.hpp"
 #include "tatami_test/tatami_test.hpp"
 
-#include "tatami_chunked/CustomDenseChunkedMatrix.hpp"
-#include "tatami_chunked/mock_dense_chunk.hpp"
+#include "tatami_chunked/CustomSparseChunkedMatrix.hpp"
+#include "tatami_chunked/mock_sparse_chunk.hpp"
 
 #include "mock_blob.h"
 
-struct CustomDenseChunkedMatrixCore {
+class CustomSparseChunkedMatrixCore {
+public:
     typedef std::tuple<
         std::pair<int, int>, // matrix dimensions
         std::pair<int, int>, // chunk dimensions
@@ -18,9 +19,9 @@ struct CustomDenseChunkedMatrixCore {
 protected:
     inline static std::unique_ptr<tatami::Matrix<double, int> > ref, mock_mat, simple_mat, subset_mat;
 
-    typedef tatami_chunked::SimpleDenseChunkWrapper<MockDenseBlob<true> > DChunk;
-    typedef tatami_chunked::MockSimpleDenseChunk MockSimple;
-    typedef tatami_chunked::MockSubsetDenseChunk MockSubset;
+    typedef tatami_chunked::SimpleSparseChunkWrapper<MockSparseBlob<false> > SChunk;
+    typedef tatami_chunked::MockSimpleSparseChunk MockSimple;
+    typedef tatami_chunked::MockSubsetSparseChunk MockSubset;
 
     inline static SimulationParameters last_params;
 
@@ -35,13 +36,13 @@ protected:
         bool rowmajor = std::get<2>(params);
         size_t cache_size = std::get<3>(params);
 
-        auto full = tatami_test::simulate_dense_vector<double>(matdim.first * matdim.second, -10, 10, 
+        auto full = tatami_test::simulate_sparse_compressed<double>(matdim.second, matdim.first, 0.1, -10, 10, 
             /* seed = */ matdim.first * matdim.second + chunkdim.first * chunkdim.second + rowmajor + cache_size);
-        ref.reset(new tatami::DenseRowMatrix<double, int>(matdim.first, matdim.second, std::move(full)));
+        ref.reset(new tatami::CompressedSparseColumnMatrix<double, int>(matdim.first, matdim.second, std::move(full.value), std::move(full.index), std::move(full.ptr)));
 
         auto num_chunks_per_row = (matdim.second + chunkdim.second - 1) / chunkdim.second;
         auto num_chunks_per_column = (matdim.first + chunkdim.first - 1) / chunkdim.first;
-        std::vector<DChunk> mock_chunks(num_chunks_per_row * num_chunks_per_column);
+        std::vector<SChunk> mock_chunks(num_chunks_per_row * num_chunks_per_column);
         std::vector<MockSimple> simple_chunks(mock_chunks.size());
         std::vector<MockSubset> subset_chunks(mock_chunks.size());
 
@@ -55,35 +56,66 @@ protected:
                 auto rend = std::min(rstart + chunkdim.first, matdim.first);
                 auto rlen = rend - rstart;
 
-                std::vector<double> contents(chunkdim.second * chunkdim.first);
-                auto ccptr = contents.data();
-                auto ext = ref->dense_row(cstart, clen);
-                for (int r2 = 0; r2 < rlen; ++r2) {
-                    auto ptr = ext->fetch(r2 + rstart, ccptr);
-                    tatami::copy_n(ptr, clen, ccptr);
-                    ccptr += chunkdim.second;
+                auto offset = rowmajor ? (r * num_chunks_per_row + c) : (c * num_chunks_per_column + r);
+
+                {
+                    std::vector<double> vcontents;
+                    std::vector<int> icontents;
+                    std::vector<size_t> pcontents(1);
+
+                    auto ext = ref->sparse_column(rstart, rlen);
+                    std::vector<double> vbuffer(rlen);
+                    std::vector<int> ibuffer(rlen);
+
+                    for (int c2 = 0; c2 < clen; ++c2) {
+                        auto range = ext->fetch(c2 + cstart, vbuffer.data(), ibuffer.data());
+                        vcontents.insert(vcontents.end(), range.value, range.value + range.number);
+                        for (int i = 0; i < range.number; ++i) {
+                            icontents.push_back(range.index[i] - rstart);
+                        }
+                        pcontents.push_back(pcontents.back() + range.number);
+                    }
+
+                    mock_chunks[offset] = SChunk(MockSparseBlob<false>(rlen, clen, std::move(vcontents), std::move(icontents), std::move(pcontents)));
                 }
 
-                auto offset = rowmajor ? (r * num_chunks_per_row + c) : (c * num_chunks_per_column + r);
-                mock_chunks[offset] = DChunk(MockDenseBlob<true>(chunkdim.first, chunkdim.second, contents));
-                simple_chunks[offset] = MockSimple(contents, chunkdim.first, chunkdim.second);
-                subset_chunks[offset] = MockSubset(std::move(contents), chunkdim.first, chunkdim.second);
+                {
+                    std::vector<double> vcontents;
+                    std::vector<int> icontents;
+                    std::vector<size_t> pcontents(1);
+
+                    auto ext = ref->sparse_row(cstart, clen);
+                    std::vector<double> vbuffer(clen);
+                    std::vector<int> ibuffer(clen);
+
+                    for (int r2 = 0; r2 < rlen; ++r2) {
+                        auto range = ext->fetch(r2 + rstart, vbuffer.data(), ibuffer.data());
+                        vcontents.insert(vcontents.end(), range.value, range.value + range.number);
+                        for (int i = 0; i < range.number; ++i) {
+                            icontents.push_back(range.index[i] - cstart);
+                        }
+                        pcontents.push_back(pcontents.back() + range.number);
+                    }
+
+                    simple_chunks[offset] = MockSimple(rlen, clen, vcontents, icontents, pcontents);
+                    subset_chunks[offset] = MockSubset(rlen, clen, std::move(vcontents), std::move(icontents), std::move(pcontents));
+                }
             }
         }
 
-        tatami_chunked::CustomDenseChunkedOptions opt;
+        tatami_chunked::CustomSparseChunkedOptions opt;
         opt.maximum_cache_size = cache_size;
         opt.require_minimum_cache = (cache_size > 0);
 
-        mock_mat.reset(new tatami_chunked::CustomDenseChunkedMatrix<double, int, DChunk>(
+        mock_mat.reset(new tatami_chunked::CustomSparseChunkedMatrix<double, int, SChunk>(
             matdim.first, matdim.second, chunkdim.first, chunkdim.second, std::move(mock_chunks), rowmajor, opt
         ));
 
-        simple_mat.reset(new tatami_chunked::CustomDenseChunkedMatrix<double, int, MockSimple>(
+        simple_mat.reset(new tatami_chunked::CustomSparseChunkedMatrix<double, int, MockSimple>(
             matdim.first, matdim.second, chunkdim.first, chunkdim.second, std::move(simple_chunks), rowmajor, opt
         ));
 
-        subset_mat.reset(new tatami_chunked::CustomDenseChunkedMatrix<double, int, MockSubset>(
+        subset_mat.reset(new tatami_chunked::CustomSparseChunkedMatrix<double, int, MockSubset>(
             matdim.first, matdim.second, chunkdim.first, chunkdim.second, std::move(subset_chunks), rowmajor, opt
         ));
     }
@@ -91,16 +123,16 @@ protected:
 
 /*******************************************************/
 
-class CustomDenseChunkedMatrixFullTest :
-    public ::testing::TestWithParam<std::tuple<typename CustomDenseChunkedMatrixCore::SimulationParameters, tatami_test::StandardTestAccessParameters> >, 
-    public CustomDenseChunkedMatrixCore {
+class CustomSparseChunkedMatrixFullTest :
+    public ::testing::TestWithParam<std::tuple<typename CustomSparseChunkedMatrixCore::SimulationParameters, tatami_test::StandardTestAccessParameters> >, 
+    public CustomSparseChunkedMatrixCore {
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
     }
 };
 
-TEST_P(CustomDenseChunkedMatrixFullTest, Basic) {
+TEST_P(CustomSparseChunkedMatrixFullTest, Basic) {
     auto params = tatami_test::convert_access_parameters(std::get<1>(GetParam()));
     tatami_test::test_full_access(params, mock_mat.get(), ref.get());
     tatami_test::test_full_access(params, simple_mat.get(), ref.get());
@@ -108,8 +140,8 @@ TEST_P(CustomDenseChunkedMatrixFullTest, Basic) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    CustomDenseChunkedMatrix,
-    CustomDenseChunkedMatrixFullTest,
+    CustomSparseChunkedMatrix,
+    CustomSparseChunkedMatrixFullTest,
     ::testing::Combine(
         ::testing::Combine(
             ::testing::Values( // matrix dimensions
@@ -133,16 +165,16 @@ INSTANTIATE_TEST_SUITE_P(
 
 /*******************************************************/
 
-class CustomDenseChunkedMatrixBlockTest :
-    public ::testing::TestWithParam<std::tuple<typename CustomDenseChunkedMatrixCore::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, double> > >, 
-    public CustomDenseChunkedMatrixCore {
+class CustomSparseChunkedMatrixBlockTest :
+    public ::testing::TestWithParam<std::tuple<typename CustomSparseChunkedMatrixCore::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, double> > >, 
+    public CustomSparseChunkedMatrixCore {
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
     }
 };
 
-TEST_P(CustomDenseChunkedMatrixBlockTest, Basic) {
+TEST_P(CustomSparseChunkedMatrixBlockTest, Basic) {
     auto tparam = GetParam();
     auto params = tatami_test::convert_access_parameters(std::get<1>(tparam));
     auto block = std::get<2>(tparam);
@@ -154,8 +186,8 @@ TEST_P(CustomDenseChunkedMatrixBlockTest, Basic) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    CustomDenseChunkedMatrix,
-    CustomDenseChunkedMatrixBlockTest,
+    CustomSparseChunkedMatrix,
+    CustomSparseChunkedMatrixBlockTest,
     ::testing::Combine(
         ::testing::Combine(
             ::testing::Values( // matrix dimensions
@@ -185,16 +217,16 @@ INSTANTIATE_TEST_SUITE_P(
 
 /*******************************************************/
 
-class CustomDenseChunkedMatrixIndexTest :
-    public ::testing::TestWithParam<std::tuple<typename CustomDenseChunkedMatrixCore::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, int> > >, 
-    public CustomDenseChunkedMatrixCore {
+class CustomSparseChunkedMatrixIndexTest :
+    public ::testing::TestWithParam<std::tuple<typename CustomSparseChunkedMatrixCore::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, int> > >, 
+    public CustomSparseChunkedMatrixCore {
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
     }
 };
 
-TEST_P(CustomDenseChunkedMatrixIndexTest, Basic) {
+TEST_P(CustomSparseChunkedMatrixIndexTest, Basic) {
     auto tparam = GetParam();
     auto params = tatami_test::convert_access_parameters(std::get<1>(tparam));
     auto index = std::get<2>(tparam);
@@ -206,8 +238,8 @@ TEST_P(CustomDenseChunkedMatrixIndexTest, Basic) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    CustomDenseChunkedMatrix,
-    CustomDenseChunkedMatrixIndexTest,
+    CustomSparseChunkedMatrix,
+    CustomSparseChunkedMatrixIndexTest,
     ::testing::Combine(
         ::testing::Combine(
             ::testing::Values( // matrix dimensions

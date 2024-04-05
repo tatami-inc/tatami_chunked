@@ -308,8 +308,8 @@ private:
                     } else {
                         chunk.template extract<accrow_>(from, len, chunk_workspace, tmp_slab.values, tmp_slab.indices, secondary_start_pos);
                     }
-                    final_slab.values.insert(final_slab.values.end(), tmp_slab.values[chunk_offset].begin(), tmp_slab.values[chunk_offset].end());
-                    final_slab.indices.insert(final_slab.indices.end(), tmp_slab.indices[chunk_offset].begin(), tmp_slab.indices[chunk_offset].end());
+                    final_slab.values[0].insert(final_slab.values[0].end(), tmp_slab.values[chunk_offset].begin(), tmp_slab.values[chunk_offset].end());
+                    final_slab.indices[0].insert(final_slab.indices[0].end(), tmp_slab.indices[chunk_offset].begin(), tmp_slab.indices[chunk_offset].end());
                 }
             );
         } else {
@@ -354,8 +354,8 @@ private:
                     } else {
                         chunk.template extract<accrow_>(chunk_indices, chunk_workspace, tmp_slab.values, tmp_slab.indices, secondary_start_pos);
                     }
-                    final_slab.values.insert(final_slab.values.end(), tmp_slab.values[chunk_offset].begin(), tmp_slab.values[chunk_offset].end());
-                    final_slab.indices.insert(final_slab.indices.end(), tmp_slab.indices[chunk_offset].begin(), tmp_slab.indices[chunk_offset].end());
+                    final_slab.values[0].insert(final_slab.values[0].end(), tmp_slab.values[chunk_offset].begin(), tmp_slab.values[chunk_offset].end());
+                    final_slab.indices[0].insert(final_slab.indices[0].end(), tmp_slab.indices[chunk_offset].begin(), tmp_slab.indices[chunk_offset].end());
                 }
             );
         } else {

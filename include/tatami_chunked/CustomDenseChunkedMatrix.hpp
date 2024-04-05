@@ -2,6 +2,7 @@
 #define TATAMI_CHUNKED_CUSTOM_DENSE_CHUNKED_MATRIX_HPP
 
 #include "tatami/tatami.hpp"
+#include "typical_slab_cache.hpp"
 #include "custom_chunk_coordinator.hpp"
 
 #include <vector>
@@ -191,7 +192,7 @@ private:
  *
  * @tparam Value_ Numeric type for the matrix value.
  * @tparam Index_ Integer type for the row/column indices.
- * @tparam Chunk_ Class of the chunk, following either the `MockSimpleDenseChunk` or `MockSubsetDenseChunk` interfaces.
+ * @tparam Chunk_ Class of the chunk, implementing either the `MockSimpleDenseChunk` or `MockSubsetDenseChunk` interfaces.
  *
  * Implements a `Matrix` subclass where data is contained in dense rectangular chunks.
  * These chunks are typically compressed in some manner to reduce memory usage; on access, each chunk is decompressed and the desired values are extracted.
