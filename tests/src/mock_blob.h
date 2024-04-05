@@ -1,11 +1,11 @@
-#ifndef TATAMI_TEST_CHUNKED_MOCK_HPP
-#define TATAMI_TEST_CHUNKED_MOCK_HPP
+#ifndef TATAMI_TEST_MOCK_BLOB_HPP
+#define TATAMI_TEST_MOCK_BLOB_HPP
 
 #include <vector>
 #include <algorithm>
 
 template<bool row_major_>
-struct MockDenseChunk {
+struct MockDenseBlob {
     typedef double value_type;
     static constexpr bool row_major = row_major_;
 
@@ -14,9 +14,9 @@ private:
     std::vector<double> contents;
 
 public:
-    MockDenseChunk() = default;
+    MockDenseBlob() = default;
 
-    MockDenseChunk(int nr, int nc, std::vector<double> c) : nrows(nr), ncols(nc), contents(std::move(c)) {}
+    MockDenseBlob(int nr, int nc, std::vector<double> c) : nrows(nr), ncols(nc), contents(std::move(c)) {}
 
     int nrow() const {
         return nrows;
@@ -33,7 +33,7 @@ public:
 };
 
 template<bool row_major_>
-struct MockSparseChunk {
+struct MockSparseBlob {
     typedef int index_type;
     typedef double value_type;
     static constexpr bool row_major = row_major_;
@@ -45,9 +45,9 @@ private:
     std::vector<size_t> pcontents;
 
 public:
-    MockSparseChunk() = default;
+    MockSparseBlob() = default;
 
-    MockSparseChunk(int nr, int nc, std::vector<double> v, std::vector<int> i, std::vector<size_t> p) : 
+    MockSparseBlob(int nr, int nc, std::vector<double> v, std::vector<int> i, std::vector<size_t> p) : 
         nrows(nr), ncols(nc), vcontents(std::move(v)), icontents(std::move(i)), pcontents(std::move(p)) {}
 
     int nrow() const {

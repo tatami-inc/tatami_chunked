@@ -75,7 +75,7 @@ TEST_F(SubsettedOracleSlabCacheTest, Consecutive) {
         99
     };
 
-    tatami_chunked::SubsettedOracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedOracle<int> >(predictions.data(), predictions.size()), 100, 3);
+    tatami_chunked::SubsettedOracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedViewOracle<int> >(predictions.data(), predictions.size()), 100, 3);
     int counter = 0;
     int nalloc = 0;
 
@@ -197,7 +197,7 @@ TEST_F(SubsettedOracleSlabCacheTest, FullFallback) {
         45
     };
 
-    tatami_chunked::SubsettedOracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedOracle<int> >(predictions.data(), predictions.size()), 100, 3);
+    tatami_chunked::SubsettedOracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedViewOracle<int> >(predictions.data(), predictions.size()), 100, 3);
     int counter = 0;
     int nalloc = 0;
 
@@ -332,8 +332,8 @@ TEST_P(SubsettedOracleSlabCacheStressTest, Stressed) {
     }
 
     // Using limited predictions to force more cache interations.
-    tatami_chunked::SubsettedOracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedOracle<int> >(predictions.data(), predictions.size()), max_pred, cache_size);
-    tatami_chunked::OracleSlabCache<unsigned char, int, TestSlab> simple(std::make_unique<tatami::FixedOracle<int> >(predictions.data(), predictions.size()), max_pred, cache_size);
+    tatami_chunked::SubsettedOracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedViewOracle<int> >(predictions.data(), predictions.size()), max_pred, cache_size);
+    tatami_chunked::OracleSlabCache<unsigned char, int, TestSlab> simple(std::make_unique<tatami::FixedViewOracle<int> >(predictions.data(), predictions.size()), max_pred, cache_size);
     int counter = 0, scounter = 0;
     int nalloc = 0, snalloc = 0;
 
@@ -373,7 +373,7 @@ TEST_P(SubsettedOracleSlabCacheStressTest, Stressed) {
         } 
     }
 
-    EXPECT_EQ(nalloc, std::min({ 5, max_pred, cache_size }));
+    EXPECT_EQ(nalloc, std::min({ 5, cache_size }));
     EXPECT_EQ(nalloc, snalloc);
 }
 

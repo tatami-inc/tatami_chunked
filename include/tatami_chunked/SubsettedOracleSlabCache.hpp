@@ -36,9 +36,10 @@ enum class SubsetSelection : char { FULL, BLOCK, INDEX };
  */
 template<typename Id_, typename Index_, class Slab_> 
 class SubsettedOracleSlabCache {
-    tatami::OracleStream<Index_> prediction_stream;
+    std::shared_ptr<const tatami::Oracle<Index_> > oracle;
     size_t max_predictions;
     size_t max_slabs;
+    size_t counter = 0;
 
 public:
     /**
@@ -192,13 +193,13 @@ private:
 
 public:
     /**
-     * @param oracle Pointer to an `tatami::Oracle` to be used for predictions.
+     * @param ora Pointer to an `tatami::Oracle` to be used for predictions.
      * @param per_iteration Maximum number of predictions to make per iteration.
      * @param num_slabs Maximum number of slabs to store.
      */
-    SubsettedOracleSlabCache(std::unique_ptr<tatami::Oracle<Index_> > oracle, size_t per_iteration, size_t num_slabs) :
-        prediction_stream(std::move(oracle)), 
-        max_predictions(per_iteration),
+    SubsettedOracleSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > ora, [[maybe_unused]] size_t per_iteration, size_t num_slabs) :
+        oracle(std::move(ora)), 
+        max_predictions(oracle->total()),
         max_slabs(num_slabs)
     {
         slab_exists.reserve(max_slabs);
@@ -235,7 +236,19 @@ private:
 
 public:
     /**
+     * This method is intended to be called when `num_slabs = 0`, to provide callers with the oracle predictions for non-cached extraction of data.
+     * Calls to this method should not be intermingled with calls to its overload below; the latter should only be called when `max_slabs > 0`.
+     *
+     * @return The next prediction from the oracle.
+     */
+    Index_ next() {
+        return oracle->get(counter++);
+    }
+
+public:
+    /**
      * Fetch the next slab according to the stream of predictions provided by the `tatami::Oracle`.
+     * This method should only be called if `num_slabs > 0` in the constructor; otherwise, no slabs are actually available and cannot be returned.
      *
      * @tparam Ifunction_ Function to identify the slab containing each predicted row/column.
      * @tparam Cfunction_ Function to create a new slab.
@@ -305,11 +318,8 @@ public:
         } else {
             // This is the first run, so we can freely allocate here.
             size_t used = 0;
-            for (size_t p = 0; p < max_predictions; ++p) {
-                Index_ current;
-                if (!prediction_stream.next(current)) {
-                    break;
-                }
+            while (counter < max_predictions) {
+                Index_ current = next();
 
                 auto slab_id = identify(current);
                 auto curslab = slab_id.first;
@@ -334,7 +344,7 @@ public:
                     ++used;
 
                 } else {
-                    prediction_stream.back();
+                    --counter;
                     break;
                 }
             }
@@ -352,11 +362,8 @@ public:
         past_exists.swap(slab_exists);
         slab_exists.clear();
 
-        for (size_t p = 0; p < max_predictions; ++p) {
-            Index_ current;
-            if (!prediction_stream.next(current)) {
-                break;
-            }
+        while (counter < max_predictions) {
+            Index_ current = next();
 
             auto slab_id = identify(current);
             auto curslab = slab_id.first;
@@ -411,7 +418,7 @@ public:
                 ++used;
 
             } else {
-                prediction_stream.back();
+                --counter;
                 break;
             }
         }

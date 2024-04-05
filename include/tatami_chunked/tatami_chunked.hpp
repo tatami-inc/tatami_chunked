@@ -6,11 +6,13 @@
  * @brief Umbrella header for chunked tatami matrices.
  */
 
-#include "CustomChunkedMatrix.hpp"
 #include "LruSlabCache.hpp"
 #include "OracleSlabCache.hpp"
-#include "simple_chunk_wrappers.hpp"
 #include "typical_slab_cache.hpp"
+#include "mock_dense_chunk.hpp"
+#include "mock_sparse_chunk.hpp"
+#include "CustomDenseChunkedMatrix.hpp"
+#include "CustomSparseChunkedMatrix.hpp"
 
 /**
  * @namespace tatami_chunked
