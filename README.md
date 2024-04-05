@@ -21,14 +21,14 @@ We typically want to load and cache an entire slab at once, ensuring that future
 The **tatami_chunked** library provides the `LruSlabCache` and `OracleSlabCache` classes to facilitate caching of the slabs in `tatami::Matrix` extractors.
 The `TypicalSlabCacheWorkspace` class allows developers to easily switch between caching strategies, depending on whether an oracle is provided to predict the future access pattern.
 
-The `CustomChunkedDenseMatrix` and `CustomChunkedSparseMatrix` classes implement the `tatami::Matrix` interface on top of a matrix of custom chunks.
-These classes automatically perform slab caching given a set of options including the maximum cache size (see the `CustomChunkedOptions` class).
+The `CustomDenseChunkedMatrix` and `CustomSparseChunkedMatrix` classes implement the `tatami::Matrix` interface on top of a matrix of custom chunks.
+These classes automatically perform slab caching given a set of options including the maximum cache size (see the `CustomDenseChunkedOptions` and `CustomSparseChunkedOptions` classes).
 Developers can use this to quickly create matrix representations with arbitrary chunk compression schemes that can reduce the memory footprint, e.g., DEFLATE, run length encodings.
 Obviously, this comes at the cost of speed whereby the chunks must be unpacked to extract the relevant data -
 developers are expected to define an appropriate extraction method for dense/sparse chunks.
 
 In simple cases, chunk extraction is "atomic", i.e., the entire chunk must be unpacked to extract a subset of data.
-Developers can then use the `SimpleDenseChunkWrapper` and `SimpleSparseChunkWrapper` to wrap these simple chunks for use in the `CustomChunked*Matrix` classes.
+Developers can then use the `SimpleDenseChunkWrapper` and `SimpleSparseChunkWrapper` to wrap these simple chunks for use in the `Custom*ChunkedMatrix` classes.
 These wrappers only need a method to inflate the entire chunk; they will automatically handle the extraction of the desired block/subset from each chunk.
 (More advanced developers may prefer to write their own extraction methods that avoid inflating the entire chunk, in which case these wrappers are not necessary.)
 
