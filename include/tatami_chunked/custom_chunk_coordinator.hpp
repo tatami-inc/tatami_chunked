@@ -224,7 +224,7 @@ private:
                 extract(chunk, from, len);
             }
 
-            secondary_start_pos += len;
+            secondary_start_pos += to; // yes, this is deliberate; '+ to' means that either we add 'secondary_chunkdim' or set it to 'secondary_block_end', the latter of which avoids overflow.
             offset += increment;
         }
     }
@@ -343,9 +343,7 @@ private:
         Slab& final_slab,
         ChunkWork& chunk_workspace) 
     const {
-        if constexpr(Chunk_::use_subset) {
-            ;
-        } else if constexpr(sparse_) {
+        if constexpr(sparse_) {
             flush_slab(final_slab);
             extract_secondary_index<accrow_>(
                 chunk_id, secondary_indices, chunk_indices_buffer,

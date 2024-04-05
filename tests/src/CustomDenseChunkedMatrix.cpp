@@ -131,146 +131,106 @@ INSTANTIATE_TEST_SUITE_P(
     )
 );
 
-///*******************************************************/
-//
-//class CustomDenseChunkedMatrixBlockTest :
-//    public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<int, int>, bool, bool, int, std::pair<double, double> > >, 
-//    public CustomDenseChunkedMatrixMethods {};
-//
-//TEST_P(CustomDenseChunkedMatrixBlockTest, Row) {
-//    auto param = GetParam();
-//    auto matdim = std::get<0>(param);
-//    auto chunkdim = std::get<1>(param);
-//    bool rowmajor = std::get<2>(param);
-//    bool sparse = std::get<3>(param);
-//    auto cache_size = std::get<4>(param);
-//    auto bounds = std::get<5>(param);
-//
-//    assemble(sparse, matdim, chunkdim, rowmajor, cache_size);
-//
-//    bool FORWARD = true;
-//    size_t JUMP = 1;
-//    int FIRST = bounds.first * ref->ncol();
-//    int LAST = bounds.second * ref->ncol();
-//
-//    tatami_test::test_sliced_row_access(mat.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-//    tatami_test::test_sliced_row_access(mat.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-//}
-//
-//TEST_P(CustomDenseChunkedMatrixBlockTest, Column) {
-//    auto param = GetParam();
-//    auto matdim = std::get<0>(param);
-//    auto chunkdim = std::get<1>(param);
-//    bool rowmajor = std::get<2>(param);
-//    bool sparse = std::get<3>(param);
-//    auto cache_size = std::get<4>(param);
-//    auto bounds = std::get<5>(param);
-//
-//    assemble(sparse, matdim, chunkdim, rowmajor, cache_size);
-//
-//    bool FORWARD = true;
-//    size_t JUMP = 1;
-//    int FIRST = bounds.first * ref->nrow();
-//    int LAST = bounds.second * ref->nrow();
-//
-//    tatami_test::test_sliced_column_access(mat.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-//    tatami_test::test_sliced_column_access(mat.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-//}
-//
-//INSTANTIATE_TEST_SUITE_P(
-//    CustomDenseChunkedMatrix,
-//    CustomDenseChunkedMatrixBlockTest,
-//    ::testing::Combine(
-//        ::testing::Values( // matrix dimensions
-//            std::make_pair(201, 67),
-//            std::make_pair(123, 372)
-//        ),
-//
-//        ::testing::Values( // chunk dimensions
-//            std::make_pair(1, 20),
-//            std::make_pair(20, 1),
-//            std::make_pair(10, 10)
-//        ),
-//
-//        ::testing::Values(true, false), // row major
-//        ::testing::Values(false, true), // sparse chunks
-//        ::testing::Values(0, 1000, 10000), // cache size
-//
-//        ::testing::Values( // block boundaries
-//            std::make_pair(0.0, 0.35),
-//            std::make_pair(0.15, 0.87),
-//            std::make_pair(0.38, 1.0)
-//        )
-//    )
-//);
-//
-///*******************************************************/
-//
-//class CustomDenseChunkedMatrixIndexTest :
-//    public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<int, int>, bool, bool, int, std::pair<double, double> > >, 
-//    public CustomDenseChunkedMatrixMethods {};
-//
-//TEST_P(CustomDenseChunkedMatrixIndexTest, Row) {
-//    auto param = GetParam();
-//    auto matdim = std::get<0>(param);
-//    auto chunkdim = std::get<1>(param);
-//    bool rowmajor = std::get<2>(param);
-//    bool sparse = std::get<3>(param);
-//    auto cache_size = std::get<4>(param);
-//    auto bounds = std::get<5>(param);
-//
-//    assemble(sparse, matdim, chunkdim, rowmajor, cache_size);
-//
-//    bool FORWARD = true;
-//    size_t JUMP = 1;
-//    int FIRST = bounds.first * ref->ncol(), STEP = bounds.second;
-//
-//    tatami_test::test_indexed_row_access(mat.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-//    tatami_test::test_indexed_row_access(mat.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-//}
-//
-//TEST_P(CustomDenseChunkedMatrixIndexTest, Column) {
-//    auto param = GetParam();
-//    auto matdim = std::get<0>(param);
-//    auto chunkdim = std::get<1>(param);
-//    bool rowmajor = std::get<2>(param);
-//    bool sparse = std::get<3>(param);
-//    auto cache_size = std::get<4>(param);
-//    auto bounds = std::get<5>(param);
-//
-//    assemble(sparse, matdim, chunkdim, rowmajor, cache_size);
-//
-//    bool FORWARD = true;
-//    size_t JUMP = 1;
-//    int FIRST = bounds.first * ref->nrow(), STEP = bounds.second;
-//
-//    tatami_test::test_indexed_column_access(mat.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-//    tatami_test::test_indexed_column_access(mat.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-//}
-//
-//INSTANTIATE_TEST_SUITE_P(
-//    CustomDenseChunkedMatrix,
-//    CustomDenseChunkedMatrixIndexTest,
-//    ::testing::Combine(
-//        ::testing::Values( // matrix dimensions
-//            std::make_pair(198, 67),
-//            std::make_pair(187, 300)
-//        ),
-//
-//        ::testing::Values( // chunk dimensions
-//            std::make_pair(1, 20),
-//            std::make_pair(20, 1),
-//            std::make_pair(7, 13)
-//        ),
-//
-//        ::testing::Values(true, false), // row major 
-//        ::testing::Values(false, true), // sparse chunks
-//        ::testing::Values(0, 1000, 10000), // cache size
-//
-//        ::testing::Values( // index information.
-//            std::make_pair(0.0, 10),
-//            std::make_pair(0.2, 5),
-//            std::make_pair(0.7, 3)
-//        )
-//    )
-//);
+/*******************************************************/
+
+class CustomDenseChunkedMatrixBlockTest :
+    public ::testing::TestWithParam<std::tuple<typename CustomDenseChunkedMatrixCore::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, double> > >, 
+    public CustomDenseChunkedMatrixCore {
+protected:
+    void SetUp() {
+        assemble(std::get<0>(GetParam()));
+    }
+};
+
+TEST_P(CustomDenseChunkedMatrixBlockTest, Basic) {
+    auto tparam = GetParam();
+    auto params = tatami_test::convert_access_parameters(std::get<1>(tparam));
+    auto block = std::get<2>(tparam);
+    auto len = params.use_row ? ref->ncol() : ref->nrow();
+    size_t FIRST = block.first * len, LAST = block.second * len;
+    tatami_test::test_block_access(params, mock_mat.get(), ref.get(), FIRST, LAST);
+    tatami_test::test_block_access(params, simple_mat.get(), ref.get(), FIRST, LAST);
+    tatami_test::test_block_access(params, subset_mat.get(), ref.get(), FIRST, LAST);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    CustomDenseChunkedMatrix,
+    CustomDenseChunkedMatrixBlockTest,
+    ::testing::Combine(
+        ::testing::Combine(
+            ::testing::Values( // matrix dimensions
+                std::make_pair(201, 67),
+                std::make_pair(123, 372)
+            ),
+
+            ::testing::Values( // chunk dimensions
+                std::make_pair(1, 20),
+                std::make_pair(20, 1),
+                std::make_pair(10, 10)
+            ),
+
+            ::testing::Values(true, false), // row major
+            ::testing::Values(0, 1000, 10000) // cache size
+        ),
+
+        tatami_test::standard_test_access_parameter_combinations(),
+
+        ::testing::Values( // block boundaries
+            std::make_pair(0.0, 0.35),
+            std::make_pair(0.15, 0.87),
+            std::make_pair(0.38, 1.0)
+        )
+    )
+);
+
+/*******************************************************/
+
+class CustomDenseChunkedMatrixIndexTest :
+    public ::testing::TestWithParam<std::tuple<typename CustomDenseChunkedMatrixCore::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, int> > >, 
+    public CustomDenseChunkedMatrixCore {
+protected:
+    void SetUp() {
+        assemble(std::get<0>(GetParam()));
+    }
+};
+
+TEST_P(CustomDenseChunkedMatrixIndexTest, Basic) {
+    auto tparam = GetParam();
+    auto params = tatami_test::convert_access_parameters(std::get<1>(tparam));
+    auto index = std::get<2>(tparam);
+    auto len = params.use_row ? ref->ncol() : ref->nrow();
+    size_t FIRST = index.first * len, STEP = index.second;
+    tatami_test::test_indexed_access(params, mock_mat.get(), ref.get(), FIRST, STEP);
+    tatami_test::test_indexed_access(params, simple_mat.get(), ref.get(), FIRST, STEP);
+    tatami_test::test_indexed_access(params, subset_mat.get(), ref.get(), FIRST, STEP);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    CustomDenseChunkedMatrix,
+    CustomDenseChunkedMatrixIndexTest,
+    ::testing::Combine(
+        ::testing::Combine(
+            ::testing::Values( // matrix dimensions
+                std::make_pair(198, 67),
+                std::make_pair(187, 300)
+            ),
+
+            ::testing::Values( // chunk dimensions
+                std::make_pair(1, 20),
+                std::make_pair(20, 1),
+                std::make_pair(7, 13)
+            ),
+
+            ::testing::Values(true, false), // row major 
+            ::testing::Values(0, 1000, 10000) // cache size
+        ),
+
+        tatami_test::standard_test_access_parameter_combinations(),
+
+        ::testing::Values( // index information.
+            std::make_pair(0.0, 10),
+            std::make_pair(0.2, 5),
+            std::make_pair(0.7, 3)
+        )
+    )
+);
