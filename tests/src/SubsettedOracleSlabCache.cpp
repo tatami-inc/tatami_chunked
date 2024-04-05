@@ -162,7 +162,6 @@ TEST_F(SubsettedOracleSlabCacheTest, Consecutive) {
 
     {
         for (int i = 0; i < 3; ++i) { // extracting 77, 88, 99
-            std::cout << i << std::endl;
             auto out = next(cache, counter, nalloc); 
             EXPECT_EQ(out.first->contents.chunk_id, static_cast<unsigned char>(7 + i));
             EXPECT_EQ(out.first->contents.populate_number, 6 + i);
