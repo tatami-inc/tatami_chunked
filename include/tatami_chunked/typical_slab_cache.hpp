@@ -75,6 +75,7 @@ public:
 
     /**
      * Number of slabs that can fit in the cache.
+     * This is used as `num_slabs` in `OracleSlabCache` and `SubsettedOracleSlabCache`, and as `m` in `LruSlabCache`.
      */
     size_t num_slabs_in_cache;
 

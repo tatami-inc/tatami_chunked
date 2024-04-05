@@ -236,7 +236,19 @@ private:
 
 public:
     /**
+     * This method is intended to be called when `num_slabs = 0`, to provide callers with the oracle predictions for non-cached extraction of data.
+     * Calls to this method should not be intermingled with calls to its overload below; the latter should only be called when `max_slabs > 0`.
+     *
+     * @return The next prediction from the oracle.
+     */
+    Index_ next() {
+        return oracle->get(counter++);
+    }
+
+public:
+    /**
      * Fetch the next slab according to the stream of predictions provided by the `tatami::Oracle`.
+     * This method should only be called if `num_slabs > 0` in the constructor; otherwise, no slabs are actually available and cannot be returned.
      *
      * @tparam Ifunction_ Function to identify the slab containing each predicted row/column.
      * @tparam Cfunction_ Function to create a new slab.
@@ -307,7 +319,7 @@ public:
             // This is the first run, so we can freely allocate here.
             size_t used = 0;
             while (counter < max_predictions) {
-                Index_ current = oracle->get(counter++);
+                Index_ current = next();
 
                 auto slab_id = identify(current);
                 auto curslab = slab_id.first;
@@ -351,7 +363,7 @@ public:
         slab_exists.clear();
 
         while (counter < max_predictions) {
-            Index_ current = oracle->get(counter++);
+            Index_ current = next();
 
             auto slab_id = identify(current);
             auto curslab = slab_id.first;

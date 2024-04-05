@@ -84,8 +84,8 @@ private:
 
 public:
     /**
-     * This method is intended to be called when `max_slabs = 0`, to provide callers with the oracle predictions for non-cached extraction of data.
-     * Calls to this method should not be intermingled with calls to its overload below; the latter should only be called when `max_slabs > 0`.
+     * This method is intended to be called when `num_slabs = 0`, to provide callers with the oracle predictions for non-cached extraction of data.
+     * Calls to this method should not be intermingled with calls to its overload below; the latter should only be called when `num_slabs > 0`.
      *
      * @return The next prediction from the oracle.
      */
@@ -96,7 +96,7 @@ public:
 public:
     /**
      * Fetch the next slab according to the stream of predictions provided by the `tatami::Oracle`.
-     * This method should only be called if `max_slabs > 0` in the constructor; otherwise, no slabs are actually available and cannot be returned.
+     * This method should only be called if `num_slabs > 0` in the constructor; otherwise, no slabs are actually available and cannot be returned.
      *
      * @tparam Ifunction_ Function to identify the slab containing each predicted row/column.
      * @tparam Cfunction_ Function to create a new slab.

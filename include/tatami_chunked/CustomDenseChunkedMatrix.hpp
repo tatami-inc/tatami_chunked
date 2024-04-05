@@ -44,7 +44,8 @@ protected:
     typename Chunk_::Workspace chunk_workspace;
     typedef typename ChunkCoordinator<Index_, false, Chunk_, int>::DenseSlab Slab;
     TypicalSlabCacheWorkspace<oracle_, Chunk_::use_subset, Index_, Slab> cache_workspace;
-    Slab solo;
+    Slab tmp_solo;
+    Slab final_solo;
 
 public:
     DenseBase(
@@ -63,7 +64,8 @@ public:
         )
     {
         if (cache_workspace.num_slabs_in_cache == 0) {
-            solo.resize(secondary_length);
+            tmp_solo.resize(coordinator.get_chunk_nrow() * coordinator.get_chunk_ncol());
+            final_solo.resize(secondary_length);
         }
     }
 
@@ -99,7 +101,8 @@ struct DenseFull : public tatami::DenseExtractor<oracle_, Value_, Index_>, publi
             secondary_len,
             this->cache_workspace,
             this->chunk_workspace, 
-            this->solo
+            this->tmp_solo,
+            this->final_solo
         );
         return this->process_dense_slab(fetched, buffer, secondary_len);
     }
@@ -132,7 +135,8 @@ struct DenseBlock : public tatami::DenseExtractor<oracle_, Value_, Index_>, publ
             block_length,
             this->cache_workspace, 
             this->chunk_workspace, 
-            this->solo
+            this->tmp_solo,
+            this->final_solo
         );
         return this->process_dense_slab(fetched, buffer, block_length);
     }
@@ -166,7 +170,8 @@ struct DenseIndex : public tatami::DenseExtractor<oracle_, Value_, Index_>, publ
             tmp_indices,
             this->cache_workspace, 
             this->chunk_workspace, 
-            this->solo
+            this->tmp_solo,
+            this->final_solo
         );
         return this->process_dense_slab(fetched, buffer, indices_ptr->size());
     }
