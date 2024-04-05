@@ -1,12 +1,5 @@
 var searchData=
 [
-  ['semicompressedsparsematrix_0',['SemiCompressedSparseMatrix',['https://tatami-inc.github.io/tatami/classtatami_1_1SemiCompressedSparseMatrix.html',1,'tatami']]],
-  ['simpledensechunkwrapper_1',['SimpleDenseChunkWrapper',['../structtatami__chunked_1_1SimpleDenseChunkWrapper.html',1,'tatami_chunked']]],
-  ['simplesparsechunkwrapper_2',['SimpleSparseChunkWrapper',['../structtatami__chunked_1_1SimpleSparseChunkWrapper.html',1,'tatami_chunked']]],
-  ['somenumericarray_3',['SomeNumericArray',['https://tatami-inc.github.io/tatami/structtatami_1_1SomeNumericArray.html',1,'tatami']]],
-  ['sparseextractor_4',['SparseExtractor',['https://tatami-inc.github.io/tatami/classtatami_1_1SparseExtractor.html',1,'tatami']]],
-  ['sparserange_5',['SparseRange',['https://tatami-inc.github.io/tatami/structtatami_1_1SparseRange.html',1,'tatami']]],
-  ['sparserangecopy_6',['SparseRangeCopy',['https://tatami-inc.github.io/tatami/structtatami_1_1SparseRangeCopy.html',1,'tatami']]],
-  ['subsetdetails_7',['SubsetDetails',['../structtatami__chunked_1_1SubsettedOracleSlabCache_1_1SubsetDetails.html',1,'tatami_chunked::SubsettedOracleSlabCache']]],
-  ['subsettedoracleslabcache_8',['SubsettedOracleSlabCache',['../classtatami__chunked_1_1SubsettedOracleSlabCache.html',1,'tatami_chunked']]]
+  ['pseudooraculardenseextractor_0',['PseudoOracularDenseExtractor',['https://tatami-inc.github.io/tatami/structtatami_1_1PseudoOracularDenseExtractor.html',1,'tatami']]],
+  ['pseudooracularsparseextractor_1',['PseudoOracularSparseExtractor',['https://tatami-inc.github.io/tatami/structtatami_1_1PseudoOracularSparseExtractor.html',1,'tatami']]]
 ];

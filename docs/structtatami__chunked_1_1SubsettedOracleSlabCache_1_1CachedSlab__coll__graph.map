@@ -1,4 +1,5 @@
 <map id="tatami_chunked::SubsettedOracleSlabCache&lt; Id_, Index_, Slab_ &gt;::CachedSlab" name="tatami_chunked::SubsettedOracleSlabCache&lt; Id_, Index_, Slab_ &gt;::CachedSlab">
-<area shape="rect" id="node1" title="A cached slab." alt="" coords="5,123,196,177"/>
-<area shape="rect" id="node2" href="$structtatami__chunked_1_1SubsettedOracleSlabCache_1_1SubsetDetails.html" title="Details on the subset to extract." alt="" coords="5,5,196,60"/>
+<area shape="rect" id="Node000001" title="A cached slab." alt="" coords="5,124,195,180"/>
+<area shape="rect" id="Node000002" href="$structtatami__chunked_1_1SubsettedOracleSlabCache_1_1SubsetDetails.html" title="Details on the subset to extract." alt="" coords="5,5,195,61"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,76,103,123,97,123,97,76"/>
 </map>

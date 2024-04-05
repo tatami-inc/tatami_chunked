@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['pointers_0',['pointers',['https://tatami-inc.github.io/tatami/structtatami_1_1CompressedSparseContents.html#ad56fc74d757e9dcd8ffbdc48d5adc692',1,'tatami::CompressedSparseContents']]],
-  ['primary_5flength_1',['primary_length',['../structtatami__chunked_1_1TypicalSlabCacheWorkspace.html#aa1f492cff84927346fe0c2da318f1e0c',1,'tatami_chunked::TypicalSlabCacheWorkspace']]]
+  ['use_5fsubset_0',['use_subset',['../structtatami__chunked_1_1MockSimpleDenseChunk.html#ab8b6933c5a77ea1d9e29ee4d91413b3d',1,'tatami_chunked::MockSimpleDenseChunk::use_subset'],['../structtatami__chunked_1_1MockSubsetDenseChunk.html#a79e60970d114d27efa8db67042b89b4c',1,'tatami_chunked::MockSubsetDenseChunk::use_subset'],['../structtatami__chunked_1_1MockSimpleSparseChunk.html#aacc656011869b48792e99e90b393110a',1,'tatami_chunked::MockSimpleSparseChunk::use_subset'],['../structtatami__chunked_1_1MockSubsetSparseChunk.html#ae184bc71b5796bc03d981cc74bad7a26',1,'tatami_chunked::MockSubsetSparseChunk::use_subset']]]
 ];

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['mapping_0',['mapping',['../structtatami__chunked_1_1SubsettedOracleSlabCache_1_1SubsetDetails.html#a92222ed5250f12b0fcb58b7d7251658b',1,'tatami_chunked::SubsettedOracleSlabCache::SubsetDetails']]],
-  ['maximum_5fcache_5fsize_1',['maximum_cache_size',['../structtatami__chunked_1_1TypicalSlabCacheOptions.html#acb6a39320c2eccd7cf2231e8b29b13fc',1,'tatami_chunked::TypicalSlabCacheOptions']]]
+  ['pointers_0',['pointers',['https://tatami-inc.github.io/tatami/structtatami_1_1CompressedSparseContents.html#ad56fc74d757e9dcd8ffbdc48d5adc692',1,'tatami::CompressedSparseContents']]]
 ];

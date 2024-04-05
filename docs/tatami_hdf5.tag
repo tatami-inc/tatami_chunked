@@ -1,67 +1,74 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-<tagfile doxygen_version="1.9.5">
+<tagfile doxygen_version="1.9.8">
   <compound kind="file">
-    <name>CustomChunkedMatrix.hpp</name>
-    <path>/github/workspace/include/tatami_chunked/</path>
-    <filename>CustomChunkedMatrix_8hpp.html</filename>
-    <class kind="struct">tatami_chunked::CustomChunkedOptions</class>
-    <class kind="class">tatami_chunked::CustomChunkedDenseMatrix</class>
-    <class kind="class">tatami_chunked::CustomChunkedSparseMatrix</class>
+    <name>CustomDenseChunkedMatrix.hpp</name>
+    <path>tatami_chunked/</path>
+    <filename>CustomDenseChunkedMatrix_8hpp.html</filename>
+    <class kind="struct">tatami_chunked::CustomDenseChunkedOptions</class>
+    <class kind="class">tatami_chunked::CustomDenseChunkedMatrix</class>
+    <namespace>tatami_chunked</namespace>
+  </compound>
+  <compound kind="file">
+    <name>CustomSparseChunkedMatrix.hpp</name>
+    <path>tatami_chunked/</path>
+    <filename>CustomSparseChunkedMatrix_8hpp.html</filename>
+    <class kind="struct">tatami_chunked::CustomSparseChunkedOptions</class>
+    <class kind="class">tatami_chunked::CustomSparseChunkedMatrix</class>
     <namespace>tatami_chunked</namespace>
   </compound>
   <compound kind="file">
     <name>LruSlabCache.hpp</name>
-    <path>/github/workspace/include/tatami_chunked/</path>
+    <path>tatami_chunked/</path>
     <filename>LruSlabCache_8hpp.html</filename>
     <class kind="class">tatami_chunked::LruSlabCache</class>
     <namespace>tatami_chunked</namespace>
   </compound>
   <compound kind="file">
+    <name>mock_dense_chunk.hpp</name>
+    <path>tatami_chunked/</path>
+    <filename>mock__dense__chunk_8hpp.html</filename>
+    <class kind="struct">tatami_chunked::MockSimpleDenseChunk</class>
+    <class kind="struct">tatami_chunked::SimpleDenseChunkWrapper</class>
+    <class kind="struct">tatami_chunked::MockSubsetDenseChunk</class>
+    <namespace>tatami_chunked</namespace>
+  </compound>
+  <compound kind="file">
+    <name>mock_sparse_chunk.hpp</name>
+    <path>tatami_chunked/</path>
+    <filename>mock__sparse__chunk_8hpp.html</filename>
+    <class kind="struct">tatami_chunked::MockSimpleSparseChunk</class>
+    <class kind="struct">tatami_chunked::MockSimpleSparseChunk::Workspace</class>
+    <class kind="struct">tatami_chunked::SimpleSparseChunkWrapper</class>
+    <class kind="struct">tatami_chunked::MockSubsetSparseChunk</class>
+    <class kind="struct">tatami_chunked::MockSubsetSparseChunk::Workspace</class>
+    <namespace>tatami_chunked</namespace>
+  </compound>
+  <compound kind="file">
     <name>OracleSlabCache.hpp</name>
-    <path>/github/workspace/include/tatami_chunked/</path>
+    <path>tatami_chunked/</path>
     <filename>OracleSlabCache_8hpp.html</filename>
     <class kind="class">tatami_chunked::OracleSlabCache</class>
     <namespace>tatami_chunked</namespace>
   </compound>
   <compound kind="file">
-    <name>simple_chunk_wrappers.hpp</name>
-    <path>/github/workspace/include/tatami_chunked/</path>
-    <filename>simple__chunk__wrappers_8hpp.html</filename>
-    <class kind="struct">tatami_chunked::SimpleDenseChunkWrapper</class>
-    <class kind="struct">tatami_chunked::SimpleSparseChunkWrapper</class>
-    <class kind="struct">tatami_chunked::SimpleSparseChunkWrapper::Workspace</class>
-    <namespace>tatami_chunked</namespace>
-  </compound>
-  <compound kind="file">
     <name>SubsettedOracleSlabCache.hpp</name>
-    <path>/github/workspace/include/tatami_chunked/</path>
+    <path>tatami_chunked/</path>
     <filename>SubsettedOracleSlabCache_8hpp.html</filename>
     <class kind="class">tatami_chunked::SubsettedOracleSlabCache</class>
     <class kind="struct">tatami_chunked::SubsettedOracleSlabCache::SubsetDetails</class>
     <class kind="struct">tatami_chunked::SubsettedOracleSlabCache::CachedSlab</class>
     <namespace>tatami_chunked</namespace>
-    <member kind="enumeration">
-      <type></type>
-      <name>SubsetSelection</name>
-      <anchorfile>namespacetatami__chunked.html</anchorfile>
-      <anchor>a04acaabc7d3d46a03f1a2faca6dc8ff6</anchor>
-      <arglist></arglist>
-      <enumvalue file="namespacetatami__chunked.html" anchor="a04acaabc7d3d46a03f1a2faca6dc8ff6aba7de5bc6888294e5884b024a4c894f1">FULL</enumvalue>
-      <enumvalue file="namespacetatami__chunked.html" anchor="a04acaabc7d3d46a03f1a2faca6dc8ff6a4d34f53389ed7f28ca91fc31ea360a66">BLOCK</enumvalue>
-      <enumvalue file="namespacetatami__chunked.html" anchor="a04acaabc7d3d46a03f1a2faca6dc8ff6acb4ae3b37047fb4b2c0d16f8bf84f076">INDEX</enumvalue>
-    </member>
   </compound>
   <compound kind="file">
     <name>tatami_chunked.hpp</name>
-    <path>/github/workspace/include/tatami_chunked/</path>
+    <path>tatami_chunked/</path>
     <filename>tatami__chunked_8hpp.html</filename>
     <namespace>tatami_chunked</namespace>
   </compound>
   <compound kind="file">
     <name>typical_slab_cache.hpp</name>
-    <path>/github/workspace/include/tatami_chunked/</path>
+    <path>tatami_chunked/</path>
     <filename>typical__slab__cache_8hpp.html</filename>
-    <class kind="struct">tatami_chunked::TypicalSlabCacheOptions</class>
     <class kind="struct">tatami_chunked::TypicalSlabCacheWorkspace</class>
     <namespace>tatami_chunked</namespace>
   </compound>
@@ -84,40 +91,69 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>tatami_chunked::CustomChunkedDenseMatrix</name>
-    <filename>classtatami__chunked_1_1CustomChunkedDenseMatrix.html</filename>
+    <name>tatami_chunked::CustomDenseChunkedMatrix</name>
+    <filename>classtatami__chunked_1_1CustomDenseChunkedMatrix.html</filename>
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>typename Chunk_</templarg>
-    <templarg>bool use_subsetted_oracle_</templarg>
-    <base>VirtualDenseMatrix&lt; Value_, Index_ &gt;</base>
-    <member kind="function">
-      <type></type>
-      <name>CustomChunkedDenseMatrix</name>
-      <anchorfile>classtatami__chunked_1_1CustomChunkedDenseMatrix.html</anchorfile>
-      <anchor>a105e52c23a1e46681369e0ea48afc591</anchor>
-      <arglist>(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector&lt; Chunk_ &gt; chunks, bool row_major, const CustomChunkedOptions &amp;opt)</arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
-    <name>tatami_chunked::CustomChunkedOptions</name>
-    <filename>structtatami__chunked_1_1CustomChunkedOptions.html</filename>
-    <base>tatami_chunked::TypicalSlabCacheOptions</base>
-  </compound>
-  <compound kind="class">
-    <name>tatami_chunked::CustomChunkedSparseMatrix</name>
-    <filename>classtatami__chunked_1_1CustomChunkedSparseMatrix.html</filename>
-    <templarg>typename Value_</templarg>
-    <templarg>typename Index_</templarg>
-    <templarg>typename Chunk_</templarg>
-    <templarg>bool use_subsetted_oracle_</templarg>
     <base>Matrix&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
-      <name>CustomChunkedSparseMatrix</name>
-      <anchorfile>classtatami__chunked_1_1CustomChunkedSparseMatrix.html</anchorfile>
-      <anchor>a398ed1cddde3ac16a7ba701a4a4eedc1</anchor>
-      <arglist>(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector&lt; Chunk_ &gt; chunks, bool row_major, const CustomChunkedOptions &amp;opt)</arglist>
+      <name>CustomDenseChunkedMatrix</name>
+      <anchorfile>classtatami__chunked_1_1CustomDenseChunkedMatrix.html</anchorfile>
+      <anchor>ac60c324ee232ab578353f879e1540083</anchor>
+      <arglist>(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector&lt; Chunk_ &gt; chunks, bool row_major, const CustomDenseChunkedOptions &amp;opt)</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami_chunked::CustomDenseChunkedOptions</name>
+    <filename>structtatami__chunked_1_1CustomDenseChunkedOptions.html</filename>
+    <member kind="variable">
+      <type>size_t</type>
+      <name>maximum_cache_size</name>
+      <anchorfile>structtatami__chunked_1_1CustomDenseChunkedOptions.html</anchorfile>
+      <anchor>ac867e9ee92d981a4b64bdcd3922ba0ef</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>require_minimum_cache</name>
+      <anchorfile>structtatami__chunked_1_1CustomDenseChunkedOptions.html</anchorfile>
+      <anchor>a371c078f772cc4b494988a7b96d6798e</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami_chunked::CustomSparseChunkedMatrix</name>
+    <filename>classtatami__chunked_1_1CustomSparseChunkedMatrix.html</filename>
+    <templarg>typename Value_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>typename Chunk_</templarg>
+    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>CustomSparseChunkedMatrix</name>
+      <anchorfile>classtatami__chunked_1_1CustomSparseChunkedMatrix.html</anchorfile>
+      <anchor>aaf8de32d64a64a80f2c8a7d3467871ee</anchor>
+      <arglist>(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector&lt; Chunk_ &gt; chunks, bool row_major, const CustomSparseChunkedOptions &amp;opt)</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami_chunked::CustomSparseChunkedOptions</name>
+    <filename>structtatami__chunked_1_1CustomSparseChunkedOptions.html</filename>
+    <member kind="variable">
+      <type>size_t</type>
+      <name>maximum_cache_size</name>
+      <anchorfile>structtatami__chunked_1_1CustomSparseChunkedOptions.html</anchorfile>
+      <anchor>a7590657e09265b2af90f3b493c82fc6e</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>bool</type>
+      <name>require_minimum_cache</name>
+      <anchorfile>structtatami__chunked_1_1CustomSparseChunkedOptions.html</anchorfile>
+      <anchor>a35d3fd4f3063bfb2f8a5808c8e41b8f7</anchor>
+      <arglist></arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -129,8 +165,8 @@
       <type></type>
       <name>LruSlabCache</name>
       <anchorfile>classtatami__chunked_1_1LruSlabCache.html</anchorfile>
-      <anchor>ac305164cd47db9f7f008266ddef9f4fb</anchor>
-      <arglist>(size_t m)</arglist>
+      <anchor>a022fccffb0fcfbe9e399366eb6f22bb1</anchor>
+      <arglist>(size_t m=1)</arglist>
     </member>
     <member kind="function">
       <type>const Slab_ &amp;</type>
@@ -138,6 +174,192 @@
       <anchorfile>classtatami__chunked_1_1LruSlabCache.html</anchorfile>
       <anchor>a022825f5749bba03b112fbe72d98ddd5</anchor>
       <arglist>(Id_ id, Cfunction_ create, Pfunction_ populate)</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami_chunked::MockSimpleDenseChunk</name>
+    <filename>structtatami__chunked_1_1MockSimpleDenseChunk.html</filename>
+    <member kind="typedef">
+      <type>double</type>
+      <name>value_type</name>
+      <anchorfile>structtatami__chunked_1_1MockSimpleDenseChunk.html</anchorfile>
+      <anchor>a88f07a7b34a0d7a0f9fbd296467f24aa</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>std::vector&lt; value_type &gt;</type>
+      <name>Workspace</name>
+      <anchorfile>structtatami__chunked_1_1MockSimpleDenseChunk.html</anchorfile>
+      <anchor>a0a377b07a002320195e9a0be23c05e97</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1MockSimpleDenseChunk.html</anchorfile>
+      <anchor>a3302828143effaa3b331331c64565d3a</anchor>
+      <arglist>(Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1MockSimpleDenseChunk.html</anchorfile>
+      <anchor>a22b1030cdf9149c775b7a45677a73086</anchor>
+      <arglist>(const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static constexpr bool</type>
+      <name>use_subset</name>
+      <anchorfile>structtatami__chunked_1_1MockSimpleDenseChunk.html</anchorfile>
+      <anchor>ab8b6933c5a77ea1d9e29ee4d91413b3d</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami_chunked::MockSimpleSparseChunk</name>
+    <filename>structtatami__chunked_1_1MockSimpleSparseChunk.html</filename>
+    <class kind="struct">tatami_chunked::MockSimpleSparseChunk::Workspace</class>
+    <member kind="typedef">
+      <type>double</type>
+      <name>value_type</name>
+      <anchorfile>structtatami__chunked_1_1MockSimpleSparseChunk.html</anchorfile>
+      <anchor>ad6c1f27da026f8d947159884d5e4cd1f</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>int</type>
+      <name>index_type</name>
+      <anchorfile>structtatami__chunked_1_1MockSimpleSparseChunk.html</anchorfile>
+      <anchor>a8aac93a4ea386e10341de5a0626fc6a5</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1MockSimpleSparseChunk.html</anchorfile>
+      <anchor>a0eda6522f83a7e849148597ed8e3d150</anchor>
+      <arglist>(Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, std::vector&lt; std::vector&lt; value_type &gt; &gt; &amp;output_values, std::vector&lt; std::vector&lt; index_type &gt; &gt; &amp;output_indices, index_type shift) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1MockSimpleSparseChunk.html</anchorfile>
+      <anchor>a91cf20517832532e1616769a14615cf1</anchor>
+      <arglist>(const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, std::vector&lt; std::vector&lt; value_type &gt; &gt; &amp;output_values, std::vector&lt; std::vector&lt; index_type &gt; &gt; &amp;output_indices, index_type shift) const</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static constexpr bool</type>
+      <name>use_subset</name>
+      <anchorfile>structtatami__chunked_1_1MockSimpleSparseChunk.html</anchorfile>
+      <anchor>aacc656011869b48792e99e90b393110a</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami_chunked::MockSubsetDenseChunk</name>
+    <filename>structtatami__chunked_1_1MockSubsetDenseChunk.html</filename>
+    <member kind="typedef">
+      <type>double</type>
+      <name>value_type</name>
+      <anchorfile>structtatami__chunked_1_1MockSubsetDenseChunk.html</anchorfile>
+      <anchor>af44118c0e432a492297ad1f9cea0ac4d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>std::vector&lt; value_type &gt;</type>
+      <name>Workspace</name>
+      <anchorfile>structtatami__chunked_1_1MockSubsetDenseChunk.html</anchorfile>
+      <anchor>a81fdb711908f7ab2a0d22306dc369b2d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1MockSubsetDenseChunk.html</anchorfile>
+      <anchor>a0b918bb9dfd60289ae743cbd61efba7b</anchor>
+      <arglist>(Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1MockSubsetDenseChunk.html</anchorfile>
+      <anchor>a5ccdaa43b292223a7acdb8eaa24d3603</anchor>
+      <arglist>(Index_ primary_start, Index_ primary_length, const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1MockSubsetDenseChunk.html</anchorfile>
+      <anchor>abbe1d50ad042df17cfdd30ea2a8d0ecd</anchor>
+      <arglist>(const std::vector&lt; Index_ &gt; &amp;primary_indices, Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1MockSubsetDenseChunk.html</anchorfile>
+      <anchor>a21e900985cf3160e816e6eff5b715dfc</anchor>
+      <arglist>(const std::vector&lt; Index_ &gt; &amp;primary_indices, const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static constexpr bool</type>
+      <name>use_subset</name>
+      <anchorfile>structtatami__chunked_1_1MockSubsetDenseChunk.html</anchorfile>
+      <anchor>a79e60970d114d27efa8db67042b89b4c</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami_chunked::MockSubsetSparseChunk</name>
+    <filename>structtatami__chunked_1_1MockSubsetSparseChunk.html</filename>
+    <class kind="struct">tatami_chunked::MockSubsetSparseChunk::Workspace</class>
+    <member kind="typedef">
+      <type>double</type>
+      <name>value_type</name>
+      <anchorfile>structtatami__chunked_1_1MockSubsetSparseChunk.html</anchorfile>
+      <anchor>ab4b8726956944e3d23a847873467733d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>int</type>
+      <name>index_type</name>
+      <anchorfile>structtatami__chunked_1_1MockSubsetSparseChunk.html</anchorfile>
+      <anchor>ae57b40750c649c924a5c8b7d5b564c98</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1MockSubsetSparseChunk.html</anchorfile>
+      <anchor>ad8d849ed25414aad22e85df501ee9020</anchor>
+      <arglist>(Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, std::vector&lt; std::vector&lt; value_type &gt; &gt; &amp;output_values, std::vector&lt; std::vector&lt; index_type &gt; &gt; &amp;output_indices, index_type shift) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1MockSubsetSparseChunk.html</anchorfile>
+      <anchor>add2224603efe08526d6ccc930960a922</anchor>
+      <arglist>(Index_ primary_start, Index_ primary_length, const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, std::vector&lt; std::vector&lt; value_type &gt; &gt; &amp;output_values, std::vector&lt; std::vector&lt; index_type &gt; &gt; &amp;output_indices, index_type shift) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1MockSubsetSparseChunk.html</anchorfile>
+      <anchor>ab2a62c44d054c8c66fa6219079340ec4</anchor>
+      <arglist>(const std::vector&lt; Index_ &gt; &amp;primary_indices, Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, std::vector&lt; std::vector&lt; value_type &gt; &gt; &amp;output_values, std::vector&lt; std::vector&lt; index_type &gt; &gt; &amp;output_indices, index_type shift) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
+      <anchorfile>structtatami__chunked_1_1MockSubsetSparseChunk.html</anchorfile>
+      <anchor>aeed5a614e70643585ee2bcd1b3769619</anchor>
+      <arglist>(const std::vector&lt; Index_ &gt; &amp;primary_indices, const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, std::vector&lt; std::vector&lt; value_type &gt; &gt; &amp;output_values, std::vector&lt; std::vector&lt; index_type &gt; &gt; &amp;output_indices, index_type shift) const</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static constexpr bool</type>
+      <name>use_subset</name>
+      <anchorfile>structtatami__chunked_1_1MockSubsetSparseChunk.html</anchorfile>
+      <anchor>ae184bc71b5796bc03d981cc74bad7a26</anchor>
+      <arglist></arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -150,8 +372,15 @@
       <type></type>
       <name>OracleSlabCache</name>
       <anchorfile>classtatami__chunked_1_1OracleSlabCache.html</anchorfile>
-      <anchor>ab2ec1decfa4cdbff71b673d1ef960488</anchor>
-      <arglist>(std::unique_ptr&lt; tatami::Oracle&lt; Index_ &gt; &gt; oracle, size_t per_iteration, size_t num_slabs)</arglist>
+      <anchor>a0749cb3f44b19a4375c4366cfbadd56b</anchor>
+      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; ora, size_t per_iteration, size_t num_slabs)</arglist>
+    </member>
+    <member kind="function">
+      <type>Index_</type>
+      <name>next</name>
+      <anchorfile>classtatami__chunked_1_1OracleSlabCache.html</anchorfile>
+      <anchor>a368d924ebc4d47daf8f0766d9c0a2438</anchor>
+      <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>std::pair&lt; const Slab_ *, Index_ &gt;</type>
@@ -164,153 +393,12 @@
   <compound kind="struct">
     <name>tatami_chunked::SimpleDenseChunkWrapper</name>
     <filename>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</filename>
-    <templarg>class SimpleChunk_</templarg>
-    <member kind="typedef">
-      <type>SimpleChunk_::value_type</type>
-      <name>value_type</name>
-      <anchorfile>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</anchorfile>
-      <anchor>ae5bf9f551bb7b3bd9b8663522b6e4f4c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>std::vector&lt; value_type &gt;</type>
-      <name>Workspace</name>
-      <anchorfile>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</anchorfile>
-      <anchor>a4c87a7880792f8f92402aec85b57f30c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type></type>
-      <name>SimpleDenseChunkWrapper</name>
-      <anchorfile>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</anchorfile>
-      <anchor>a6849ffc525c47c55d3d76f5ebb894160</anchor>
-      <arglist>()=default</arglist>
-    </member>
-    <member kind="function">
-      <type></type>
-      <name>SimpleDenseChunkWrapper</name>
-      <anchorfile>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</anchorfile>
-      <anchor>ad5b601444cc5a3a8bf1301faa42558a7</anchor>
-      <arglist>(SimpleChunk_ c)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>extract</name>
-      <anchorfile>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</anchorfile>
-      <anchor>ad9ed0914c50251a78a0566f2f0a166ca</anchor>
-      <arglist>(Index_ primary, Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, Output_ *output) const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>extract</name>
-      <anchorfile>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</anchorfile>
-      <anchor>ace0d720292d4b4bad6acd2b219addbf8</anchor>
-      <arglist>(Index_ primary, const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, Output_ *output) const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>extract</name>
-      <anchorfile>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</anchorfile>
-      <anchor>a429fbb4e5588ee5a67256222f42a3dd7</anchor>
-      <arglist>(Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, Output_ *output, size_t stride) const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>extract</name>
-      <anchorfile>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</anchorfile>
-      <anchor>a7f06978c01dc2de3e8ba10b42b8c91d6</anchor>
-      <arglist>(Index_ primary_start, Index_ primary_length, const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, Output_ *output, size_t stride) const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>extract</name>
-      <anchorfile>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</anchorfile>
-      <anchor>a00faab69eadbc9c2a5850f3f96b4f00f</anchor>
-      <arglist>(const std::vector&lt; Index_ &gt; &amp;primary_indices, Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, Output_ *output, size_t stride) const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>extract</name>
-      <anchorfile>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</anchorfile>
-      <anchor>a86a4ffdad8a474113d04941dab9e201f</anchor>
-      <arglist>(const std::vector&lt; Index_ &gt; &amp;primary_indices, const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, Output_ *output, size_t stride) const</arglist>
-    </member>
+    <templarg>class Blob_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami_chunked::SimpleSparseChunkWrapper</name>
     <filename>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</filename>
-    <templarg>class SimpleChunk_</templarg>
-    <class kind="struct">tatami_chunked::SimpleSparseChunkWrapper::Workspace</class>
-    <member kind="typedef">
-      <type>SimpleChunk_::value_type</type>
-      <name>value_type</name>
-      <anchorfile>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</anchorfile>
-      <anchor>a8550eae88e491cdc9891de5d5f65f0c9</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>SimpleChunk_::index_type</type>
-      <name>index_type</name>
-      <anchorfile>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</anchorfile>
-      <anchor>aee7f0271689b94d4c76891aa87e4f7a4</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type></type>
-      <name>SimpleSparseChunkWrapper</name>
-      <anchorfile>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</anchorfile>
-      <anchor>aa1bb067a0363059be4fae4609bf0da40</anchor>
-      <arglist>()=default</arglist>
-    </member>
-    <member kind="function">
-      <type></type>
-      <name>SimpleSparseChunkWrapper</name>
-      <anchorfile>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</anchorfile>
-      <anchor>ad426667f705a2518ffc9199fcf2915d2</anchor>
-      <arglist>(SimpleChunk_ c)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>extract</name>
-      <anchorfile>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</anchorfile>
-      <anchor>a8a062c1bf9cea336bf0dda0e91f6067e</anchor>
-      <arglist>(Index_ primary, Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, std::vector&lt; OutputValue_ &gt; &amp;output_values, std::vector&lt; OutputIndex_ &gt; &amp;output_indices, OutputIndex_ shift) const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>extract</name>
-      <anchorfile>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</anchorfile>
-      <anchor>aa27a8fa69e1c6400d38585f2b0e5a361</anchor>
-      <arglist>(Index_ primary, const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, std::vector&lt; OutputValue_ &gt; &amp;output_values, std::vector&lt; OutputIndex_ &gt; &amp;output_indices, OutputIndex_ shift) const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>extract</name>
-      <anchorfile>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</anchorfile>
-      <anchor>a928e327793a4ed9fccc3e18eebdb23c7</anchor>
-      <arglist>(Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, std::vector&lt; std::vector&lt; OutputValue_ &gt; &gt; &amp;output_values, std::vector&lt; std::vector&lt; OutputIndex_ &gt; &gt; &amp;output_indices, OutputIndex_ shift) const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>extract</name>
-      <anchorfile>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</anchorfile>
-      <anchor>a458cd60cd17c81407366041ff2fa9569</anchor>
-      <arglist>(Index_ primary_start, Index_ primary_length, const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, std::vector&lt; std::vector&lt; OutputValue_ &gt; &gt; &amp;output_values, std::vector&lt; std::vector&lt; OutputIndex_ &gt; &gt; &amp;output_indices, OutputIndex_ shift) const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>extract</name>
-      <anchorfile>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</anchorfile>
-      <anchor>a21aeb9076df2cb030520052b14b5bae7</anchor>
-      <arglist>(const std::vector&lt; Index_ &gt; &amp;primary_indices, Index_ secondary_start, Index_ secondary_length, Workspace &amp;work, std::vector&lt; std::vector&lt; OutputValue_ &gt; &gt; &amp;output_values, std::vector&lt; std::vector&lt; OutputIndex_ &gt; &gt; &amp;output_indices, OutputIndex_ shift) const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>extract</name>
-      <anchorfile>structtatami__chunked_1_1SimpleSparseChunkWrapper.html</anchorfile>
-      <anchor>a5c746e76474d14e55c7bcdabd06dfd50</anchor>
-      <arglist>(const std::vector&lt; Index_ &gt; &amp;primary_indices, const std::vector&lt; Index_ &gt; &amp;secondary_indices, Workspace &amp;work, std::vector&lt; std::vector&lt; OutputValue_ &gt; &gt; &amp;output_values, std::vector&lt; std::vector&lt; OutputIndex_ &gt; &gt; &amp;output_indices, OutputIndex_ shift) const</arglist>
-    </member>
+    <templarg>class Blob_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami_chunked::SubsettedOracleSlabCache::SubsetDetails</name>
@@ -363,8 +451,15 @@
       <type></type>
       <name>SubsettedOracleSlabCache</name>
       <anchorfile>classtatami__chunked_1_1SubsettedOracleSlabCache.html</anchorfile>
-      <anchor>a4d007072fdee018b8cd075784759dc19</anchor>
-      <arglist>(std::unique_ptr&lt; tatami::Oracle&lt; Index_ &gt; &gt; oracle, size_t per_iteration, size_t num_slabs)</arglist>
+      <anchor>af5282248ae695dfd5f15c239bbb53ef5</anchor>
+      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; ora, size_t per_iteration, size_t num_slabs)</arglist>
+    </member>
+    <member kind="function">
+      <type>Index_</type>
+      <name>next</name>
+      <anchorfile>classtatami__chunked_1_1SubsettedOracleSlabCache.html</anchorfile>
+      <anchor>ab861a229c86fab7212a18b05a01fb9a4</anchor>
+      <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>std::pair&lt; const CachedSlab *, Index_ &gt;</type>
@@ -375,109 +470,79 @@
     </member>
   </compound>
   <compound kind="struct">
-    <name>tatami_chunked::TypicalSlabCacheOptions</name>
-    <filename>structtatami__chunked_1_1TypicalSlabCacheOptions.html</filename>
-    <member kind="variable">
-      <type>size_t</type>
-      <name>maximum_cache_size</name>
-      <anchorfile>structtatami__chunked_1_1TypicalSlabCacheOptions.html</anchorfile>
-      <anchor>acb6a39320c2eccd7cf2231e8b29b13fc</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>bool</type>
-      <name>require_minimum_cache</name>
-      <anchorfile>structtatami__chunked_1_1TypicalSlabCacheOptions.html</anchorfile>
-      <anchor>ac48f95c0943d497e3d743b9573d47510</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
     <name>tatami_chunked::TypicalSlabCacheWorkspace</name>
     <filename>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</filename>
+    <templarg>bool oracle_</templarg>
+    <templarg>bool subset_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>class Slab_</templarg>
-    <templarg>bool subset_</templarg>
     <member kind="typedef">
-      <type>std::conditional&lt; subset_, SubsettedOracleSlabCache&lt; Index_, Index_, Slab_ &gt;, OracleSlabCache&lt; Index_, Index_, Slab_ &gt; &gt;::type</type>
-      <name>OracleCache</name>
+      <type>std::conditional&lt; oracle_, typenamestd::conditional&lt; subset_, SubsettedOracleSlabCache&lt; Index_, Index_, Slab_ &gt;, OracleSlabCache&lt; Index_, Index_, Slab_ &gt; &gt;::type, LruSlabCache&lt; Index_, Slab_ &gt; &gt;::type</type>
+      <name>SlabCache</name>
       <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a6a4fa7d2a4fc66947a3646ea9a50948c</anchor>
+      <anchor>a6197681c15be36666c0f84d59cbbaf6d</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>TypicalSlabCacheWorkspace</name>
       <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>ac27a71aa118a875f1f915e7dfc0dfbd7</anchor>
+      <anchor>ac0a1044ead9aa4efeee929a554bebf1f</anchor>
       <arglist>()=default</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>TypicalSlabCacheWorkspace</name>
       <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a347e990db1a0471ea42a1f27702d4117</anchor>
-      <arglist>(Index_ primary_length, Index_ secondary_length, size_t cache_size_in_elements, bool require_minimum_cache)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>set_oracle</name>
-      <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a44ac93763f6c372657867e410f0dc80b</anchor>
-      <arglist>(std::unique_ptr&lt; tatami::Oracle&lt; Index_ &gt; &gt; o)</arglist>
-    </member>
-    <member kind="variable">
-      <type>Index_</type>
-      <name>primary_length</name>
-      <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>aa1f492cff84927346fe0c2da318f1e0c</anchor>
-      <arglist></arglist>
+      <anchor>a37ee1eceb475726fa3164040d3bdf036</anchor>
+      <arglist>(Index_ primary_length, Index_ secondary_length, size_t cache_size_in_elements, bool require_minimum_cache, tatami::MaybeOracle&lt; oracle_, Index_ &gt; oracle)</arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
       <name>slab_size_in_elements</name>
       <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a95f2fbaa94e3c78264b4ad6b742e3dd0</anchor>
+      <anchor>a9dbdcf92bd2886c49cc17c3d1c2f4199</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
       <name>num_slabs_in_cache</name>
       <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a9b01d451085734c970f4c6f985443cbf</anchor>
+      <anchor>a0a3b4426fcfe4d5b5bef07e4dd83b86a</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>std::unique_ptr&lt; LruSlabCache&lt; Index_, Slab_ &gt; &gt;</type>
-      <name>lru_cache</name>
+      <type>SlabCache</type>
+      <name>cache</name>
       <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>af21e3f5737b73c1155ef12a7a9896269</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>std::unique_ptr&lt; OracleCache &gt;</type>
-      <name>oracle_cache</name>
-      <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a9dc2bab8876b8d7be33337de133ca8a7</anchor>
+      <anchor>a6a786e1be6531f07dd5f8718ca4526d9</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>tatami_chunked::SimpleSparseChunkWrapper::Workspace</name>
-    <filename>structtatami__chunked_1_1SimpleSparseChunkWrapper_1_1Workspace.html</filename>
+    <name>tatami_chunked::MockSimpleSparseChunk::Workspace</name>
+    <filename>structtatami__chunked_1_1MockSimpleSparseChunk_1_1Workspace.html</filename>
+  </compound>
+  <compound kind="struct">
+    <name>tatami_chunked::MockSubsetSparseChunk::Workspace</name>
+    <filename>structtatami__chunked_1_1MockSubsetSparseChunk_1_1Workspace.html</filename>
   </compound>
   <compound kind="namespace">
     <name>tatami_chunked</name>
     <filename>namespacetatami__chunked.html</filename>
-    <class kind="class">tatami_chunked::CustomChunkedDenseMatrix</class>
-    <class kind="struct">tatami_chunked::CustomChunkedOptions</class>
-    <class kind="class">tatami_chunked::CustomChunkedSparseMatrix</class>
+    <class kind="class">tatami_chunked::CustomDenseChunkedMatrix</class>
+    <class kind="struct">tatami_chunked::CustomDenseChunkedOptions</class>
+    <class kind="class">tatami_chunked::CustomSparseChunkedMatrix</class>
+    <class kind="struct">tatami_chunked::CustomSparseChunkedOptions</class>
     <class kind="class">tatami_chunked::LruSlabCache</class>
+    <class kind="struct">tatami_chunked::MockSimpleDenseChunk</class>
+    <class kind="struct">tatami_chunked::MockSimpleSparseChunk</class>
+    <class kind="struct">tatami_chunked::MockSubsetDenseChunk</class>
+    <class kind="struct">tatami_chunked::MockSubsetSparseChunk</class>
     <class kind="class">tatami_chunked::OracleSlabCache</class>
     <class kind="struct">tatami_chunked::SimpleDenseChunkWrapper</class>
     <class kind="struct">tatami_chunked::SimpleSparseChunkWrapper</class>
     <class kind="class">tatami_chunked::SubsettedOracleSlabCache</class>
-    <class kind="struct">tatami_chunked::TypicalSlabCacheOptions</class>
     <class kind="struct">tatami_chunked::TypicalSlabCacheWorkspace</class>
     <member kind="enumeration">
       <type></type>
@@ -494,6 +559,6 @@
     <name>index</name>
     <title>tatami bindings for chunked matrices</title>
     <filename>index.html</filename>
-    <docanchor file="index.html">md__github_workspace_README</docanchor>
+    <docanchor file="index.html">md__2github_2workspace_2README</docanchor>
   </compound>
 </tagfile>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tatami_20bindings_20for_20chunked_20matrices_0',['tatami bindings for chunked matrices',['../index.html',1,'']]]
+  ['bindings_20for_20chunked_20matrices_0',['tatami bindings for chunked matrices',['../index.html',1,'']]]
 ];
