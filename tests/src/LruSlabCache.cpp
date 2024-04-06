@@ -27,11 +27,23 @@ TEST(LruSlabCache, Basic) {
     EXPECT_EQ(out.first, 10);
     EXPECT_EQ(out.second, 0);
 
+    out = cache.find(10, creator, populator); // retrieve from cache with short-circuit optimization.
+    EXPECT_EQ(out.first, 10);
+    EXPECT_EQ(out.second, 0);
+
     out = cache.find(30, creator, populator); // new allocation, now we're full.
     EXPECT_EQ(out.first, 30);
     EXPECT_EQ(out.second, 2);
 
+    out = cache.find(30, creator, populator); // retrieve from cache with short-circuit optimization.
+    EXPECT_EQ(out.first, 30);
+    EXPECT_EQ(out.second, 2);
+
     out = cache.find(20, creator, populator); // retrieve from cache.
+    EXPECT_EQ(out.first, 20);
+    EXPECT_EQ(out.second, 1);
+
+    out = cache.find(20, creator, populator); // retrieve from cache with short-circuit optimization.
     EXPECT_EQ(out.first, 20);
     EXPECT_EQ(out.second, 1);
 
@@ -78,7 +90,7 @@ TEST(LruSlabCache, Solo) {
     EXPECT_EQ(out.first, 10);
     EXPECT_EQ(out.second, 0);
 
-    out = cache.find(10, creator, populator); // retrieve from cache.
+    out = cache.find(10, creator, populator); // retrieve from cache with short circuit.
     EXPECT_EQ(out.first, 10);
     EXPECT_EQ(out.second, 0);
 

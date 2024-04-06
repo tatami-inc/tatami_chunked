@@ -28,7 +28,9 @@ private:
     typedef std::pair<Slab_, Id_> Element;
     std::list<Element> cache_data;
     std::unordered_map<Id_, typename std::list<Element>::iterator> cache_exists;
-    size_t max_slabs = 0;
+    size_t max_slabs;
+    Id_ last_id = 0;
+    Slab_* last_slab = NULL;
 
 public:
     /**
@@ -38,6 +40,8 @@ public:
 
 public:
     /**
+     * This method should only be called if `m > 0` in the constructor.
+     *
      * @tparam Cfunction_ Function to create a new `Slab_` object.
      * @tparam Pfunction_ Function to populate a `Slab_` object with the contents of a slab.
      *
@@ -55,23 +59,18 @@ public:
      */
     template<class Cfunction_, class Pfunction_>
     const Slab_& find(Id_ id, Cfunction_ create, Pfunction_ populate) {
-        if (max_slabs == 1) {
-            // Minor optimization if there's just one slab, in which case we can
-            // skip the search and the list splice if there's a hit.
-            if (!cache_data.empty()) {
-                const auto& solo = cache_data.front();
-                if (solo.second == id) {
-                    return solo.first;
-                }
-            }
-        } else {
-            auto it = cache_exists.find(id);
-            if (it != cache_exists.end()) {
-                auto chosen = it->second;
-                cache_data.splice(cache_data.end(), cache_data, chosen); // move to end.
-                return chosen->first;
-            } 
+        if (id == last_id && last_slab) {
+            return *last_slab;
         }
+        last_id = id;
+
+        auto it = cache_exists.find(id);
+        if (it != cache_exists.end()) {
+            auto chosen = it->second;
+            cache_data.splice(cache_data.end(), cache_data, chosen); // move to end.
+            last_slab = &(chosen->first);
+            return chosen->first;
+        } 
 
         typename std::list<Element>::iterator location;
         if (cache_data.size() < max_slabs) {
@@ -87,6 +86,7 @@ public:
 
         auto& slab = location->first;
         populate(id, slab);
+        last_slab = &slab;
         return slab;
     }
 };
