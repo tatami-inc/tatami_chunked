@@ -135,6 +135,10 @@ public:
                 future_cache[a] = cIt->second;
                 ++cIt;
             }
+            to_reassign.clear();
+
+            populate(to_populate);
+            to_populate.clear();
 
             // We always fill future_cache to the brim so every entry of
             // all_slabs should be referenced by a pointer in future_cache.
@@ -145,12 +149,7 @@ public:
             // worrying about leaking memory. The only exception is if we're at
             // the end of the predictions, in which case it doesn't matter.
             current_cache.clear();
-            to_reassign.clear();
-
-            populate(to_populate);
-
             current_cache.swap(future_cache);
-            to_populate.clear();
         }
 
         // We know it must exist, so no need to check ccIt's validity.
