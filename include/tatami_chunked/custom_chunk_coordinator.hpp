@@ -606,9 +606,9 @@ public:
                 /* create = */ [&]() -> Slab {
                     return Slab(alloc);
                 },
-                /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
+                /* populate =*/ [&](const std::vector<std::pair<Index_, Slab_*> >& to_populate) -> void {
                     for (const auto& p : in_need) {
-                        fetch_block(p.first, 0, get_primary_chunkdim<accrow_>(p.first), *(data[p.second]));
+                        fetch_block(p.first, 0, get_primary_chunkdim<accrow_>(p.first), *(p.second));
                     }
                 }
             );
