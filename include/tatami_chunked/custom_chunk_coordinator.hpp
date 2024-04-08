@@ -579,24 +579,26 @@ public:
                 /* create = */ [&]() -> Slab {
                     return Slab(alloc);
                 },
-                /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
+                /* populate =*/ [&](std::vector<std::tuple<Index_, Slab*, SubsettedOracleSlabSubset<Index_>*> >& in_need) -> void {
                     for (const auto& p : in_need) {
-                        auto& ptr = data[p.second];
-                        switch (ptr->subset.selection) {
-                            case SubsetSelection::FULL:
-                                fetch_block(p.first, 0, get_primary_chunkdim<accrow_>(p.first), ptr->contents);
+                        auto id = std::get<0>(p);
+                        auto ptr = std::get<1>(p);
+                        auto sub = std::get<2>(p);
+                        switch (sub->selection) {
+                            case SubsettedOracleSelection::FULL:
+                                fetch_block(id, 0, get_primary_chunkdim<accrow_>(id), *ptr);
                                 break;
-                            case SubsetSelection::BLOCK:
-                                fetch_block(p.first, ptr->subset.block_start, ptr->subset.block_length, ptr->contents);
+                            case SubsettedOracleSelection::BLOCK:
+                                fetch_block(id, sub->block_start, sub->block_length, *ptr);
                                 break;
-                            case SubsetSelection::INDEX:
-                                fetch_index(p.first, ptr->subset.indices, ptr->contents);
+                            case SubsettedOracleSelection::INDEX:
+                                fetch_index(id, sub->indices, *ptr);
                                 break;
                         }
                     }
                 }
             );
-            return std::make_pair(&(out.first->contents), out.second);
+            return std::make_pair(out.first, out.second);
 
         } else {
             return cache_workspace.cache.next(
@@ -606,9 +608,9 @@ public:
                 /* create = */ [&]() -> Slab {
                     return Slab(alloc);
                 },
-                /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& in_need, auto& data) -> void {
-                    for (const auto& p : in_need) {
-                        fetch_block(p.first, 0, get_primary_chunkdim<accrow_>(p.first), *(data[p.second]));
+                /* populate =*/ [&](std::vector<std::pair<Index_, Slab*> >& to_populate) -> void {
+                    for (auto& p : to_populate) {
+                        fetch_block(p.first, 0, get_primary_chunkdim<accrow_>(p.first), *(p.second));
                     }
                 }
             );

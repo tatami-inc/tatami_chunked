@@ -61,9 +61,9 @@ struct TypicalSlabCacheWorkspace {
         if constexpr(!oracle_) {
             cache = LruSlabCache<Index_, Slab_>(num_slabs_in_cache);
         } else if constexpr(!subset_) {
-            cache = OracleSlabCache<Index_, Index_, Slab_>(std::move(oracle), 10000, num_slabs_in_cache);
+            cache = OracleSlabCache<Index_, Index_, Slab_>(std::move(oracle), num_slabs_in_cache);
         } else {
-            cache = SubsettedOracleSlabCache<Index_, Index_, Slab_>(std::move(oracle), 10000, num_slabs_in_cache);
+            cache = SubsettedOracleSlabCache<Index_, Index_, Slab_>(std::move(oracle), num_slabs_in_cache);
         }
     }
 
