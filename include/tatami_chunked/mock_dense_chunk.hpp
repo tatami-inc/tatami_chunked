@@ -226,7 +226,7 @@ struct MockSimpleDenseChunk {
 
     /**
      * Whether to extract a subset of elements on the primary dimension.
-     * This should be set to `false`, otherwise a `MockSubsetDenseChunk` is expected.
+     * This should be set to `false`, otherwise a `MockSubsettedDenseChunk` is expected.
      */
     static constexpr bool use_subset = false;
 
@@ -366,10 +366,10 @@ public:
  * The interface is smarter as it only extracts elements of interest along the primary dimension
  * (i.e., the dimension used to create instances of the various `tatami::DenseExtractor` classes).
  * The elements of interest may be either as a contiguous block or a indexed subset,
- * as predicted for each chunk from the `SubsettedOracleSlabCache`.
+ * as predicted for each chunk from the `SubsettedtedOracleSlabCache`.
  * This provides some opportunities for optimization if the chunk can be partially read.
  */
-struct MockSubsetDenseChunk {
+struct MockSubsettedDenseChunk {
     /**
      * Type of the value stored in this chunk.
      * Implementations can use any numeric type. 
@@ -393,8 +393,8 @@ public:
     /**
      * @cond
      */
-    MockSubsetDenseChunk() = default;
-    MockSubsetDenseChunk(std::vector<double> c, size_t nr, size_t nc) : core(MockDenseChunk_internal::MockBlob(std::move(c), nr, nc)) {}
+    MockSubsettedDenseChunk() = default;
+    MockSubsettedDenseChunk(std::vector<double> c, size_t nr, size_t nc) : core(MockDenseChunk_internal::MockBlob(std::move(c), nr, nc)) {}
     /**
      * @endcond
      */

@@ -21,7 +21,7 @@ protected:
 
     typedef tatami_chunked::SimpleSparseChunkWrapper<MockSparseBlob<false> > SChunk;
     typedef tatami_chunked::MockSimpleSparseChunk MockSimple;
-    typedef tatami_chunked::MockSubsetSparseChunk MockSubset;
+    typedef tatami_chunked::MockSubsettedSparseChunk MockSubsetted;
 
     inline static SimulationParameters last_params;
 
@@ -44,7 +44,7 @@ protected:
         auto num_chunks_per_column = (matdim.first + chunkdim.first - 1) / chunkdim.first;
         std::vector<SChunk> mock_chunks(num_chunks_per_row * num_chunks_per_column);
         std::vector<MockSimple> simple_chunks(mock_chunks.size());
-        std::vector<MockSubset> subset_chunks(mock_chunks.size());
+        std::vector<MockSubsetted> subset_chunks(mock_chunks.size());
 
         for (int r = 0; r < num_chunks_per_column; ++r) {
             for (int c = 0; c < num_chunks_per_row; ++c) {
@@ -98,7 +98,7 @@ protected:
                     }
 
                     simple_chunks[offset] = MockSimple(rlen, clen, vcontents, icontents, pcontents);
-                    subset_chunks[offset] = MockSubset(rlen, clen, std::move(vcontents), std::move(icontents), std::move(pcontents));
+                    subset_chunks[offset] = MockSubsetted(rlen, clen, std::move(vcontents), std::move(icontents), std::move(pcontents));
                 }
             }
         }
@@ -115,7 +115,7 @@ protected:
             matdim.first, matdim.second, chunkdim.first, chunkdim.second, std::move(simple_chunks), rowmajor, opt
         ));
 
-        subset_mat.reset(new tatami_chunked::CustomSparseChunkedMatrix<double, int, MockSubset>(
+        subset_mat.reset(new tatami_chunked::CustomSparseChunkedMatrix<double, int, MockSubsetted>(
             matdim.first, matdim.second, chunkdim.first, chunkdim.second, std::move(subset_chunks), rowmajor, opt
         ));
     }

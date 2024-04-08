@@ -376,7 +376,7 @@ struct MockSimpleSparseChunk {
 
     /**
      * Whether to extract a subset of elements on the primary dimension.
-     * This should be set to `false`, otherwise a `MockSubsetSparseChunk` is expected.
+     * This should be set to `false`, otherwise a `MockSubsettedSparseChunk` is expected.
      */
     static constexpr bool use_subset = false;
 
@@ -591,10 +591,10 @@ public:
  * The interface is smarter as it only extracts elements of interest along the primary dimension
  * (i.e., the dimension used to create instances of the various `tatami::SparseExtractor` classes).
  * The elements of interest may be either as a contiguous block or a indexed subset,
- * as predicted for each chunk from the `SubsettedOracleSlabCache`.
+ * as predicted for each chunk from the `SubsettedtedOracleSlabCache`.
  * This provides some opportunities for optimization if the chunk can be partially read.
  */
-struct MockSubsetSparseChunk {
+struct MockSubsettedSparseChunk {
     /**
      * Type of the value stored in this chunk.
      * Implementations can use any numeric type. 
@@ -634,8 +634,8 @@ public:
     /**
      * @cond
      */
-    MockSubsetSparseChunk() = default;
-    MockSubsetSparseChunk(int nr, int nc, std::vector<double> x, std::vector<int> i, std::vector<size_t> p) : 
+    MockSubsettedSparseChunk() = default;
+    MockSubsettedSparseChunk(int nr, int nc, std::vector<double> x, std::vector<int> i, std::vector<size_t> p) : 
         core(MockSparseChunk_internal::MockBlob(nr, nc, std::move(x), std::move(i), std::move(p))) {}
     /**
      * @endcond

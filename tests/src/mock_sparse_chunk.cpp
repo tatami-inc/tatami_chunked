@@ -240,11 +240,11 @@ INSTANTIATE_TEST_SUITE_P(
 /**********************************************************
  **********************************************************/
 
-class MockSubsetSparseChunkUtils {
+class MockSubsettedSparseChunkUtils {
 protected:
     static inline std::unique_ptr<tatami::Matrix<double, int> > ref;
 
-    static inline tatami_chunked::MockSubsetSparseChunk mock;
+    static inline tatami_chunked::MockSubsettedSparseChunk mock;
 
     static inline std::pair<int, int> last_params;
 
@@ -259,7 +259,7 @@ protected:
         tatami::DenseRowMatrix<double, int> tmp(dim.first, dim.second, std::move(full));
 
         auto compressed = tatami::retrieve_compressed_sparse_contents<true, double, int>(&tmp, true);
-        mock = tatami_chunked::MockSubsetSparseChunk(
+        mock = tatami_chunked::MockSubsettedSparseChunk(
             dim.first, 
             dim.second, 
             compressed.value, 
@@ -274,8 +274,8 @@ protected:
 /**********************************************************
  **********************************************************/
 
-class MockSubsetSparseChunkBlockBlockTest : 
-    public MockSubsetSparseChunkUtils, 
+class MockSubsettedSparseChunkBlockBlockTest : 
+    public MockSubsettedSparseChunkUtils, 
     public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<double, double>, std::pair<double, double> > > {
 protected:
     void SetUp() {
@@ -283,13 +283,13 @@ protected:
     }
 };
 
-TEST_P(MockSubsetSparseChunkBlockBlockTest, Basic) {
+TEST_P(MockSubsettedSparseChunkBlockBlockTest, Basic) {
     auto params = GetParam();
     auto dim = std::get<0>(params);
     auto bounds = std::get<1>(params);
     auto block = std::get<2>(params);
 
-    typename tatami_chunked::MockSubsetSparseChunk::Workspace work;
+    typename tatami_chunked::MockSubsettedSparseChunk::Workspace work;
 
     // Row extraction.
     {
@@ -327,8 +327,8 @@ TEST_P(MockSubsetSparseChunkBlockBlockTest, Basic) {
 };
 
 INSTANTIATE_TEST_SUITE_P(
-    MockSubsetSparseChunk,
-    MockSubsetSparseChunkBlockBlockTest,
+    MockSubsettedSparseChunk,
+    MockSubsettedSparseChunkBlockBlockTest,
     ::testing::Combine(
         ::testing::Values( // chunk dimensions
             std::make_pair(1, 50),
@@ -352,8 +352,8 @@ INSTANTIATE_TEST_SUITE_P(
 /**********************************************************
  **********************************************************/
 
-class MockSubsetSparseChunkBlockIndexTest : 
-    public MockSubsetSparseChunkUtils, 
+class MockSubsettedSparseChunkBlockIndexTest : 
+    public MockSubsettedSparseChunkUtils, 
     public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<double, double>, std::pair<double, int> > > {
 protected:
     void SetUp() {
@@ -361,13 +361,13 @@ protected:
     }
 };
 
-TEST_P(MockSubsetSparseChunkBlockIndexTest, Basic) {
+TEST_P(MockSubsettedSparseChunkBlockIndexTest, Basic) {
     auto params = GetParam();
     auto dim = std::get<0>(params);
     auto bounds = std::get<1>(params);
     auto iparam = std::get<2>(params);
 
-    typename tatami_chunked::MockSubsetSparseChunk::Workspace work;
+    typename tatami_chunked::MockSubsettedSparseChunk::Workspace work;
 
     {
         int r_first = bounds.first * dim.first,  r_last = bounds.second * dim.first,  r_len = r_last - r_first;
@@ -403,8 +403,8 @@ TEST_P(MockSubsetSparseChunkBlockIndexTest, Basic) {
 };
 
 INSTANTIATE_TEST_SUITE_P(
-    MockSubsetSparseChunk,
-    MockSubsetSparseChunkBlockIndexTest,
+    MockSubsettedSparseChunk,
+    MockSubsettedSparseChunkBlockIndexTest,
     ::testing::Combine(
         ::testing::Values( // chunk dimensions
             std::make_pair(1, 50),
@@ -428,8 +428,8 @@ INSTANTIATE_TEST_SUITE_P(
 /**********************************************************
  **********************************************************/
 
-class MockSubsetSparseChunkIndexBlockTest : 
-    public MockSubsetSparseChunkUtils, 
+class MockSubsettedSparseChunkIndexBlockTest : 
+    public MockSubsettedSparseChunkUtils, 
     public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<double, int>, std::pair<double, double> > > {
 protected:
     void SetUp() {
@@ -437,13 +437,13 @@ protected:
     }
 };
 
-TEST_P(MockSubsetSparseChunkIndexBlockTest, Sparse) {
+TEST_P(MockSubsettedSparseChunkIndexBlockTest, Sparse) {
     auto params = GetParam();
     auto dim = std::get<0>(params);
     auto bounds = std::get<1>(params);
     auto block = std::get<2>(params);
 
-    typename tatami_chunked::MockSubsetSparseChunk::Workspace work;
+    typename tatami_chunked::MockSubsettedSparseChunk::Workspace work;
 
     {
         auto r_indices = create_indices(dim.first, bounds);
@@ -479,8 +479,8 @@ TEST_P(MockSubsetSparseChunkIndexBlockTest, Sparse) {
 };
 
 INSTANTIATE_TEST_SUITE_P(
-    MockSubsetSparseChunk,
-    MockSubsetSparseChunkIndexBlockTest,
+    MockSubsettedSparseChunk,
+    MockSubsettedSparseChunkIndexBlockTest,
     ::testing::Combine(
         ::testing::Values( // chunk dimensions
             std::make_pair(1, 50),
@@ -504,8 +504,8 @@ INSTANTIATE_TEST_SUITE_P(
 /**********************************************************
  **********************************************************/
 
-class MockSubsetSparseChunkIndexIndexTest : 
-    public MockSubsetSparseChunkUtils, 
+class MockSubsettedSparseChunkIndexIndexTest : 
+    public MockSubsettedSparseChunkUtils, 
     public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<double, int>, std::pair<double, int> > > {
 protected:
     void SetUp() {
@@ -513,13 +513,13 @@ protected:
     }
 };
 
-TEST_P(MockSubsetSparseChunkIndexIndexTest, Sparse) {
+TEST_P(MockSubsettedSparseChunkIndexIndexTest, Sparse) {
     auto params = GetParam();
     auto dim = std::get<0>(params);
     auto iparam1 = std::get<1>(params);
     auto iparam2 = std::get<2>(params);
 
-    typename tatami_chunked::MockSubsetSparseChunk::Workspace work;
+    typename tatami_chunked::MockSubsettedSparseChunk::Workspace work;
 
     {
         auto r_indices = create_indices(dim.first, iparam1);
@@ -555,8 +555,8 @@ TEST_P(MockSubsetSparseChunkIndexIndexTest, Sparse) {
 };
 
 INSTANTIATE_TEST_SUITE_P(
-    MockSubsetSparseChunk,
-    MockSubsetSparseChunkIndexIndexTest,
+    MockSubsettedSparseChunk,
+    MockSubsettedSparseChunkIndexIndexTest,
     ::testing::Combine(
         ::testing::Values( // chunk dimensions
             std::make_pair(1, 50),
