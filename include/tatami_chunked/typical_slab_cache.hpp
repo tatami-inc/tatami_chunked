@@ -46,25 +46,24 @@ struct TypicalSlabCacheWorkspace {
      * @param oracle Oracle containing the predicted accesses.
      * Only relevant if `oracle_ = true`, otherwise a bool should be passed in (which is ignored).
      */
-    TypicalSlabCacheWorkspace(Index_ primary_length, Index_ secondary_length, size_t cache_size_in_elements, bool require_minimum_cache, tatami::MaybeOracle<oracle_, Index_> oracle) {
-        slab_size_in_elements = static_cast<size_t>(primary_length) * static_cast<size_t>(secondary_length);
+    TypicalSlabCacheWorkspace(Index_ primary_length, Index_ secondary_length, size_t cache_size_in_elements, bool require_minimum_cache, tatami::MaybeOracle<oracle_, Index_> oracle) :
+        slab_size_in_elements(static_cast<size_t>(primary_length) * static_cast<size_t>(secondary_length)),
+        num_slabs_in_cache(compute_num_slabs_in_cache(slab_size_in_elements, cache_size_in_elements, require_minimum_cache)),
+        cache(std::move(oracle), num_slabs_in_cache)
+    {}
 
-        if (!slab_size_in_elements) {
-            num_slabs_in_cache = 0;
-        } else {
-            num_slabs_in_cache = (slab_size_in_elements ? cache_size_in_elements / slab_size_in_elements : 1);
-            if (num_slabs_in_cache == 0 && require_minimum_cache) {
-                num_slabs_in_cache = 1;
-            }
+private:
+    static size_t compute_num_slabs_in_cache(size_t slab_size_in_elements, size_t cache_size_in_elements, bool require_minimum_cache) {
+        if (slab_size_in_elements == 0) {
+            return 0;
         }
 
-        if constexpr(!oracle_) {
-            cache = LruSlabCache<Index_, Slab_>(num_slabs_in_cache);
-        } else if constexpr(!subset_) {
-            cache = OracleSlabCache<Index_, Index_, Slab_>(std::move(oracle), num_slabs_in_cache);
-        } else {
-            cache = SubsettedOracleSlabCache<Index_, Index_, Slab_>(std::move(oracle), num_slabs_in_cache);
-        }
+        auto tmp = cache_size_in_elements / slab_size_in_elements;
+        if (tmp == 0 && require_minimum_cache) {
+            return 1;
+        } 
+
+        return tmp;
     }
 
 public:

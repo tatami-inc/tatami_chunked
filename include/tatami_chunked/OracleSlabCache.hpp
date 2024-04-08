@@ -57,11 +57,24 @@ public:
         future_cache.reserve(max_slabs);
     } 
 
+
+    /**
+     * Deleted as the cache holds persistent pointers.
+     */
+    OracleSlabCache(const OracleSlabCache&) = delete;
+
+    /**
+     * Deleted as the cache holds persistent pointers.
+     */
+    OracleSlabCache& operator=(const OracleSlabCache&) = delete;
+
     /**
      * @cond
      */
-    // For testing only.
-    OracleSlabCache() = default;
+    // Move operators are still okay as pointers still point to the moved vectors.
+    // see https://stackoverflow.com/questions/43988553/stdvector-stdmove-and-pointer-invalidation.
+    OracleSlabCache& operator=(OracleSlabCache&&) = default;
+    OracleSlabCache(OracleSlabCache&&) = default;
     /**
      * @endcond
      */

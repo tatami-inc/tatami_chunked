@@ -191,10 +191,22 @@ public:
     }
 
     /**
+     * Deleted as the cache holds persistent pointers.
+     */
+    SubsettedOracleSlabCache(const SubsettedOracleSlabCache&) = delete;
+
+    /**
+     * Deleted as the cache holds persistent pointers.
+     */
+    SubsettedOracleSlabCache& operator=(const SubsettedOracleSlabCache&) = delete;
+
+    /**
      * @cond
      */
-    // For testing only.
-    SubsettedOracleSlabCache() = default;
+    // Move operators are still okay as pointers still point to the moved vectors,
+    // see https://stackoverflow.com/questions/43988553/stdvector-stdmove-and-pointer-invalidation.
+    SubsettedOracleSlabCache(SubsettedOracleSlabCache&&) = delete;
+    SubsettedOracleSlabCache& operator=(SubsettedOracleSlabCache&&) = delete;
     /**
      * @endcond
      */

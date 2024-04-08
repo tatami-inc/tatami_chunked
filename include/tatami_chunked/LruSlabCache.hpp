@@ -36,7 +36,36 @@ public:
     /**
      * @param m Maximum number of slabs to store.
      */
-    LruSlabCache(size_t m = 1) : max_slabs(m) {}
+    LruSlabCache(size_t m) : max_slabs(m) {}
+
+    /**
+     * Deleted as the cache holds persistent iterators.
+     */
+    LruSlabCache(const LruSlabCache&) = delete;
+
+    /**
+     * Deleted as the cache holds persistent iterators.
+     */
+    LruSlabCache& operator=(const LruSlabCache&) = delete;
+
+    /**
+     * @cond
+     */
+    // Iterators are guaranteed to be valid after move, see Notes in
+    // https://en.cppreference.com/w/cpp/container/list/list
+    // https://en.cppreference.com/w/cpp/container/list/operator%3D
+    LruSlabCache& operator=(LruSlabCache&&) = default; 
+    LruSlabCache(LruSlabCache&&) = default;
+    /**
+     * @endcond
+     */
+
+    /**
+     * Overloaded constructor for consistency with `OracleSlabCache` and `SubsettedOracleSlabCache`.
+     * @tparam Oracle_ Any class, to be ignored.
+     */ 
+    template<class Oracle_>
+    LruSlabCache([[maybe_unused]] Oracle_ ora, size_t m) : LruSlabCache(m) {}
 
 public:
     /**
