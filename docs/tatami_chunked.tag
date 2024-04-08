@@ -146,8 +146,29 @@
       <type></type>
       <name>LruSlabCache</name>
       <anchorfile>classtatami__chunked_1_1LruSlabCache.html</anchorfile>
-      <anchor>a022fccffb0fcfbe9e399366eb6f22bb1</anchor>
-      <arglist>(size_t m=1)</arglist>
+      <anchor>ac305164cd47db9f7f008266ddef9f4fb</anchor>
+      <arglist>(size_t m)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>LruSlabCache</name>
+      <anchorfile>classtatami__chunked_1_1LruSlabCache.html</anchorfile>
+      <anchor>a11ebee4dd4514b76fa56dd21e3a2d5a5</anchor>
+      <arglist>(const LruSlabCache &amp;)=delete</arglist>
+    </member>
+    <member kind="function">
+      <type>LruSlabCache &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classtatami__chunked_1_1LruSlabCache.html</anchorfile>
+      <anchor>a6eab8e76919ca8873fd4a5a5a816a1b2</anchor>
+      <arglist>(const LruSlabCache &amp;)=delete</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>LruSlabCache</name>
+      <anchorfile>classtatami__chunked_1_1LruSlabCache.html</anchorfile>
+      <anchor>a53460d588554e0ed34bc27d1463d9e0e</anchor>
+      <arglist>(Oracle_ ora, size_t m)</arglist>
     </member>
     <member kind="function">
       <type>const Slab_ &amp;</type>
@@ -357,6 +378,20 @@
       <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; ora, size_t num_slabs)</arglist>
     </member>
     <member kind="function">
+      <type></type>
+      <name>OracleSlabCache</name>
+      <anchorfile>classtatami__chunked_1_1OracleSlabCache.html</anchorfile>
+      <anchor>a83fd03588752f760581248ebd7403a30</anchor>
+      <arglist>(const OracleSlabCache &amp;)=delete</arglist>
+    </member>
+    <member kind="function">
+      <type>OracleSlabCache &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classtatami__chunked_1_1OracleSlabCache.html</anchorfile>
+      <anchor>adbd437ff534f13bf5fac2d9d20322a84</anchor>
+      <arglist>(const OracleSlabCache &amp;)=delete</arglist>
+    </member>
+    <member kind="function">
       <type>Index_</type>
       <name>next</name>
       <anchorfile>classtatami__chunked_1_1OracleSlabCache.html</anchorfile>
@@ -393,6 +428,20 @@
       <anchorfile>classtatami__chunked_1_1SubsettedOracleSlabCache.html</anchorfile>
       <anchor>ac642e224ec611e618a9c2a8fa9b6c4bc</anchor>
       <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; ora, size_t num_slabs)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>SubsettedOracleSlabCache</name>
+      <anchorfile>classtatami__chunked_1_1SubsettedOracleSlabCache.html</anchorfile>
+      <anchor>ab7599fd12a66b20bfad3b3272bc56553</anchor>
+      <arglist>(const SubsettedOracleSlabCache &amp;)=delete</arglist>
+    </member>
+    <member kind="function">
+      <type>SubsettedOracleSlabCache &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classtatami__chunked_1_1SubsettedOracleSlabCache.html</anchorfile>
+      <anchor>a4aebba9a39bc83f43dc7e0fde9fa63f5</anchor>
+      <arglist>(const SubsettedOracleSlabCache &amp;)=delete</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>

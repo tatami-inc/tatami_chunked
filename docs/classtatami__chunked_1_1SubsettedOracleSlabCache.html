@@ -91,6 +91,10 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ac642e224ec611e618a9c2a8fa9b6c4bc" id="r_ac642e224ec611e618a9c2a8fa9b6c4bc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html#ac642e224ec611e618a9c2a8fa9b6c4bc">SubsettedOracleSlabCache</a> (std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; ora, size_t num_slabs)</td></tr>
 <tr class="separator:ac642e224ec611e618a9c2a8fa9b6c4bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab7599fd12a66b20bfad3b3272bc56553" id="r_ab7599fd12a66b20bfad3b3272bc56553"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html#ab7599fd12a66b20bfad3b3272bc56553">SubsettedOracleSlabCache</a> (const <a class="el" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html">SubsettedOracleSlabCache</a> &amp;)=delete</td></tr>
+<tr class="separator:ab7599fd12a66b20bfad3b3272bc56553"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4aebba9a39bc83f43dc7e0fde9fa63f5" id="r_a4aebba9a39bc83f43dc7e0fde9fa63f5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html">SubsettedOracleSlabCache</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html#a4aebba9a39bc83f43dc7e0fde9fa63f5">operator=</a> (const <a class="el" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html">SubsettedOracleSlabCache</a> &amp;)=delete</td></tr>
+<tr class="separator:a4aebba9a39bc83f43dc7e0fde9fa63f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab861a229c86fab7212a18b05a01fb9a4" id="r_ab861a229c86fab7212a18b05a01fb9a4"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html#ab861a229c86fab7212a18b05a01fb9a4">next</a> ()</td></tr>
 <tr class="separator:ab861a229c86fab7212a18b05a01fb9a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a835433da5c6e146e76f2e50a43d6ce28" id="r_a835433da5c6e146e76f2e50a43d6ce28"><td class="memTemplParams" colspan="2">template&lt;class Ifunction_ , class Cfunction_ , class Pfunction_ &gt; </td></tr>
@@ -111,7 +115,7 @@ class tatami_chunked::SubsettedOracleSlabCache&lt; Id_, Index_, Slab_ &gt;</div>
 <p>Implement an oracle-aware cache for slab subsets. This is similar to the <code><a class="el" href="classtatami__chunked_1_1OracleSlabCache.html" title="Oracle-aware cache for slabs.">OracleSlabCache</a></code> except that it remembers the subset of rows/columns that were requested for each slab. Slab extractors can use this information to optimize the slab population process by ignoring rows/columns that are not needed. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ac642e224ec611e618a9c2a8fa9b6c4bc" name="ac642e224ec611e618a9c2a8fa9b6c4bc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac642e224ec611e618a9c2a8fa9b6c4bc">&#9670;&#160;</a></span>SubsettedOracleSlabCache()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ac642e224ec611e618a9c2a8fa9b6c4bc">&#9670;&#160;</a></span>SubsettedOracleSlabCache() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -155,7 +159,65 @@ template&lt;typename Id_ , typename Index_ , class Slab_ &gt; </div>
 
 </div>
 </div>
+<a id="ab7599fd12a66b20bfad3b3272bc56553" name="ab7599fd12a66b20bfad3b3272bc56553"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab7599fd12a66b20bfad3b3272bc56553">&#9670;&#160;</a></span>SubsettedOracleSlabCache() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id_ , typename Index_ , class Slab_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html">tatami_chunked::SubsettedOracleSlabCache</a>&lt; Id_, Index_, Slab_ &gt;::SubsettedOracleSlabCache </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html">SubsettedOracleSlabCache</a>&lt; Id_, Index_, Slab_ &gt; &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Deleted as the cache holds persistent pointers. </p>
+
+</div>
+</div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a4aebba9a39bc83f43dc7e0fde9fa63f5" name="a4aebba9a39bc83f43dc7e0fde9fa63f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4aebba9a39bc83f43dc7e0fde9fa63f5">&#9670;&#160;</a></span>operator=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Id_ , typename Index_ , class Slab_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html">SubsettedOracleSlabCache</a> &amp; <a class="el" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html">tatami_chunked::SubsettedOracleSlabCache</a>&lt; Id_, Index_, Slab_ &gt;::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html">SubsettedOracleSlabCache</a>&lt; Id_, Index_, Slab_ &gt; &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">delete</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Deleted as the cache holds persistent pointers. </p>
+
+</div>
+</div>
 <a id="ab861a229c86fab7212a18b05a01fb9a4" name="ab861a229c86fab7212a18b05a01fb9a4"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab861a229c86fab7212a18b05a01fb9a4">&#9670;&#160;</a></span>next() <span class="overload">[1/2]</span></h2>
 
