@@ -18,7 +18,7 @@ var searchData=
   ['options_2ehpp_15',['Options.hpp',['https://tatami-inc.github.io/tatami/Options_8hpp.html',1,'']]],
   ['oracle_16',['Oracle',['https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html',1,'tatami']]],
   ['oracle_2ehpp_17',['Oracle.hpp',['https://tatami-inc.github.io/tatami/Oracle_8hpp.html',1,'']]],
-  ['oracleslabcache_18',['oracleslabcache',['../classtatami__chunked_1_1OracleSlabCache.html',1,'tatami_chunked::OracleSlabCache&lt; Id_, Index_, Slab_ &gt;'],['../classtatami__chunked_1_1OracleSlabCache.html#a0749cb3f44b19a4375c4366cfbadd56b',1,'tatami_chunked::OracleSlabCache::OracleSlabCache()']]],
+  ['oracleslabcache_18',['oracleslabcache',['../classtatami__chunked_1_1OracleSlabCache.html',1,'tatami_chunked::OracleSlabCache&lt; Id_, Index_, Slab_ &gt;'],['../classtatami__chunked_1_1OracleSlabCache.html#a920b4c5979177df0df54c88cc77f399a',1,'tatami_chunked::OracleSlabCache::OracleSlabCache()']]],
   ['oracleslabcache_2ehpp_19',['OracleSlabCache.hpp',['../OracleSlabCache_8hpp.html',1,'']]],
   ['oraculardenseextractor_20',['OracularDenseExtractor',['https://tatami-inc.github.io/tatami/structtatami_1_1OracularDenseExtractor.html',1,'tatami']]],
   ['oracularsparseextractor_21',['OracularSparseExtractor',['https://tatami-inc.github.io/tatami/structtatami_1_1OracularSparseExtractor.html',1,'tatami']]]

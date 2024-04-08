@@ -14,5 +14,5 @@ var searchData=
   ['operator_3e_11',['operator&gt;',['https://tatami-inc.github.io/tatami/structtatami_1_1SomeNumericArray_1_1Iterator.html#a4296f53f8ed91bb3324e9a681b2d3c35',1,'tatami::SomeNumericArray::Iterator']]],
   ['operator_3e_3d_12',['operator&gt;=',['https://tatami-inc.github.io/tatami/structtatami_1_1SomeNumericArray_1_1Iterator.html#a82077d04886a5a0088372b03707d2fca',1,'tatami::SomeNumericArray::Iterator']]],
   ['operator_5b_5d_13',['operator[]',['https://tatami-inc.github.io/tatami/classtatami_1_1ArrayView.html#a329bcfebf2ebc7ca73d559836170722c',1,'tatami::ArrayView::operator[]()'],['https://tatami-inc.github.io/tatami/structtatami_1_1SomeNumericArray_1_1Iterator.html#a220df2018efe0af029200950bf8f2656',1,'tatami::SomeNumericArray::Iterator::operator[]()'],['https://tatami-inc.github.io/tatami/structtatami_1_1SomeNumericArray.html#ac40db52de47708abb156ad33f24619a4',1,'tatami::SomeNumericArray::operator[]()']]],
-  ['oracleslabcache_14',['OracleSlabCache',['../classtatami__chunked_1_1OracleSlabCache.html#a0749cb3f44b19a4375c4366cfbadd56b',1,'tatami_chunked::OracleSlabCache']]]
+  ['oracleslabcache_14',['OracleSlabCache',['../classtatami__chunked_1_1OracleSlabCache.html#a920b4c5979177df0df54c88cc77f399a',1,'tatami_chunked::OracleSlabCache']]]
 ];

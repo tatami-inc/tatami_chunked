@@ -89,8 +89,8 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0749cb3f44b19a4375c4366cfbadd56b" id="r_a0749cb3f44b19a4375c4366cfbadd56b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracleSlabCache.html#a0749cb3f44b19a4375c4366cfbadd56b">OracleSlabCache</a> (std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; ora, size_t per_iteration, size_t num_slabs)</td></tr>
-<tr class="separator:a0749cb3f44b19a4375c4366cfbadd56b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a920b4c5979177df0df54c88cc77f399a" id="r_a920b4c5979177df0df54c88cc77f399a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracleSlabCache.html#a920b4c5979177df0df54c88cc77f399a">OracleSlabCache</a> (std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; ora, size_t num_slabs)</td></tr>
+<tr class="separator:a920b4c5979177df0df54c88cc77f399a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a368d924ebc4d47daf8f0766d9c0a2438" id="r_a368d924ebc4d47daf8f0766d9c0a2438"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracleSlabCache.html#a368d924ebc4d47daf8f0766d9c0a2438">next</a> ()</td></tr>
 <tr class="separator:a368d924ebc4d47daf8f0766d9c0a2438"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8a7fd554334053ebef56bdcb5d6c0321" id="r_a8a7fd554334053ebef56bdcb5d6c0321"><td class="memTemplParams" colspan="2">template&lt;class Ifunction_ , class Cfunction_ , class Pfunction_ &gt; </td></tr>
@@ -110,8 +110,8 @@ class tatami_chunked::OracleSlabCache&lt; Id_, Index_, Slab_ &gt;</div><p>Oracle
 </dl>
 <p>Implement an oracle-aware cache for slabs. Each slab is defined as the set of chunks required to read a row/column (or a contiguous block/indexed subset thereof) during iteration through a <code><a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a></code>. This cache can be used for <code>Matrix</code> representations where the data is costly to load (e.g., from file) and a <code><a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html">tatami::Oracle</a></code> is provided to predict future accesses. In such cases, chunks of data can be loaded and cached such that any possible future request for an already-loaded slab will just fetch it from cache. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a0749cb3f44b19a4375c4366cfbadd56b" name="a0749cb3f44b19a4375c4366cfbadd56b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0749cb3f44b19a4375c4366cfbadd56b">&#9670;&#160;</a></span>OracleSlabCache()</h2>
+<a id="a920b4c5979177df0df54c88cc77f399a" name="a920b4c5979177df0df54c88cc77f399a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a920b4c5979177df0df54c88cc77f399a">&#9670;&#160;</a></span>OracleSlabCache()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -126,12 +126,6 @@ template&lt;typename Id_ , typename Index_ , class Slab_ &gt; </div>
           <td>(</td>
           <td class="paramtype">std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt;&#160;</td>
           <td class="paramname"><em>ora</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>per_iteration</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -154,7 +148,6 @@ template&lt;typename Id_ , typename Index_ , class Slab_ &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">ora</td><td>Pointer to an <code><a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html">tatami::Oracle</a></code> to be used for predictions. </td></tr>
-    <tr><td class="paramname">per_iteration</td><td>Maximum number of predictions to make per iteration. </td></tr>
     <tr><td class="paramname">num_slabs</td><td>Maximum number of slabs to store. </td></tr>
   </table>
   </dd>
@@ -248,7 +241,7 @@ template&lt;class Ifunction_ , class Cfunction_ , class Pfunction_ &gt; </div>
   <table class="params">
     <tr><td class="paramname">identify</td><td>Function that accepts an <code>i</code>, an <code>Index_</code> containing the predicted row/column index. This should return a pair containing (1) the identifier of the slab containing <code>i</code>, and (2) the index of row/column <code>i</code> inside that slab. This is typically defined as the index of the slab on the iteration dimension. For example, if each chunk takes up 10 rows, attempting to access row 21 would require retrieval of slab 2 and an offset of 1. </td></tr>
     <tr><td class="paramname">create</td><td>Function that accepts no arguments and returns a <code>Slab_</code> object with sufficient memory to hold a slab's contents when used in <code>populate()</code>. This may also return a default-constructed <code>Slab_</code> object if the allocation is done dynamically per slab in <code>populate()</code>. </td></tr>
-    <tr><td class="paramname">populate</td><td>Function that accepts two arguments, <code>slabs_in_need</code> and <code>slab_data</code>. (1) <code>slabs_in_need</code> is a <code>const std::vector&lt;std::pair&lt;Id_, Index_&gt; &gt;&amp;</code> specifying the slabs to be populated. The first <code>Id_</code> element of each pair contains the slab identifier, i.e., the first element returned by the <code>identify</code> function. The second <code>Index_</code> element specifies the index in <code>slab_data</code> in which to store the contents of each slab. (2) <code>slab_data</code> is a <code>std::vector&lt;Slab_*&gt;&amp;</code> containing pointers to the cached slab contents to be populated. This function should iterate over the <code>slabs_in_need</code> and populate the corresponding entries in <code>slab_data</code>.</td></tr>
+    <tr><td class="paramname">populate</td><td>Function that accepts a <code>std::vector&lt;std::pair&lt;Id_, Slab_*&gt; &gt;&amp;</code> specifying the slabs to be populated. The first <code>Id_</code> element of each pair contains the slab identifier, i.e., the first element returned by the <code>identify</code> function. The second <code>Slab_*</code> element contains a pointer to a <code>Slab_</code> returned by <code>create()</code>. This function should iterate over the vector and populate each slab. Note that the vector is not guaranteed to be sorted.</td></tr>
   </table>
   </dd>
 </dl>

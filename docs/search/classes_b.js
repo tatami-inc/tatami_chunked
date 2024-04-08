@@ -5,6 +5,6 @@ var searchData=
   ['somenumericarray_2',['SomeNumericArray',['https://tatami-inc.github.io/tatami/structtatami_1_1SomeNumericArray.html',1,'tatami']]],
   ['sparserange_3',['SparseRange',['https://tatami-inc.github.io/tatami/structtatami_1_1SparseRange.html',1,'tatami']]],
   ['sparserangecopy_4',['SparseRangeCopy',['https://tatami-inc.github.io/tatami/structtatami_1_1SparseRangeCopy.html',1,'tatami']]],
-  ['subsetdetails_5',['SubsetDetails',['../structtatami__chunked_1_1SubsettedOracleSlabCache_1_1SubsetDetails.html',1,'tatami_chunked::SubsettedOracleSlabCache']]],
-  ['subsettedoracleslabcache_6',['SubsettedOracleSlabCache',['../classtatami__chunked_1_1SubsettedOracleSlabCache.html',1,'tatami_chunked']]]
+  ['subsettedoracleslabcache_5',['SubsettedOracleSlabCache',['../classtatami__chunked_1_1SubsettedOracleSlabCache.html',1,'tatami_chunked']]],
+  ['subsettedoracleslabsubset_6',['SubsettedOracleSlabSubset',['../structtatami__chunked_1_1SubsettedOracleSlabSubset.html',1,'tatami_chunked']]]
 ];

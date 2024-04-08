@@ -60,7 +60,7 @@ var searchData=
   ['make_5fdelayedsubtractvectorhelper_57',['make_DelayedSubtractVectorHelper',['https://tatami-inc.github.io/tatami/namespacetatami.html#a800b92854282015d96308fb283aeb508',1,'tatami']]],
   ['make_5fdelayedtranspose_58',['make_DelayedTranspose',['https://tatami-inc.github.io/tatami/namespacetatami.html#afa35d8e9fe286967f327ec0eb6bd5005',1,'tatami']]],
   ['make_5fdelayedunaryisometricop_59',['make_DelayedUnaryIsometricOp',['https://tatami-inc.github.io/tatami/namespacetatami.html#a07b072944c766d85dc4ce4dc734e0b75',1,'tatami']]],
-  ['mapping_60',['mapping',['../structtatami__chunked_1_1SubsettedOracleSlabCache_1_1SubsetDetails.html#a92222ed5250f12b0fcb58b7d7251658b',1,'tatami_chunked::SubsettedOracleSlabCache::SubsetDetails']]],
+  ['mapping_60',['mapping',['../structtatami__chunked_1_1SubsettedOracleSlabSubset.html#a73221964703115aa90ee69608ed133f6',1,'tatami_chunked::SubsettedOracleSlabSubset']]],
   ['math_5fhelpers_2ehpp_61',['math_helpers.hpp',['https://tatami-inc.github.io/tatami/math__helpers_8hpp.html',1,'']]],
   ['matrices_62',['tatami bindings for chunked matrices',['../index.html',1,'']]],
   ['matrix_63',['Matrix',['https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html',1,'tatami']]],
