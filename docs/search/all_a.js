@@ -74,8 +74,8 @@ var searchData=
   ['mock_5fsparse_5fchunk_2ehpp_71',['mock_sparse_chunk.hpp',['../mock__sparse__chunk_8hpp.html',1,'']]],
   ['mocksimpledensechunk_72',['MockSimpleDenseChunk',['../structtatami__chunked_1_1MockSimpleDenseChunk.html',1,'tatami_chunked']]],
   ['mocksimplesparsechunk_73',['MockSimpleSparseChunk',['../structtatami__chunked_1_1MockSimpleSparseChunk.html',1,'tatami_chunked']]],
-  ['mocksubsetdensechunk_74',['MockSubsetDenseChunk',['../structtatami__chunked_1_1MockSubsetDenseChunk.html',1,'tatami_chunked']]],
-  ['mocksubsetsparsechunk_75',['MockSubsetSparseChunk',['../structtatami__chunked_1_1MockSubsetSparseChunk.html',1,'tatami_chunked']]],
+  ['mocksubsetteddensechunk_74',['MockSubsettedDenseChunk',['../structtatami__chunked_1_1MockSubsettedDenseChunk.html',1,'tatami_chunked']]],
+  ['mocksubsettedsparsechunk_75',['MockSubsettedSparseChunk',['../structtatami__chunked_1_1MockSubsettedSparseChunk.html',1,'tatami_chunked']]],
   ['myopicdenseextractor_76',['MyopicDenseExtractor',['https://tatami-inc.github.io/tatami/structtatami_1_1MyopicDenseExtractor.html',1,'tatami']]],
   ['myopicsparseextractor_77',['MyopicSparseExtractor',['https://tatami-inc.github.io/tatami/structtatami_1_1MyopicSparseExtractor.html',1,'tatami']]]
 ];

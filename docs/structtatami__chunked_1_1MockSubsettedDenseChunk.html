@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami_chunked: tatami_chunked::MockSubsetDenseChunk Struct Reference</title>
+<title>tatami_chunked: tatami_chunked::MockSubsettedDenseChunk Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -71,7 +71,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespacetatami__chunked.html">tatami_chunked</a></li><li class="navelem"><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html">MockSubsetDenseChunk</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacetatami__chunked.html">tatami_chunked</a></li><li class="navelem"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html">MockSubsettedDenseChunk</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -79,55 +79,55 @@ $(function() {
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
-<a href="structtatami__chunked_1_1MockSubsetDenseChunk-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">tatami_chunked::MockSubsetDenseChunk Struct Reference</div></div>
+<a href="structtatami__chunked_1_1MockSubsettedDenseChunk-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">tatami_chunked::MockSubsettedDenseChunk Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>Mock a subsettable dense chunk for a <code><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html" title="Matrix of custom dense chunks.">CustomDenseChunkedMatrix</a></code>.  
- <a href="structtatami__chunked_1_1MockSubsetDenseChunk.html#details">More...</a></p>
+ <a href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="mock__dense__chunk_8hpp_source.html">mock_dense_chunk.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:af44118c0e432a492297ad1f9cea0ac4d" id="r_af44118c0e432a492297ad1f9cea0ac4d"><td class="memItemLeft" align="right" valign="top">typedef double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#af44118c0e432a492297ad1f9cea0ac4d">value_type</a></td></tr>
-<tr class="separator:af44118c0e432a492297ad1f9cea0ac4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a81fdb711908f7ab2a0d22306dc369b2d" id="r_a81fdb711908f7ab2a0d22306dc369b2d"><td class="memItemLeft" align="right" valign="top">typedef std::vector&lt; <a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#af44118c0e432a492297ad1f9cea0ac4d">value_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#a81fdb711908f7ab2a0d22306dc369b2d">Workspace</a></td></tr>
-<tr class="separator:a81fdb711908f7ab2a0d22306dc369b2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fb4893a712b987e07cf64f1b2db1073" id="r_a9fb4893a712b987e07cf64f1b2db1073"><td class="memItemLeft" align="right" valign="top">typedef double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a></td></tr>
+<tr class="separator:a9fb4893a712b987e07cf64f1b2db1073"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2dbbc7d17528976547d16ccd9af68903" id="r_a2dbbc7d17528976547d16ccd9af68903"><td class="memItemLeft" align="right" valign="top">typedef std::vector&lt; <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a></td></tr>
+<tr class="separator:a2dbbc7d17528976547d16ccd9af68903"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a0b918bb9dfd60289ae743cbd61efba7b" id="r_a0b918bb9dfd60289ae743cbd61efba7b"><td class="memTemplParams" colspan="2">template&lt;bool accrow_, typename Index_ &gt; </td></tr>
-<tr class="memitem:a0b918bb9dfd60289ae743cbd61efba7b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#a0b918bb9dfd60289ae743cbd61efba7b">extract</a> (Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, <a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#a81fdb711908f7ab2a0d22306dc369b2d">Workspace</a> &amp;work, <a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#af44118c0e432a492297ad1f9cea0ac4d">value_type</a> *output, size_t stride) const</td></tr>
-<tr class="separator:a0b918bb9dfd60289ae743cbd61efba7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ccdaa43b292223a7acdb8eaa24d3603" id="r_a5ccdaa43b292223a7acdb8eaa24d3603"><td class="memTemplParams" colspan="2">template&lt;bool accrow_, typename Index_ &gt; </td></tr>
-<tr class="memitem:a5ccdaa43b292223a7acdb8eaa24d3603"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#a5ccdaa43b292223a7acdb8eaa24d3603">extract</a> (Index_ primary_start, Index_ primary_length, const std::vector&lt; Index_ &gt; &amp;secondary_indices, <a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#a81fdb711908f7ab2a0d22306dc369b2d">Workspace</a> &amp;work, <a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#af44118c0e432a492297ad1f9cea0ac4d">value_type</a> *output, size_t stride) const</td></tr>
-<tr class="separator:a5ccdaa43b292223a7acdb8eaa24d3603"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbe1d50ad042df17cfdd30ea2a8d0ecd" id="r_abbe1d50ad042df17cfdd30ea2a8d0ecd"><td class="memTemplParams" colspan="2">template&lt;bool accrow_, typename Index_ &gt; </td></tr>
-<tr class="memitem:abbe1d50ad042df17cfdd30ea2a8d0ecd"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#abbe1d50ad042df17cfdd30ea2a8d0ecd">extract</a> (const std::vector&lt; Index_ &gt; &amp;primary_indices, Index_ secondary_start, Index_ secondary_length, <a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#a81fdb711908f7ab2a0d22306dc369b2d">Workspace</a> &amp;work, <a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#af44118c0e432a492297ad1f9cea0ac4d">value_type</a> *output, size_t stride) const</td></tr>
-<tr class="separator:abbe1d50ad042df17cfdd30ea2a8d0ecd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21e900985cf3160e816e6eff5b715dfc" id="r_a21e900985cf3160e816e6eff5b715dfc"><td class="memTemplParams" colspan="2">template&lt;bool accrow_, typename Index_ &gt; </td></tr>
-<tr class="memitem:a21e900985cf3160e816e6eff5b715dfc"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#a21e900985cf3160e816e6eff5b715dfc">extract</a> (const std::vector&lt; Index_ &gt; &amp;primary_indices, const std::vector&lt; Index_ &gt; &amp;secondary_indices, <a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#a81fdb711908f7ab2a0d22306dc369b2d">Workspace</a> &amp;work, <a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#af44118c0e432a492297ad1f9cea0ac4d">value_type</a> *output, size_t stride) const</td></tr>
-<tr class="separator:a21e900985cf3160e816e6eff5b715dfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab16cac7a49be208a65a5a601d71122f7" id="r_ab16cac7a49be208a65a5a601d71122f7"><td class="memTemplParams" colspan="2">template&lt;bool accrow_, typename Index_ &gt; </td></tr>
+<tr class="memitem:ab16cac7a49be208a65a5a601d71122f7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#ab16cac7a49be208a65a5a601d71122f7">extract</a> (Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a> &amp;work, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> *output, size_t stride) const</td></tr>
+<tr class="separator:ab16cac7a49be208a65a5a601d71122f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bf202abd5537255382892b6dc75797a" id="r_a2bf202abd5537255382892b6dc75797a"><td class="memTemplParams" colspan="2">template&lt;bool accrow_, typename Index_ &gt; </td></tr>
+<tr class="memitem:a2bf202abd5537255382892b6dc75797a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2bf202abd5537255382892b6dc75797a">extract</a> (Index_ primary_start, Index_ primary_length, const std::vector&lt; Index_ &gt; &amp;secondary_indices, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a> &amp;work, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> *output, size_t stride) const</td></tr>
+<tr class="separator:a2bf202abd5537255382892b6dc75797a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1940bc6e63eee22d4cd96145642ec30e" id="r_a1940bc6e63eee22d4cd96145642ec30e"><td class="memTemplParams" colspan="2">template&lt;bool accrow_, typename Index_ &gt; </td></tr>
+<tr class="memitem:a1940bc6e63eee22d4cd96145642ec30e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a1940bc6e63eee22d4cd96145642ec30e">extract</a> (const std::vector&lt; Index_ &gt; &amp;primary_indices, Index_ secondary_start, Index_ secondary_length, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a> &amp;work, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> *output, size_t stride) const</td></tr>
+<tr class="separator:a1940bc6e63eee22d4cd96145642ec30e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f1738a7f720198f0497732d29182279" id="r_a9f1738a7f720198f0497732d29182279"><td class="memTemplParams" colspan="2">template&lt;bool accrow_, typename Index_ &gt; </td></tr>
+<tr class="memitem:a9f1738a7f720198f0497732d29182279"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9f1738a7f720198f0497732d29182279">extract</a> (const std::vector&lt; Index_ &gt; &amp;primary_indices, const std::vector&lt; Index_ &gt; &amp;secondary_indices, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a> &amp;work, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> *output, size_t stride) const</td></tr>
+<tr class="separator:a9f1738a7f720198f0497732d29182279"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a79e60970d114d27efa8db67042b89b4c" id="r_a79e60970d114d27efa8db67042b89b4c"><td class="memItemLeft" align="right" valign="top">static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#a79e60970d114d27efa8db67042b89b4c">use_subset</a> = true</td></tr>
-<tr class="separator:a79e60970d114d27efa8db67042b89b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c649f1fc69e5e9df0290ff5c3079275" id="r_a4c649f1fc69e5e9df0290ff5c3079275"><td class="memItemLeft" align="right" valign="top">static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a4c649f1fc69e5e9df0290ff5c3079275">use_subset</a> = true</td></tr>
+<tr class="separator:a4c649f1fc69e5e9df0290ff5c3079275"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Mock a subsettable dense chunk for a <code><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html" title="Matrix of custom dense chunks.">CustomDenseChunkedMatrix</a></code>. </p>
-<p>Mock a subsettable dense chunk for use inside a <code><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html" title="Matrix of custom dense chunks.">CustomDenseChunkedMatrix</a></code>. Each chunk should represent a (possible compressed) 2-dimensional array of numeric values. The interface is smarter as it only extracts elements of interest along the primary dimension (i.e., the dimension used to create instances of the various <code><a class="elRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a4e0374ed6401df3d6ae262ad379a4743">tatami::DenseExtractor</a></code> classes). The elements of interest may be either as a contiguous block or a indexed subset, as predicted for each chunk from the <code><a class="el" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html" title="Oracle-aware cache for slabs, plus subsets.">SubsettedOracleSlabCache</a></code>. This provides some opportunities for optimization if the chunk can be partially read. </p>
+<p>Mock a subsettable dense chunk for use inside a <code><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html" title="Matrix of custom dense chunks.">CustomDenseChunkedMatrix</a></code>. Each chunk should represent a (possible compressed) 2-dimensional array of numeric values. The interface is smarter as it only extracts elements of interest along the primary dimension (i.e., the dimension used to create instances of the various <code><a class="elRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a4e0374ed6401df3d6ae262ad379a4743">tatami::DenseExtractor</a></code> classes). The elements of interest may be either as a contiguous block or a indexed subset, as predicted for each chunk from the <code>SubsettedtedOracleSlabCache</code>. This provides some opportunities for optimization if the chunk can be partially read. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="af44118c0e432a492297ad1f9cea0ac4d" name="af44118c0e432a492297ad1f9cea0ac4d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af44118c0e432a492297ad1f9cea0ac4d">&#9670;&#160;</a></span>value_type</h2>
+<a id="a9fb4893a712b987e07cf64f1b2db1073" name="a9fb4893a712b987e07cf64f1b2db1073"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9fb4893a712b987e07cf64f1b2db1073">&#9670;&#160;</a></span>value_type</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef double <a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#af44118c0e432a492297ad1f9cea0ac4d">tatami_chunked::MockSubsetDenseChunk::value_type</a></td>
+          <td class="memname">typedef double <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">tatami_chunked::MockSubsettedDenseChunk::value_type</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -135,24 +135,24 @@ Static Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a81fdb711908f7ab2a0d22306dc369b2d" name="a81fdb711908f7ab2a0d22306dc369b2d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a81fdb711908f7ab2a0d22306dc369b2d">&#9670;&#160;</a></span>Workspace</h2>
+<a id="a2dbbc7d17528976547d16ccd9af68903" name="a2dbbc7d17528976547d16ccd9af68903"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2dbbc7d17528976547d16ccd9af68903">&#9670;&#160;</a></span>Workspace</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef std::vector&lt;<a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#af44118c0e432a492297ad1f9cea0ac4d">value_type</a>&gt; <a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#a81fdb711908f7ab2a0d22306dc369b2d">tatami_chunked::MockSubsetDenseChunk::Workspace</a></td>
+          <td class="memname">typedef std::vector&lt;<a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a>&gt; <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">tatami_chunked::MockSubsettedDenseChunk::Workspace</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Workspace for chunk extraction. One instance of this workspace will be re-used in multiple <code><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#a0b918bb9dfd60289ae743cbd61efba7b">extract()</a></code> calls for the same or even different chunks. Implementations may use any data structure here. </p>
+<p>Workspace for chunk extraction. One instance of this workspace will be re-used in multiple <code><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#ab16cac7a49be208a65a5a601d71122f7">extract()</a></code> calls for the same or even different chunks. Implementations may use any data structure here. </p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a0b918bb9dfd60289ae743cbd61efba7b" name="a0b918bb9dfd60289ae743cbd61efba7b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0b918bb9dfd60289ae743cbd61efba7b">&#9670;&#160;</a></span>extract() <span class="overload">[1/4]</span></h2>
+<a id="ab16cac7a49be208a65a5a601d71122f7" name="ab16cac7a49be208a65a5a601d71122f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab16cac7a49be208a65a5a601d71122f7">&#9670;&#160;</a></span>extract() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -163,7 +163,7 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void tatami_chunked::MockSubsetDenseChunk::extract </td>
+          <td class="memname">void tatami_chunked::MockSubsettedDenseChunk::extract </td>
           <td>(</td>
           <td class="paramtype">Index_&#160;</td>
           <td class="paramname"><em>primary_start</em>, </td>
@@ -189,13 +189,13 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#a81fdb711908f7ab2a0d22306dc369b2d">Workspace</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a> &amp;&#160;</td>
           <td class="paramname"><em>work</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#af44118c0e432a492297ad1f9cea0ac4d">value_type</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> *&#160;</td>
           <td class="paramname"><em>output</em>, </td>
         </tr>
         <tr>
@@ -240,8 +240,8 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="a5ccdaa43b292223a7acdb8eaa24d3603" name="a5ccdaa43b292223a7acdb8eaa24d3603"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ccdaa43b292223a7acdb8eaa24d3603">&#9670;&#160;</a></span>extract() <span class="overload">[2/4]</span></h2>
+<a id="a2bf202abd5537255382892b6dc75797a" name="a2bf202abd5537255382892b6dc75797a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2bf202abd5537255382892b6dc75797a">&#9670;&#160;</a></span>extract() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -252,7 +252,7 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void tatami_chunked::MockSubsetDenseChunk::extract </td>
+          <td class="memname">void tatami_chunked::MockSubsettedDenseChunk::extract </td>
           <td>(</td>
           <td class="paramtype">Index_&#160;</td>
           <td class="paramname"><em>primary_start</em>, </td>
@@ -272,13 +272,13 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#a81fdb711908f7ab2a0d22306dc369b2d">Workspace</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a> &amp;&#160;</td>
           <td class="paramname"><em>work</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#af44118c0e432a492297ad1f9cea0ac4d">value_type</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> *&#160;</td>
           <td class="paramname"><em>output</em>, </td>
         </tr>
         <tr>
@@ -322,8 +322,8 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="abbe1d50ad042df17cfdd30ea2a8d0ecd" name="abbe1d50ad042df17cfdd30ea2a8d0ecd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abbe1d50ad042df17cfdd30ea2a8d0ecd">&#9670;&#160;</a></span>extract() <span class="overload">[3/4]</span></h2>
+<a id="a1940bc6e63eee22d4cd96145642ec30e" name="a1940bc6e63eee22d4cd96145642ec30e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1940bc6e63eee22d4cd96145642ec30e">&#9670;&#160;</a></span>extract() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -334,7 +334,7 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void tatami_chunked::MockSubsetDenseChunk::extract </td>
+          <td class="memname">void tatami_chunked::MockSubsettedDenseChunk::extract </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; Index_ &gt; &amp;&#160;</td>
           <td class="paramname"><em>primary_indices</em>, </td>
@@ -354,13 +354,13 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#a81fdb711908f7ab2a0d22306dc369b2d">Workspace</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a> &amp;&#160;</td>
           <td class="paramname"><em>work</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#af44118c0e432a492297ad1f9cea0ac4d">value_type</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> *&#160;</td>
           <td class="paramname"><em>output</em>, </td>
         </tr>
         <tr>
@@ -404,8 +404,8 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
 
 </div>
 </div>
-<a id="a21e900985cf3160e816e6eff5b715dfc" name="a21e900985cf3160e816e6eff5b715dfc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a21e900985cf3160e816e6eff5b715dfc">&#9670;&#160;</a></span>extract() <span class="overload">[4/4]</span></h2>
+<a id="a9f1738a7f720198f0497732d29182279" name="a9f1738a7f720198f0497732d29182279"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f1738a7f720198f0497732d29182279">&#9670;&#160;</a></span>extract() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -416,7 +416,7 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void tatami_chunked::MockSubsetDenseChunk::extract </td>
+          <td class="memname">void tatami_chunked::MockSubsettedDenseChunk::extract </td>
           <td>(</td>
           <td class="paramtype">const std::vector&lt; Index_ &gt; &amp;&#160;</td>
           <td class="paramname"><em>primary_indices</em>, </td>
@@ -430,13 +430,13 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#a81fdb711908f7ab2a0d22306dc369b2d">Workspace</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a> &amp;&#160;</td>
           <td class="paramname"><em>work</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsetDenseChunk.html#af44118c0e432a492297ad1f9cea0ac4d">value_type</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> *&#160;</td>
           <td class="paramname"><em>output</em>, </td>
         </tr>
         <tr>
@@ -480,8 +480,8 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a79e60970d114d27efa8db67042b89b4c" name="a79e60970d114d27efa8db67042b89b4c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a79e60970d114d27efa8db67042b89b4c">&#9670;&#160;</a></span>use_subset</h2>
+<a id="a4c649f1fc69e5e9df0290ff5c3079275" name="a4c649f1fc69e5e9df0290ff5c3079275"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c649f1fc69e5e9df0290ff5c3079275">&#9670;&#160;</a></span>use_subset</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -490,7 +490,7 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr bool tatami_chunked::MockSubsetDenseChunk::use_subset = true</td>
+          <td class="memname">constexpr bool tatami_chunked::MockSubsettedDenseChunk::use_subset = true</td>
         </tr>
       </table>
   </td>
