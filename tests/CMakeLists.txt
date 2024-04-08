@@ -18,7 +18,7 @@ add_executable(
     libtest 
     src/LruSlabCache.cpp
     src/OracleSlabCache.cpp
-#    src/SubsettedOracleSlabCache.cpp
+    src/SubsettedOracleSlabCache.cpp
     src/mock_dense_chunk.cpp
     src/mock_sparse_chunk.cpp
 #    src/CustomDenseChunkedMatrix.cpp
