@@ -21,8 +21,8 @@ add_executable(
     src/SubsettedOracleSlabCache.cpp
     src/mock_dense_chunk.cpp
     src/mock_sparse_chunk.cpp
-#    src/CustomDenseChunkedMatrix.cpp
-#    src/CustomSparseChunkedMatrix.cpp
+    src/CustomDenseChunkedMatrix.cpp
+    src/CustomSparseChunkedMatrix.cpp
 )
 
 set(CODE_COVERAGE OFF CACHE BOOL "Enable coverage testing")
