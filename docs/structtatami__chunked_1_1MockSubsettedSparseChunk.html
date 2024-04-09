@@ -242,8 +242,8 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
     <tr><td class="paramdir"></td><td class="paramname">secondary_start</td><td>Index of the first element on the secondary dimension to be extracted. If <code>accrow_ = true</code>, this is the first column, otherwise it is the first row. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">secondary_length</td><td>Number of elements on the secondary dimension to be extracted. If <code>accrow_ = true</code>, this is the number of columns, otherwise it is the number of rows. This is guaranteed to be positive. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">work</td><td>Re-usable workspace for extraction from one or more chunks. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">output_values</td><td>Vector of vectors in which to store the output values. The outer vector is of length no less than <code>primary_indices.back() + 1</code>; each inner vector corresponds to an element of the primary dimension. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">output_indices</td><td>Vector of vectors in which to store the output indices. The outer vector is of length no less than <code>primary_indices.back() + 1</code>; each inner vector corresponds to an element of the primary dimension. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">output_values</td><td>Vector of vectors in which to store the output values. The outer vector is of length no less than <code>primary_start + primary_length</code>; each inner vector corresponds to an element of the primary dimension. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">output_indices</td><td>Vector of vectors in which to store the output indices. The outer vector is of length no less than <code>primary_start + primary_length</code>; each inner vector corresponds to an element of the primary dimension. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">shift</td><td>Shift to be added to the chunk's reported indices when storing them in <code>output_indices</code>.</td></tr>
   </table>
   </dd>
@@ -331,8 +331,8 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
     <tr><td class="paramdir"></td><td class="paramname">primary_length</td><td>Number of elements on the primary dimension to be extracted. If <code>accrow_ = true</code>, this is the number of rows, otherwise it is the number of columns. This is guaranteed to be positive. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">secondary_indices</td><td>Indices of the elements on the secondary dimension to be extracted. If <code>accrow_ = true</code>, these are column indices, otherwise these are row indices. This is guaranteed to be non-empty with unique and sorted indices. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">work</td><td>Re-usable workspace for extraction from one or more chunks. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">output_values</td><td>Vector of vectors in which to store the output values. The outer vector is of length no less than <code>primary_indices.back() + 1</code>; each inner vector corresponds to an element of the primary dimension. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">output_indices</td><td>Vector of vectors in which to store the output indices. The outer vector is of length no less than <code>primary_indices.back() + 1</code>; each inner vector corresponds to an element of the primary dimension. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">output_values</td><td>Vector of vectors in which to store the output values. The outer vector is of length no less than <code>primary_start + primary_length</code>; each inner vector corresponds to an element of the primary dimension. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">output_indices</td><td>Vector of vectors in which to store the output indices. The outer vector is of length no less than <code>primary_start + primary_length</code>; each inner vector corresponds to an element of the primary dimension. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">shift</td><td>Shift to be added to the chunk's reported indices when storing them in <code>output_indices</code>.</td></tr>
   </table>
   </dd>
@@ -533,7 +533,7 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Whether to extract a subset of elements on the primary dimension. This should be set to <code>false</code>, otherwise a <code><a class="el" href="structtatami__chunked_1_1MockSimpleSparseChunk.html" title="Mock a simple sparse chunk for a CustomSparseChunkedMatrix.">MockSimpleSparseChunk</a></code> is expected. </p>
+<p>Whether to extract a subset of elements on the primary dimension. This should be set to <code>true</code>, otherwise a <code><a class="el" href="structtatami__chunked_1_1MockSimpleSparseChunk.html" title="Mock a simple sparse chunk for a CustomSparseChunkedMatrix.">MockSimpleSparseChunk</a></code> is expected. </p>
 
 </div>
 </div>

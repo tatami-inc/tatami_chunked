@@ -76,6 +76,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
@@ -89,26 +90,29 @@ $(function() {
 
 <p><code>#include &lt;<a class="el" href="mock__dense__chunk_8hpp_source.html">mock_dense_chunk.hpp</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk_1_1Workspace.html">Workspace</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a9fb4893a712b987e07cf64f1b2db1073" id="r_a9fb4893a712b987e07cf64f1b2db1073"><td class="memItemLeft" align="right" valign="top">typedef double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a></td></tr>
 <tr class="separator:a9fb4893a712b987e07cf64f1b2db1073"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2dbbc7d17528976547d16ccd9af68903" id="r_a2dbbc7d17528976547d16ccd9af68903"><td class="memItemLeft" align="right" valign="top">typedef std::vector&lt; <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a></td></tr>
-<tr class="separator:a2dbbc7d17528976547d16ccd9af68903"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ab16cac7a49be208a65a5a601d71122f7" id="r_ab16cac7a49be208a65a5a601d71122f7"><td class="memTemplParams" colspan="2">template&lt;bool accrow_, typename Index_ &gt; </td></tr>
-<tr class="memitem:ab16cac7a49be208a65a5a601d71122f7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#ab16cac7a49be208a65a5a601d71122f7">extract</a> (Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a> &amp;work, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> *output, size_t stride) const</td></tr>
+<tr class="memitem:ab16cac7a49be208a65a5a601d71122f7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#ab16cac7a49be208a65a5a601d71122f7">extract</a> (Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk_1_1Workspace.html">Workspace</a> &amp;work, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> *output, size_t stride) const</td></tr>
 <tr class="separator:ab16cac7a49be208a65a5a601d71122f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2bf202abd5537255382892b6dc75797a" id="r_a2bf202abd5537255382892b6dc75797a"><td class="memTemplParams" colspan="2">template&lt;bool accrow_, typename Index_ &gt; </td></tr>
-<tr class="memitem:a2bf202abd5537255382892b6dc75797a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2bf202abd5537255382892b6dc75797a">extract</a> (Index_ primary_start, Index_ primary_length, const std::vector&lt; Index_ &gt; &amp;secondary_indices, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a> &amp;work, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> *output, size_t stride) const</td></tr>
+<tr class="memitem:a2bf202abd5537255382892b6dc75797a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2bf202abd5537255382892b6dc75797a">extract</a> (Index_ primary_start, Index_ primary_length, const std::vector&lt; Index_ &gt; &amp;secondary_indices, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk_1_1Workspace.html">Workspace</a> &amp;work, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> *output, size_t stride) const</td></tr>
 <tr class="separator:a2bf202abd5537255382892b6dc75797a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1940bc6e63eee22d4cd96145642ec30e" id="r_a1940bc6e63eee22d4cd96145642ec30e"><td class="memTemplParams" colspan="2">template&lt;bool accrow_, typename Index_ &gt; </td></tr>
-<tr class="memitem:a1940bc6e63eee22d4cd96145642ec30e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a1940bc6e63eee22d4cd96145642ec30e">extract</a> (const std::vector&lt; Index_ &gt; &amp;primary_indices, Index_ secondary_start, Index_ secondary_length, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a> &amp;work, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> *output, size_t stride) const</td></tr>
+<tr class="memitem:a1940bc6e63eee22d4cd96145642ec30e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a1940bc6e63eee22d4cd96145642ec30e">extract</a> (const std::vector&lt; Index_ &gt; &amp;primary_indices, Index_ secondary_start, Index_ secondary_length, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk_1_1Workspace.html">Workspace</a> &amp;work, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> *output, size_t stride) const</td></tr>
 <tr class="separator:a1940bc6e63eee22d4cd96145642ec30e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f1738a7f720198f0497732d29182279" id="r_a9f1738a7f720198f0497732d29182279"><td class="memTemplParams" colspan="2">template&lt;bool accrow_, typename Index_ &gt; </td></tr>
-<tr class="memitem:a9f1738a7f720198f0497732d29182279"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9f1738a7f720198f0497732d29182279">extract</a> (const std::vector&lt; Index_ &gt; &amp;primary_indices, const std::vector&lt; Index_ &gt; &amp;secondary_indices, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a> &amp;work, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> *output, size_t stride) const</td></tr>
+<tr class="memitem:a9f1738a7f720198f0497732d29182279"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9f1738a7f720198f0497732d29182279">extract</a> (const std::vector&lt; Index_ &gt; &amp;primary_indices, const std::vector&lt; Index_ &gt; &amp;secondary_indices, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk_1_1Workspace.html">Workspace</a> &amp;work, <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a> *output, size_t stride) const</td></tr>
 <tr class="separator:a9f1738a7f720198f0497732d29182279"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
@@ -132,21 +136,6 @@ Static Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Type of the value stored in this chunk. Implementations can use any numeric type. </p>
-
-</div>
-</div>
-<a id="a2dbbc7d17528976547d16ccd9af68903" name="a2dbbc7d17528976547d16ccd9af68903"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2dbbc7d17528976547d16ccd9af68903">&#9670;&#160;</a></span>Workspace</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">typedef std::vector&lt;<a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a9fb4893a712b987e07cf64f1b2db1073">value_type</a>&gt; <a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">tatami_chunked::MockSubsettedDenseChunk::Workspace</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Workspace for chunk extraction. One instance of this workspace will be re-used in multiple <code><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#ab16cac7a49be208a65a5a601d71122f7">extract()</a></code> calls for the same or even different chunks. Implementations may use any data structure here. </p>
 
 </div>
 </div>
@@ -189,7 +178,7 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk_1_1Workspace.html">Workspace</a> &amp;&#160;</td>
           <td class="paramname"><em>work</em>, </td>
         </tr>
         <tr>
@@ -272,7 +261,7 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk_1_1Workspace.html">Workspace</a> &amp;&#160;</td>
           <td class="paramname"><em>work</em>, </td>
         </tr>
         <tr>
@@ -354,7 +343,7 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk_1_1Workspace.html">Workspace</a> &amp;&#160;</td>
           <td class="paramname"><em>work</em>, </td>
         </tr>
         <tr>
@@ -430,7 +419,7 @@ template&lt;bool accrow_, typename Index_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk.html#a2dbbc7d17528976547d16ccd9af68903">Workspace</a> &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1MockSubsettedDenseChunk_1_1Workspace.html">Workspace</a> &amp;&#160;</td>
           <td class="paramname"><em>work</em>, </td>
         </tr>
         <tr>

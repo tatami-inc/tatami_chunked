@@ -28,8 +28,10 @@
     <path>tatami_chunked/</path>
     <filename>mock__dense__chunk_8hpp.html</filename>
     <class kind="struct">tatami_chunked::MockSimpleDenseChunk</class>
+    <class kind="struct">tatami_chunked::MockSimpleDenseChunk::Workspace</class>
     <class kind="struct">tatami_chunked::SimpleDenseChunkWrapper</class>
     <class kind="struct">tatami_chunked::MockSubsettedDenseChunk</class>
+    <class kind="struct">tatami_chunked::MockSubsettedDenseChunk::Workspace</class>
     <namespace>tatami_chunked</namespace>
   </compound>
   <compound kind="file">
@@ -181,18 +183,12 @@
   <compound kind="struct">
     <name>tatami_chunked::MockSimpleDenseChunk</name>
     <filename>structtatami__chunked_1_1MockSimpleDenseChunk.html</filename>
+    <class kind="struct">tatami_chunked::MockSimpleDenseChunk::Workspace</class>
     <member kind="typedef">
       <type>double</type>
       <name>value_type</name>
       <anchorfile>structtatami__chunked_1_1MockSimpleDenseChunk.html</anchorfile>
       <anchor>a88f07a7b34a0d7a0f9fbd296467f24aa</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>std::vector&lt; value_type &gt;</type>
-      <name>Workspace</name>
-      <anchorfile>structtatami__chunked_1_1MockSimpleDenseChunk.html</anchorfile>
-      <anchor>a0a377b07a002320195e9a0be23c05e97</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -260,18 +256,12 @@
   <compound kind="struct">
     <name>tatami_chunked::MockSubsettedDenseChunk</name>
     <filename>structtatami__chunked_1_1MockSubsettedDenseChunk.html</filename>
+    <class kind="struct">tatami_chunked::MockSubsettedDenseChunk::Workspace</class>
     <member kind="typedef">
       <type>double</type>
       <name>value_type</name>
       <anchorfile>structtatami__chunked_1_1MockSubsettedDenseChunk.html</anchorfile>
       <anchor>a9fb4893a712b987e07cf64f1b2db1073</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>std::vector&lt; value_type &gt;</type>
-      <name>Workspace</name>
-      <anchorfile>structtatami__chunked_1_1MockSubsettedDenseChunk.html</anchorfile>
-      <anchor>a2dbbc7d17528976547d16ccd9af68903</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -549,8 +539,16 @@
     </member>
   </compound>
   <compound kind="struct">
+    <name>tatami_chunked::MockSimpleDenseChunk::Workspace</name>
+    <filename>structtatami__chunked_1_1MockSimpleDenseChunk_1_1Workspace.html</filename>
+  </compound>
+  <compound kind="struct">
     <name>tatami_chunked::MockSimpleSparseChunk::Workspace</name>
     <filename>structtatami__chunked_1_1MockSimpleSparseChunk_1_1Workspace.html</filename>
+  </compound>
+  <compound kind="struct">
+    <name>tatami_chunked::MockSubsettedDenseChunk::Workspace</name>
+    <filename>structtatami__chunked_1_1MockSubsettedDenseChunk_1_1Workspace.html</filename>
   </compound>
   <compound kind="struct">
     <name>tatami_chunked::MockSubsettedSparseChunk::Workspace</name>
