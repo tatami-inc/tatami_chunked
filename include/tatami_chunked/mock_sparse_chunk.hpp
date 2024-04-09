@@ -2,6 +2,7 @@
 #define TATAMI_CHUNKED_MOCK_SPARSE_CHUNK_HPP
 
 #include <vector>
+#include <cstdint>
 
 /**
  * @file mock_sparse_chunk.hpp
@@ -15,7 +16,19 @@ namespace tatami_chunked {
  */
 namespace MockSparseChunk_internal {
 
-template<class Blob_, class Workspace_>
+template<typename InflatedValue_, typename InflatedIndex_>
+struct Workspace {
+    // Standard compressed sparse members:
+    std::vector<InflatedValue_> values;
+    std::vector<InflatedIndex_> indices;
+    std::vector<size_t> indptrs;
+
+    // Allocation to allow for O(1) mapping of requested indices to sparse indices.
+    // This mimics what is done in the indexed sparse primary extractors in tatami proper.
+    std::vector<uint8_t> remap;
+};
+
+template<class Blob_>
 struct Core {
     Core() = default;
 
@@ -48,14 +61,6 @@ public:
     }
 
     template<typename Index_>
-    static void refine_start(size_t& start, size_t end, Index_ desired_start, const std::vector<index_type>& indices) {
-        if (desired_start) {
-            auto it = indices.begin();
-            start = std::lower_bound(it + start, it + end, static_cast<index_type>(desired_start)) - it;
-        }
-    }
-
-    template<typename Index_>
     static void refine_start_and_end(size_t& start, size_t& end, Index_ desired_start, Index_ desired_end, Index_ max_end, const std::vector<index_type>& indices) {
         if (desired_start) {
             auto it = indices.begin();
@@ -77,13 +82,31 @@ public:
     }
 
 private:
+    // Building a present/absent mapping for the requested indices to allow O(1) look-up from the sparse matrix indices.
     template<typename Index_>
+    static void configure_remap(Workspace<value_type, index_type>& work, const std::vector<Index_>& indices, size_t full) {
+        work.remap.resize(full);
+        for (auto i : indices) {
+            work.remap[i] = 1;
+        }
+    }
+
+    // Resetting just the affected indices so we can avoid a fill operation over the entire array.
+    template<typename Index_>
+    static void reset_remap(Workspace<value_type, index_type>& work, const std::vector<Index_>& indices) {
+        for (auto i : indices) {
+            work.remap[i] = 0;
+        }
+    }
+
+private:
+    template<bool is_block_, typename Index_>
     void fill_primary(
         Index_ p, 
         Index_ secondary_start, 
         Index_ secondary_end, 
         Index_ secondary_chunkdim,
-        Workspace_& work, 
+        Workspace<value_type, index_type>& work, 
         std::vector<value_type>& current_values, 
         std::vector<index_type>& current_indices,
         index_type shift)
@@ -94,53 +117,31 @@ private:
         }
 
         refine_start_and_end(start, end, secondary_start, secondary_end, secondary_chunkdim, work.indices);
-        current_values.insert(current_values.end(), work.values.begin() + start, work.values.begin() + end);
-        for (size_t i = start; i < end; ++i) {
-            current_indices.push_back(work.indices[i] + shift);
-        }
-    }
 
-    template<typename Index_>
-    void fill_primary(
-        Index_ p, 
-        const std::vector<Index_>& secondary_indices,
-        Workspace_& work, 
-        std::vector<value_type>& current_values, 
-        std::vector<index_type>& current_indices,
-        index_type shift)
-    const {
-        auto start = work.indptrs[p], end = work.indptrs[p + 1];
-        if (start >= end) {
-            return;
-        }
-
-        refine_start(start, end, secondary_indices.front(), work.indices);
-
-        // TODO: switch to a reverse-index map.
-        auto sIt = secondary_indices.begin(), sEnd = secondary_indices.end();
-        for (size_t i = start; i < end; ++i) {
-            Index_ target = work.indices[i];
-            while (sIt != sEnd && *sIt < target) {
-                ++sIt;
-            }
-            if (sIt == sEnd) {
-                break;
-            }
-            if (*sIt == target) {
-                current_values.push_back(work.values[i]);
+        if constexpr(is_block_) {
+            current_values.insert(current_values.end(), work.values.begin() + start, work.values.begin() + end);
+            for (size_t i = start; i < end; ++i) {
                 current_indices.push_back(work.indices[i] + shift);
-                ++sIt;
+            }
+        } else {
+            // Assumes that work.remap has been properly configured, see configure_remap().
+            for (size_t i = start; i < end; ++i) {
+                Index_ target = work.indices[i];
+                if (work.remap[target]) {
+                    current_values.push_back(work.values[i]);
+                    current_indices.push_back(target + shift);
+                }
             }
         }
     }
 
-    template<typename Index_>
+    template<bool is_block_, typename Index_>
     void fill_secondary(
         Index_ s,
         Index_ primary_start, 
         Index_ primary_end, 
         Index_ primary_chunkdim,
-        Workspace_& work, 
+        Workspace<value_type, index_type>& work, 
         std::vector<std::vector<value_type> >& output_values, 
         std::vector<std::vector<index_type> >& output_indices,
         index_type shift)
@@ -152,42 +153,20 @@ private:
 
         refine_start_and_end(start, end, primary_start, primary_end, primary_chunkdim, work.indices);
 
-        for (size_t i = start; i < end; ++i) {
-            auto p = work.indices[i];
-            output_values[p].push_back(work.values[i]);
-            output_indices[p].push_back(s + shift);
-        }
-    }
-
-    template<typename Index_, typename OutputValue_, typename OutputIndex_>
-    void fill_secondary(
-        Index_ s, 
-        const std::vector<Index_>& primary_indices, 
-        Workspace_& work, 
-        std::vector<std::vector<OutputValue_> >& output_values, 
-        std::vector<std::vector<OutputIndex_> >& output_indices,
-        OutputIndex_ shift)
-    const {
-        auto start = work.indptrs[s], end = work.indptrs[s + 1];
-        if (start >= end) {
-            return;
-        }
-
-        refine_start(start, end, primary_indices.front(), work.indices);
-
-        // TODO: switch to a reverse-index map.
-        auto pIt = primary_indices.begin(), pEnd = primary_indices.end();
-        for (size_t i = start; i < end; ++i) {
-            while (pIt != pEnd && *pIt < work.indices[i]) {
-                ++pIt;
+        if constexpr(is_block_) {
+            for (size_t i = start; i < end; ++i) {
+                auto p = work.indices[i];
+                output_values[p].push_back(work.values[i]);
+                output_indices[p].push_back(s + shift);
             }
-            if (pIt == pEnd) {
-                break;
-            }
-            if (*pIt == work.indices[i]) {
-                output_values[*pIt].push_back(work.values[i]);
-                output_indices[*pIt].push_back(s + shift);
-                ++pIt;
+        } else {
+            // Assumes that work.remap has been properly configured, see configure_remap().
+            for (size_t i = start; i < end; ++i) {
+                Index_ target = work.indices[i];
+                if (work.remap[target]) {
+                    output_values[target].push_back(work.values[i]);
+                    output_indices[target].push_back(s + shift);
+                }
             }
         }
     }
@@ -199,7 +178,7 @@ public:
         Index_ primary_length,
         Index_ secondary_start,
         Index_ secondary_length,
-        Workspace_& work,
+        Workspace<value_type, index_type>& work,
         std::vector<std::vector<value_type> >& output_values,
         std::vector<std::vector<index_type> >& output_indices,
         index_type shift)
@@ -211,12 +190,12 @@ public:
         if constexpr(Blob_::row_major == accrow_) {
             Index_ secondary_chunkdim = get_secondary_chunkdim<accrow_>();
             for (Index_ p = primary_start; p < primary_end; ++p) {
-                fill_primary(p, secondary_start, secondary_end, secondary_chunkdim, work, output_values[p], output_indices[p], shift);
+                fill_primary<true>(p, secondary_start, secondary_end, secondary_chunkdim, work, output_values[p], output_indices[p], shift);
             }
         } else {
             Index_ primary_chunkdim = get_primary_chunkdim<accrow_>();
             for (Index_ s = secondary_start; s < secondary_end; ++s) {
-                fill_secondary(s, primary_start, primary_end, primary_chunkdim, work, output_values, output_indices, shift);
+                fill_secondary<true>(s, primary_start, primary_end, primary_chunkdim, work, output_values, output_indices, shift);
             }
         }
     }
@@ -226,7 +205,7 @@ public:
         Index_ primary_start,
         Index_ primary_length,
         const std::vector<Index_>& secondary_indices,
-        Workspace_& work,
+        Workspace<value_type, index_type>& work,
         std::vector<std::vector<value_type> >& output_values,
         std::vector<std::vector<index_type> >& output_indices,
         index_type shift)
@@ -235,13 +214,21 @@ public:
         Index_ primary_end = primary_start + primary_length;
 
         if constexpr(Blob_::row_major == accrow_) {
+            // secondary_indices is guaranteed to be non-empty, see contracts below.
+            auto secondary_start = secondary_indices.front();
+            auto secondary_end = secondary_indices.back() + 1; // need 1 past end.
+            auto secondary_chunkdim = get_secondary_chunkdim<accrow_>();
+
+            configure_remap(work, secondary_indices, secondary_chunkdim);
             for (Index_ p = primary_start; p < primary_end; ++p) {
-                fill_primary(p, secondary_indices, work, output_values[p], output_indices[p], shift);
+                fill_primary<false>(p, secondary_start, secondary_end, secondary_chunkdim, work, output_values[p], output_indices[p], shift);
             }
+            reset_remap(work, secondary_indices);
+
         } else {
             Index_ primary_chunkdim = get_primary_chunkdim<accrow_>();
             for (auto s : secondary_indices) {
-                fill_secondary(s, primary_start, primary_end, primary_chunkdim, work, output_values, output_indices, shift);
+                fill_secondary<true>(s, primary_start, primary_end, primary_chunkdim, work, output_values, output_indices, shift);
             }
         }
     }
@@ -252,7 +239,7 @@ public:
         const std::vector<Index_>& primary_indices,
         Index_ secondary_start,
         Index_ secondary_length,
-        Workspace_& work,
+        Workspace<value_type, index_type>& work,
         std::vector<std::vector<value_type> >& output_values,
         std::vector<std::vector<index_type> >& output_indices,
         index_type shift)
@@ -263,12 +250,20 @@ public:
         if constexpr(Blob_::row_major == accrow_) {
             Index_ secondary_chunkdim = get_secondary_chunkdim<accrow_>();
             for (auto p : primary_indices) {
-                fill_primary(p, secondary_start, secondary_end, secondary_chunkdim, work, output_values[p], output_indices[p], shift);
+                fill_primary<true>(p, secondary_start, secondary_end, secondary_chunkdim, work, output_values[p], output_indices[p], shift);
             }
+
         } else {
+            // primary_indices is guaranteed to be non-empty, see contracts below.
+            auto primary_start = primary_indices.front();
+            auto primary_end = primary_indices.back() + 1; // need 1 past end.
+            auto primary_chunkdim = get_primary_chunkdim<accrow_>();
+
+            configure_remap(work, primary_indices, primary_chunkdim);
             for (Index_ s = secondary_start; s < secondary_end; ++s) {
-                fill_secondary(s, primary_indices, work, output_values, output_indices, shift);
+                fill_secondary<false>(s, primary_start, primary_end, primary_chunkdim, work, output_values, output_indices, shift);
             }
+            reset_remap(work, primary_indices);
         }
     }
 
@@ -276,7 +271,7 @@ public:
     void extract(
         const std::vector<Index_>& primary_indices,
         const std::vector<Index_>& secondary_indices,
-        Workspace_& work,
+        Workspace<value_type, index_type>& work,
         std::vector<std::vector<value_type> >& output_values,
         std::vector<std::vector<index_type> >& output_indices,
         index_type shift)
@@ -284,13 +279,28 @@ public:
         chunk.inflate(work.values, work.indices, work.indptrs);
 
         if constexpr(Blob_::row_major == accrow_) {
+            // secondary_indices is guaranteed to be non-empty, see contracts below.
+            auto secondary_start = secondary_indices.front();
+            auto secondary_end = secondary_indices.back() + 1; // need 1 past end.
+            auto secondary_chunkdim = get_secondary_chunkdim<accrow_>();
+
+            configure_remap(work, secondary_indices, secondary_chunkdim);
             for (auto p : primary_indices) {
-                fill_primary(p, secondary_indices, work, output_values[p], output_indices[p], shift);
+                fill_primary<false>(p, secondary_start, secondary_end, secondary_chunkdim, work, output_values[p], output_indices[p], shift);
             }
+            reset_remap(work, secondary_indices);
+
         } else {
+            // primary_indices is guaranteed to be non-empty, see contracts below.
+            auto primary_start = primary_indices.front();
+            auto primary_end = primary_indices.back() + 1; // need 1 past end.
+            auto primary_chunkdim = get_primary_chunkdim<accrow_>();
+
+            configure_remap(work, primary_indices, primary_chunkdim);
             for (auto s : secondary_indices) {
-                fill_secondary(s, primary_indices, work, output_values, output_indices, shift);
+                fill_secondary<false>(s, primary_start, primary_end, primary_chunkdim, work, output_values, output_indices, shift);
             }
+            reset_remap(work, primary_indices);
         }
     }
 };
@@ -366,9 +376,8 @@ struct MockSimpleSparseChunk {
         /**
          * @cond
          */
-        std::vector<value_type> values;
-        std::vector<index_type> indices;
-        std::vector<size_t> indptrs;
+        // Hiding this here to avoid giving the impression that we NEED to implement this.
+        MockSparseChunk_internal::Workspace<value_type, index_type> work;
         /**
          * @endcond
          */
@@ -393,7 +402,7 @@ public:
      */
 
 private:
-    MockSparseChunk_internal::Core<MockSparseChunk_internal::MockBlob, Workspace> core;
+    MockSparseChunk_internal::Core<MockSparseChunk_internal::MockBlob> core;
 
 public:
     /**
@@ -436,7 +445,7 @@ public:
             core.template get_primary_chunkdim<accrow_>(), 
             secondary_start, 
             secondary_length, 
-            work, 
+            work.work, 
             output_values, 
             output_indices, 
             shift
@@ -479,7 +488,7 @@ public:
             0, 
             core.template get_primary_chunkdim<accrow_>(), 
             secondary_indices, 
-            work, 
+            work.work, 
             output_values, 
             output_indices,
             shift
@@ -517,11 +526,7 @@ struct SimpleSparseChunkWrapper {
 
     typedef typename Blob_::index_type index_type;
 
-    struct Workspace {
-        std::vector<value_type> values;
-        std::vector<index_type> indices;
-        std::vector<size_t> indptrs;
-    };
+    typedef MockSparseChunk_internal::Workspace<value_type, index_type> Workspace;
 
     static constexpr bool use_subset = false;
 
@@ -533,7 +538,7 @@ struct SimpleSparseChunkWrapper {
      */
 
 private:
-    MockSparseChunk_internal::Core<Blob_, Workspace> core;
+    MockSparseChunk_internal::Core<Blob_> core;
 
 public:
     /**
@@ -616,9 +621,8 @@ struct MockSubsettedSparseChunk {
         /**
          * @cond
          */
-        std::vector<value_type> values;
-        std::vector<index_type> indices;
-        std::vector<size_t> indptrs;
+        // Hiding this here to avoid giving the impression that we NEED to implement this.
+        MockSparseChunk_internal::Workspace<value_type, index_type> work;
         /**
          * @endcond
          */
@@ -626,7 +630,7 @@ struct MockSubsettedSparseChunk {
 
     /**
      * Whether to extract a subset of elements on the primary dimension.
-     * This should be set to `false`, otherwise a `MockSimpleSparseChunk` is expected.
+     * This should be set to `true`, otherwise a `MockSimpleSparseChunk` is expected.
      */
     static constexpr bool use_subset = true;
 
@@ -642,7 +646,7 @@ public:
      */
 
 private:
-    MockSparseChunk_internal::Core<MockSparseChunk_internal::MockBlob, Workspace> core;
+    MockSparseChunk_internal::Core<MockSparseChunk_internal::MockBlob> core;
 
 public:
     /**
@@ -661,9 +665,9 @@ public:
      * This is guaranteed to be positive.
      * @param work Re-usable workspace for extraction from one or more chunks.
      * @param[out] output_values Vector of vectors in which to store the output values.
-     * The outer vector is of length no less than `primary_indices.back() + 1`; each inner vector corresponds to an element of the primary dimension.
+     * The outer vector is of length no less than `primary_start + primary_length`; each inner vector corresponds to an element of the primary dimension.
      * @param[out] output_indices Vector of vectors in which to store the output indices.
-     * The outer vector is of length no less than `primary_indices.back() + 1`; each inner vector corresponds to an element of the primary dimension.
+     * The outer vector is of length no less than `primary_start + primary_length`; each inner vector corresponds to an element of the primary dimension.
      * @param shift Shift to be added to the chunk's reported indices when storing them in `output_indices`.
      *
      * If `accrow_ = true`, we would extract a block of rows `[primary_start, primary_start + length)` and a block of columns `[secondary_start, secondary_start + secondary_length)`;
@@ -692,7 +696,7 @@ public:
             primary_length, 
             secondary_start, 
             secondary_length, 
-            work,
+            work.work,
             output_values,
             output_indices,
             shift
@@ -713,9 +717,9 @@ public:
      * This is guaranteed to be non-empty with unique and sorted indices.
      * @param work Re-usable workspace for extraction from one or more chunks.
      * @param[out] output_values Vector of vectors in which to store the output values.
-     * The outer vector is of length no less than `primary_indices.back() + 1`; each inner vector corresponds to an element of the primary dimension.
+     * The outer vector is of length no less than `primary_start + primary_length`; each inner vector corresponds to an element of the primary dimension.
      * @param[out] output_indices Vector of vectors in which to store the output indices.
-     * The outer vector is of length no less than `primary_indices.back() + 1`; each inner vector corresponds to an element of the primary dimension.
+     * The outer vector is of length no less than `primary_start + primary_length`; each inner vector corresponds to an element of the primary dimension.
      * @param shift Shift to be added to the chunk's reported indices when storing them in `output_indices`.
      *
      * If `accrow_ = true`, we would extract a block of rows `[primary_start, primary_start + length)` and a subset of columns in `secondary_indices`;
@@ -742,7 +746,7 @@ public:
             primary_start, 
             primary_length, 
             secondary_indices, 
-            work, 
+            work.work, 
             output_values, 
             output_indices, 
             shift
@@ -793,7 +797,7 @@ public:
             primary_indices, 
             secondary_start, 
             secondary_length, 
-            work, 
+            work.work, 
             output_values,
             output_indices,
             shift
@@ -839,7 +843,7 @@ public:
         core.template extract<accrow_>(
             primary_indices, 
             secondary_indices, 
-            work, 
+            work.work, 
             output_values,
             output_indices,
             shift 
