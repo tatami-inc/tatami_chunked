@@ -506,13 +506,6 @@
       <type></type>
       <name>TypicalSlabCacheWorkspace</name>
       <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>ac0a1044ead9aa4efeee929a554bebf1f</anchor>
-      <arglist>()=default</arglist>
-    </member>
-    <member kind="function">
-      <type></type>
-      <name>TypicalSlabCacheWorkspace</name>
-      <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
       <anchor>a37ee1eceb475726fa3164040d3bdf036</anchor>
       <arglist>(Index_ primary_length, Index_ secondary_length, size_t cache_size_in_elements, bool require_minimum_cache, tatami::MaybeOracle&lt; oracle_, Index_ &gt; oracle)</arglist>
     </member>
