@@ -56,6 +56,9 @@ public:
     // https://en.cppreference.com/w/cpp/container/list/operator%3D
     LruSlabCache& operator=(LruSlabCache&&) = default; 
     LruSlabCache(LruSlabCache&&) = default;
+
+    // Might as well define this.
+    ~LruSlabCache() = default;
     /**
      * @endcond
      */

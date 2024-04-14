@@ -75,6 +75,9 @@ public:
     // see https://stackoverflow.com/questions/43988553/stdvector-stdmove-and-pointer-invalidation.
     OracleSlabCache& operator=(OracleSlabCache&&) = default;
     OracleSlabCache(OracleSlabCache&&) = default;
+
+    // Might as well define this.
+    ~OracleSlabCache() = default;
     /**
      * @endcond
      */

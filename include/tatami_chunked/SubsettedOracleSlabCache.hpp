@@ -207,6 +207,9 @@ public:
     // see https://stackoverflow.com/questions/43988553/stdvector-stdmove-and-pointer-invalidation.
     SubsettedOracleSlabCache(SubsettedOracleSlabCache&&) = delete;
     SubsettedOracleSlabCache& operator=(SubsettedOracleSlabCache&&) = delete;
+
+    // Might as well define this.
+    ~SubsettedOracleSlabCache() = default;
     /**
      * @endcond
      */

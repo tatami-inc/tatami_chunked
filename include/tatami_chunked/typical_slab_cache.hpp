@@ -30,12 +30,6 @@ namespace tatami_chunked {
 template<bool oracle_, bool subset_, typename Index_, class Slab_>
 struct TypicalSlabCacheWorkspace {
     /**
-     * Default constructor.
-     * Instances constructed in this manner should only be used for copy/move-assignment from instances created with the other constructor.
-     */
-    TypicalSlabCacheWorkspace() = default;
-
-    /**
      * @param primary_length Length of the primary dimension of each slab.
      * The primary dimension contains the elements to be extracted from each cached slab.
      * For example, if we were iterating through rows of a matrix, `primary_length` would be the number of rows spanned by each slab.
