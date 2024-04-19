@@ -73,7 +73,8 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#enum-members">Enumerations</a>  </div>
+<a href="#enum-members">Enumerations</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">tatami_chunked Namespace Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -83,6 +84,9 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">ChunkDimensionStats</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Statistics for regular chunks along a dimension.  <a href="structtatami__chunked_1_1ChunkDimensionStats.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">CustomDenseChunkedMatrix</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Matrix of custom dense chunks.  <a href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -136,6 +140,12 @@ Enumerations</h2></td></tr>
 , <b>INDEX</b>
  }</td></tr>
 <tr class="separator:ad8a9a6497dbbe538be338a3b0fc3bcea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a846db95781e2041553df81958c02b41a" id="r_a846db95781e2041553df81958c02b41a"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt; </td></tr>
+<tr class="memitem:a846db95781e2041553df81958c02b41a"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami__chunked.html#a846db95781e2041553df81958c02b41a">integer_ceil</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">left</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">right</a>)</td></tr>
+<tr class="separator:a846db95781e2041553df81958c02b41a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Methods to handle chunked tatami matrices. </p>
@@ -150,7 +160,7 @@ Enumerations</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">enum class <a class="el" href="namespacetatami__chunked.html#ad8a9a6497dbbe538be338a3b0fc3bcea">tatami_chunked::SubsettedOracleSelection</a> : char</td>
+          <td class="memname"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">enum</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="namespacetatami__chunked.html#ad8a9a6497dbbe538be338a3b0fc3bcea">tatami_chunked::SubsettedOracleSelection</a> : <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">char</a></td>
         </tr>
       </table>
   </td>
@@ -165,6 +175,52 @@ Enumerations</h2></td></tr>
 <li><code>BLOCK</code>: a contiguous block of rows/columns.</li>
 <li><code>INDEX</code>: an indexed subset of rows/columns. </li>
 </ul>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="a846db95781e2041553df81958c02b41a" name="a846db95781e2041553df81958c02b41a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a846db95781e2041553df81958c02b41a">&#9670;&#160;</a></span>integer_ceil()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> tatami_chunked::integer_ceil </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>&#160;</td>
+          <td class="paramname"><em>left</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>&#160;</td>
+          <td class="paramname"><em>right</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Index_</td><td>Integer type.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Obtain the integer ceiling of <code>left/right</code>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">left</td><td>A non-negative number. </td></tr>
+    <tr><td class="paramname">right</td><td>A non-negative number.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The integer ceiling if <code>right &gt; 0</code>, otherwise 0. </dd></dl>
 
 </div>
 </div>

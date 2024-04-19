@@ -72,5 +72,6 @@ var searchData=
   ['densematrix_2ehpp_69',['DenseMatrix.hpp',['https://tatami-inc.github.io/tatami/DenseMatrix_8hpp.html',1,'']]],
   ['denserowmatrix_70',['DenseRowMatrix',['https://tatami-inc.github.io/tatami/namespacetatami.html#a51122d20490b377cd3f4609cc044f314',1,'tatami']]],
   ['difference_5ftype_71',['difference_type',['https://tatami-inc.github.io/tatami/structtatami_1_1SomeNumericArray_1_1Iterator.html#ae2439d56ee9c796afae3b07f70e1c3b1',1,'tatami::SomeNumericArray::Iterator']]],
-  ['dimensionselectiontype_72',['DimensionSelectionType',['https://tatami-inc.github.io/tatami/namespacetatami.html#a0a2ecaf58e2b69bb4a808e814aeb16a1',1,'tatami']]]
+  ['dimension_5fextent_72',['dimension_extent',['../structtatami__chunked_1_1ChunkDimensionStats.html#ab51e3f87f98cd77d7aa2aa47b7a4be92',1,'tatami_chunked::ChunkDimensionStats']]],
+  ['dimensionselectiontype_73',['DimensionSelectionType',['https://tatami-inc.github.io/tatami/namespacetatami.html#a0a2ecaf58e2b69bb4a808e814aeb16a1',1,'tatami']]]
 ];

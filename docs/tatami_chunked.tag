@@ -73,6 +73,60 @@
     <class kind="struct">tatami_chunked::TypicalSlabCacheWorkspace</class>
     <namespace>tatami_chunked</namespace>
   </compound>
+  <compound kind="struct">
+    <name>tatami_chunked::ChunkDimensionStats</name>
+    <filename>structtatami__chunked_1_1ChunkDimensionStats.html</filename>
+    <templarg>typename Index_</templarg>
+    <member kind="function">
+      <type></type>
+      <name>ChunkDimensionStats</name>
+      <anchorfile>structtatami__chunked_1_1ChunkDimensionStats.html</anchorfile>
+      <anchor>a409cdc30672f71a8346636bc14c8c859</anchor>
+      <arglist>(Index_ dimension_extent, Index_ chunk_length)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>ChunkDimensionStats</name>
+      <anchorfile>structtatami__chunked_1_1ChunkDimensionStats.html</anchorfile>
+      <anchor>a43f0bc21d26d193aaf186f14e9a49640</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>Index_</type>
+      <name>get_chunk_length</name>
+      <anchorfile>structtatami__chunked_1_1ChunkDimensionStats.html</anchorfile>
+      <anchor>a83ba437aa9dc119055748d78d3933a9b</anchor>
+      <arglist>(Index_ i) const</arglist>
+    </member>
+    <member kind="variable">
+      <type>Index_</type>
+      <name>dimension_extent</name>
+      <anchorfile>structtatami__chunked_1_1ChunkDimensionStats.html</anchorfile>
+      <anchor>ab51e3f87f98cd77d7aa2aa47b7a4be92</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>Index_</type>
+      <name>chunk_length</name>
+      <anchorfile>structtatami__chunked_1_1ChunkDimensionStats.html</anchorfile>
+      <anchor>a2def077216eed06795aec42f851d7bdf</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>Index_</type>
+      <name>num_chunks</name>
+      <anchorfile>structtatami__chunked_1_1ChunkDimensionStats.html</anchorfile>
+      <anchor>a9dab0db60e6bc39edd3bc643c054998b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>Index_</type>
+      <name>last_chunk_length</name>
+      <anchorfile>structtatami__chunked_1_1ChunkDimensionStats.html</anchorfile>
+      <anchor>ac85a32e683733bd8a3a78e58ba567cc4</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
   <compound kind="class">
     <name>tatami_chunked::CustomDenseChunkedMatrix</name>
     <filename>classtatami__chunked_1_1CustomDenseChunkedMatrix.html</filename>
@@ -550,6 +604,7 @@
   <compound kind="namespace">
     <name>tatami_chunked</name>
     <filename>namespacetatami__chunked.html</filename>
+    <class kind="struct">tatami_chunked::ChunkDimensionStats</class>
     <class kind="class">tatami_chunked::CustomDenseChunkedMatrix</class>
     <class kind="struct">tatami_chunked::CustomDenseChunkedOptions</class>
     <class kind="class">tatami_chunked::CustomSparseChunkedMatrix</class>
@@ -574,6 +629,13 @@
       <enumvalue file="namespacetatami__chunked.html" anchor="ad8a9a6497dbbe538be338a3b0fc3bceaaba7de5bc6888294e5884b024a4c894f1">FULL</enumvalue>
       <enumvalue file="namespacetatami__chunked.html" anchor="ad8a9a6497dbbe538be338a3b0fc3bceaa4d34f53389ed7f28ca91fc31ea360a66">BLOCK</enumvalue>
       <enumvalue file="namespacetatami__chunked.html" anchor="ad8a9a6497dbbe538be338a3b0fc3bceaacb4ae3b37047fb4b2c0d16f8bf84f076">INDEX</enumvalue>
+    </member>
+    <member kind="function">
+      <type>Index_</type>
+      <name>integer_ceil</name>
+      <anchorfile>namespacetatami__chunked.html</anchorfile>
+      <anchor>a846db95781e2041553df81958c02b41a</anchor>
+      <arglist>(Index_ left, Index_ right)</arglist>
     </member>
   </compound>
   <compound kind="page">
