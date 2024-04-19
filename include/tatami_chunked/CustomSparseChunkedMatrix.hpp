@@ -46,6 +46,12 @@ protected:
     typedef typename ChunkCoordinator<Index_, true, Chunk_>::SparseSlab Slab;
     TypicalSlabCacheWorkspace<oracle_, Chunk_::use_subset, Index_, Slab> cache_workspace;
     bool needs_value, needs_index;
+
+    // These two instances are not fully allocated Slabs; rather, tmp_solo just
+    // holds the content for a single chunk, while final_solo holds the content
+    // across chunks but only for the requested dimension element. Both cases
+    // are likely to be much smaller than a full Slab, so we're already more
+    // memory-efficient than trying to use num_slabs_in_cache = 1.
     Slab tmp_solo, final_solo;
 
 public:
