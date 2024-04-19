@@ -3,6 +3,7 @@
 
 #include "tatami/tatami.hpp"
 #include "typical_slab_cache.hpp"
+#include "ChunkDimensionStats.hpp"
 
 #include <vector>
 
@@ -18,120 +19,114 @@ template<
 >
 class ChunkCoordinator {
 public:
-    ChunkCoordinator(Index_ mat_nr, Index_ mat_nc, Index_ chunk_nr, Index_ chunk_nc, std::vector<Chunk_> chunks, bool rm) :
-        mat_nrow(mat_nr),
-        mat_ncol(mat_nc),
-        chunk_nrow(chunk_nr), 
-        chunk_ncol(chunk_nc),
-        num_chunks_per_row(integer_ceil(mat_ncol, chunk_ncol)),
-        num_chunks_per_column(integer_ceil(mat_nrow, chunk_nrow)),
-        last_row_chunk_rows(mat_nrow ? (mat_nrow - (num_chunks_per_column - 1) * chunk_nrow) : 0),
-        last_column_chunk_cols(mat_ncol ? (mat_ncol - (num_chunks_per_row - 1) * chunk_ncol) : 0),
-        chunk_array(std::move(chunks)),
-        row_major(rm)
+    ChunkCoordinator(ChunkDimensionStats<Index_> rows, ChunkDimensionStats<Index_> cols, std::vector<Chunk_> chunks, bool rm) :
+        row_stats(std::move(rows)), col_stats(std::move(cols)), chunk_array(std::move(chunks)), row_major(rm)
     {
-        if (static_cast<size_t>(num_chunks_per_row) * static_cast<size_t>(num_chunks_per_column) != chunk_array.size()) {
+        if (static_cast<size_t>(row_stats.num_chunks) * static_cast<size_t>(col_stats.num_chunks) != chunk_array.size()) {
             throw std::runtime_error("length of 'chunks' should be equal to the product of the number of chunks along each row and column");
         }
     }
 
 private:
-    Index_ mat_nrow, mat_ncol;
-    Index_ chunk_nrow, chunk_ncol;
-    Index_ num_chunks_per_row, num_chunks_per_column;
-    Index_ last_row_chunk_rows, last_column_chunk_cols; // number of rows in the chunks overlapping the last row, or columns in the chunks overlapping the last column.
-
+    ChunkDimensionStats<Index_> row_stats;
+    ChunkDimensionStats<Index_> col_stats;
     std::vector<Chunk_> chunk_array;
     bool row_major;
 
+    // Number of chunks along the rows is equal to the number of chunks for
+    // each column, and vice versa; hence the flipped definitions.
+    Index_ get_num_chunks_per_row() const {
+        return col_stats.num_chunks;
+    }
+
+    Index_ get_num_chunks_per_column() const {
+        return row_stats.num_chunks;
+    }
+
 public:
     Index_ get_nrow() const {
-        return mat_nrow;
+        return row_stats.dimension_extent;
     }
 
     Index_ get_ncol() const {
-        return mat_ncol;
+        return col_stats.dimension_extent;
     }
 
     bool prefer_rows_internal() const {
         // Prefer rows if we have to extract fewer chunks per row.
-        return num_chunks_per_column > num_chunks_per_row; 
+        return get_num_chunks_per_column() > get_num_chunks_per_row(); 
     }
 
     Index_ get_chunk_nrow() const {
-        return chunk_nrow;
+        return row_stats.chunk_length;
     }
 
     Index_ get_chunk_ncol() const {
-        return chunk_ncol;
+        return col_stats.chunk_length;
     }
 
 public:
     template<bool accrow_>
     Index_ get_primary_dim() const {
         if constexpr(accrow_) {
-            return mat_nrow;
+            return row_stats.dimension_extent;
         } else {
-            return mat_ncol;
+            return col_stats.dimension_extent;
         }
     }
 
     template<bool accrow_>
     Index_ get_secondary_dim() const {
         if constexpr(accrow_) {
-            return mat_ncol;
+            return col_stats.dimension_extent;
         } else {
-            return mat_nrow;
+            return row_stats.dimension_extent;
         }
     }
 
     template<bool accrow_>
     Index_ get_primary_chunkdim() const {
         if constexpr(accrow_) {
-            return chunk_nrow;
+            return row_stats.chunk_length;
         } else {
-            return chunk_ncol;
+            return col_stats.chunk_length;
         }
     }
 
     template<bool accrow_>
     Index_ get_secondary_chunkdim() const {
         if constexpr(accrow_) {
-            return chunk_ncol;
+            return col_stats.chunk_length;
         } else {
-            return chunk_nrow;
+            return row_stats.chunk_length;
         }
     }
 
     template<bool accrow_>
     Index_ get_primary_num_chunks() const {
         if constexpr(accrow_) {
-            return num_chunks_per_column;
+            return row_stats.num_chunks;
         } else {
-            return num_chunks_per_row;
+            return col_stats.num_chunks;
         }
     }
 
     template<bool accrow_>
     Index_ get_secondary_num_chunks() const {
         if constexpr(accrow_) {
-            return num_chunks_per_row;
+            return col_stats.num_chunks;
         } else {
-            return num_chunks_per_column;
+            return row_stats.num_chunks;
         }
     }
 
     // Overload that handles the truncated chunk at the bottom/right edges of each matrix.
     template<bool accrow_>
     Index_ get_primary_chunkdim(Index_ chunk_id) const {
-        if (chunk_id + 1 == get_primary_num_chunks<accrow_>()) {
-            if constexpr(accrow_) {
-                return last_row_chunk_rows;
-            } else {
-                return last_column_chunk_cols;
-            }
+        if constexpr(accrow_) {
+            return row_stats.get_chunk_length(chunk_id);
         } else {
-            return get_primary_chunkdim<accrow_>();
+            return col_stats.get_chunk_length(chunk_id);
         }
     }
 
@@ -168,15 +163,15 @@ private:
     std::pair<size_t, size_t> offset_and_increment(Index_ chunk_id) const {
         if (row_major) {
             if constexpr(accrow_) {
-                return std::pair<size_t, size_t>(static_cast<size_t>(chunk_id) * num_chunks_per_row, 1);
+                return std::pair<size_t, size_t>(static_cast<size_t>(chunk_id) * get_num_chunks_per_row(), 1);
             } else {
-                return std::pair<size_t, size_t>(chunk_id, num_chunks_per_row);
+                return std::pair<size_t, size_t>(chunk_id, get_num_chunks_per_row());
             }
         } else {
             if constexpr(accrow_) {
-                return std::pair<size_t, size_t>(chunk_id, num_chunks_per_column);
+                return std::pair<size_t, size_t>(chunk_id, get_num_chunks_per_column());
             } else {
-                return std::pair<size_t, size_t>(static_cast<size_t>(chunk_id) * num_chunks_per_column, 1);
+                return std::pair<size_t, size_t>(static_cast<size_t>(chunk_id) * get_num_chunks_per_column(), 1);
             }
         }
     }

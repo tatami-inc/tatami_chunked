@@ -411,7 +411,7 @@ public:
      * @param opt Further options for chunked extraction.
      */
     CustomSparseChunkedMatrix(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector<Chunk_> chunks, bool row_major, const CustomSparseChunkedOptions& opt) : 
-        coordinator(mat_nrow, mat_ncol, chunk_nrow, chunk_ncol, std::move(chunks), row_major),
+        coordinator(ChunkDimensionStats<Index_>(mat_nrow, chunk_nrow), ChunkDimensionStats<Index_>(mat_ncol, chunk_ncol), std::move(chunks), row_major),
         cache_size_in_elements(opt.maximum_cache_size / (sizeof(typename Chunk_::value_type) + sizeof(typename Chunk_::index_type))),
         require_minimum_cache(opt.require_minimum_cache)
     {}

@@ -21,6 +21,7 @@ add_executable(
     src/SubsettedOracleSlabCache.cpp
     src/mock_dense_chunk.cpp
     src/mock_sparse_chunk.cpp
+    src/ChunkDimensionStats.cpp
     src/CustomDenseChunkedMatrix.cpp
     src/CustomSparseChunkedMatrix.cpp
 )
