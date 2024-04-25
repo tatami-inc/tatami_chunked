@@ -3,6 +3,8 @@
 
 TEST(LruSlabCache, Basic) {
     tatami_chunked::LruSlabCache<int, std::pair<int, int> > cache(3);
+    EXPECT_EQ(cache.get_max_slabs(), 3);
+    EXPECT_EQ(cache.get_num_slabs(), 0);
 
     int counter = 0;
     auto creator = []() -> std::pair<int, int> {
@@ -18,10 +20,12 @@ TEST(LruSlabCache, Basic) {
     auto out = cache.find(10, creator, populator); // new allocation
     EXPECT_EQ(out.first, 10);
     EXPECT_EQ(out.second, 0);
+    EXPECT_EQ(cache.get_num_slabs(), 1);
 
     out = cache.find(20, creator, populator); // new allocation
     EXPECT_EQ(out.first, 20);
     EXPECT_EQ(out.second, 1);
+    EXPECT_EQ(cache.get_num_slabs(), 2);
 
     out = cache.find(10, creator, populator); // retrieve from cache.
     EXPECT_EQ(out.first, 10);
@@ -34,6 +38,7 @@ TEST(LruSlabCache, Basic) {
     out = cache.find(30, creator, populator); // new allocation, now we're full.
     EXPECT_EQ(out.first, 30);
     EXPECT_EQ(out.second, 2);
+    EXPECT_EQ(cache.get_num_slabs(), 3);
 
     out = cache.find(30, creator, populator); // retrieve from cache with short-circuit optimization.
     EXPECT_EQ(out.first, 30);

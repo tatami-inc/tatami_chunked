@@ -47,6 +47,9 @@ TEST_F(OracleSlabCacheTest, Consecutive) {
     };
 
     tatami_chunked::OracleSlabCache<unsigned char, int, TestSlab> cache(std::make_shared<tatami::FixedVectorOracle<int> >(std::move(predictions)), 3);
+    EXPECT_EQ(cache.get_max_slabs(), 3);
+    EXPECT_EQ(cache.get_num_slabs(), 0);
+
     int counter = 0;
     int nalloc = 0;
 
@@ -58,6 +61,7 @@ TEST_F(OracleSlabCacheTest, Consecutive) {
     }
 
     EXPECT_EQ(nalloc, 3); // respects the max cache size.
+    EXPECT_EQ(cache.get_num_slabs(), 3);
 }
 
 TEST_F(OracleSlabCacheTest, AllPredictions) {

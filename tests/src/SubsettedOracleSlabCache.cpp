@@ -80,6 +80,8 @@ TEST_F(SubsettedOracleSlabCacheTest, Consecutive) {
     };
 
     tatami_chunked::SubsettedOracleSlabCache<unsigned char, int, TestSlab> cache(std::make_unique<tatami::FixedViewOracle<int> >(predictions.data(), predictions.size()), 3);
+    EXPECT_EQ(cache.get_max_slabs(), 3);
+    EXPECT_EQ(cache.get_num_slabs(), 0);
     int counter = 0;
     int nalloc = 0;
 
@@ -178,6 +180,7 @@ TEST_F(SubsettedOracleSlabCacheTest, Consecutive) {
     }
 
     EXPECT_EQ(nalloc, 3); // respects the max cache size.
+    EXPECT_EQ(cache.get_num_slabs(), 3);
 }
 
 TEST_F(SubsettedOracleSlabCacheTest, FullFallback) {

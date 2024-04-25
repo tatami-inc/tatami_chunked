@@ -121,6 +121,21 @@ public:
         last_slab = &slab;
         return slab;
     }
+
+public:
+    /**
+     * @return Maximum number of slabs in the cache.
+     */
+    size_t get_max_slabs() const {
+        return max_slabs;
+    }
+
+    /**
+     * @return Number of slabs currently in the cache.
+     */
+    size_t get_num_slabs() const {
+        return cache_data.size();
+    }
 };
 
 }
