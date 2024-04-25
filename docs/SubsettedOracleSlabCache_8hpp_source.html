@@ -377,18 +377,33 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>            cfcIt-&gt;second-&gt;selection = SubsettedOracleSelection::FULL;</div>
 <div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>        }</div>
 <div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>    }</div>
-<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span>};</div>
+<div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span> </div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span><span class="keyword">public</span>:</div>
+<div class="foldopen" id="foldopen00398" data-start="{" data-end="}">
+<div class="line"><a id="l00398" name="l00398"></a><span class="lineno"><a class="line" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html#a1a3e5cd9d05754a3d315333ad3054507">  398</a></span>    <span class="keywordtype">size_t</span> <a class="code hl_function" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html#a1a3e5cd9d05754a3d315333ad3054507">get_max_slabs</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>        <span class="keywordflow">return</span> max_slabs;</div>
+<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span>    }</div>
 </div>
-<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span> </div>
-<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>}</div>
-<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span> </div>
-<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span> </div>
+<div class="foldopen" id="foldopen00405" data-start="{" data-end="}">
+<div class="line"><a id="l00405" name="l00405"></a><span class="lineno"><a class="line" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html#af7ca1d78fb5e614df84791a20c2d0b37">  405</a></span>    <span class="keywordtype">size_t</span> <a class="code hl_function" href="classtatami__chunked_1_1SubsettedOracleSlabCache.html#af7ca1d78fb5e614df84791a20c2d0b37">get_num_slabs</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00406" name="l00406"></a><span class="lineno">  406</span>        <span class="keywordflow">return</span> current_cache.size();</div>
+<div class="line"><a id="l00407" name="l00407"></a><span class="lineno">  407</span>    }</div>
+</div>
+<div class="line"><a id="l00408" name="l00408"></a><span class="lineno">  408</span>};</div>
+</div>
+<div class="line"><a id="l00409" name="l00409"></a><span class="lineno">  409</span> </div>
+<div class="line"><a id="l00410" name="l00410"></a><span class="lineno">  410</span>}</div>
+<div class="line"><a id="l00411" name="l00411"></a><span class="lineno">  411</span> </div>
+<div class="line"><a id="l00412" name="l00412"></a><span class="lineno">  412</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasstatami__chunked_1_1SubsettedOracleSlabCache_html"><div class="ttname"><a href="classtatami__chunked_1_1SubsettedOracleSlabCache.html">tatami_chunked::SubsettedOracleSlabCache</a></div><div class="ttdoc">Oracle-aware cache for slabs, plus subsets.</div><div class="ttdef"><b>Definition</b> SubsettedOracleSlabCache.hpp:147</div></div>
+<div class="ttc" id="aclasstatami__chunked_1_1SubsettedOracleSlabCache_html_a1a3e5cd9d05754a3d315333ad3054507"><div class="ttname"><a href="classtatami__chunked_1_1SubsettedOracleSlabCache.html#a1a3e5cd9d05754a3d315333ad3054507">tatami_chunked::SubsettedOracleSlabCache::get_max_slabs</a></div><div class="ttdeci">size_t get_max_slabs() const</div><div class="ttdef"><b>Definition</b> SubsettedOracleSlabCache.hpp:398</div></div>
 <div class="ttc" id="aclasstatami__chunked_1_1SubsettedOracleSlabCache_html_a4aebba9a39bc83f43dc7e0fde9fa63f5"><div class="ttname"><a href="classtatami__chunked_1_1SubsettedOracleSlabCache.html#a4aebba9a39bc83f43dc7e0fde9fa63f5">tatami_chunked::SubsettedOracleSlabCache::operator=</a></div><div class="ttdeci">SubsettedOracleSlabCache &amp; operator=(const SubsettedOracleSlabCache &amp;)=delete</div></div>
 <div class="ttc" id="aclasstatami__chunked_1_1SubsettedOracleSlabCache_html_a835433da5c6e146e76f2e50a43d6ce28"><div class="ttname"><a href="classtatami__chunked_1_1SubsettedOracleSlabCache.html#a835433da5c6e146e76f2e50a43d6ce28">tatami_chunked::SubsettedOracleSlabCache::next</a></div><div class="ttdeci">std::pair&lt; const Slab_ *, Index_ &gt; next(Ifunction_ identify, Cfunction_ create, Pfunction_ populate)</div><div class="ttdef"><b>Definition</b> SubsettedOracleSlabCache.hpp:253</div></div>
 <div class="ttc" id="aclasstatami__chunked_1_1SubsettedOracleSlabCache_html_ab7599fd12a66b20bfad3b3272bc56553"><div class="ttname"><a href="classtatami__chunked_1_1SubsettedOracleSlabCache.html#ab7599fd12a66b20bfad3b3272bc56553">tatami_chunked::SubsettedOracleSlabCache::SubsettedOracleSlabCache</a></div><div class="ttdeci">SubsettedOracleSlabCache(const SubsettedOracleSlabCache &amp;)=delete</div></div>
 <div class="ttc" id="aclasstatami__chunked_1_1SubsettedOracleSlabCache_html_ab861a229c86fab7212a18b05a01fb9a4"><div class="ttname"><a href="classtatami__chunked_1_1SubsettedOracleSlabCache.html#ab861a229c86fab7212a18b05a01fb9a4">tatami_chunked::SubsettedOracleSlabCache::next</a></div><div class="ttdeci">Index_ next()</div><div class="ttdef"><b>Definition</b> SubsettedOracleSlabCache.hpp:224</div></div>
 <div class="ttc" id="aclasstatami__chunked_1_1SubsettedOracleSlabCache_html_ac642e224ec611e618a9c2a8fa9b6c4bc"><div class="ttname"><a href="classtatami__chunked_1_1SubsettedOracleSlabCache.html#ac642e224ec611e618a9c2a8fa9b6c4bc">tatami_chunked::SubsettedOracleSlabCache::SubsettedOracleSlabCache</a></div><div class="ttdeci">SubsettedOracleSlabCache(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; ora, size_t num_slabs)</div><div class="ttdef"><b>Definition</b> SubsettedOracleSlabCache.hpp:176</div></div>
+<div class="ttc" id="aclasstatami__chunked_1_1SubsettedOracleSlabCache_html_af7ca1d78fb5e614df84791a20c2d0b37"><div class="ttname"><a href="classtatami__chunked_1_1SubsettedOracleSlabCache.html#af7ca1d78fb5e614df84791a20c2d0b37">tatami_chunked::SubsettedOracleSlabCache::get_num_slabs</a></div><div class="ttdeci">size_t get_num_slabs() const</div><div class="ttdef"><b>Definition</b> SubsettedOracleSlabCache.hpp:405</div></div>
 <div class="ttc" id="anamespacetatami__chunked_html"><div class="ttname"><a href="namespacetatami__chunked.html">tatami_chunked</a></div><div class="ttdoc">Methods to handle chunked tatami matrices.</div><div class="ttdef"><b>Definition</b> ChunkDimensionStats.hpp:4</div></div>
 <div class="ttc" id="anamespacetatami__chunked_html_ad8a9a6497dbbe538be338a3b0fc3bcea"><div class="ttname"><a href="namespacetatami__chunked.html#ad8a9a6497dbbe538be338a3b0fc3bcea">tatami_chunked::SubsettedOracleSelection</a></div><div class="ttdeci">SubsettedOracleSelection</div><div class="ttdef"><b>Definition</b> SubsettedOracleSlabCache.hpp:24</div></div>
 <div class="ttc" id="astructtatami_1_1Oracle_html"><div class="ttname"><a href="https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html">tatami::Oracle</a></div></div>

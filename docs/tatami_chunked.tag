@@ -233,6 +233,20 @@
       <anchor>a022825f5749bba03b112fbe72d98ddd5</anchor>
       <arglist>(Id_ id, Cfunction_ create, Pfunction_ populate)</arglist>
     </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>get_max_slabs</name>
+      <anchorfile>classtatami__chunked_1_1LruSlabCache.html</anchorfile>
+      <anchor>a9a1d2dff3598e0e2bdb750e104e45b1b</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>get_num_slabs</name>
+      <anchorfile>classtatami__chunked_1_1LruSlabCache.html</anchorfile>
+      <anchor>a756afc7221a667f40989328a578dba9c</anchor>
+      <arglist>() const</arglist>
+    </member>
   </compound>
   <compound kind="struct">
     <name>tatami_chunked::MockSimpleDenseChunk</name>
@@ -449,6 +463,20 @@
       <anchor>a8a7fd554334053ebef56bdcb5d6c0321</anchor>
       <arglist>(Ifunction_ identify, Cfunction_ create, Pfunction_ populate)</arglist>
     </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>get_max_slabs</name>
+      <anchorfile>classtatami__chunked_1_1OracleSlabCache.html</anchorfile>
+      <anchor>aa59e27f2dc2fc44672e11f76251197a0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>get_num_slabs</name>
+      <anchorfile>classtatami__chunked_1_1OracleSlabCache.html</anchorfile>
+      <anchor>a92085210ca410ed53502634e972e98da</anchor>
+      <arglist>() const</arglist>
+    </member>
   </compound>
   <compound kind="struct">
     <name>tatami_chunked::SimpleDenseChunkWrapper</name>
@@ -500,6 +528,20 @@
       <anchorfile>classtatami__chunked_1_1SubsettedOracleSlabCache.html</anchorfile>
       <anchor>a835433da5c6e146e76f2e50a43d6ce28</anchor>
       <arglist>(Ifunction_ identify, Cfunction_ create, Pfunction_ populate)</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>get_max_slabs</name>
+      <anchorfile>classtatami__chunked_1_1SubsettedOracleSlabCache.html</anchorfile>
+      <anchor>a1a3e5cd9d05754a3d315333ad3054507</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>get_num_slabs</name>
+      <anchorfile>classtatami__chunked_1_1SubsettedOracleSlabCache.html</anchorfile>
+      <anchor>af7ca1d78fb5e614df84791a20c2d0b37</anchor>
+      <arglist>() const</arglist>
     </member>
   </compound>
   <compound kind="struct">
