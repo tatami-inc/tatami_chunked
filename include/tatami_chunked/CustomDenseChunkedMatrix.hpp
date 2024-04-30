@@ -71,14 +71,14 @@ public:
         )
     {
         if (cache_workspace.num_slabs_in_cache == 0) {
-            tmp_solo.resize(coordinator.get_chunk_nrow() * coordinator.get_chunk_ncol());
+            tmp_solo.resize(static_cast<size_t>(coordinator.get_chunk_nrow()) * static_cast<size_t>(coordinator.get_chunk_ncol()));
             final_solo.resize(secondary_length);
         }
     }
 
 protected:
     const Value_* process_dense_slab(const std::pair<const Slab*, Index_>& fetched, Value_* buffer, size_t secondary_length) {
-        auto ptr = fetched.first->data() + fetched.second * secondary_length; // already cast to size_t to avoid overflow.
+        auto ptr = fetched.first->data() + static_cast<size_t>(fetched.second) * secondary_length; // cast to size_t to avoid overflow.
         std::copy_n(ptr, secondary_length, buffer);
         return buffer;
     }

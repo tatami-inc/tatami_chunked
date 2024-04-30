@@ -52,20 +52,20 @@ public:
     template<bool accrow_, typename Index_>
     void extract(Index_ primary_start, Index_ primary_length, Index_ secondary_start, Index_ secondary_length, Workspace<value_type>& work, value_type* output, size_t stride) const {
         chunk.inflate(work);
-        output += primary_start * stride;
+        output += static_cast<size_t>(primary_start) * stride; // cast to size_t to avoid overflow.
 
         if constexpr(Blob_::row_major == accrow_) {
             size_t secondary_chunkdim = get_secondary_chunkdim<accrow_>(); // use size_t to avoid integer overflow with Index_.
-            auto srcptr = work.data() + primary_start * secondary_chunkdim + secondary_start;
+            auto srcptr = work.data() + static_cast<size_t>(primary_start) * secondary_chunkdim + static_cast<size_t>(secondary_start);
             for (Index_ p = 0; p < primary_length; ++p) {
-                std::copy(srcptr, srcptr + secondary_length, output);
+                std::copy_n(srcptr, secondary_length, output);
                 srcptr += secondary_chunkdim;
                 output += stride;
             }
 
         } else {
             size_t primary_chunkdim = get_primary_chunkdim<accrow_>(); // use size_t to avoid integer overflow with Index_.
-            auto srcptr = work.data() + secondary_start * primary_chunkdim + primary_start;
+            auto srcptr = work.data() + static_cast<size_t>(secondary_start) * primary_chunkdim + static_cast<size_t>(primary_start);
             for (Index_ p = 0; p < primary_length; ++p) {
                 auto copy_srcptr = srcptr;
                 auto copy_output = output;
@@ -83,11 +83,11 @@ public:
     template<bool accrow_, typename Index_>
     void extract(Index_ primary_start, Index_ primary_length, const std::vector<Index_>& secondary_indices, Workspace<value_type>& work, value_type* output, size_t stride) const {
         chunk.inflate(work);
-        output += primary_start * stride;
+        output += static_cast<size_t>(primary_start) * stride; // cast to size_t to avoid overflow.
 
         if constexpr(Blob_::row_major == accrow_) {
             size_t secondary_chunkdim = get_secondary_chunkdim<accrow_>(); // use size_t to avoid integer overflow with Index_.
-            auto srcptr = work.data() + primary_start * secondary_chunkdim;
+            auto srcptr = work.data() + static_cast<size_t>(primary_start) * secondary_chunkdim;
             for (Index_ p = 0; p < primary_length; ++p) {
                 auto copy_output = output;
                 for (auto x : secondary_indices) {
@@ -100,10 +100,10 @@ public:
 
         } else {
             size_t primary_chunkdim = get_primary_chunkdim<accrow_>(); // use size_t to avoid integer overflow with Index_.
-            auto srcptr = work.data() + primary_start;
+            auto srcptr = work.data() + static_cast<size_t>(primary_start);
             for (Index_ p = 0; p < primary_length; ++p) {
                 auto copy_output = output;
-                for (auto x : secondary_indices) {
+                for (size_t x : secondary_indices) {
                     *copy_output = srcptr[x * primary_chunkdim];
                     ++copy_output;
                 }
@@ -120,15 +120,16 @@ public:
 
         if constexpr(Blob_::row_major == accrow_) {
             size_t secondary_chunkdim = get_secondary_chunkdim<accrow_>(); // use size_t to avoid integer overflow with Index_.
-            for (auto p : primary_indices) {
-                auto srcptr = work.data() + p * secondary_chunkdim + secondary_start;
-                std::copy(srcptr, srcptr + secondary_length, output + p * stride);
+            size_t offset = secondary_start;
+            for (size_t p : primary_indices) {
+                auto srcptr = work.data() + p * secondary_chunkdim + offset;
+                std::copy_n(srcptr, secondary_length, output + p * stride);
             }
 
         } else {
             size_t primary_chunkdim = get_primary_chunkdim<accrow_>(); // use size_t to avoid integer overflow with Index_.
-            auto srcptr = work.data() + secondary_start * primary_chunkdim;
-            for (auto p : primary_indices) {
+            auto srcptr = work.data() + static_cast<size_t>(secondary_start) * primary_chunkdim;
+            for (size_t p : primary_indices) {
                 auto copy_srcptr = srcptr + p;
                 auto copy_output = output + p * stride;
                 for (Index_ s = 0; s < secondary_length; ++s) {
@@ -146,7 +147,7 @@ public:
 
         if constexpr(Blob_::row_major == accrow_) {
             size_t secondary_chunkdim = get_secondary_chunkdim<accrow_>(); // use size_t to avoid integer overflow with Index_.
-            for (auto p : primary_indices) {
+            for (size_t p : primary_indices) {
                 auto srcptr = work.data() + p * secondary_chunkdim;
                 auto copy_output = output + p * stride;
                 for (auto x : secondary_indices) {
@@ -157,10 +158,10 @@ public:
 
         } else {
             size_t primary_chunkdim = get_primary_chunkdim<accrow_>(); // use size_t to avoid integer overflow with Index_.
-            for (auto p : primary_indices) {
+            for (size_t p : primary_indices) {
                 auto srcptr = work.data() + p;
                 auto copy_output = output + p * stride;
-                for (auto x : secondary_indices) {
+                for (size_t x : secondary_indices) {
                     *copy_output = srcptr[x * primary_chunkdim];
                     ++copy_output;
                 }
