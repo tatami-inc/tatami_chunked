@@ -663,7 +663,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00578" name="l00578"></a><span class="lineno">  578</span>        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(Chunk_::use_subset) {</div>
 <div class="line"><a id="l00579" name="l00579"></a><span class="lineno">  579</span>            <span class="keyword">auto</span> out = cache_workspace.cache.next(</div>
 <div class="line"><a id="l00580" name="l00580"></a><span class="lineno">  580</span>                <span class="comment">/* identify = */</span> [&amp;](Index_ i) -&gt; std::pair&lt;Index_, Index_&gt; {</div>
-<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>                    <span class="keywordflow">return</span> { i / primary_chunkdim, i % primary_chunkdim };</div>
+<div class="line"><a id="l00581" name="l00581"></a><span class="lineno">  581</span>                    <span class="keywordflow">return</span> std::pair&lt;Index_, Index_&gt;(i / primary_chunkdim, i % primary_chunkdim);</div>
 <div class="line"><a id="l00582" name="l00582"></a><span class="lineno">  582</span>                },</div>
 <div class="line"><a id="l00583" name="l00583"></a><span class="lineno">  583</span>                <span class="comment">/* create = */</span> [&amp;]() -&gt; Slab {</div>
 <div class="line"><a id="l00584" name="l00584"></a><span class="lineno">  584</span>                    <span class="keywordflow">return</span> allocate&lt;accrow_&gt;(secondary_length);</div>
@@ -692,7 +692,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00607" name="l00607"></a><span class="lineno">  607</span>        } <span class="keywordflow">else</span> {</div>
 <div class="line"><a id="l00608" name="l00608"></a><span class="lineno">  608</span>            <span class="keywordflow">return</span> cache_workspace.cache.next(</div>
 <div class="line"><a id="l00609" name="l00609"></a><span class="lineno">  609</span>                <span class="comment">/* identify = */</span> [&amp;](Index_ i) -&gt; std::pair&lt;Index_, Index_&gt; {</div>
-<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>                    <span class="keywordflow">return</span> { i / primary_chunkdim, i % primary_chunkdim };</div>
+<div class="line"><a id="l00610" name="l00610"></a><span class="lineno">  610</span>                    <span class="keywordflow">return</span> std::pair&lt;Index_, Index_&gt;(i / primary_chunkdim, i % primary_chunkdim);</div>
 <div class="line"><a id="l00611" name="l00611"></a><span class="lineno">  611</span>                },</div>
 <div class="line"><a id="l00612" name="l00612"></a><span class="lineno">  612</span>                <span class="comment">/* create = */</span> [&amp;]() -&gt; Slab {</div>
 <div class="line"><a id="l00613" name="l00613"></a><span class="lineno">  613</span>                    <span class="keywordflow">return</span> allocate&lt;accrow_&gt;(secondary_length);</div>
