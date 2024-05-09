@@ -45,18 +45,17 @@ private:
 public:
     /**
      * @param ora Pointer to an `tatami::Oracle` to be used for predictions.
-     * @param num_slabs Maximum number of slabs to store.
+     * @param max_slabs Maximum number of slabs to store.
      */
-    OracleSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > ora, size_t num_slabs) : 
+    OracleSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > ora, size_t max_slabs) : 
         oracle(std::move(ora)), 
         total(oracle->total()),
-        max_slabs(num_slabs) 
+        max_slabs(max_slabs) 
     {
         all_slabs.reserve(max_slabs);
         current_cache.reserve(max_slabs);
         future_cache.reserve(max_slabs);
     } 
-
 
     /**
      * Deleted as the cache holds persistent pointers.

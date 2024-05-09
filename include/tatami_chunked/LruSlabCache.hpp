@@ -34,9 +34,9 @@ private:
 
 public:
     /**
-     * @param m Maximum number of slabs to store.
+     * @param max_slabs Maximum number of slabs to store in the cache.
      */
-    LruSlabCache(size_t m) : max_slabs(m) {}
+    LruSlabCache(size_t max_slabs) : max_slabs(max_slabs) {}
 
     /**
      * Deleted as the cache holds persistent iterators.
