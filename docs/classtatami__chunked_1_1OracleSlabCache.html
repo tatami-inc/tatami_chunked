@@ -89,8 +89,8 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a920b4c5979177df0df54c88cc77f399a" id="r_a920b4c5979177df0df54c88cc77f399a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracleSlabCache.html#a920b4c5979177df0df54c88cc77f399a">OracleSlabCache</a> (std::shared_ptr&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html">tatami::Oracle</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt; &gt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">ora</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">num_slabs</a>)</td></tr>
-<tr class="separator:a920b4c5979177df0df54c88cc77f399a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade59494ff6693858daab4963f4479395" id="r_ade59494ff6693858daab4963f4479395"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracleSlabCache.html#ade59494ff6693858daab4963f4479395">OracleSlabCache</a> (std::shared_ptr&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html">tatami::Oracle</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt; &gt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">ora</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> max_slabs)</td></tr>
+<tr class="separator:ade59494ff6693858daab4963f4479395"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83fd03588752f760581248ebd7403a30" id="r_a83fd03588752f760581248ebd7403a30"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracleSlabCache.html#a83fd03588752f760581248ebd7403a30">OracleSlabCache</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="classtatami__chunked_1_1OracleSlabCache.html">OracleSlabCache</a> &amp;)=<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">delete</a></td></tr>
 <tr class="separator:a83fd03588752f760581248ebd7403a30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adbd437ff534f13bf5fac2d9d20322a84" id="r_adbd437ff534f13bf5fac2d9d20322a84"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classtatami__chunked_1_1OracleSlabCache.html">OracleSlabCache</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracleSlabCache.html#adbd437ff534f13bf5fac2d9d20322a84">operator=</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="classtatami__chunked_1_1OracleSlabCache.html">OracleSlabCache</a> &amp;)=<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">delete</a></td></tr>
@@ -118,8 +118,8 @@ class tatami_chunked::OracleSlabCache&lt; Id_, Index_, Slab_ &gt;</div><p>Oracle
 </dl>
 <p>Implement an oracle-aware cache for slabs. Each slab is defined as the set of chunks required to read a row/column (or a contiguous block/indexed subset thereof) during iteration through a <code><a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a></code>. This cache can be used for <code>Matrix</code> representations where the data is costly to load (e.g., from file) and a <code><a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html">tatami::Oracle</a></code> is provided to predict future accesses. In such cases, chunks of data can be loaded and cached such that any possible future request for an already-loaded slab will just fetch it from cache. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a920b4c5979177df0df54c88cc77f399a" name="a920b4c5979177df0df54c88cc77f399a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a920b4c5979177df0df54c88cc77f399a">&#9670;&#160;</a></span>OracleSlabCache() <span class="overload">[1/2]</span></h2>
+<a id="ade59494ff6693858daab4963f4479395" name="ade59494ff6693858daab4963f4479395"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade59494ff6693858daab4963f4479395">&#9670;&#160;</a></span>OracleSlabCache() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -139,7 +139,7 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a>&#160;</td>
-          <td class="paramname"><em>num_slabs</em>&#160;</td>
+          <td class="paramname"><em>max_slabs</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -156,7 +156,7 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">ora</td><td>Pointer to an <code><a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Oracle.html">tatami::Oracle</a></code> to be used for predictions. </td></tr>
-    <tr><td class="paramname">num_slabs</td><td>Maximum number of slabs to store. </td></tr>
+    <tr><td class="paramname">max_slabs</td><td>Maximum number of slabs to store. </td></tr>
   </table>
   </dd>
 </dl>

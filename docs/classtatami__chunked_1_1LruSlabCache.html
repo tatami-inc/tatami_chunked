@@ -89,8 +89,8 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac305164cd47db9f7f008266ddef9f4fb" id="r_ac305164cd47db9f7f008266ddef9f4fb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1LruSlabCache.html#ac305164cd47db9f7f008266ddef9f4fb">LruSlabCache</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">m</a>)</td></tr>
-<tr class="separator:ac305164cd47db9f7f008266ddef9f4fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87ca1cc9cf8a138f3b1ce45b70f2d054" id="r_a87ca1cc9cf8a138f3b1ce45b70f2d054"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1LruSlabCache.html#a87ca1cc9cf8a138f3b1ce45b70f2d054">LruSlabCache</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> max_slabs)</td></tr>
+<tr class="separator:a87ca1cc9cf8a138f3b1ce45b70f2d054"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11ebee4dd4514b76fa56dd21e3a2d5a5" id="r_a11ebee4dd4514b76fa56dd21e3a2d5a5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1LruSlabCache.html#a11ebee4dd4514b76fa56dd21e3a2d5a5">LruSlabCache</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="classtatami__chunked_1_1LruSlabCache.html">LruSlabCache</a> &amp;)=<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">delete</a></td></tr>
 <tr class="separator:a11ebee4dd4514b76fa56dd21e3a2d5a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6eab8e76919ca8873fd4a5a5a816a1b2" id="r_a6eab8e76919ca8873fd4a5a5a816a1b2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classtatami__chunked_1_1LruSlabCache.html">LruSlabCache</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1LruSlabCache.html#a6eab8e76919ca8873fd4a5a5a816a1b2">operator=</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="classtatami__chunked_1_1LruSlabCache.html">LruSlabCache</a> &amp;)=<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">delete</a></td></tr>
@@ -118,8 +118,8 @@ class tatami_chunked::LruSlabCache&lt; Id_, Slab_ &gt;</div><p>Least-recently-us
 </dl>
 <p>Implements a least-recently-used (LRU) cache, typically containing one or more "slabs" from a chunked matrix representation. Each slab is defined as the set of chunks required to read a row/column (or a contiguous block/indexed subset thereof) during iteration through a <code><a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a></code>. The LRU cache can be used for chunked <code><a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a></code> representations where the data is costly to load (e.g., from file) and no oracle is provided to predict future accesses. In such cases, chunks of data can be loaded and cached such that any possible future request for an already-loaded slab will just fetch it from cache. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ac305164cd47db9f7f008266ddef9f4fb" name="ac305164cd47db9f7f008266ddef9f4fb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac305164cd47db9f7f008266ddef9f4fb">&#9670;&#160;</a></span>LruSlabCache() <span class="overload">[1/3]</span></h2>
+<a id="a87ca1cc9cf8a138f3b1ce45b70f2d054" name="a87ca1cc9cf8a138f3b1ce45b70f2d054"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87ca1cc9cf8a138f3b1ce45b70f2d054">&#9670;&#160;</a></span>LruSlabCache() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -133,7 +133,7 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
           <td class="memname"><a class="el" href="classtatami__chunked_1_1LruSlabCache.html">tatami_chunked::LruSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt;::LruSlabCache </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a>&#160;</td>
-          <td class="paramname"><em>m</em></td><td>)</td>
+          <td class="paramname"><em>max_slabs</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -145,7 +145,7 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">m</td><td>Maximum number of slabs to store. </td></tr>
+    <tr><td class="paramname">max_slabs</td><td>Maximum number of slabs to store in the cache. </td></tr>
   </table>
   </dd>
 </dl>

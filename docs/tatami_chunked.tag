@@ -202,8 +202,8 @@
       <type></type>
       <name>LruSlabCache</name>
       <anchorfile>classtatami__chunked_1_1LruSlabCache.html</anchorfile>
-      <anchor>ac305164cd47db9f7f008266ddef9f4fb</anchor>
-      <arglist>(size_t m)</arglist>
+      <anchor>a87ca1cc9cf8a138f3b1ce45b70f2d054</anchor>
+      <arglist>(size_t max_slabs)</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -432,8 +432,8 @@
       <type></type>
       <name>OracleSlabCache</name>
       <anchorfile>classtatami__chunked_1_1OracleSlabCache.html</anchorfile>
-      <anchor>a920b4c5979177df0df54c88cc77f399a</anchor>
-      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; ora, size_t num_slabs)</arglist>
+      <anchor>ade59494ff6693858daab4963f4479395</anchor>
+      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; ora, size_t max_slabs)</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -498,8 +498,8 @@
       <type></type>
       <name>SubsettedOracleSlabCache</name>
       <anchorfile>classtatami__chunked_1_1SubsettedOracleSlabCache.html</anchorfile>
-      <anchor>ac642e224ec611e618a9c2a8fa9b6c4bc</anchor>
-      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; ora, size_t num_slabs)</arglist>
+      <anchor>a6c8a6d14bb50292fed00746165122ceb</anchor>
+      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; ora, size_t max_slabs)</arglist>
     </member>
     <member kind="function">
       <type></type>
