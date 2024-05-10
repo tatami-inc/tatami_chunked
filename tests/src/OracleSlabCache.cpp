@@ -53,7 +53,7 @@ TEST_F(OracleSlabCacheTest, Consecutive) {
     int counter = 0;
     int nalloc = 0;
 
-    for (int i = 1; i < 9; ++i) {
+    for (int i = 1; i <= 9; ++i) {
         auto out = next(cache, counter, nalloc); 
         EXPECT_EQ(out.first->chunk_id, static_cast<unsigned char>(i));
         EXPECT_EQ(out.first->populate_number, i - 1);

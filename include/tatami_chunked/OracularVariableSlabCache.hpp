@@ -25,11 +25,13 @@ namespace tatami_chunked {
  * This is similar to `OracleSlabCache` but enables improved cache utilization when the slabs vary in size.
  * For example, the number of non-zero entries in a sparse matrix might vary between slabs,
  * so the cache could be optimized to fit more slabs into memory when they have fewer non-zeros.
+ * Similarly, a dense matrix may be chunked into a grid with arbitrary intervals on each dimension, resulting in variable slab sizes when iterating over either dimension. 
  *
  * The size of each slab is defined by `Size_`, which can be any non-negative measure of slab size.
  * This could be the number of non-zero elements, or the number of dimension elements, or the size of the slab in bytes, etc.,
  * as long as its interpretation is consistent between slabs and with the `max_size` used in the constructor.
- * Users can also differentiate between the estimated and actual size of the slab, if the latter is not known until after the slab has been loaded into memory.
+ * Users can also differentiate between the estimated and actual size of the slab, if the latter is not known until after the slab has been loaded into memory,
+ * e.g., the number of non-zero entries in a file-backed sparse matrix.
  *
  * When implementing `Slab_`,  we generally suggest using a common memory pool that is referenced by each `Slab_` instance.
  * This guarantees that the actual cache size does not exceed the limit associated with `max_size` when `Slab_` instances are re-used for different slabs.
@@ -44,15 +46,18 @@ private:
     size_t counter = 0;
 
     Index_ last_slab_id = 0;
-    Slab_* last_slab = NULL;
+    size_t last_slab_num = -1;
 
-    size_t max_size;
+    Size_ max_size, used_size = 0;
     std::vector<Slab_> all_slabs;
-    std::unordered_map<Id_, Slab_*> current_cache, future_cache;
-    std::vector<std::pair<Id_, Slab_*> > to_populate;
-    std::vector<Id_> to_reuse;
+
+    // We need to hold an offset into 'all_slabs' rather than a pointer, as
+    // 'all_slabs' might be reallocated upon addition of new slabs, given that
+    // we don't know the maximum number of slabs ahead of time.
+    std::unordered_map<Id_, size_t> current_cache, future_cache;
+    std::vector<std::pair<Id_, size_t> > to_populate, to_reuse;
     std::vector<Id_> in_need;
-    std::vector<Slab_*> free_pool;
+    std::vector<size_t> free_pool;
     size_t refresh_point = 0;
 
 public:
@@ -114,25 +119,33 @@ public:
      * @tparam Pfunction_ Function to populate zero, one or more slabs with their contents.
      *
      * @param identify Function that accepts an `i`, an `Index_` containing the predicted row/column index.
-     * This should return a pair containing (1) the identifier of the slab containing `i`, and (2) the index of row/column `i` inside that slab.
-     * This is typically defined as the index of the slab on the iteration dimension.
-     * For example, if each chunk takes up 10 rows, attempting to access row 21 would require retrieval of slab 2 and an offset of 1.
+     * This should return a pair containing:
+     * 1. An `Id_`, the identifier of the slab containing `i`.
+     *    This is typically defined as the index of the slab on its dimension.
+     *    For example, if each chunk takes up 10 rows, attempting to access row 21 would require retrieval of slab 2.
+     * 2. An `Index_`, the index of row/column `i` inside that slab.
+     *    For example, if each chunk takes up 10 rows, attempting to access row 21 would yield an offset of 1.
      * @param estimated_size Function that accepts `j`, an `Id_` containing the slab identifier.
      * It should return the size of the slab as a non-negative `Size_`.
      * @param actual_size Function that accepts `j`, an `Id_` containing the slab identifier; and `slab`, a populated `const Slab_&` instance corresponding to `j`.
      * It should return the actual size of the slab as a non-negative `Size_` that is no greater than `estimated_size(j)`.
      * @param create Function that accepts no arguments and returns a `Slab_` object with sufficient memory to hold a slab's contents when used in `populate()`.
      * This may also return a default-constructed `Slab_` object if the allocation is done dynamically per slab in `populate()`.
-     * @param populate Function that accepts two arguments - `to_populate` and `to_reuse`.
-     * - The `to_populate` argument is a `std::vector<std::pair<Id_, Slab_*> >&` specifying the slabs to be populated.
+     * @param populate Function that accepts three arguments - `to_populate`, `to_reuse` and `all_slabs`.
+     * - The `to_populate` argument is a `std::vector<std::pair<Id_, size_t> >&` specifying the slabs to be populated.
      *   The first `Id_` element of each pair contains the slab identifier, i.e., the first element returned by the `identify` function.
-     *   The second `Slab_*` element contains a pointer to a `Slab_` returned by `create()`.
-     * - The `to_reuse` argument is a `std::vector<std::pair<Id_, Slab_*> >&` specifying the cached slabs that were re-used in the upcoming set of predictions.
+     *   The second `size_t` element specifies the entry of `all_slabs` containing the corresponding `Slab_` instance, as returned by `create()`.
+     *   This argument can be modified in any manner.
+     * - The `to_reuse` argument is a `std::vector<std::pair<Id_, size_t> >&` specifying the cached slabs that were re-used in the upcoming set of predictions.
      *   The elements of each pair are interpreted in the same manner as `to_populate`. 
+     *   This argument can be modified in any manner.
+     * - The `all_slabs` argument is a `std::vector<Slab_>&` containing all slabs in the cache.
+     *   This may include instances that are not referenced by `to_populate` or `to_reuse`.
+     *   Each element of this argument can be modified but the length should not change.
      * .
      * The `populate` function should iterate over `to_populate` and fill each `Slab_` with the contents of the corresponding slab.
      * It may optionally iterate over `to_reuse` to defragment the cache in order to free up enough space for the new contents in `to_populate` -
-     * this is typically required for `Slab_` implementations that point into a single shared buffer, as repeated variable-size allocations can fragment that buffer.
+     * this is typically required for `Slab_` implementations pointing into a common memory pool that could be fragmented by repeated variable-size allocations.
      * Note that neither `to_populate` or `to_reuse` vector is guaranteed to be sorted. 
      *
      * @return Pair containing (1) a pointer to a slab's contents and (2) the index of the next predicted row/column inside the retrieved slab.
@@ -141,30 +154,20 @@ public:
     std::pair<const Slab_*, Index_> next(Ifunction_ identify, Efunction_ estimated_size, Afunction_ actual_size, Cfunction_ create, Pfunction_ populate) {
         Index_ index = this->next(); 
         auto slab_info = identify(index);
-        if (slab_info.first == last_slab_id && last_slab) {
-            return std::make_pair(last_slab, slab_info.second);
+        if (slab_info.first == last_slab_id && last_slab_num != static_cast<size_t>(-1)) {
+            return std::make_pair(all_slabs.data() + last_slab_num, slab_info.second);
         }
         last_slab_id = slab_info.first;
 
         // Updating the cache if we hit the refresh point.
         if (counter - 1 == refresh_point) {
-            Size_ used_size;
-
-            auto ccIt = current_cache.find(slab_info.first);
-            if (ccIt != current_cache.end()) {
-                auto slab_ptr = ccIt->second;
-                used_size = actual_size(slab_info.first, *slab_ptr);
-                future_cache[slab_info.first] = slab_ptr;
-                to_reuse.emplace_back(slab_info.first, slab_ptr);
-                current_cache.erase(ccIt);
-            } else {
-                used_size = estimated_size(slab_info.first);
-                requisition_new_slab(slab_info.first);
-            }
+            // Note that, for any given populate cycle, the first prediction's
+            // slab cannot already be in the cache, otherwise it would have
+            // incorporated into the previous cycle. So we can skip some code.
+            used_size = estimated_size(slab_info.first);
+            requisition_new_slab(slab_info.first);
 
             auto last_future_slab_id = slab_info.first;
-            to_reuse.clear();
-
             while (++refresh_point < total) {
                 auto future_index = oracle->get(refresh_point);
                 auto future_slab_info = identify(future_index);
@@ -172,19 +175,21 @@ public:
                     if (future_cache.find(future_slab_info.first) == future_cache.end()) {
                         auto ccIt = current_cache.find(future_slab_info.first);
                         if (ccIt != current_cache.end()) {
-                            auto slab_ptr = ccIt->second;
-                            used_size += actual_size(slab_info.first, *slab_ptr);
-                            if (used_size > max_size) {
+                            size_t slab_num = ccIt->second;
+                            auto candidate = used_size + actual_size(future_slab_info.first, all_slabs[slab_num]);
+                            if (candidate > max_size) {
                                 break;
                             } 
-                            future_cache[future_slab_info.first] = slab_ptr;
-                            to_reuse.emplace_back(future_slab_info.first, slab_ptr);
+                            used_size = candidate;
+                            future_cache[future_slab_info.first] = slab_num;
+                            to_reuse.emplace_back(future_slab_info.first, slab_num);
                             current_cache.erase(ccIt);
                         } else {
-                            used_size += estimated_size(future_slab_info.first);
-                            if (used_size > max_size) {
+                            auto candidate = used_size + estimated_size(future_slab_info.first);
+                            if (candidate > max_size) {
                                 break;
                             } 
+                            used_size = candidate;
                             requisition_new_slab(future_slab_info.first);
                         }
                     }
@@ -194,12 +199,15 @@ public:
             auto cIt = current_cache.begin();
             for (auto a : in_need) {
                 if (cIt != current_cache.end()) {
-                    to_populate.emplace_back(a, cIt->second);
-                    future_cache[a] = cIt->second;
+                    size_t slab_num = cIt->second;
+                    to_populate.emplace_back(a, slab_num);
+                    future_cache[a] = slab_num;
                     ++cIt;
                 } else {
+                    size_t slab_num = all_slabs.size();
                     all_slabs.push_back(create());
-                    to_populate.emplace_back(a, &(all_slabs.back()));
+                    to_populate.emplace_back(a, slab_num);
+                    future_cache[a] = slab_num;
                 }
             }
             in_need.clear();
@@ -208,7 +216,7 @@ public:
                 free_pool.emplace_back(cIt->second);
             }
 
-            populate(to_populate, to_reuse);
+            populate(to_populate, to_reuse, all_slabs);
             to_populate.clear();
             to_reuse.clear();
 
@@ -218,29 +226,37 @@ public:
 
         // We know it must exist, so no need to check ccIt's validity.
         auto ccIt = current_cache.find(slab_info.first);
-        last_slab = ccIt->second;
-        return std::make_pair(last_slab, slab_info.second);
+        last_slab_num = ccIt->second;
+        return std::make_pair(all_slabs.data() + last_slab_num, slab_info.second);
     }
 
 private:
     void requisition_new_slab(Id_ slab_id) {
         if (!free_pool.empty()) {
-            auto slab_ptr = free_pool.back();
-            future_cache[slab_id] = slab_ptr;
+            auto slab_num = free_pool.back();
+            future_cache[slab_id] = slab_num;
             free_pool.pop_back();
-            to_populate.emplace_back(slab_id, slab_ptr);
+            to_populate.emplace_back(slab_id, slab_num);
         } else {
-            future_cache[slab_id] = NULL;
+            future_cache[slab_id] = 0;
             in_need.push_back(slab_id);
         }
     }
 
 public:
     /**
-     * @return Maximum total size of all slabs in the cache.
+     * @return Maximum total size of the cache.
+     * This is the same as the `max_size` used in the constructor.
      */
     size_t get_max_size() const {
         return max_size;
+    }
+
+    /**
+     * @return Estimate of the usage across all slabs in the cache.
+     */
+    size_t get_used_size() const {
+        return used_size;
     }
 
     /**
