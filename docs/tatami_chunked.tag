@@ -53,6 +53,13 @@
     <namespace>tatami_chunked</namespace>
   </compound>
   <compound kind="file">
+    <name>OracularVariableSlabCache.hpp</name>
+    <path>tatami_chunked/</path>
+    <filename>OracularVariableSlabCache_8hpp.html</filename>
+    <class kind="class">tatami_chunked::OracularVariableSlabCache</class>
+    <namespace>tatami_chunked</namespace>
+  </compound>
+  <compound kind="file">
     <name>SubsettedOracleSlabCache.hpp</name>
     <path>tatami_chunked/</path>
     <filename>SubsettedOracleSlabCache_8hpp.html</filename>
@@ -478,6 +485,70 @@
       <arglist>() const</arglist>
     </member>
   </compound>
+  <compound kind="class">
+    <name>tatami_chunked::OracularVariableSlabCache</name>
+    <filename>classtatami__chunked_1_1OracularVariableSlabCache.html</filename>
+    <templarg>typename Id_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>class Slab_</templarg>
+    <templarg>typename Size_</templarg>
+    <member kind="function">
+      <type></type>
+      <name>OracularVariableSlabCache</name>
+      <anchorfile>classtatami__chunked_1_1OracularVariableSlabCache.html</anchorfile>
+      <anchor>a1f2173f0fa042e4d8f341dd690883c48</anchor>
+      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; ora, size_t max_size)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>OracularVariableSlabCache</name>
+      <anchorfile>classtatami__chunked_1_1OracularVariableSlabCache.html</anchorfile>
+      <anchor>aa092185a77c8c89bc0a6d1e36c1f1c51</anchor>
+      <arglist>(const OracularVariableSlabCache &amp;)=delete</arglist>
+    </member>
+    <member kind="function">
+      <type>OracularVariableSlabCache &amp;</type>
+      <name>operator=</name>
+      <anchorfile>classtatami__chunked_1_1OracularVariableSlabCache.html</anchorfile>
+      <anchor>aa290fe5e31bb85293df722b5f42fbc54</anchor>
+      <arglist>(const OracularVariableSlabCache &amp;)=delete</arglist>
+    </member>
+    <member kind="function">
+      <type>Index_</type>
+      <name>next</name>
+      <anchorfile>classtatami__chunked_1_1OracularVariableSlabCache.html</anchorfile>
+      <anchor>ab403b1e2b0a2ecad69bc21968041fa1a</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>std::pair&lt; const Slab_ *, Index_ &gt;</type>
+      <name>next</name>
+      <anchorfile>classtatami__chunked_1_1OracularVariableSlabCache.html</anchorfile>
+      <anchor>a1e467ed4f5891bfc18535578dbadc842</anchor>
+      <arglist>(Ifunction_ identify, Efunction_ estimated_size, Afunction_ actual_size, Cfunction_ create, Pfunction_ populate)</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>get_max_size</name>
+      <anchorfile>classtatami__chunked_1_1OracularVariableSlabCache.html</anchorfile>
+      <anchor>ab39bb21b36c1bcfc95c41dd331ac6263</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>get_used_size</name>
+      <anchorfile>classtatami__chunked_1_1OracularVariableSlabCache.html</anchorfile>
+      <anchor>a42819d2ea602dde692ae5b3415d010da</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>get_num_slabs</name>
+      <anchorfile>classtatami__chunked_1_1OracularVariableSlabCache.html</anchorfile>
+      <anchor>a401d66fc2083d7317433dfea2a725696</anchor>
+      <arglist>() const</arglist>
+    </member>
+  </compound>
   <compound kind="struct">
     <name>tatami_chunked::SimpleDenseChunkWrapper</name>
     <filename>structtatami__chunked_1_1SimpleDenseChunkWrapper.html</filename>
@@ -657,6 +728,7 @@
     <class kind="struct">tatami_chunked::MockSubsettedDenseChunk</class>
     <class kind="struct">tatami_chunked::MockSubsettedSparseChunk</class>
     <class kind="class">tatami_chunked::OracleSlabCache</class>
+    <class kind="class">tatami_chunked::OracularVariableSlabCache</class>
     <class kind="struct">tatami_chunked::SimpleDenseChunkWrapper</class>
     <class kind="struct">tatami_chunked::SimpleSparseChunkWrapper</class>
     <class kind="class">tatami_chunked::SubsettedOracleSlabCache</class>
