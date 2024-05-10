@@ -173,28 +173,33 @@ public:
             while (++refresh_point < total) {
                 auto future_index = oracle->get(refresh_point);
                 auto future_slab_info = identify(future_index);
-                if (last_future_slab_id != future_slab_info.first) {
-                    if (future_cache.find(future_slab_info.first) == future_cache.end()) {
-                        auto ccIt = current_cache.find(future_slab_info.first);
-                        if (ccIt != current_cache.end()) {
-                            size_t slab_num = ccIt->second;
-                            auto candidate = used_size + actual_size(future_slab_info.first, all_slabs[slab_num]);
-                            if (candidate > max_size) {
-                                break;
-                            } 
-                            used_size = candidate;
-                            future_cache[future_slab_info.first] = slab_num;
-                            to_reuse.emplace_back(future_slab_info.first, slab_num);
-                            current_cache.erase(ccIt);
-                        } else {
-                            auto candidate = used_size + estimated_size(future_slab_info.first);
-                            if (candidate > max_size) {
-                                break;
-                            } 
-                            used_size = candidate;
-                            requisition_new_slab(future_slab_info.first);
-                        }
-                    }
+                if (last_future_slab_id == future_slab_info.first) {
+                    continue;
+                }
+
+                last_future_slab_id = future_slab_info.first;
+                if (future_cache.find(future_slab_info.first) != future_cache.end()) {
+                    continue;
+                }
+
+                auto ccIt = current_cache.find(future_slab_info.first);
+                if (ccIt != current_cache.end()) {
+                    size_t slab_num = ccIt->second;
+                    auto candidate = used_size + actual_size(future_slab_info.first, all_slabs[slab_num]);
+                    if (candidate > max_size) {
+                        break;
+                    } 
+                    used_size = candidate;
+                    future_cache[future_slab_info.first] = slab_num;
+                    to_reuse.emplace_back(future_slab_info.first, slab_num);
+                    current_cache.erase(ccIt);
+                } else {
+                    auto candidate = used_size + estimated_size(future_slab_info.first);
+                    if (candidate > max_size) {
+                        break;
+                    } 
+                    used_size = candidate;
+                    requisition_new_slab(future_slab_info.first);
                 }
             }
 

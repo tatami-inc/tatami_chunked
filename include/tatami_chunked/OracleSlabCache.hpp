@@ -127,21 +127,39 @@ public:
 
         // Updating the cache if we hit the refresh point.
         if (counter - 1 == refresh_point) {
-            requisition_slab(slab_info.first);
+            // Note that, for any given populate cycle, the first prediction's
+            // slab cannot already be in the cache, otherwise it would have
+            // incorporated into the previous cycle. So we can skip some code.
+            future_cache[slab_info.first] = NULL;
+            in_need.push_back(slab_info.first);
             size_t used_slabs = 1;
             auto last_future_slab_id = slab_info.first;
 
             while (++refresh_point < total) {
                 auto future_index = oracle->get(refresh_point);
                 auto future_slab_info = identify(future_index);
-                if (last_future_slab_id != future_slab_info.first) {
-                    if (future_cache.find(future_slab_info.first) == future_cache.end()) {
-                        if (used_slabs == max_slabs) {
-                            break;
-                        } 
-                        requisition_slab(future_slab_info.first);
-                        ++used_slabs;
-                    }
+                if (last_future_slab_id == future_slab_info.first) {
+                    continue;
+                }
+
+                last_future_slab_id = future_slab_info.first;
+                if (future_cache.find(future_slab_info.first) != future_cache.end()) {
+                    continue;
+                }
+
+                if (used_slabs == max_slabs) {
+                    break;
+                } 
+                ++used_slabs;
+
+                auto ccIt = current_cache.find(future_slab_info.first);
+                if (ccIt != current_cache.end()) {
+                    auto slab_ptr = ccIt->second;
+                    future_cache[future_slab_info.first] = slab_ptr;
+                    current_cache.erase(ccIt);
+                } else {
+                    future_cache[future_slab_info.first] = NULL;
+                    in_need.push_back(future_slab_info.first);
                 }
             }
 
@@ -181,19 +199,6 @@ public:
         auto ccIt = current_cache.find(slab_info.first);
         last_slab = ccIt->second;
         return std::make_pair(last_slab, slab_info.second);
-    }
-
-private:
-    void requisition_slab(Id_ slab_id) {
-        auto ccIt = current_cache.find(slab_id);
-        if (ccIt != current_cache.end()) {
-            auto slab_ptr = ccIt->second;
-            future_cache[slab_id] = slab_ptr;
-            current_cache.erase(ccIt);
-        } else {
-            future_cache[slab_id] = NULL;
-            in_need.push_back(slab_id);
-        }
     }
 
 public:
