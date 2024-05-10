@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 #include <list>
+#include <type_traits>
 #include "tatami/tatami.hpp"
 
 /**
@@ -136,9 +137,11 @@ public:
      *   The first `Id_` element of each pair contains the slab identifier, i.e., the first element returned by the `identify` function.
      *   The second `size_t` element specifies the entry of `all_slabs` containing the corresponding `Slab_` instance, as returned by `create()`.
      *   This argument can be modified in any manner.
+     *   It is not guaranteed to be sorted.
      * - The `to_reuse` argument is a `std::vector<std::pair<Id_, size_t> >&` specifying the cached slabs that were re-used in the upcoming set of predictions.
      *   The elements of each pair are interpreted in the same manner as `to_populate`. 
      *   This argument can be modified in any manner.
+     *   It is not guaranteed to be sorted.
      * - The `all_slabs` argument is a `std::vector<Slab_>&` containing all slabs in the cache.
      *   This may include instances that are not referenced by `to_populate` or `to_reuse`.
      *   Each element of this argument can be modified but the length should not change.
@@ -146,7 +149,6 @@ public:
      * The `populate` function should iterate over `to_populate` and fill each `Slab_` with the contents of the corresponding slab.
      * It may optionally iterate over `to_reuse` to defragment the cache in order to free up enough space for the new contents in `to_populate` -
      * this is typically required for `Slab_` implementations pointing into a common memory pool that could be fragmented by repeated variable-size allocations.
-     * Note that neither `to_populate` or `to_reuse` vector is guaranteed to be sorted. 
      *
      * @return Pair containing (1) a pointer to a slab's contents and (2) the index of the next predicted row/column inside the retrieved slab.
      */
@@ -253,7 +255,8 @@ public:
     }
 
     /**
-     * @return Estimate of the usage across all slabs in the cache.
+     * @return Current usage across all slabs in the cache.
+     * This should be interpreted as an upper bound on usage if there is a difference between estimated and actual slab sizes.
      */
     size_t get_used_size() const {
         return used_size;

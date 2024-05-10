@@ -28,7 +28,43 @@ protected:
                 ++nalloc;
                 return TestSlab();
             },
-            [&](std::vector<std::pair<unsigned char, size_t> >& in_need, std::vector<std::pair<unsigned char, size_t> >& to_reuse, std::vector<TestSlab>& all_slabs) -> void {
+            [&](std::vector<std::pair<unsigned char, size_t> >& in_need, std::vector<std::pair<unsigned char, size_t> >& to_reuse, std::vector<TestSlab>& all_slabs) {
+                for (auto& x : in_need) {
+                    auto& current = all_slabs[x.second];
+                    current.chunk_id = x.first;
+                    current.cycle = cycle;
+                    current.populate_number = counter++;
+                    current.reuse_number = 0;
+                }
+
+                for (auto& y : to_reuse) {
+                    auto& current = all_slabs[y.second];
+                    current.cycle = cycle;
+                    ++(current.reuse_number);
+                }
+
+                ++cycle;
+            }
+        );
+    }
+
+    template<class Cache_>
+    auto complex_next(Cache_& cache, int& counter, int& nalloc, int& cycle) {
+        return cache.next(
+            [](int i) -> std::pair<unsigned char, int> {
+                return std::make_pair<unsigned char, int>(i / 10, i % 10);
+            },
+            [](int i) -> int {
+                return i * 10;
+            },
+            [](int, const TestSlab& slab) -> int {
+                return slab.chunk_id * 5; // difference in the sizes here!
+            },
+            [&]() -> TestSlab {
+                ++nalloc;
+                return TestSlab();
+            },
+            [&](std::vector<std::pair<unsigned char, size_t> >& in_need, std::vector<std::pair<unsigned char, size_t> >& to_reuse, std::vector<TestSlab>& all_slabs) {
                 for (auto& x : in_need) {
                     auto& current = all_slabs[x.second];
                     current.chunk_id = x.first;
@@ -240,6 +276,122 @@ TEST_F(OracularVariableSlabCacheTest, Reused) {
     // Max of 3 slabs in circulation at any given time.
     EXPECT_EQ(nalloc, 3);
 }
+
+TEST_F(OracularVariableSlabCacheTest, ReusedContracted) {
+    std::vector<int> predictions{
+        11, // Cycle 1
+        22, 
+        12, 
+        31, // Cycle 2 (reuses slabs 1 and 2 at half price)
+        23, 
+        14, 
+        28,
+        45, // Cycle 3 (reuses slab 1 at half price)
+        11, 
+        36, // Cycle 4 (reuses slab 4 at half price)
+        32,
+        42,
+        24, // Cycle 5 (no slab reuse).
+        15
+    };
+
+    tatami_chunked::OracularVariableSlabCache<unsigned char, int, TestSlab, int> cache(std::make_shared<tatami::FixedViewOracle<int> >(predictions.data(), predictions.size()), 50);
+
+    int counter = 0;
+    int nalloc = 0;
+    int cycle = 1;
+
+    for (size_t i = 0; i < 3; ++i) { // fetching 11 to 12.
+        auto out = complex_next(cache, counter, nalloc, cycle); 
+        EXPECT_EQ(out.first->chunk_id, static_cast<unsigned char>(predictions[i] / 10));
+        EXPECT_EQ(out.first->cycle, 1);
+
+        if (out.first->chunk_id == 1) {
+            EXPECT_EQ(out.first->populate_number, 0);
+        } else {
+            EXPECT_EQ(out.first->populate_number, 1);
+        } 
+
+        EXPECT_EQ(out.first->reuse_number, 0);
+        EXPECT_EQ(out.second, predictions[i] % 10);
+        EXPECT_EQ(cache.get_used_size(), 30);
+    }
+
+    for (size_t i = 3; i < 7; ++i) { // fetching 31 to 28.
+        auto out = complex_next(cache, counter, nalloc, cycle); 
+        EXPECT_EQ(out.first->chunk_id, static_cast<unsigned char>(predictions[i] / 10));
+        EXPECT_EQ(out.first->cycle, 2);
+
+        if (out.first->chunk_id == 1) {
+            EXPECT_EQ(out.first->populate_number, 0);
+            EXPECT_EQ(out.first->reuse_number, 1);
+        } else if (out.first->chunk_id == 2) {
+            EXPECT_EQ(out.first->populate_number, 1);
+            EXPECT_EQ(out.first->reuse_number, 1);
+        } else {
+            EXPECT_EQ(out.first->populate_number, 2);
+            EXPECT_EQ(out.first->reuse_number, 0);
+        } 
+
+        EXPECT_EQ(out.second, predictions[i] % 10);
+        EXPECT_EQ(cache.get_used_size(), 45);
+    }
+
+    for (size_t i = 7; i < 9; ++i) { // fetching 45 to 11.
+        auto out = complex_next(cache, counter, nalloc, cycle); 
+        EXPECT_EQ(out.first->chunk_id, static_cast<unsigned char>(predictions[i] / 10));
+        EXPECT_EQ(out.first->cycle, 3);
+
+        if (out.first->chunk_id == 1) {
+            EXPECT_EQ(out.first->populate_number, 0);
+            EXPECT_EQ(out.first->reuse_number, 2);
+        } else {
+            EXPECT_EQ(out.first->populate_number, 3);
+            EXPECT_EQ(out.first->reuse_number, 0);
+        } 
+
+        EXPECT_EQ(out.second, predictions[i] % 10);
+        EXPECT_EQ(cache.get_used_size(), 45);
+    }
+
+    for (size_t i = 9; i < 12; ++i) { // fetching 36 to 42.
+        auto out = complex_next(cache, counter, nalloc, cycle); 
+        EXPECT_EQ(out.first->chunk_id, static_cast<unsigned char>(predictions[i] / 10));
+        EXPECT_EQ(out.first->cycle, 4);
+
+        if (out.first->chunk_id == 4) {
+            EXPECT_EQ(out.first->populate_number, 3);
+            EXPECT_EQ(out.first->reuse_number, 1);
+        } else {
+            EXPECT_EQ(out.first->populate_number, 4);
+            EXPECT_EQ(out.first->reuse_number, 0);
+        } 
+
+        EXPECT_EQ(out.second, predictions[i] % 10);
+        EXPECT_EQ(cache.get_used_size(), 50);
+    }
+
+    for (size_t i = 12, end = predictions.size(); i < end; ++i) { // fetching 24 to 15.
+        auto out = complex_next(cache, counter, nalloc, cycle); 
+        EXPECT_EQ(out.first->chunk_id, static_cast<unsigned char>(predictions[i] / 10));
+        EXPECT_EQ(out.first->cycle, 5);
+
+        if (out.first->chunk_id == 2) {
+            EXPECT_EQ(out.first->populate_number, 5); // slab 1 needs to be reloaded.
+            EXPECT_EQ(out.first->reuse_number, 0);
+        } else {
+            EXPECT_EQ(out.first->populate_number, 6); // slab 2 needs to be reloaded.
+            EXPECT_EQ(out.first->reuse_number, 0);
+        }
+
+        EXPECT_EQ(out.second, predictions[i] % 10);
+        EXPECT_EQ(cache.get_used_size(), 30);
+    }
+
+    // Max of 3 slabs in circulation at any given time.
+    EXPECT_EQ(nalloc, 3);
+}
+
 
 TEST_F(OracularVariableSlabCacheTest, ConsecutiveReuse) {
     // This just checks that the short-circuiting works correctly for
