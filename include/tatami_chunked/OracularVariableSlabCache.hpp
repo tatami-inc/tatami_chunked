@@ -18,7 +18,7 @@ namespace tatami_chunked {
  *
  * @tparam Id_ Type of slab identifier, typically integer.
  * @tparam Index_ Type of row/column index produced by the oracle.
- * @tparam Size_ Integer type for the slab size.
+ * @tparam Size_ Numeric type for the slab size.
  * @tparam Slab_ Class for a single slab.
  *
  * Implement an oracle-aware cache for variable-size slabs.
@@ -27,20 +27,26 @@ namespace tatami_chunked {
  * so the cache could be optimized to fit more slabs into memory when they have fewer non-zeros.
  *
  * The size of each slab is defined by `Size_`, which can be any non-negative measure of slab size.
- * This could be the number of non-zero elements, or the number of dimension elements, etc.,
- * as long as it is consistent between slabs and with the `total_size` used in the constructor.
+ * This could be the number of non-zero elements, or the number of dimension elements, or the size of the slab in bytes, etc.,
+ * as long as its interpretation is consistent between slabs and with the `max_size` used in the constructor.
+ * Users can also differentiate between the estimated and actual size of the slab, if the latter is not known until after the slab has been loaded into memory.
+ *
+ * When implementing `Slab_`,  we generally suggest using a common memory pool that is referenced by each `Slab_` instance.
+ * This guarantees that the actual cache size does not exceed the limit associated with `max_size` when `Slab_` instances are re-used for different slabs.
+ * (Otherwise, if each `Slab_` allocates its own memory, re-use of an instance may cause its allocation to inflate to the size of the largest encountered slab.)
+ * A side effect of this implementation is that callers may need to occasionally defragment the pool to ensure that enough memory is available for loading new slabs.
  */
-template<typename Id_, typename Index_, class Slab_> 
-class OracleVariableSlabCache {
+template<typename Id_, typename Index_, class Slab_, typename Size_> 
+class OracularVariableSlabCache {
 private:
     std::shared_ptr<const tatami::Oracle<Index_> > oracle;
-    size_t total_pred;
+    size_t total;
     size_t counter = 0;
 
     Index_ last_slab_id = 0;
     Slab_* last_slab = NULL;
 
-    size_t total_size;
+    size_t max_size;
     std::vector<Slab_> all_slabs;
     std::unordered_map<Id_, Slab_*> current_cache, future_cache;
     std::vector<std::pair<Id_, Slab_*> > to_populate;
@@ -52,13 +58,13 @@ private:
 public:
     /**
      * @param ora Pointer to an `tatami::Oracle` to be used for predictions.
-     * @param total_size Total size of all slabs to store in the cache.
+     * @param max_size Total size of all slabs to store in the cache.
      * This may be zero, in which case no caching should be performed.
      */
-    OracularVariableSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > ora, size_t total_size) : 
+    OracularVariableSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > ora, size_t max_size) : 
         oracle(std::move(ora)), 
-        total_pred(oracle->total()),
-        total_size(total_size) 
+        total(oracle->total()),
+        max_size(max_size) 
     {} 
 
     /**
@@ -87,8 +93,8 @@ public:
 
 public:
     /**
-     * This method is intended to be called when `total_size = 0`, to provide callers with the oracle predictions for non-cached extraction of data.
-     * Calls to this method should not be intermingled with calls to its overload below; the latter should only be called when `total_size > 0`.
+     * This method is intended to be called when `max_size = 0`, to provide callers with the oracle predictions for non-cached extraction of data.
+     * Calls to this method should not be intermingled with calls to its overload below; the latter should only be called when `max_size > 0`.
      *
      * @return The next prediction from the oracle.
      */
@@ -99,10 +105,11 @@ public:
 public:
     /**
      * Fetch the next slab according to the stream of predictions provided by the `tatami::Oracle`.
-     * This method should only be called if `total_size > 0` in the constructor; otherwise, no slabs are actually available and cannot be returned.
+     * This method should only be called if `max_size > 0` in the constructor; otherwise, no slabs are actually available and cannot be returned.
      *
      * @tparam Ifunction_ Function to identify the slab containing each predicted row/column.
-     * @tparam Sfunction_ Function to compute the size of a slab.
+     * @tparam Efunction_ Function to compute the estimated size of a slab.
+     * @tparam Afunction_ Function to compute the actual size of a slab.
      * @tparam Cfunction_ Function to create a new slab.
      * @tparam Pfunction_ Function to populate zero, one or more slabs with their contents.
      *
@@ -110,7 +117,10 @@ public:
      * This should return a pair containing (1) the identifier of the slab containing `i`, and (2) the index of row/column `i` inside that slab.
      * This is typically defined as the index of the slab on the iteration dimension.
      * For example, if each chunk takes up 10 rows, attempting to access row 21 would require retrieval of slab 2 and an offset of 1.
-     * @param size Function that accepts `j`, an `Id_` containing the slab identifier, and returns the size of the slab as a `Size_`.
+     * @param estimated_size Function that accepts `j`, an `Id_` containing the slab identifier.
+     * It should return the size of the slab as a non-negative `Size_`.
+     * @param actual_size Function that accepts `j`, an `Id_` containing the slab identifier; and `slab`, a populated `const Slab_&` instance corresponding to `j`.
+     * It should return the actual size of the slab as a non-negative `Size_` that is no greater than `estimated_size(j)`.
      * @param create Function that accepts no arguments and returns a `Slab_` object with sufficient memory to hold a slab's contents when used in `populate()`.
      * This may also return a default-constructed `Slab_` object if the allocation is done dynamically per slab in `populate()`.
      * @param populate Function that accepts two arguments - `to_populate` and `to_reuse`.
@@ -127,8 +137,8 @@ public:
      *
      * @return Pair containing (1) a pointer to a slab's contents and (2) the index of the next predicted row/column inside the retrieved slab.
      */
-    template<class Ifunction_, class Sfunction_, class Cfunction_, class Pfunction_>
-    std::pair<const Slab_*, Index_> next(Ifunction_ identify, Sfunction_ size, Cfunction_ create, Pfunction_ populate) {
+    template<class Ifunction_, class Efunction_, class Afunction_, class Cfunction_, class Pfunction_>
+    std::pair<const Slab_*, Index_> next(Ifunction_ identify, Efunction_ estimated_size, Afunction_ actual_size, Cfunction_ create, Pfunction_ populate) {
         Index_ index = this->next(); 
         auto slab_info = identify(index);
         if (slab_info.first == last_slab_id && last_slab) {
@@ -138,8 +148,20 @@ public:
 
         // Updating the cache if we hit the refresh point.
         if (counter - 1 == refresh_point) {
-            requisition_slab(slab_info.first);
-            Size_ used_size = size(slab_info.first);
+            Size_ used_size;
+
+            auto ccIt = current_cache.find(slab_info.first);
+            if (ccIt != current_cache.end()) {
+                auto slab_ptr = ccIt->second;
+                used_size = actual_size(slab_info.first, *slab_ptr);
+                future_cache[slab_info.first] = slab_ptr;
+                to_reuse.emplace_back(slab_info.first, slab_ptr);
+                current_cache.erase(ccIt);
+            } else {
+                used_size = estimated_size(slab_info.first);
+                requisition_new_slab(slab_info.first);
+            }
+
             auto last_future_slab_id = slab_info.first;
             to_reuse.clear();
 
@@ -148,11 +170,23 @@ public:
                 auto future_slab_info = identify(future_index);
                 if (last_future_slab_id != future_slab_info.first) {
                     if (future_cache.find(future_slab_info.first) == future_cache.end()) {
-                        used_size += size(future_slab_info.first);
-                        if (used_size > total_size) {
-                            break;
-                        } 
-                        requisition_slab(future_slab_info.first);
+                        auto ccIt = current_cache.find(future_slab_info.first);
+                        if (ccIt != current_cache.end()) {
+                            auto slab_ptr = ccIt->second;
+                            used_size += actual_size(slab_info.first, *slab_ptr);
+                            if (used_size > max_size) {
+                                break;
+                            } 
+                            future_cache[future_slab_info.first] = slab_ptr;
+                            to_reuse.emplace_back(future_slab_info.first, slab_ptr);
+                            current_cache.erase(ccIt);
+                        } else {
+                            used_size += estimated_size(future_slab_info.first);
+                            if (used_size > max_size) {
+                                break;
+                            } 
+                            requisition_new_slab(future_slab_info.first);
+                        }
                     }
                 }
             }
@@ -178,14 +212,6 @@ public:
             to_populate.clear();
             to_reuse.clear();
 
-            // We always fill future_cache to the brim so every entry of
-            // all_slabs should be referenced by a pointer in future_cache.
-            // There shouldn't be any free cache entries remaining in
-            // current_cache i.e., at this point, cIt should equal
-            // current_cache.end(), as we transferred everything to
-            // future_cache. Thus it is safe to clear current_cache without
-            // worrying about leaking memory. The only exception is if we're at
-            // the end of the predictions, in which case it doesn't matter.
             current_cache.clear();
             current_cache.swap(future_cache);
         }
@@ -197,20 +223,12 @@ public:
     }
 
 private:
-    void requisition_slab(Id_ slab_id) {
-        auto ccIt = current_cache.find(slab_id);
-        if (ccIt != current_cache.end()) {
-            auto slab_ptr = ccIt->second;
-            future_cache[slab_id] = slab_ptr;
-            to_reuse.emplace_back(slab_id, slab_ptr);
-            current_cache.erase(ccIt);
-
-        } else if (!free_pool.empty()) {
+    void requisition_new_slab(Id_ slab_id) {
+        if (!free_pool.empty()) {
             auto slab_ptr = free_pool.back();
             future_cache[slab_id] = slab_ptr;
             free_pool.pop_back();
             to_populate.emplace_back(slab_id, slab_ptr);
-
         } else {
             future_cache[slab_id] = NULL;
             in_need.push_back(slab_id);
@@ -219,10 +237,10 @@ private:
 
 public:
     /**
-     * @return Total size of all slabs in the cache.
+     * @return Maximum total size of all slabs in the cache.
      */
-    size_t get_total_size() const {
-        return total_size;
+    size_t get_max_size() const {
+        return max_size;
     }
 
     /**
