@@ -17,7 +17,7 @@ enable_testing()
 add_executable(
     libtest 
     src/LruSlabCache.cpp
-    src/OracleSlabCache.cpp
+    src/OracularSlabCache.cpp
     src/OracularVariableSlabCache.cpp
     src/SubsettedOracleSlabCache.cpp
     src/mock_dense_chunk.cpp

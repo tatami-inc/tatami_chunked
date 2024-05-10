@@ -1,5 +1,5 @@
-#ifndef TATAMI_CHUNKED_ORACLE_SLAB_CACHE_HPP
-#define TATAMI_CHUNKED_ORACLE_SLAB_CACHE_HPP
+#ifndef TATAMI_CHUNKED_ORACULAR_SLAB_CACHE_HPP
+#define TATAMI_CHUNKED_ORACULAR_SLAB_CACHE_HPP
 
 #include <unordered_map>
 #include <vector>
@@ -7,14 +7,14 @@
 #include "tatami/tatami.hpp"
 
 /**
- * @file OracleSlabCache.hpp
+ * @file OracularSlabCache.hpp
  * @brief Create a oracle-aware cache for slabs.
  */
 
 namespace tatami_chunked {
 
 /**
- * @brief Oracle-aware cache for slabs.
+ * @brief Oracular-aware cache for slabs.
  *
  * @tparam Id_ Type of slab identifier, typically integer.
  * @tparam Index_ Type of row/column index produced by the oracle.
@@ -24,9 +24,12 @@ namespace tatami_chunked {
  * Each slab is defined as the set of chunks required to read a row/column (or a contiguous block/indexed subset thereof) during iteration through a `tatami::Matrix`.
  * This cache can be used for `Matrix` representations where the data is costly to load (e.g., from file) and a `tatami::Oracle` is provided to predict future accesses.
  * In such cases, chunks of data can be loaded and cached such that any possible future request for an already-loaded slab will just fetch it from cache.
+ *
+ * It is assumed that each slab has the same size such that `Slab_` instances can be effectively reused between slabs without requiring reallocations.
+ * For variable-sized slabs, consider using `OracularVariableSlabCache` instead.
  */
 template<typename Id_, typename Index_, class Slab_> 
-class OracleSlabCache {
+class OracularSlabCache {
 private:
     std::shared_ptr<const tatami::Oracle<Index_> > oracle;
     size_t total;
@@ -39,18 +42,19 @@ private:
     std::vector<Slab_> all_slabs;
     std::unordered_map<Id_, Slab_*> current_cache, future_cache;
     std::vector<std::pair<Id_, Slab_*> > to_populate;
-    std::vector<Id_> to_reassign;
+    std::vector<Id_> in_need;
     size_t refresh_point = 0;
 
 public:
     /**
      * @param ora Pointer to an `tatami::Oracle` to be used for predictions.
-     * @param max_slabs Maximum number of slabs to store.
+     * @param max_slabs Maximum number of slabs to store in the cache.
      */
-    OracleSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > ora, size_t max_slabs) : 
+    OracularSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > ora, size_t max_slabs) : 
         oracle(std::move(ora)), 
         total(oracle->total()),
         max_slabs(max_slabs) 
+
     {
         all_slabs.reserve(max_slabs);
         current_cache.reserve(max_slabs);
@@ -60,23 +64,23 @@ public:
     /**
      * Deleted as the cache holds persistent pointers.
      */
-    OracleSlabCache(const OracleSlabCache&) = delete;
+    OracularSlabCache(const OracularSlabCache&) = delete;
 
     /**
      * Deleted as the cache holds persistent pointers.
      */
-    OracleSlabCache& operator=(const OracleSlabCache&) = delete;
+    OracularSlabCache& operator=(const OracularSlabCache&) = delete;
 
     /**
      * @cond
      */
     // Move operators are still okay as pointers still point to the moved vectors.
     // see https://stackoverflow.com/questions/43988553/stdvector-stdmove-and-pointer-invalidation.
-    OracleSlabCache& operator=(OracleSlabCache&&) = default;
-    OracleSlabCache(OracleSlabCache&&) = default;
+    OracularSlabCache& operator=(OracularSlabCache&&) = default;
+    OracularSlabCache(OracularSlabCache&&) = default;
 
     // Might as well define this.
-    ~OracleSlabCache() = default;
+    ~OracularSlabCache() = default;
     /**
      * @endcond
      */
@@ -126,31 +130,58 @@ public:
 
         // Updating the cache if we hit the refresh point.
         if (counter - 1 == refresh_point) {
-            requisition_slab(slab_info.first, create);
+            // Note that, for any given populate cycle, the first prediction's
+            // slab cannot already be in the cache, otherwise it would have
+            // incorporated into the previous cycle. So we can skip some code.
+            future_cache[slab_info.first] = NULL;
+            in_need.push_back(slab_info.first);
             size_t used_slabs = 1;
             auto last_future_slab_id = slab_info.first;
 
             while (++refresh_point < total) {
                 auto future_index = oracle->get(refresh_point);
                 auto future_slab_info = identify(future_index);
-                if (last_future_slab_id != future_slab_info.first) {
-                    if (future_cache.find(future_slab_info.first) == future_cache.end()) {
-                        if (used_slabs == max_slabs) {
-                            break;
-                        } 
-                        requisition_slab(future_slab_info.first, create);
-                        ++used_slabs;
-                    }
+                if (last_future_slab_id == future_slab_info.first) {
+                    continue;
+                }
+
+                last_future_slab_id = future_slab_info.first;
+                if (future_cache.find(future_slab_info.first) != future_cache.end()) {
+                    continue;
+                }
+
+                if (used_slabs == max_slabs) {
+                    break;
+                } 
+                ++used_slabs;
+
+                auto ccIt = current_cache.find(future_slab_info.first);
+                if (ccIt != current_cache.end()) {
+                    auto slab_ptr = ccIt->second;
+                    future_cache[future_slab_info.first] = slab_ptr;
+                    current_cache.erase(ccIt);
+                } else {
+                    future_cache[future_slab_info.first] = NULL;
+                    in_need.push_back(future_slab_info.first);
                 }
             }
 
             auto cIt = current_cache.begin();
-            for (auto a : to_reassign) {
-                to_populate.emplace_back(a, cIt->second);
-                future_cache[a] = cIt->second;
-                ++cIt;
+            for (auto a : in_need) {
+                if (cIt != current_cache.end()) {
+                    to_populate.emplace_back(a, cIt->second);
+                    future_cache[a] = cIt->second;
+                    ++cIt;
+                } else {
+                    // We reserved all_slabs so further push_backs() should not 
+                    // trigger any reallocation or invalidation of the pointers.
+                    all_slabs.push_back(create());
+                    auto slab_ptr = &(all_slabs.back());
+                    to_populate.emplace_back(a, slab_ptr);
+                    future_cache[a] = slab_ptr;
+                }
             }
-            to_reassign.clear();
+            in_need.clear();
 
             populate(to_populate);
             to_populate.clear();
@@ -171,27 +202,6 @@ public:
         auto ccIt = current_cache.find(slab_info.first);
         last_slab = ccIt->second;
         return std::make_pair(last_slab, slab_info.second);
-    }
-
-private:
-    template<class Cfunction_>
-    void requisition_slab(Id_ slab_id, Cfunction_ create) {
-        auto ccIt = current_cache.find(slab_id);
-        if (ccIt != current_cache.end()) {
-            auto slab_ptr = ccIt->second;
-            future_cache[slab_id] = slab_ptr;
-            current_cache.erase(ccIt);
-
-        } else if (all_slabs.size() < max_slabs) {
-            all_slabs.emplace_back(create());
-            auto slab_ptr = &(all_slabs.back());
-            future_cache[slab_id] = slab_ptr;
-            to_populate.emplace_back(slab_id, slab_ptr);
-
-        } else {
-            future_cache[slab_id] = NULL;
-            to_reassign.push_back(slab_id);
-        }
     }
 
 public:

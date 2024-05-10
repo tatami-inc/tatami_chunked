@@ -23,7 +23,7 @@ namespace tatami_chunked {
  * @tparam Slab_ Class for a single slab.
  *
  * Implement an oracle-aware cache for variable-size slabs.
- * This is similar to `OracleSlabCache` but enables improved cache utilization when the slabs vary in size.
+ * This is similar to `OracularSlabCache` but enables improved cache utilization when the slabs vary in size.
  * For example, the number of non-zero entries in a sparse matrix might vary between slabs,
  * so the cache could be optimized to fit more slabs into memory when they have fewer non-zeros.
  * Similarly, a dense matrix may be chunked into a grid with arbitrary intervals on each dimension, resulting in variable slab sizes when iterating over either dimension. 

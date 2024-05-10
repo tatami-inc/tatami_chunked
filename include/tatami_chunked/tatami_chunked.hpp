@@ -7,7 +7,7 @@
  */
 
 #include "LruSlabCache.hpp"
-#include "OracleSlabCache.hpp"
+#include "OracularSlabCache.hpp"
 #include "typical_slab_cache.hpp"
 #include "mock_dense_chunk.hpp"
 #include "mock_sparse_chunk.hpp"

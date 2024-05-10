@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include "tatami_chunked/SubsettedOracleSlabCache.hpp"
-#include "tatami_chunked/OracleSlabCache.hpp"
 
 #include <random>
 #include <algorithm>

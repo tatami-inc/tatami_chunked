@@ -4,7 +4,7 @@
 #include <memory>
 #include <type_traits>
 
-#include "OracleSlabCache.hpp"
+#include "OracularSlabCache.hpp"
 #include "SubsettedOracleSlabCache.hpp"
 #include "LruSlabCache.hpp"
 
@@ -18,7 +18,7 @@ namespace tatami_chunked {
 /**
  * @brief Workspace for typical slab extraction.
  *
- * Implements a workspace to initialize the slab caches (i.e., the `LruSlabCache` and `OracleSlabCache`) for extraction from a chunked matrix representation.
+ * Implements a workspace to initialize the slab caches (i.e., the `LruSlabCache` and `OracularSlabCache`) for extraction from a chunked matrix representation.
  * This is intended to be a member of an `Extractor` class, allowing extraction to switch between different caches, e.g., when `ExtractorBase::set_oracle()` is called.
  * It also handles the calculation of various cache size statistics.
  *
@@ -68,7 +68,7 @@ public:
 
     /**
      * Number of slabs that can fit in the cache.
-     * This is used as `num_slabs` in `OracleSlabCache` and `SubsettedOracleSlabCache`, and as `m` in `LruSlabCache`.
+     * This is used as `num_slabs` in `OracularSlabCache` and `SubsettedOracleSlabCache`, and as `m` in `LruSlabCache`.
      */
     size_t num_slabs_in_cache;
 
@@ -80,7 +80,7 @@ public:
         typename std::conditional<
             subset_, 
             SubsettedOracleSlabCache<Index_, Index_, Slab_>, 
-            OracleSlabCache<Index_, Index_, Slab_> 
+            OracularSlabCache<Index_, Index_, Slab_> 
         >::type,
         LruSlabCache<Index_, Slab_>
     >::type SlabCache;
