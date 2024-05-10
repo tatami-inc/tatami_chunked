@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['subsettedoracleselection_0',['SubsettedOracleSelection',['../namespacetatami__chunked.html#ad8a9a6497dbbe538be338a3b0fc3bcea',1,'tatami_chunked']]]
+  ['oracularsubsetselection_0',['OracularSubsetSelection',['../namespacetatami__chunked.html#a55fabfb4a9c64f6074b7c72a37013528',1,'tatami_chunked']]]
 ];
