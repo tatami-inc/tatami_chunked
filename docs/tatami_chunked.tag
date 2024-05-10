@@ -46,10 +46,10 @@
     <namespace>tatami_chunked</namespace>
   </compound>
   <compound kind="file">
-    <name>OracleSlabCache.hpp</name>
+    <name>OracularSlabCache.hpp</name>
     <path>tatami_chunked/</path>
-    <filename>OracleSlabCache_8hpp.html</filename>
-    <class kind="class">tatami_chunked::OracleSlabCache</class>
+    <filename>OracularSlabCache_8hpp.html</filename>
+    <class kind="class">tatami_chunked::OracularSlabCache</class>
     <namespace>tatami_chunked</namespace>
   </compound>
   <compound kind="file">
@@ -430,58 +430,58 @@
     </member>
   </compound>
   <compound kind="class">
-    <name>tatami_chunked::OracleSlabCache</name>
-    <filename>classtatami__chunked_1_1OracleSlabCache.html</filename>
+    <name>tatami_chunked::OracularSlabCache</name>
+    <filename>classtatami__chunked_1_1OracularSlabCache.html</filename>
     <templarg>typename Id_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>class Slab_</templarg>
     <member kind="function">
       <type></type>
-      <name>OracleSlabCache</name>
-      <anchorfile>classtatami__chunked_1_1OracleSlabCache.html</anchorfile>
-      <anchor>ade59494ff6693858daab4963f4479395</anchor>
+      <name>OracularSlabCache</name>
+      <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
+      <anchor>a251c4cb4ba70dd8a6198380aef51fa13</anchor>
       <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; ora, size_t max_slabs)</arglist>
     </member>
     <member kind="function">
       <type></type>
-      <name>OracleSlabCache</name>
-      <anchorfile>classtatami__chunked_1_1OracleSlabCache.html</anchorfile>
-      <anchor>a83fd03588752f760581248ebd7403a30</anchor>
-      <arglist>(const OracleSlabCache &amp;)=delete</arglist>
+      <name>OracularSlabCache</name>
+      <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
+      <anchor>ac74750409b9fac40f6c46cd32db69ccf</anchor>
+      <arglist>(const OracularSlabCache &amp;)=delete</arglist>
     </member>
     <member kind="function">
-      <type>OracleSlabCache &amp;</type>
+      <type>OracularSlabCache &amp;</type>
       <name>operator=</name>
-      <anchorfile>classtatami__chunked_1_1OracleSlabCache.html</anchorfile>
-      <anchor>adbd437ff534f13bf5fac2d9d20322a84</anchor>
-      <arglist>(const OracleSlabCache &amp;)=delete</arglist>
+      <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
+      <anchor>a999b0596c2285f6f62a55b2bc73d7416</anchor>
+      <arglist>(const OracularSlabCache &amp;)=delete</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
       <name>next</name>
-      <anchorfile>classtatami__chunked_1_1OracleSlabCache.html</anchorfile>
-      <anchor>a368d924ebc4d47daf8f0766d9c0a2438</anchor>
+      <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
+      <anchor>a6dda098e33d10e43dd9b6eb7974eb572</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>std::pair&lt; const Slab_ *, Index_ &gt;</type>
       <name>next</name>
-      <anchorfile>classtatami__chunked_1_1OracleSlabCache.html</anchorfile>
-      <anchor>a8a7fd554334053ebef56bdcb5d6c0321</anchor>
+      <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
+      <anchor>ac0c939e10e4e2a6677394cc0aa1b8e04</anchor>
       <arglist>(Ifunction_ identify, Cfunction_ create, Pfunction_ populate)</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
       <name>get_max_slabs</name>
-      <anchorfile>classtatami__chunked_1_1OracleSlabCache.html</anchorfile>
-      <anchor>aa59e27f2dc2fc44672e11f76251197a0</anchor>
+      <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
+      <anchor>a2ed5ecf793e1a278c19322a30e85d65b</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
       <name>get_num_slabs</name>
-      <anchorfile>classtatami__chunked_1_1OracleSlabCache.html</anchorfile>
-      <anchor>a92085210ca410ed53502634e972e98da</anchor>
+      <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
+      <anchor>aaa6b5c45da93c504a2b69aecd652afc6</anchor>
       <arglist>() const</arglist>
     </member>
   </compound>
@@ -663,10 +663,10 @@
     <templarg>typename Index_</templarg>
     <templarg>class Slab_</templarg>
     <member kind="typedef">
-      <type>std::conditional&lt; oracle_, typenamestd::conditional&lt; subset_, SubsettedOracleSlabCache&lt; Index_, Index_, Slab_ &gt;, OracleSlabCache&lt; Index_, Index_, Slab_ &gt; &gt;::type, LruSlabCache&lt; Index_, Slab_ &gt; &gt;::type</type>
+      <type>std::conditional&lt; oracle_, typenamestd::conditional&lt; subset_, SubsettedOracleSlabCache&lt; Index_, Index_, Slab_ &gt;, OracularSlabCache&lt; Index_, Index_, Slab_ &gt; &gt;::type, LruSlabCache&lt; Index_, Slab_ &gt; &gt;::type</type>
       <name>SlabCache</name>
       <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a6197681c15be36666c0f84d59cbbaf6d</anchor>
+      <anchor>a79b0e7c564e08eb3553598cf9ae28888</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -727,7 +727,7 @@
     <class kind="struct">tatami_chunked::MockSimpleSparseChunk</class>
     <class kind="struct">tatami_chunked::MockSubsettedDenseChunk</class>
     <class kind="struct">tatami_chunked::MockSubsettedSparseChunk</class>
-    <class kind="class">tatami_chunked::OracleSlabCache</class>
+    <class kind="class">tatami_chunked::OracularSlabCache</class>
     <class kind="class">tatami_chunked::OracularVariableSlabCache</class>
     <class kind="struct">tatami_chunked::SimpleDenseChunkWrapper</class>
     <class kind="struct">tatami_chunked::SimpleSparseChunkWrapper</class>
