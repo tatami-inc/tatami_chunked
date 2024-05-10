@@ -36,8 +36,8 @@ namespace tatami_chunked {
  *
  * When implementing `Slab_`,  we generally suggest using a common memory pool that is referenced by each `Slab_` instance.
  * This guarantees that the actual cache size does not exceed the limit associated with `max_size` when `Slab_` instances are re-used for different slabs.
- * (Otherwise, if each `Slab_` allocates its own memory, re-use of an instance may cause its allocation to inflate to the size of the largest encountered slab.)
- * A side effect of this implementation is that callers may need to occasionally defragment the pool to ensure that enough memory is available for loading new slabs.
+ * (Otherwise, if each `Slab_` allocates its own memory, re-use of an instance may cause its allocation to increase to the size of the largest encountered slab.)
+ * Callers may need to occasionally defragment the pool to ensure that enough memory is available for loading new slabs.
  */
 template<typename Id_, typename Index_, class Slab_, typename Size_> 
 class OracularVariableSlabCache {
@@ -147,8 +147,7 @@ public:
      *   Each element of this argument can be modified but the length should not change.
      * .
      * The `populate` function should iterate over `to_populate` and fill each `Slab_` with the contents of the corresponding slab.
-     * It may optionally iterate over `to_reuse` to defragment the cache in order to free up enough space for the new contents in `to_populate` -
-     * this is typically required for `Slab_` implementations pointing into a common memory pool that could be fragmented by repeated variable-size allocations.
+     * Optionally, callers may use `to_reuse` to defragment the already-in-use parts of the cache, in order to free up enough space for new data from `to_populate`.
      *
      * @return Pair containing (1) a pointer to a slab's contents and (2) the index of the next predicted row/column inside the retrieved slab.
      */
