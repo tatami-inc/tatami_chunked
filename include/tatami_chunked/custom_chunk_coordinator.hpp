@@ -583,19 +583,19 @@ public:
                 /* create = */ [&]() -> Slab {
                     return allocate<accrow_>(secondary_length);
                 },
-                /* populate =*/ [&](std::vector<std::tuple<Index_, Slab*, SubsettedOracleSlabSubset<Index_>*> >& in_need) -> void {
+                /* populate =*/ [&](std::vector<std::tuple<Index_, Slab*, OracularSlabSubset<Index_>*> >& in_need) -> void {
                     for (const auto& p : in_need) {
                         auto id = std::get<0>(p);
                         auto ptr = std::get<1>(p);
                         auto sub = std::get<2>(p);
                         switch (sub->selection) {
-                            case SubsettedOracleSelection::FULL:
+                            case OracularSubsetSelection::FULL:
                                 fetch_block(id, 0, get_primary_chunkdim<accrow_>(id), *ptr);
                                 break;
-                            case SubsettedOracleSelection::BLOCK:
+                            case OracularSubsetSelection::BLOCK:
                                 fetch_block(id, sub->block_start, sub->block_length, *ptr);
                                 break;
-                            case SubsettedOracleSelection::INDEX:
+                            case OracularSubsetSelection::INDEX:
                                 fetch_index(id, sub->indices, *ptr);
                                 break;
                         }

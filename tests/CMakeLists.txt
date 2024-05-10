@@ -19,7 +19,7 @@ add_executable(
     src/LruSlabCache.cpp
     src/OracularSlabCache.cpp
     src/OracularVariableSlabCache.cpp
-    src/SubsettedOracleSlabCache.cpp
+    src/OracularSubsettedSlabCache.cpp
     src/mock_dense_chunk.cpp
     src/mock_sparse_chunk.cpp
     src/ChunkDimensionStats.cpp

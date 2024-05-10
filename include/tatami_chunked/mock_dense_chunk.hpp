@@ -376,7 +376,7 @@ public:
  * The interface is smarter as it only extracts elements of interest along the primary dimension
  * (i.e., the dimension used to create instances of the various `tatami::DenseExtractor` classes).
  * The elements of interest may be either as a contiguous block or a indexed subset,
- * as predicted for each chunk from the `SubsettedtedOracleSlabCache`.
+ * as predicted for each chunk from the `OracularSubsettedSlabCache`.
  * This provides some opportunities for optimization if the chunk can be partially read.
  */
 struct MockSubsettedDenseChunk {

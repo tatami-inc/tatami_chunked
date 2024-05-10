@@ -5,7 +5,7 @@
 #include <type_traits>
 
 #include "OracularSlabCache.hpp"
-#include "SubsettedOracleSlabCache.hpp"
+#include "OracularSubsettedSlabCache.hpp"
 #include "LruSlabCache.hpp"
 
 /**
@@ -68,7 +68,7 @@ public:
 
     /**
      * Number of slabs that can fit in the cache.
-     * This is used as `num_slabs` in `OracularSlabCache` and `SubsettedOracleSlabCache`, and as `m` in `LruSlabCache`.
+     * This is used as `num_slabs` in `OracularSlabCache` and `OracularSubsettedSlabCache`, and as `m` in `LruSlabCache`.
      */
     size_t num_slabs_in_cache;
 
@@ -79,7 +79,7 @@ public:
         oracle_,
         typename std::conditional<
             subset_, 
-            SubsettedOracleSlabCache<Index_, Index_, Slab_>, 
+            OracularSubsettedSlabCache<Index_, Index_, Slab_>, 
             OracularSlabCache<Index_, Index_, Slab_> 
         >::type,
         LruSlabCache<Index_, Slab_>
