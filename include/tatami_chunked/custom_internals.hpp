@@ -2,7 +2,9 @@
 #define TATAMI_CHUNKED_CUSTOM_CHUNK_COORDINATOR_HPP
 
 #include "tatami/tatami.hpp"
-#include "typical_slab_cache.hpp"
+#include "OracularSlabCache.hpp"
+#include "OracularSubsettedSlabCache.hpp"
+#include "SlabCacheStats.hpp"
 #include "ChunkDimensionStats.hpp"
 
 #include <vector>
