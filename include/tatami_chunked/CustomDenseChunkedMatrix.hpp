@@ -4,6 +4,7 @@
 #include "tatami/tatami.hpp"
 #include "custom_chunk_coordinator.hpp"
 
+#include <type_traits>
 #include <vector>
 
 /**
@@ -37,18 +38,19 @@ struct CustomDenseChunkedOptions {
  */
 namespace CustomChunkedMatrix_internal {
 
-const Value_* process_dense_slab(const std::pair<const Slab*, Index_>& fetched, Value_* buffer, size_t secondary_length) {
-    auto ptr = fetched.first->data() + static_cast<size_t>(fetched.second) * secondary_length; // cast to size_t to avoid overflow.
-    std::copy_n(ptr, secondary_length, buffer);
-    return buffer;
-}
+/*********************
+ **** Base classes ***
+ *********************/
 
-template<bool accrow_, typename Value_, typename Index_, typename Chunk_>
+template<bool accrow_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
 struct DenseBaseSolo {
 private:
     const ChunkCoordinator<Index_, Chunk_::use_subset, Chunk_, int>& coordinator;
     typename Chunk_::Workspace chunk_workspace;
     typedef typename ChunkCoordinator<Index_, Chunk_::use_subset, Chunk_, int>::DenseSlab Slab;
+
+    tatami::MaybeOracle<oracle_, Index_> oracle;
+    typename std::conditional<oracle_, size_t, bool>::type counter = 0;
 
     // These two instances are not fully allocated Slabs; rather, tmp_solo just
     // holds the content for a single chunk, while final_solo holds the content
@@ -59,8 +61,13 @@ private:
     Slab final_solo;
 
 public:
-    DenseBaseSolo(const ChunkCoordinator<Index_, Chunk_::use_subset, Chunk_, int>& coordinator, Index_ secondary_length) : 
+    DenseBaseSolo(
+        const ChunkCoordinator<Index_, Chunk_::use_subset, Chunk_, int>& coordinator, 
+        Index_ secondary_length, 
+        [[maybe_unused]] size_t max_slabs_in_cache, // for consistency with the other base classes.
+        tatami::MaybeOracle<oracle_, Index_> ora) : 
         coordinator(coordinator),
+        oracle(std::move(ora)),
         tmp_solo(static_cast<size_t>(coordinator.get_chunk_nrow()) * static_cast<size_t>(coordinator.get_chunk_ncol())),
         final_solo(secondary_length)
     {}
@@ -70,6 +77,9 @@ public:
 protected:
     template<typename ... Args_>
     std::pair<const Slab*, Index_> fetch_raw(Index_ i, Args_&& ... args) {
+        if constexpr(oracle_) {
+            i = oracle->get(counter++);
+        }
         return coordinator.template fetch_solo<accrow_>(i, std::forward<Args_>(args)..., chunk_workspace, tmp_solo, final_solo);
     }
 };
@@ -83,8 +93,14 @@ protected:
     LruSlabCache<Index_, Slab_> cache;
 
 public:
-    DenseBaseMyopic(const ChunkCoordinator<Index_, Chunk_::use_subset, Chunk_, int>& coordinator, size_t max_slabs_in_cache) :
-        coordinator(coordinator), cache(max_slabs_in_cache) {}
+    DenseBaseMyopic(
+        const ChunkCoordinator<Index_, Chunk_::use_subset, Chunk_, int>& coordinator,
+        [[maybe_unused]] Index_ secondary_length, // for consistency with the other base classes
+        size_t max_slabs_in_cache, 
+        [[maybe_unused]] tatami::MaybeOracle<oracle_, Index_> ora) :
+        coordinator(coordinator),
+        cache(max_slabs_in_cache) 
+    {}
 
     ~DenseBaseMyopic() = default;
 
@@ -98,130 +114,116 @@ protected:
 template<bool accrow_, typename Value_, typename Index_, typename Chunk_>
 struct DenseBaseOracular {
 protected:
-    const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator;
+    const ChunkCoordinator<Index_, Chunk_::use_subset, Chunk_, int>& coordinator;
     typename Chunk_::Workspace chunk_workspace;
-    typedef typename ChunkCoordinator<Index_, false, Chunk_, int>::DenseSlab Slab;
-    typename std::conditional<subset_, OracularSubsettedSlabCache<Index_, Index_, Slab>, OracularSlabCache<Index_, Index_, Slab> >::type cache;
+    typedef typename ChunkCoordinator<Index_, Chunk_::use_subset, Chunk_, int>::DenseSlab Slab;
+    typename std::conditional<Chunk_::use_subset, OracularSubsettedSlabCache<Index_, Index_, Slab>, OracularSlabCache<Index_, Index_, Slab> >::type cache;
 
 public:
-    DenseBaseOracular(const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator, size_t max_slabs_in_cache, tatami::MaybeOracle<oracle_, Index_> oracle) : 
-        coordinator(coordinator), cache(std::move(oracle), max_slabs_in_cache) {}
+    DenseBaseOracular(
+        const ChunkCoordinator<Index_, Chunk_::use_subset, Chunk_, int>& coordinator,
+        [[maybe_unused]] Index_ secondary_length, // for consistency with the other base classes
+        size_t max_slabs_in_cache,
+        tatami::MaybeOracle<oracle_, Index_> ora) : 
+        coordinator(coordinator), 
+        cache(std::move(ora), max_slabs_in_cache) 
+    {}
 
     ~DenseBaseOracular() = default;
 
 protected:
     template<typename ... Args_>
-    std::pair<const Slab*, Index_> fetch_raw(Index_ i, Args_&& ... args) {
-        return this->coordinator.template fetch_oracle<accrow_>(i, std::forward<Args_>(args)..., chunk_workspace, cache);
+    std::pair<const Slab*, Index_> fetch_raw([[maybe_unused]] Index_ i, Args_&& ... args) {
+        return this->coordinator.template fetch_oracle<accrow_>(std::forward<Args_>(args)..., chunk_workspace, cache);
     }
 };
 
 template<bool accrow_, bool solo_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
 using DenseBase = typename std::conditional<solo_, 
-      DenseBaseSolo<accrow_, Value_, Index_, Chunk_>,
+      DenseBaseSolo<accrow_, oracle_, Value_, Index_, Chunk_>,
       typename std::conditional<oracle_,
           DenseBaseOracular<accrow_, Value_, Index_, Chunk_>,
           DenseBaseMyopic<accrow_, Value_, Index_, Chunk_>
       >::type
 >::type;
 
+/***********************
+ **** Actual classes ***
+ ***********************/
+
+const Value_* process_dense_slab(const std::pair<const Slab*, Index_>& fetched, Value_* buffer, size_t secondary_length) {
+    auto ptr = fetched.first->data() + static_cast<size_t>(fetched.second) * secondary_length; // cast to size_t to avoid overflow.
+    std::copy_n(ptr, secondary_length, buffer);
+    return buffer;
+}
+
 template<bool accrow_, bool solo_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
 struct DenseFull : public tatami::DenseExtractor<oracle_, Value_, Index_>, public DenseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_> {
     DenseFull(
-        const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator, 
-        size_t cache_size_in_elements, 
-        bool require_minimum_cache, 
-        tatami::MaybeOracle<oracle_, Index_> oracle) :
-        DenseBase<accrow_, oracle_, Value_, Index_, Chunk_>(
-            coordinator, 
-            cache_size_in_elements, 
-            require_minimum_cache, 
-            std::move(oracle), 
-            coordinator.template get_secondary_dim<accrow_>()
+        const ChunkCoordinator<Index_, Chunk_::use_subset, Chunk_, int>& coordinator, 
+        tatami::MaybeOracle<oracle_, Index_> ora,
+        size_t max_slabs_in_cache) :
+        DenseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_>(
+            coordinator,
+            coordinator.template get_secondary_dim<accrow_>(),
+            max_slabs_in_cache,
+            std::move(ora)
         )
     {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto secondary_len = this->coordinator.template get_secondary_dim<accrow_>();
-        auto fetched = this->coordinator.template fetch<accrow_, oracle_>(
-            i, 
-            0, 
-            secondary_len,
-            this->cache_workspace,
-            this->chunk_workspace, 
-            this->tmp_solo,
-            this->final_solo
-        );
-        return this->process_dense_slab(fetched, buffer, secondary_len);
+        Index_ secondary_dim = coordinator.template get_secondary_dim<acrow_>();
+        auto fetched = this->fetch_raw(i, 0, secondary_dim);
+        return process_dense_slab(fetched, buffer, secondary_dim);
     }
 };
 
-template<bool accrow_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
-struct DenseBlock : public tatami::DenseExtractor<oracle_, Value_, Index_>, public DenseBase<accrow_, oracle_, Value_, Index_, Chunk_> {
+template<bool accrow_, bool solo_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
+struct DenseBlock : public tatami::DenseExtractor<oracle_, Value_, Index_>, public DenseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_> {
     DenseBlock(
-        const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator, 
-        size_t cache_size_in_elements, 
-        bool require_minimum_cache, 
-        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        const ChunkCoordinator<Index_, Chunk_::use_subset, Chunk_, int>& coordinator, 
+        tatami::MaybeOracle<oracle_, Index_> ora, 
         Index_ block_start, 
-        Index_ block_length) : 
-        DenseBase<accrow_, oracle_, Value_, Index_, Chunk_>(
+        Index_ block_length,
+        size_t max_slabs_in_cache) :
+        DenseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_>(
             coordinator, 
-            cache_size_in_elements, 
-            require_minimum_cache, 
-            std::move(oracle), 
-            block_length
+            block_length,
+            max_slabs_in_cache,
+            std::move(ora)
         ),
         block_start(block_start),
         block_length(block_length)
     {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto fetched = this->coordinator.template fetch<accrow_, oracle_>(
-            i, 
-            block_start, 
-            block_length,
-            this->cache_workspace, 
-            this->chunk_workspace, 
-            this->tmp_solo,
-            this->final_solo
-        );
-        return this->process_dense_slab(fetched, buffer, block_length);
+        auto fetched = this->fetch_raw(i, block_start, block_length);
+        return process_dense_slab(fetched, buffer, block_length);
     }
 
 private:
     Index_ block_start, block_length;
 };
 
-template<bool accrow_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
-struct DenseIndex : public tatami::DenseExtractor<oracle_, Value_, Index_>, public DenseBase<accrow_, oracle_, Value_, Index_, Chunk_> {
+template<bool accrow_, bool solo_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
+struct DenseIndex : public tatami::DenseExtractor<oracle_, Value_, Index_>, public DenseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_> {
     DenseIndex(
-        const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator, 
-        size_t cache_size_in_elements, 
-        bool require_minimum_cache, 
-        tatami::MaybeOracle<oracle_, Index_> oracle, 
-        tatami::VectorPtr<Index_> idx_ptr) :
-        DenseBase<accrow_, oracle_, Value_, Index_, Chunk_>(
+        const ChunkCoordinator<Index_, Chunk_::use_subset, Chunk_, int>& coordinator, 
+        tatami::MaybeOracle<oracle_, Index_> ora, 
+        tatami::VectorPtr<Index_> idx_ptr,
+        size_t max_slabs_in_cache) :
+        DenseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_>(
             coordinator, 
-            cache_size_in_elements, 
-            require_minimum_cache, 
-            std::move(oracle), 
-            idx_ptr->size()
+            idx_ptr->size(),
+            max_slabs_in_cache,
+            std::move(ora)
         ),
         indices_ptr(std::move(idx_ptr))
     {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto fetched = this->coordinator.template fetch<accrow_, oracle_>(
-            i, 
-            *indices_ptr,
-            tmp_indices,
-            this->cache_workspace, 
-            this->chunk_workspace, 
-            this->tmp_solo,
-            this->final_solo
-        );
-        return this->process_dense_slab(fetched, buffer, indices_ptr->size());
+        auto fetched = this->fetch_raw(i, *indices_ptr, tmp_indices);
+        return process_dense_slab(fetched, buffer, indices_ptr->size());
     }
 
 private:
@@ -267,7 +269,7 @@ public:
     {}
 
 private:
-    CustomChunkedMatrix_internal::ChunkCoordinator<Index_, false, Chunk_, int> coordinator;
+    CustomChunkedMatrix_internal::ChunkCoordinator<Index_, Chunk_::use_subset, Chunk_, int> coordinator;
     size_t cache_size_in_elements;
     bool require_minimum_cache;
 
@@ -308,27 +310,29 @@ public:
      *** Myopic dense ***
      ********************/
 private:
-    template<bool oracle_>
-    std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > dense_internal(
-        bool row, 
-        tatami::MaybeOracle<oracle_, Index_> oracle, 
-        const tatami::Options&) 
-    const {
+    template<bool oracle_, template<bool, bool, bool, typename, typename, class> Extractor_>
+    std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > raw_dense_internal(bool row, Index_ secondary_length, Args_&& ... args) const {
         if (row) {
-            return std::make_unique<CustomChunkedMatrix_internal::DenseFull<true, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle)
-            );
+            SlabChunkStats stats(coordinator.get_chunk_nrow(), secondary_length, cache_size_in_elements, require_minimum_cache);
+            if (stats.num_slabs_in_cache > 0) {
+                return std::make_unique<Extractor_<true, false, oracle_, Value_, Index_, Chunk_> >(std::forward<Args_>(args)..., stats.num_slabs_in_cache);
+            } else {
+                return std::make_unique<Extractor_<true, true, oracle_, Value_, Index_, Chunk_> >(std::forward<Args_>(args)..., stats.num_slabs_in_cache);
+            }
         } else {
-            return std::make_unique<CustomChunkedMatrix_internal::DenseFull<false, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle)
-            );
+            SlabChunkStats stats(coordinator.get_chunk_ncol(), secondary_length, cache_size_in_elements, require_minimum_cache);
+            if (stats.num_slabs_in_cache > 0) {
+                return std::make_unique<Extractor_<false, false, oracle_, Value_, Index_, Chunk_> >(std::forward<Args_>(args)..., stats.num_slabs_in_cache);
+            } else {
+                return std::make_unique<Extractor_<false, true, oracle_, Value_, Index_, Chunk_> >(std::forward<Args_>(args)..., stats.num_slabs_cache);
+            }
         }
+    }
+
+    template<bool oracle_>
+    std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > dense_internal(bool row, tatami::MaybeOracle<oracle_, Index_> oracle, const tatami::Options&) const {
+        auto secondary = (row ? coordinator.get_ncol() : coordinator.get_nrow());
+        return raw_dense_internal<oracle_, CustomChunkedMatrix_internal::DenseFull>(row, secondary, std::move(oracle));
     }
 
     template<bool oracle_>
@@ -339,25 +343,7 @@ private:
         Index_ block_length, 
         const tatami::Options&) 
     const {
-        if (row) {
-            return std::make_unique<CustomChunkedMatrix_internal::DenseBlock<true, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle), 
-                block_start, 
-                block_length
-            );
-        } else {
-            return std::make_unique<CustomChunkedMatrix_internal::DenseBlock<false, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle),
-                block_start, 
-                block_length
-            );
-        }
+        return raw_dense_internal<oracle_, CustomChunkedMatrix_internal::DenseBlock(row, block_length, std::move(oracle), block_start, block_length);
     }
 
     template<bool oracle_>
@@ -367,23 +353,8 @@ private:
         tatami::VectorPtr<Index_> indices_ptr, 
         const tatami::Options&) 
     const {
-        if (row) {
-            return std::make_unique<CustomChunkedMatrix_internal::DenseIndex<true, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle), 
-                std::move(indices_ptr)
-            );
-        } else {
-            return std::make_unique<CustomChunkedMatrix_internal::DenseIndex<false, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle), 
-                std::move(indices_ptr)
-            );
-        }
+        auto num_indices = indices_ptr->size();
+        return raw_dense_internal<oracle_, CustomChunkedMatrix_internal::DenseIndex(row, num_indices, std::move(oracle), std::move(indices_ptr));
     }
 
 public:

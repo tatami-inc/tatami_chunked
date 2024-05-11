@@ -282,7 +282,7 @@ private:
         }
     }
 
-private:
+public:
     // Extract a single element of the primary dimension, using a contiguous
     // block on the secondary dimension. 
     //
@@ -295,15 +295,18 @@ private:
     // require a workspace involving the full chunk size, so we end up needing
     // the 'tmp_slab' anyway.
     template<bool accrow_>
-    void fetch_single(
-        Index_ chunk_id, 
-        Index_ chunk_offset, 
+    std::pair<const Slab*, Index_> fetch_single(
+        Index_ i,
         Index_ secondary_block_start, 
         Index_ secondary_block_length, 
+        ChunkWork& chunk_workspace,
         Slab& tmp_slab, 
-        Slab& final_slab,
-        ChunkWork& chunk_workspace) 
+        Slab& final_slab)
     const {
+        Index_ primary_chunkdim = get_primary_chunkdim<accrow_>();
+        Index_ chunk_id = i / primary_chunkdim;
+        Index_ chunk_offset = i % primary_chunkdim;
+
         if constexpr(sparse_) {
             flush_slab(final_slab);
             extract_secondary_block<accrow_>(
@@ -336,20 +339,25 @@ private:
                 }
             );
         }
+
+        return std::make_pair(&final_solo, static_cast<Index_>(0));
     }
 
     // Extract a single element of the primary dimension, using an indexed
     // subset on the secondary dimension.
     template<bool accrow_>
-    void fetch_single(
-        Index_ chunk_id, 
-        Index_ chunk_offset, 
+    std::pair<const Slab*, Index_> fetch_single(
+        Index_ i,
         const std::vector<Index_>& secondary_indices, 
         std::vector<Index_>& chunk_indices_buffer,
+        ChunkWork& chunk_workspace,
         Slab& tmp_slab, 
-        Slab& final_slab,
-        ChunkWork& chunk_workspace) 
+        Slab& final_slab)
     const {
+        Index_ primary_chunkdim = get_primary_chunkdim<accrow_>();
+        Index_ chunk_id = i / primary_chunkdim;
+        Index_ chunk_offset = i % primary_chunkdim;
+
         if constexpr(sparse_) {
             flush_slab(final_slab);
             extract_secondary_index<accrow_>(
@@ -383,6 +391,8 @@ private:
                 }
             );
         }
+
+        return std::make_pair(&final_solo, static_cast<Index_>(0));
     }
 
 private:
@@ -543,42 +553,63 @@ private:
 
 public:
     // Obtain the slab containing the 'i'-th element of the primary dimension.
-    template<bool accrow_, bool oracle_, typename FetchSingle_, typename FetchBlock_, typename FetchIndex_>
-    std::pair<const Slab*, Index_> fetch_core(
+    template<bool accrow_, class Cache_>
+    std::pair<const Slab*, Index_> fetch_myopic(
         Index_ i, 
-        TypicalSlabCacheWorkspace<oracle_, Chunk_::use_subset, Index_, Slab>& cache_workspace,
-        Slab& tmp_solo,
-        Slab& final_solo,
-        Index_ secondary_length,
-        FetchSingle_ fetch_single,
-        FetchBlock_ fetch_block,
-        FetchIndex_ fetch_index)
+        Index_ block_start,
+        Index_ block_length,
+        ChunkWork& chunk_workspace,
+        Cache_& cache)
     const {
         Index_ primary_chunkdim = get_primary_chunkdim<accrow_>();
-
-        if (cache_workspace.num_slabs_in_cache == 0) {
-            if constexpr(oracle_) {
-                i = cache_workspace.cache.next();
+        Index_ chunk_id = i / primary_chunkdim;
+        Index_ chunk_offset = i % primary_chunkdim;
+        auto& out = cache.find(
+            chunk_id,
+            /* create = */ [&]() -> Slab {
+                return allocate<accrow_>(block_length);
+            },
+            /* populate = */ [&](Index_ id, Slab& slab) -> void {
+                fetch_block<accrow_>(id, 0, get_primary_chunkdim<accrow_>(id), block_start, block_length, slab, chunk_workspace);
             }
-            fetch_single(i / primary_chunkdim, i % primary_chunkdim, tmp_solo, final_solo);
-            return std::make_pair(&final_solo, static_cast<Index_>(0));
+        );
+        return std::make_pair(&out, chunk_offset);
+    }
 
-        } else if constexpr(!oracle_) {
-            Index_ chunk_id = i / primary_chunkdim;
-            Index_ chunk_offset = i % primary_chunkdim;
-            auto& cache = cache_workspace.cache.find(
-                chunk_id,
-                /* create = */ [&]() -> Slab {
-                    return allocate<accrow_>(secondary_length);
-                },
-                /* populate = */ [&](Index_ id, Slab& slab) -> void {
-                    fetch_block(id, 0, get_primary_chunkdim<accrow_>(id), slab);
-                }
-            );
-            return std::make_pair(&cache, chunk_offset);
+    template<bool accrow_, class Cache_>
+    std::pair<const Slab*, Index_> fetch_myopic(
+        Index_ i, 
+        const std::vector<Index_>& indices,
+        std::vector<Index_>& tmp_indices,
+        ChunkWork& chunk_workspace,
+        Cache_& cache)
+    const {
+        Index_ primary_chunkdim = get_primary_chunkdim<accrow_>();
+        Index_ chunk_id = i / primary_chunkdim;
+        Index_ chunk_offset = i % primary_chunkdim;
+        auto& out = cache.find(
+            chunk_id,
+            /* create = */ [&]() -> Slab {
+                return allocate<accrow_>(indices.size());
+            },
+            /* populate = */ [&](Index_ id, Slab& slab) -> void {
+                fetch_block<accrow_>(id, 0, get_primary_chunkdim<accrow_>(id), indices, tmp_indices, slab, chunk_workspace);
+            }
+        );
+        return std::make_pair(&out, chunk_offset);
+    }
 
-        } else if constexpr(Chunk_::use_subset) {
-            auto out = cache_workspace.cache.next(
+private:
+    template<bool accrow_, class Cache_, typename FetchBlock_, typename FetchIndex_>
+    std::pair<const Slab*, Index_> fetch_oracular_core(
+        Index_ i, 
+        Cache_& cache,
+        Index_ secondary_length,
+        FetchBlock_ fetch_block,
+        FetchIndex_ fetch_index)
+    {
+        if constexpr(Chunk_::use_subset) {
+            return cache.next(
                 /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
                     return std::pair<Index_, Index_>(i / primary_chunkdim, i % primary_chunkdim);
                 },
@@ -604,10 +635,9 @@ public:
                     }
                 }
             );
-            return std::make_pair(out.first, out.second);
 
         } else {
-            return cache_workspace.cache.next(
+            return cache.next(
                 /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
                     return std::pair<Index_, Index_>(i / primary_chunkdim, i % primary_chunkdim);
                 },
@@ -623,25 +653,18 @@ public:
         }
     }
 
-    template<bool accrow_, bool oracle_>
-    std::pair<const Slab*, Index_> fetch(
-        Index_ i, 
+public:
+    template<bool accrow_, class Cache_>
+    std::pair<const Slab*, Index_> fetch_oracular(
         Index_ block_start,
         Index_ block_length,
-        TypicalSlabCacheWorkspace<oracle_, Chunk_::use_subset, Index_, Slab>& cache_workspace,
         ChunkWork& chunk_workspace,
-        Slab& tmp_solo,
-        Slab& final_solo)
+        Cache_& cache)
     const {
-        return fetch_core<accrow_, oracle_>(
+        return fetch_oracular_core<accrow_>(
             i, 
-            cache_workspace, 
-            tmp_solo, 
-            final_solo, 
+            cache,
             block_length,
-            [&](Index_ pid, Index_ pstart, Slab& tmp_solo, Slab& final_solo) {
-                fetch_single<accrow_>(pid, pstart, block_start, block_length, tmp_solo, final_solo, chunk_workspace);
-            },
             [&](Index_ pid, Index_ pstart, Index_ plen, Slab& slab) {
                 fetch_block<accrow_>(pid, pstart, plen, block_start, block_length, slab, chunk_workspace);
             },
@@ -651,25 +674,18 @@ public:
         );
     }
 
-    template<bool accrow_, bool oracle_>
-    std::pair<const Slab*, Index_> fetch(
+    template<bool accrow_, class Cache_>
+    std::pair<const Slab*, Index_> fetch_oracular(
         Index_ i, 
         const std::vector<Index_>& indices,
         std::vector<Index_>& chunk_indices_buffer,
-        TypicalSlabCacheWorkspace<oracle_, Chunk_::use_subset, Index_, Slab>& cache_workspace,
         ChunkWork& chunk_workspace,
-        Slab& tmp_solo,
-        Slab& final_solo)
+        Cache_& cache)
     const {
-        return fetch_core<accrow_, oracle_>(
+        return fetch_oracular_core<accrow_>(
             i, 
-            cache_workspace, 
-            tmp_solo, 
-            final_solo, 
+            cache,
             indices.size(),
-            [&](Index_ pid, Index_ pstart, Slab& tmp_solo, Slab& final_solo) {
-                fetch_single<accrow_>(pid, pstart, indices, chunk_indices_buffer, tmp_solo, final_solo, chunk_workspace);
-            },
             [&](Index_ pid, Index_ pstart, Index_ plen, Slab& slab) {
                 fetch_block<accrow_>(pid, pstart, plen, indices, chunk_indices_buffer, slab, chunk_workspace);
             },
