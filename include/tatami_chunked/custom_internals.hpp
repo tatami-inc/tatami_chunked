@@ -340,7 +340,7 @@ public:
             );
         }
 
-        return std::make_pair(&final_solo, static_cast<Index_>(0));
+        return std::make_pair(&final_slab, static_cast<Index_>(0));
     }
 
     // Extract a single element of the primary dimension, using an indexed
@@ -392,7 +392,7 @@ public:
             );
         }
 
-        return std::make_pair(&final_solo, static_cast<Index_>(0));
+        return std::make_pair(&final_slab, static_cast<Index_>(0));
     }
 
 private:
@@ -602,12 +602,12 @@ public:
 private:
     template<bool accrow_, class Cache_, typename FetchBlock_, typename FetchIndex_>
     std::pair<const Slab*, Index_> fetch_oracular_core(
-        Index_ i, 
         Cache_& cache,
         Index_ secondary_length,
         FetchBlock_ fetch_block,
         FetchIndex_ fetch_index)
-    {
+    const {
+        Index_ primary_chunkdim = get_primary_chunkdim<accrow_>();
         if constexpr(Chunk_::use_subset) {
             return cache.next(
                 /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
@@ -662,7 +662,6 @@ public:
         Cache_& cache)
     const {
         return fetch_oracular_core<accrow_>(
-            i, 
             cache,
             block_length,
             [&](Index_ pid, Index_ pstart, Index_ plen, Slab& slab) {
@@ -676,14 +675,12 @@ public:
 
     template<bool accrow_, class Cache_>
     std::pair<const Slab*, Index_> fetch_oracular(
-        Index_ i, 
         const std::vector<Index_>& indices,
         std::vector<Index_>& chunk_indices_buffer,
         ChunkWork& chunk_workspace,
         Cache_& cache)
     const {
         return fetch_oracular_core<accrow_>(
-            i, 
             cache,
             indices.size(),
             [&](Index_ pid, Index_ pstart, Index_ plen, Slab& slab) {
