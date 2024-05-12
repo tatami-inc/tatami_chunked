@@ -2,8 +2,10 @@
 #define TATAMI_CHUNKED_CUSTOM_SPARSE_CHUNKED_MATRIX_HPP
 
 #include "tatami/tatami.hpp"
-#include "typical_slab_cache.hpp"
-#include "custom_chunk_coordinator.hpp"
+#include "custom_internals.hpp"
+#include "LruSlabCache.hpp"
+#include "OracularSlabCache.hpp"
+#include "OracularSubsettedSlabCache.hpp"
 
 #include <vector>
 
@@ -38,238 +40,229 @@ struct CustomSparseChunkedOptions {
  */
 namespace CustomChunkedMatrix_internal {
 
+/*********************
+ **** Base classes ***
+ *********************/
+
 template<bool accrow_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
-struct SparseBase {
+struct SparseBaseSolo {
 protected:
-    const ChunkCoordinator<Index_, true, Chunk_>& coordinator;
+    const ChunkCoordinator<Index_, true, Chunk_, int>& coordinator;
     typename Chunk_::Workspace chunk_workspace;
-    typedef typename ChunkCoordinator<Index_, true, Chunk_>::SparseSlab Slab;
-    TypicalSlabCacheWorkspace<oracle_, Chunk_::use_subset, Index_, Slab> cache_workspace;
-    bool needs_value, needs_index;
+    typedef typename ChunkCoordinator<Index_, true, Chunk_, int>::SparseSlab Slab;
+
+    tatami::MaybeOracle<oracle_, Index_> oracle;
+    typename std::conditional<oracle_, size_t, bool>::type counter = 0;
 
     // These two instances are not fully allocated Slabs; rather, tmp_solo just
     // holds the content for a single chunk, while final_solo holds the content
     // across chunks but only for the requested dimension element. Both cases
     // are likely to be much smaller than a full Slab, so we're already more
     // memory-efficient than trying to use num_slabs_in_cache = 1.
-    Slab tmp_solo, final_solo;
+    Slab tmp_solo;
+    Slab final_solo;
 
 public:
-    SparseBase(
-        const ChunkCoordinator<Index_, true, Chunk_>& coordinator, 
-        size_t cache_size_in_elements,
-        bool require_minimum_cache,
-        tatami::MaybeOracle<oracle_, Index_> oracle, 
-        Index_ secondary_length, 
-        const tatami::Options& opt) : 
+    SparseBaseSolo(
+        const ChunkCoordinator<Index_, true, Chunk_, int>& coordinator, 
+        [[maybe_unused]] size_t max_slabs_in_cache, // for consistency with the other base classes.
+        tatami::MaybeOracle<oracle_, Index_> ora,
+        Index_ secondary_length) :
         coordinator(coordinator),
-        cache_workspace(
-            coordinator.template get_primary_chunkdim<accrow_>(), 
-            secondary_length, 
-            cache_size_in_elements, 
-            require_minimum_cache, 
-            std::move(oracle)
-        ),
-        needs_value(opt.sparse_extract_value),
-        needs_index(opt.sparse_extract_index)
-    {
-        if (cache_workspace.num_slabs_in_cache == 0) {
-            tmp_solo.resize(coordinator.template get_primary_chunkdim<accrow_>());
-            final_solo.resize(1);
-        }
-    }
+        oracle(std::move(ora)),
+        tmp_solo(static_cast<size_t>(coordinator.get_chunk_nrow()) * static_cast<size_t>(coordinator.get_chunk_ncol())),
+        final_solo(secondary_length)
+    {}
+
+    ~SparseBaseSolo() = default;
 
 protected:
-    tatami::SparseRange<Value_, Index_> process_sparse_slab(const std::pair<const Slab*, Index_>& fetched, Value_* vbuffer, Index_* ibuffer) {
-        const auto& values = fetched.first->values[fetched.second];
-        const auto& indices = fetched.first->indices[fetched.second];
-
-        if (needs_value) {
-            std::copy(values.begin(), values.end(), vbuffer);
-        } else {
-            vbuffer = NULL;
+    template<typename ... Args_>
+    std::pair<const Slab*, Index_> fetch_raw(Index_ i, Args_&& ... args) {
+        if constexpr(oracle_) {
+            i = oracle->get(counter++);
         }
-
-        if (needs_index) {
-            std::copy(indices.begin(), indices.end(), ibuffer);
-        } else {
-            ibuffer = NULL;
-        }
-
-        return tatami::SparseRange<Value_, Index_>(values.size(), vbuffer, ibuffer);
+        return coordinator.template fetch_single<accrow_>(i, std::forward<Args_>(args)..., chunk_workspace, tmp_solo, final_solo);
     }
 };
 
-template<bool accrow_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
-struct SparseFull : public tatami::SparseExtractor<oracle_, Value_, Index_>, public SparseBase<accrow_, oracle_, Value_, Index_, Chunk_> {
+template<bool accrow_, typename Value_, typename Index_, typename Chunk_>
+struct SparseBaseMyopic {
+protected:
+    const ChunkCoordinator<Index_, true, Chunk_, int>& coordinator;
+    typename Chunk_::Workspace chunk_workspace;
+    typedef typename ChunkCoordinator<Index_, true, Chunk_, int>::SparseSlab Slab;
+    LruSlabCache<Index_, Slab> cache;
+
+public:
+    SparseBaseMyopic(
+        const ChunkCoordinator<Index_, true, Chunk_, int>& coordinator,
+        size_t max_slabs_in_cache, 
+        [[maybe_unused]] tatami::MaybeOracle<false, Index_> ora, // for consistency with the other base classes
+        [[maybe_unused]] Index_ secondary_length) : // ditto
+        coordinator(coordinator),
+        cache(max_slabs_in_cache) 
+    {}
+
+    ~SparseBaseMyopic() = default;
+
+protected:
+    template<typename ... Args_>
+    std::pair<const Slab*, Index_> fetch_raw(Index_ i, Args_&& ... args) {
+        return this->coordinator.template fetch_myopic<accrow_>(i, std::forward<Args_>(args)..., chunk_workspace, cache);
+    }
+};
+
+template<bool accrow_, typename Value_, typename Index_, typename Chunk_>
+struct SparseBaseOracular {
+protected:
+    const ChunkCoordinator<Index_, true, Chunk_, int>& coordinator;
+    typename Chunk_::Workspace chunk_workspace;
+    typedef typename ChunkCoordinator<Index_, true, Chunk_, int>::SparseSlab Slab;
+    typename std::conditional<Chunk_::use_subset, OracularSubsettedSlabCache<Index_, Index_, Slab>, OracularSlabCache<Index_, Index_, Slab> >::type cache;
+
+public:
+    SparseBaseOracular(
+        const ChunkCoordinator<Index_, true, Chunk_, int>& coordinator,
+        size_t max_slabs_in_cache,
+        tatami::MaybeOracle<true, Index_> ora,
+        [[maybe_unused]] Index_ secondary_length) : // for consistency with the other base classes
+        coordinator(coordinator), 
+        cache(std::move(ora), max_slabs_in_cache) 
+    {}
+
+    ~SparseBaseOracular() = default;
+
+protected:
+    template<typename ... Args_>
+    std::pair<const Slab*, Index_> fetch_raw([[maybe_unused]] Index_ i, Args_&& ... args) {
+        return this->coordinator.template fetch_oracular<accrow_>(std::forward<Args_>(args)..., chunk_workspace, cache);
+    }
+};
+
+template<bool accrow_, bool solo_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
+using SparseBase = typename std::conditional<solo_, 
+      SparseBaseSolo<accrow_, oracle_, Value_, Index_, Chunk_>,
+      typename std::conditional<oracle_,
+          SparseBaseOracular<accrow_, Value_, Index_, Chunk_>,
+          SparseBaseMyopic<accrow_, Value_, Index_, Chunk_>
+      >::type
+>::type;
+
+/***********************
+ **** Sparse classes ***
+ ***********************/
+
+template<class Slab_, typename Index_, typename Value_>
+tatami::SparseRange<Value_, Index_> process_sparse_slab(const std::pair<const Slab_*, Index_>& fetched, Value_* vbuffer, Index_* ibuffer, bool needs_value, bool needs_index) {
+    const auto& values = fetched.first->values[fetched.second];
+    const auto& indices = fetched.first->indices[fetched.second];
+
+    if (needs_value) {
+        std::copy(values.begin(), values.end(), vbuffer);
+    } else {
+        vbuffer = NULL;
+    }
+
+    if (needs_index) {
+        std::copy(indices.begin(), indices.end(), ibuffer);
+    } else {
+        ibuffer = NULL;
+    }
+
+    return tatami::SparseRange<Value_, Index_>(values.size(), vbuffer, ibuffer);
+}
+
+template<bool accrow_, bool solo_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
+struct SparseFull : public tatami::SparseExtractor<oracle_, Value_, Index_>, public SparseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_> {
     SparseFull(
         const ChunkCoordinator<Index_, true, Chunk_>& coordinator, 
-        size_t cache_size_in_elements,
-        bool require_minimum_cache, 
-        tatami::MaybeOracle<oracle_, Index_> oracle, 
-        const tatami::Options& opt) : 
-        SparseBase<accrow_, oracle_, Value_, Index_, Chunk_>(
-            coordinator, 
-            cache_size_in_elements, 
-            require_minimum_cache, 
-            std::move(oracle), 
-            coordinator.template get_secondary_dim<accrow_>(),
-            opt
-        )
+        size_t max_slabs_in_cache,
+        tatami::MaybeOracle<oracle_, Index_> ora, 
+        const tatami::Options& opt) :
+        SparseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_>(coordinator, max_slabs_in_cache, std::move(ora), coordinator.template get_secondary_dim<accrow_>()),
+        needs_value(opt.sparse_extract_value),
+        needs_index(opt.sparse_extract_index)
     {}
 
     tatami::SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-        auto secondary_len = this->coordinator.template get_secondary_dim<accrow_>();
-        auto contents = this->coordinator.template fetch<accrow_, oracle_>(
-            i, 
-            0, 
-            secondary_len,
-            this->cache_workspace, 
-            this->chunk_workspace, 
-            this->tmp_solo, 
-            this->final_solo
-        );
-        return this->process_sparse_slab(contents, vbuffer, ibuffer); 
+        Index_ secondary_len = this->coordinator.template get_secondary_dim<accrow_>();
+        auto fetched = this->fetch_raw(i, 0, secondary_len);
+        return process_sparse_slab(fetched, vbuffer, ibuffer, needs_value, needs_index); 
     }
+
+private:
+    bool needs_value, needs_index;
 };
 
-template<bool accrow_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
-struct SparseBlock : public tatami::SparseExtractor<oracle_, Value_, Index_>, public SparseBase<accrow_, oracle_, Value_, Index_, Chunk_> {
+template<bool accrow_, bool solo_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
+struct SparseBlock : public tatami::SparseExtractor<oracle_, Value_, Index_>, public SparseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_> {
     SparseBlock(
         const ChunkCoordinator<Index_, true, Chunk_>& coordinator, 
-        size_t cache_size_in_elements,
-        bool require_minimum_cache, 
-        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        size_t max_slabs_in_cache,
+        tatami::MaybeOracle<oracle_, Index_> ora, 
         Index_ block_start, 
         Index_ block_length, 
         const tatami::Options& opt) :
-        SparseBase<accrow_, oracle_, Value_, Index_, Chunk_>(
-            coordinator, 
-            cache_size_in_elements, 
-            require_minimum_cache, 
-            std::move(oracle), 
-            block_length, 
-            opt
-        ),
+        SparseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_>(coordinator, max_slabs_in_cache, std::move(ora), block_length),
         block_start(block_start),
-        block_length(block_length)
+        block_length(block_length),
+        needs_value(opt.sparse_extract_value),
+        needs_index(opt.sparse_extract_index)
     {}
 
     tatami::SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-        auto contents = this->coordinator.template fetch<accrow_, oracle_>(
-            i, 
-            block_start, 
-            block_length, 
-            this->cache_workspace, 
-            this->chunk_workspace, 
-            this->tmp_solo, 
-            this->final_solo
-        );
-        return this->process_sparse_slab(contents, vbuffer, ibuffer);
+        auto fetched = this->fetch_raw(i, block_start, block_length);
+        return process_sparse_slab(fetched, vbuffer, ibuffer, needs_value, needs_index);
     }
 
 private:
     Index_ block_start, block_length;
+    bool needs_value, needs_index;
 };
 
-template<bool accrow_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
-struct SparseIndex : public tatami::SparseExtractor<oracle_, Value_, Index_>, public SparseBase<accrow_, oracle_, Value_, Index_, Chunk_> {
+template<bool accrow_, bool solo_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
+struct SparseIndex : public tatami::SparseExtractor<oracle_, Value_, Index_>, public SparseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_> {
     SparseIndex(
         const ChunkCoordinator<Index_, true, Chunk_>& coordinator, 
-        size_t cache_size_in_elements,
-        bool require_minimum_cache, 
-        tatami::MaybeOracle<oracle_, Index_> oracle, 
+        size_t max_slabs_in_cache,
+        tatami::MaybeOracle<oracle_, Index_> ora, 
         tatami::VectorPtr<Index_> idx_ptr, 
         const tatami::Options& opt) :
-        SparseBase<accrow_, oracle_, Value_, Index_, Chunk_>(
-            coordinator, 
-            cache_size_in_elements, 
-            require_minimum_cache,
-            std::move(oracle), 
-            idx_ptr->size(),
-            opt
-        ),
-        indices_ptr(std::move(idx_ptr))
+        SparseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_>(coordinator, max_slabs_in_cache, std::move(ora), idx_ptr->size()),
+        indices_ptr(std::move(idx_ptr)),
+        needs_value(opt.sparse_extract_value),
+        needs_index(opt.sparse_extract_index)
     {}
 
     tatami::SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-        auto contents = this->coordinator.template fetch<accrow_, oracle_>(
-            i, 
-            *indices_ptr,
-            tmp_indices,
-            this->cache_workspace, 
-            this->chunk_workspace, 
-            this->tmp_solo, 
-            this->final_solo
-        );
-        return this->process_sparse_slab(contents, vbuffer, ibuffer);
+        auto fetched = this->fetch_raw(i, *indices_ptr, tmp_indices);
+        return process_sparse_slab(fetched, vbuffer, ibuffer, needs_value, needs_index);
     }
 
 private:
     tatami::VectorPtr<Index_> indices_ptr;
     std::vector<Index_> tmp_indices;
+    bool needs_value, needs_index;
 };
 
-template<bool accrow_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
-struct DensifiedBase {
-protected:
-    const ChunkCoordinator<Index_, true, Chunk_>& coordinator;
-    typename Chunk_::Workspace chunk_workspace;
-    typedef typename ChunkCoordinator<Index_, true, Chunk_>::SparseSlab Slab;
-    TypicalSlabCacheWorkspace<oracle_, Chunk_::use_subset, Index_, Slab> cache_workspace;
-    Slab tmp_solo, final_solo;
+/**************************
+ **** Densified classes ***
+ **************************/
 
-public:
-    DensifiedBase(
-        const ChunkCoordinator<Index_, true, Chunk_>& coordinator, 
-        size_t cache_size_in_elements,
-        bool require_minimum_cache, 
-        tatami::MaybeOracle<oracle_, Index_> oracle, 
-        Index_ secondary_length) : 
-        coordinator(coordinator),
-        cache_workspace(
-            coordinator.template get_primary_chunkdim<accrow_>(), 
-            secondary_length, 
-            cache_size_in_elements, 
-            require_minimum_cache, 
-            std::move(oracle)
-        )
-    {
-        if (cache_workspace.num_slabs_in_cache == 0) {
-            tmp_solo.resize(coordinator.template get_primary_chunkdim<accrow_>());
-            final_solo.resize(1);
-        }
-    }
-};
-
-template<bool accrow_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
-struct DensifiedFull : public tatami::DenseExtractor<oracle_, Value_, Index_>, public DensifiedBase<accrow_, oracle_, Value_, Index_, Chunk_> {
+template<bool accrow_, bool solo_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
+struct DensifiedFull : public tatami::DenseExtractor<oracle_, Value_, Index_>, public SparseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_> {
     DensifiedFull(
         const ChunkCoordinator<Index_, true, Chunk_>& coordinator, 
-        size_t cache_size_in_elements,
-        bool require_minimum_cache, 
-        tatami::MaybeOracle<oracle_, Index_> oracle) : 
-        DensifiedBase<accrow_, oracle_, Value_, Index_, Chunk_>(
-            coordinator, 
-            cache_size_in_elements, 
-            require_minimum_cache, 
-            std::move(oracle),
-            coordinator.template get_secondary_dim<accrow_>()
-        )
+        size_t max_slabs_in_cache,
+        tatami::MaybeOracle<oracle_, Index_> ora, 
+        const tatami::Options&) :
+        SparseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_>(coordinator, max_slabs_in_cache, std::move(ora), coordinator.template get_secondary_dim<accrow_>())
     {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         auto secondary_length = this->coordinator.template get_secondary_dim<accrow_>();
-        auto contents = this->coordinator.template fetch<accrow_, oracle_>(
-            i, 
-            0, 
-            secondary_length,
-            this->cache_workspace, 
-            this->chunk_workspace, 
-            this->tmp_solo, 
-            this->final_solo
-        );
-
+        auto contents = this->fetch_raw(i, 0, secondary_length);
         const auto& values = contents.first->values[contents.second];
         const auto& indices = contents.first->indices[contents.second];
         std::fill_n(buffer, secondary_length, 0);
@@ -278,42 +271,24 @@ struct DensifiedFull : public tatami::DenseExtractor<oracle_, Value_, Index_>, p
         }
         return buffer;
     }
-
-private:
-    Index_ secondary_length;
 };
 
-template<bool accrow_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
-struct DensifiedBlock : public tatami::DenseExtractor<oracle_, Value_, Index_>, public DensifiedBase<accrow_, oracle_, Value_, Index_, Chunk_> {
+template<bool accrow_, bool solo_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
+struct DensifiedBlock : public tatami::DenseExtractor<oracle_, Value_, Index_>, public SparseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_> {
     DensifiedBlock(
         const ChunkCoordinator<Index_, true, Chunk_>& coordinator, 
-        size_t cache_size_in_elements,
-        bool require_minimum_cache, 
-        tatami::MaybeOracle<oracle_, Index_> oracle,
+        size_t max_slabs_in_cache,
+        tatami::MaybeOracle<oracle_, Index_> ora,
         Index_ block_start, 
-        Index_ block_length) : 
-        DensifiedBase<accrow_, oracle_, Value_, Index_, Chunk_>(
-            coordinator, 
-            cache_size_in_elements, 
-            require_minimum_cache, 
-            std::move(oracle), 
-            block_length
-        ),
+        Index_ block_length,
+        const tatami::Options&) :
+        SparseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_>(coordinator, max_slabs_in_cache, std::move(ora), block_length),
         block_start(block_start),
         block_length(block_length)
     {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto contents = this->coordinator.template fetch<accrow_, oracle_>(
-            i, 
-            block_start, 
-            block_length,
-            this->cache_workspace, 
-            this->chunk_workspace, 
-            this->tmp_solo, 
-            this->final_solo
-        );
-
+        auto contents = this->fetch_raw(i, block_start, block_length);
         const auto& values = contents.first->values[contents.second];
         const auto& indices = contents.first->indices[contents.second];
         std::fill_n(buffer, block_length, 0);
@@ -327,21 +302,15 @@ private:
     Index_ block_start, block_length;
 };
 
-template<bool accrow_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
-struct DensifiedIndex : public tatami::DenseExtractor<oracle_, Value_, Index_>, public DensifiedBase<accrow_, oracle_, Value_, Index_, Chunk_> {
+template<bool accrow_, bool solo_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
+struct DensifiedIndex : public tatami::DenseExtractor<oracle_, Value_, Index_>, public SparseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_> {
     DensifiedIndex(
         const ChunkCoordinator<Index_, true, Chunk_>& coordinator, 
-        size_t cache_size_in_elements,
-        bool require_minimum_cache, 
-        tatami::MaybeOracle<oracle_, Index_> oracle, 
-        tatami::VectorPtr<Index_> idx_ptr) :
-        DensifiedBase<accrow_, oracle_, Value_, Index_, Chunk_>(
-            coordinator, 
-            cache_size_in_elements, 
-            require_minimum_cache, 
-            std::move(oracle), 
-            idx_ptr->size()
-        ),
+        size_t max_slabs_in_cache,
+        tatami::MaybeOracle<oracle_, Index_> ora, 
+        tatami::VectorPtr<Index_> idx_ptr,
+        const tatami::Options&) :
+        SparseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_>(coordinator, max_slabs_in_cache, std::move(ora), idx_ptr->size()),
         indices_ptr(std::move(idx_ptr))
     {
         const auto& indices = *indices_ptr;
@@ -359,16 +328,7 @@ struct DensifiedIndex : public tatami::DenseExtractor<oracle_, Value_, Index_>, 
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         auto nidx = indices_ptr->size();
-        auto contents = this->coordinator.template fetch<accrow_, oracle_>(
-            i, 
-            *indices_ptr,
-            tmp_indices,
-            this->cache_workspace, 
-            this->chunk_workspace, 
-            this->tmp_solo, 
-            this->final_solo
-        );
-
+        auto contents = this->fetch_raw(i, *indices_ptr, tmp_indices);
         const auto& values = contents.first->values[contents.second];
         const auto& indices = contents.first->indices[contents.second];
         std::fill_n(buffer, nidx, 0);
@@ -464,27 +424,34 @@ public:
      *** Myopic dense ***
      ********************/
 private:
-    template<bool oracle_>
-    std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > dense_internal(
-        bool row,
-        tatami::MaybeOracle<oracle_, Index_> oracle, 
-        const tatami::Options&) 
-    const {
+    template<
+        template<bool, typename, typename> class Interface_, 
+        bool oracle_, 
+        template<bool, bool, bool, typename, typename, class> class Extractor_, 
+        typename ... Args_
+    >
+    std::unique_ptr<Interface_<oracle_, Value_, Index_> > raw_internal(bool row, Index_ secondary_length, Args_&& ... args) const {
         if (row) {
-            return std::make_unique<CustomChunkedMatrix_internal::DensifiedFull<true, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle)
-            );
+            SlabCacheStats stats(coordinator.get_chunk_nrow(), secondary_length, cache_size_in_elements, require_minimum_cache);
+            if (stats.num_slabs_in_cache > 0) {
+                return std::make_unique<Extractor_<true, false, oracle_, Value_, Index_, Chunk_> >(coordinator, stats.num_slabs_in_cache, std::forward<Args_>(args)...);
+            } else {
+                return std::make_unique<Extractor_<true, true, oracle_, Value_, Index_, Chunk_> >(coordinator, stats.num_slabs_in_cache, std::forward<Args_>(args)...);
+            }
         } else {
-            return std::make_unique<CustomChunkedMatrix_internal::DensifiedFull<false, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle)
-            );
+            SlabCacheStats stats(coordinator.get_chunk_ncol(), secondary_length, cache_size_in_elements, require_minimum_cache);
+            if (stats.num_slabs_in_cache > 0) {
+                return std::make_unique<Extractor_<false, false, oracle_, Value_, Index_, Chunk_> >(coordinator, stats.num_slabs_in_cache, std::forward<Args_>(args)...);
+            } else {
+                return std::make_unique<Extractor_<false, true, oracle_, Value_, Index_, Chunk_> >(coordinator, stats.num_slabs_in_cache, std::forward<Args_>(args)...);
+            }
         }
+    }
+
+    template<bool oracle_>
+    std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > dense_internal(bool row, tatami::MaybeOracle<oracle_, Index_> oracle, const tatami::Options& opt) const {
+        auto secondary = (row ? coordinator.get_ncol() : coordinator.get_nrow());
+        return raw_internal<tatami::DenseExtractor, oracle_, CustomChunkedMatrix_internal::DensifiedFull>(row, secondary, std::move(oracle), opt);
     }
 
     template<bool oracle_>
@@ -493,27 +460,9 @@ private:
         tatami::MaybeOracle<oracle_, Index_> oracle, 
         Index_ block_start, 
         Index_ block_length, 
-        const tatami::Options&) 
+        const tatami::Options& opt) 
     const {
-        if (row) {
-            return std::make_unique<CustomChunkedMatrix_internal::DensifiedBlock<true, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle), 
-                block_start, 
-                block_length
-            );
-        } else {
-            return std::make_unique<CustomChunkedMatrix_internal::DensifiedBlock<false, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle), 
-                block_start, 
-                block_length
-            );
-        }
+        return raw_internal<tatami::DenseExtractor, oracle_, CustomChunkedMatrix_internal::DensifiedBlock>(row, block_length, std::move(oracle), block_start, block_length, opt);
     }
 
     template<bool oracle_>
@@ -521,25 +470,10 @@ private:
         bool row, 
         tatami::MaybeOracle<oracle_, Index_> oracle, 
         tatami::VectorPtr<Index_> indices_ptr, 
-        const tatami::Options&) 
+        const tatami::Options& opt) 
     const {
-        if (row) {
-            return std::make_unique<CustomChunkedMatrix_internal::DensifiedIndex<true, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle), 
-                std::move(indices_ptr)
-            );
-        } else {
-            return std::make_unique<CustomChunkedMatrix_internal::DensifiedIndex<false, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle), 
-                std::move(indices_ptr)
-            );
-        }
+        auto num_indices = indices_ptr->size();
+        return raw_internal<tatami::DenseExtractor, oracle_, CustomChunkedMatrix_internal::DensifiedIndex>(row, num_indices, std::move(oracle), std::move(indices_ptr), opt);
     }
 
 public:
@@ -591,59 +525,20 @@ public:
      *********************/
 private:
     template<bool oracle_>
-    std::unique_ptr<tatami::SparseExtractor<oracle_, Value_, Index_> > sparse_internal(
-        bool row, 
-        tatami::MaybeOracle<oracle_, Index_> oracle, 
-        const tatami::Options& opt) 
-    const {
-        if (row) {
-            return std::make_unique<CustomChunkedMatrix_internal::SparseFull<true, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle), 
-                opt
-            );
-        } else {
-            return std::make_unique<CustomChunkedMatrix_internal::SparseFull<false, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle), 
-                opt
-            );
-        }
+    std::unique_ptr<tatami::SparseExtractor<oracle_, Value_, Index_> > sparse_internal(bool row, tatami::MaybeOracle<oracle_, Index_> oracle, const tatami::Options& opt) const {
+        auto secondary = (row ? coordinator.get_ncol() : coordinator.get_nrow());
+        return raw_internal<tatami::SparseExtractor, oracle_, CustomChunkedMatrix_internal::SparseFull>(row, secondary, std::move(oracle), opt);
     }
 
     template<bool oracle_>
     std::unique_ptr<tatami::SparseExtractor<oracle_, Value_, Index_> > sparse_internal(
-        bool row, 
+        bool row,
         tatami::MaybeOracle<oracle_, Index_> oracle, 
         Index_ block_start, 
         Index_ block_length, 
         const tatami::Options& opt) 
     const {
-        if (row) {
-            return std::make_unique<CustomChunkedMatrix_internal::SparseBlock<true, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle), 
-                block_start, 
-                block_length, 
-                opt
-            );
-        } else {
-            return std::make_unique<CustomChunkedMatrix_internal::SparseBlock<false, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle), 
-                block_start, 
-                block_length, 
-                opt
-            );
-        }
+        return raw_internal<tatami::SparseExtractor, oracle_, CustomChunkedMatrix_internal::SparseBlock>(row, block_length, std::move(oracle), block_start, block_length, opt);
     }
 
     template<bool oracle_>
@@ -653,25 +548,8 @@ private:
         tatami::VectorPtr<Index_> indices_ptr, 
         const tatami::Options& opt) 
     const {
-        if (row) {
-            return std::make_unique<CustomChunkedMatrix_internal::SparseIndex<true, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle),
-                std::move(indices_ptr), 
-                opt
-            );
-        } else {
-            return std::make_unique<CustomChunkedMatrix_internal::SparseIndex<false, oracle_, Value_, Index_, Chunk_> >(
-                coordinator,
-                cache_size_in_elements,
-                require_minimum_cache,
-                std::move(oracle),
-                std::move(indices_ptr), 
-                opt
-            );
-        }
+        auto num_indices = indices_ptr->size();
+        return raw_internal<tatami::SparseExtractor, oracle_, CustomChunkedMatrix_internal::SparseIndex>(row, num_indices, std::move(oracle), std::move(indices_ptr), opt);
     }
 
 public:
