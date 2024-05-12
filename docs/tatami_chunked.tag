@@ -68,16 +68,16 @@
     <namespace>tatami_chunked</namespace>
   </compound>
   <compound kind="file">
-    <name>tatami_chunked.hpp</name>
+    <name>SlabCacheStats.hpp</name>
     <path>tatami_chunked/</path>
-    <filename>tatami__chunked_8hpp.html</filename>
+    <filename>SlabCacheStats_8hpp.html</filename>
+    <class kind="struct">tatami_chunked::SlabCacheStats</class>
     <namespace>tatami_chunked</namespace>
   </compound>
   <compound kind="file">
-    <name>typical_slab_cache.hpp</name>
+    <name>tatami_chunked.hpp</name>
     <path>tatami_chunked/</path>
-    <filename>typical__slab__cache_8hpp.html</filename>
-    <class kind="struct">tatami_chunked::TypicalSlabCacheWorkspace</class>
+    <filename>tatami__chunked_8hpp.html</filename>
     <namespace>tatami_chunked</namespace>
   </compound>
   <compound kind="struct">
@@ -656,45 +656,27 @@
     <templarg>class Blob_</templarg>
   </compound>
   <compound kind="struct">
-    <name>tatami_chunked::TypicalSlabCacheWorkspace</name>
-    <filename>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</filename>
-    <templarg>bool oracle_</templarg>
-    <templarg>bool subset_</templarg>
-    <templarg>typename Index_</templarg>
-    <templarg>class Slab_</templarg>
-    <member kind="typedef">
-      <type>std::conditional&lt; oracle_, typenamestd::conditional&lt; subset_, OracularSubsettedSlabCache&lt; Index_, Index_, Slab_ &gt;, OracularSlabCache&lt; Index_, Index_, Slab_ &gt; &gt;::type, LruSlabCache&lt; Index_, Slab_ &gt; &gt;::type</type>
-      <name>SlabCache</name>
-      <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a6f2a56838876268d68aeb5d7c8ef82eb</anchor>
-      <arglist></arglist>
-    </member>
+    <name>tatami_chunked::SlabCacheStats</name>
+    <filename>structtatami__chunked_1_1SlabCacheStats.html</filename>
     <member kind="function">
       <type></type>
-      <name>TypicalSlabCacheWorkspace</name>
-      <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a37ee1eceb475726fa3164040d3bdf036</anchor>
-      <arglist>(Index_ primary_length, Index_ secondary_length, size_t cache_size_in_elements, bool require_minimum_cache, tatami::MaybeOracle&lt; oracle_, Index_ &gt; oracle)</arglist>
+      <name>SlabCacheStats</name>
+      <anchorfile>structtatami__chunked_1_1SlabCacheStats.html</anchorfile>
+      <anchor>ae78e3fb633f8ec3fd52b4118ca1213d6</anchor>
+      <arglist>(size_t primary_length, size_t secondary_length, size_t cache_size_in_elements, bool require_minimum_cache)</arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
       <name>slab_size_in_elements</name>
-      <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a9dbdcf92bd2886c49cc17c3d1c2f4199</anchor>
+      <anchorfile>structtatami__chunked_1_1SlabCacheStats.html</anchorfile>
+      <anchor>aedb2b8a5f6d2aebe4e3eb951f5f65e7e</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
       <name>num_slabs_in_cache</name>
-      <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a0a3b4426fcfe4d5b5bef07e4dd83b86a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>SlabCache</type>
-      <name>cache</name>
-      <anchorfile>structtatami__chunked_1_1TypicalSlabCacheWorkspace.html</anchorfile>
-      <anchor>a6a786e1be6531f07dd5f8718ca4526d9</anchor>
+      <anchorfile>structtatami__chunked_1_1SlabCacheStats.html</anchorfile>
+      <anchor>ad8934008c5389594f7c227c590b26c82</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -733,7 +715,7 @@
     <class kind="class">tatami_chunked::OracularVariableSlabCache</class>
     <class kind="struct">tatami_chunked::SimpleDenseChunkWrapper</class>
     <class kind="struct">tatami_chunked::SimpleSparseChunkWrapper</class>
-    <class kind="struct">tatami_chunked::TypicalSlabCacheWorkspace</class>
+    <class kind="struct">tatami_chunked::SlabCacheStats</class>
     <member kind="enumeration">
       <type></type>
       <name>OracularSubsetSelection</name>
