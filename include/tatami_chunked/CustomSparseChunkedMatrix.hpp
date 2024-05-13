@@ -452,13 +452,13 @@ public:
      */
     CustomSparseChunkedMatrix(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector<Chunk_> chunks, bool row_major, const CustomSparseChunkedOptions& opt) : 
         coordinator(ChunkDimensionStats<Index_>(mat_nrow, chunk_nrow), ChunkDimensionStats<Index_>(mat_ncol, chunk_ncol), std::move(chunks), row_major),
-        cache_size_in_elements(opt.maximum_cache_size / (sizeof(typename Chunk_::value_type) + sizeof(typename Chunk_::index_type))),
+        cache_size_in_bytes(opt.maximum_cache_size),
         require_minimum_cache(opt.require_minimum_cache)
     {}
 
 private:
     CustomChunkedMatrix_internal::ChunkCoordinator<Index_, true, Chunk_> coordinator;
-    size_t cache_size_in_elements;
+    size_t cache_size_in_bytes;
     bool require_minimum_cache;
 
 public:
@@ -504,7 +504,19 @@ private:
         template<bool, bool, bool, typename, typename, class> class Extractor_, 
         typename ... Args_
     >
-    std::unique_ptr<Interface_<oracle_, Value_, Index_> > raw_internal(bool row, Index_ secondary_length, Args_&& ... args) const {
+    std::unique_ptr<Interface_<oracle_, Value_, Index_> > raw_internal(bool row, Index_ secondary_length, const tatami::Options& opt, Args_&& ... args) const {
+        size_t element_size = 0;
+        if (opt.sparse_extract_value) {
+            element_size += sizeof(typename Chunk_::value_type); 
+        }
+        if (opt.sparse_extract_index) {
+            element_size += sizeof(typename Chunk_::index_type);
+        }
+        if (element_size < 1) {
+            element_size = 1;
+        }
+        size_t cache_size_in_elements = cache_size_in_bytes / element_size;
+
         if (row) {
             SlabCacheStats stats(coordinator.get_chunk_nrow(), secondary_length, cache_size_in_elements, require_minimum_cache);
             if (stats.num_slabs_in_cache > 0) {
@@ -525,7 +537,7 @@ private:
     template<bool oracle_>
     std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > dense_internal(bool row, tatami::MaybeOracle<oracle_, Index_> oracle, const tatami::Options& opt) const {
         auto secondary = (row ? coordinator.get_ncol() : coordinator.get_nrow());
-        return raw_internal<tatami::DenseExtractor, oracle_, CustomChunkedMatrix_internal::DensifiedFull>(row, secondary, std::move(oracle), opt);
+        return raw_internal<tatami::DenseExtractor, oracle_, CustomChunkedMatrix_internal::DensifiedFull>(row, secondary, opt, std::move(oracle), opt);
     }
 
     template<bool oracle_>
@@ -536,7 +548,7 @@ private:
         Index_ block_length, 
         const tatami::Options& opt) 
     const {
-        return raw_internal<tatami::DenseExtractor, oracle_, CustomChunkedMatrix_internal::DensifiedBlock>(row, block_length, std::move(oracle), block_start, block_length, opt);
+        return raw_internal<tatami::DenseExtractor, oracle_, CustomChunkedMatrix_internal::DensifiedBlock>(row, block_length, opt, std::move(oracle), block_start, block_length, opt);
     }
 
     template<bool oracle_>
@@ -547,7 +559,7 @@ private:
         const tatami::Options& opt) 
     const {
         auto num_indices = indices_ptr->size();
-        return raw_internal<tatami::DenseExtractor, oracle_, CustomChunkedMatrix_internal::DensifiedIndex>(row, num_indices, std::move(oracle), std::move(indices_ptr), opt);
+        return raw_internal<tatami::DenseExtractor, oracle_, CustomChunkedMatrix_internal::DensifiedIndex>(row, num_indices, opt, std::move(oracle), std::move(indices_ptr), opt);
     }
 
 public:
@@ -601,7 +613,7 @@ private:
     template<bool oracle_>
     std::unique_ptr<tatami::SparseExtractor<oracle_, Value_, Index_> > sparse_internal(bool row, tatami::MaybeOracle<oracle_, Index_> oracle, const tatami::Options& opt) const {
         auto secondary = (row ? coordinator.get_ncol() : coordinator.get_nrow());
-        return raw_internal<tatami::SparseExtractor, oracle_, CustomChunkedMatrix_internal::SparseFull>(row, secondary, std::move(oracle), opt);
+        return raw_internal<tatami::SparseExtractor, oracle_, CustomChunkedMatrix_internal::SparseFull>(row, secondary, opt, std::move(oracle), opt);
     }
 
     template<bool oracle_>
@@ -612,7 +624,7 @@ private:
         Index_ block_length, 
         const tatami::Options& opt) 
     const {
-        return raw_internal<tatami::SparseExtractor, oracle_, CustomChunkedMatrix_internal::SparseBlock>(row, block_length, std::move(oracle), block_start, block_length, opt);
+        return raw_internal<tatami::SparseExtractor, oracle_, CustomChunkedMatrix_internal::SparseBlock>(row, block_length, opt, std::move(oracle), block_start, block_length, opt);
     }
 
     template<bool oracle_>
@@ -623,7 +635,7 @@ private:
         const tatami::Options& opt) 
     const {
         auto num_indices = indices_ptr->size();
-        return raw_internal<tatami::SparseExtractor, oracle_, CustomChunkedMatrix_internal::SparseIndex>(row, num_indices, std::move(oracle), std::move(indices_ptr), opt);
+        return raw_internal<tatami::SparseExtractor, oracle_, CustomChunkedMatrix_internal::SparseIndex>(row, num_indices, opt, std::move(oracle), std::move(indices_ptr), opt);
     }
 
 public:
