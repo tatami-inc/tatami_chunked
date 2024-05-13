@@ -78,7 +78,7 @@ public:
         final_solo(factory.create())
     {}
 
-    ~DenseBaseSolo() = default;
+    virtual ~DenseBaseSolo() = default;
 
 protected:
     template<typename ... Args_>
@@ -112,7 +112,7 @@ public:
         cache(max_slabs_in_cache)
     {}
 
-    ~DenseBaseMyopic() = default;
+    virtual ~DenseBaseMyopic() = default;
 
 protected:
     template<typename ... Args_>
@@ -143,7 +143,7 @@ public:
         cache(std::move(ora), max_slabs_in_cache)
     {}
 
-    ~DenseBaseOracular() = default;
+    virtual ~DenseBaseOracular() = default;
 
 protected:
     template<typename ... Args_>

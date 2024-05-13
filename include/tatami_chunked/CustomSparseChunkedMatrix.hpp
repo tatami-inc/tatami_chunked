@@ -84,7 +84,7 @@ public:
         final_solo(factory.create())
     {}
 
-    ~SparseBaseSolo() = default;
+    virtual ~SparseBaseSolo() = default;
 
 protected:
     template<typename ... Args_>
@@ -120,7 +120,7 @@ public:
         cache(max_slabs_in_cache) 
     {}
 
-    ~SparseBaseMyopic() = default;
+    virtual ~SparseBaseMyopic() = default;
 
 protected:
     template<typename ... Args_>
@@ -153,7 +153,7 @@ public:
         cache(std::move(ora), max_slabs_in_cache) 
     {}
 
-    ~SparseBaseOracular() = default;
+    virtual ~SparseBaseOracular() = default;
 
 protected:
     template<typename ... Args_>
