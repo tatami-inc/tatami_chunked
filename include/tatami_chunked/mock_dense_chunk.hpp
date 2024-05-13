@@ -209,8 +209,8 @@ public:
  * Mock a simple dense chunk for use inside a `CustomDenseChunkedMatrix`.
  * Each chunk should represent a 2-dimensional array of numeric values.
  * The interface is "simple" as extraction of any data involves realization of the entire blob along the primary dimension
- * (i.e., the dimension used to create instances of the various `tatami::DenseExtractor` classes),
- * with no optimization for subsets of interest along that dimension.
+ * (i.e., the dimension being iterated over/indexed into for data extraction from the matrix).
+ * Check out the `MockSubsettedDenseChunk` class for optimizations when only a subset of primary dimension elements are of interest.
  */
 struct MockSimpleDenseChunk {
     /**
@@ -374,7 +374,7 @@ public:
  * Mock a subsettable dense chunk for use inside a `CustomDenseChunkedMatrix`.
  * Each chunk should represent a (possible compressed) 2-dimensional array of numeric values.
  * The interface is smarter as it only extracts elements of interest along the primary dimension
- * (i.e., the dimension used to create instances of the various `tatami::DenseExtractor` classes).
+ * (i.e., the dimension being iterated over/indexed into for data extraction from the matrix).
  * The elements of interest may be either as a contiguous block or a indexed subset,
  * as predicted for each chunk from the `OracularSubsettedSlabCache`.
  * This provides some opportunities for optimization if the chunk can be partially read.
