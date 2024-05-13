@@ -50,17 +50,19 @@ struct DenseBaseSolo {
 protected:
     const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator;
     typename Chunk_::Workspace chunk_workspace;
-    typedef typename ChunkCoordinator<Index_, false, Chunk_, int>::DenseSlab Slab;
 
     tatami::MaybeOracle<oracle_, Index_> oracle;
     typename std::conditional<oracle_, size_t, bool>::type counter = 0;
+
+    DenseSlabFactory<typename Chunk_::value_type> factory;
+    typedef typename decltype(factory)::Slab Slab;
 
     // These two instances are not fully allocated Slabs; rather, tmp_solo just
     // holds the content for a single chunk, while final_solo holds the content
     // across chunks but only for the requested dimension element. Both cases
     // are likely to be much smaller than a full Slab, so we're already more
     // memory-efficient than trying to use num_slabs_in_cache = 1.
-    Slab tmp_solo;
+    DenseSingleWorkspace<typename Chunk_::value_type> tmp_solo;
     Slab final_solo;
 
 public:
@@ -71,8 +73,9 @@ public:
         Index_ secondary_length) :
         coordinator(coordinator),
         oracle(std::move(ora)),
+        factory(1, secondary_length, 1),
         tmp_solo(static_cast<size_t>(coordinator.get_chunk_nrow()) * static_cast<size_t>(coordinator.get_chunk_ncol())),
-        final_solo(secondary_length)
+        final_solo(factory.create())
     {}
 
     ~DenseBaseSolo() = default;
@@ -92,7 +95,10 @@ struct DenseBaseMyopic {
 protected:
     const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator;
     typename Chunk_::Workspace chunk_workspace;
-    typedef typename ChunkCoordinator<Index_, false, Chunk_, int>::DenseSlab Slab;
+
+    DenseSlabFactory<typename Chunk_::value_type> factory;
+    typedef typename decltype(factory)::Slab Slab;
+
     LruSlabCache<Index_, Slab> cache;
 
 public:
@@ -100,9 +106,10 @@ public:
         const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator,
         size_t max_slabs_in_cache, 
         [[maybe_unused]] tatami::MaybeOracle<false, Index_> ora, // for consistency with the other base classes
-        [[maybe_unused]] Index_ secondary_length) : // ditto
+        Index_ secondary_length) :
         coordinator(coordinator),
-        cache(max_slabs_in_cache) 
+        factory(coordinator.template get_primary_chunkdim<accrow_>(), secondary_length, max_slabs_in_cache),
+        cache(max_slabs_in_cache)
     {}
 
     ~DenseBaseMyopic() = default;
@@ -110,7 +117,7 @@ public:
 protected:
     template<typename ... Args_>
     std::pair<const Slab*, Index_> fetch_raw(Index_ i, Args_&& ... args) {
-        return this->coordinator.template fetch_myopic<accrow_>(i, std::forward<Args_>(args)..., chunk_workspace, cache);
+        return this->coordinator.template fetch_myopic<accrow_>(i, std::forward<Args_>(args)..., chunk_workspace, cache, factory);
     }
 };
 
@@ -119,7 +126,10 @@ struct DenseBaseOracular {
 protected:
     const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator;
     typename Chunk_::Workspace chunk_workspace;
-    typedef typename ChunkCoordinator<Index_, false, Chunk_, int>::DenseSlab Slab;
+
+    DenseSlabFactory<typename Chunk_::value_type> factory;
+    typedef typename decltype(factory)::Slab Slab;
+
     typename std::conditional<Chunk_::use_subset, OracularSubsettedSlabCache<Index_, Index_, Slab>, OracularSlabCache<Index_, Index_, Slab> >::type cache;
 
 public:
@@ -127,9 +137,10 @@ public:
         const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator,
         size_t max_slabs_in_cache,
         tatami::MaybeOracle<true, Index_> ora, 
-        [[maybe_unused]] Index_ secondary_length) : // for consistency with the other base classes
+        Index_ secondary_length) :
         coordinator(coordinator), 
-        cache(std::move(ora), max_slabs_in_cache) 
+        factory(coordinator.template get_primary_chunkdim<accrow_>(), secondary_length, max_slabs_in_cache),
+        cache(std::move(ora), max_slabs_in_cache)
     {}
 
     ~DenseBaseOracular() = default;
@@ -137,7 +148,7 @@ public:
 protected:
     template<typename ... Args_>
     std::pair<const Slab*, Index_> fetch_raw([[maybe_unused]] Index_ i, Args_&& ... args) {
-        return this->coordinator.template fetch_oracular<accrow_>(std::forward<Args_>(args)..., chunk_workspace, cache);
+        return this->coordinator.template fetch_oracular<accrow_>(std::forward<Args_>(args)..., chunk_workspace, cache, factory);
     }
 };
 
@@ -156,7 +167,7 @@ using DenseBase = typename std::conditional<solo_,
 
 template<class Slab_, typename Index_, typename Value_>
 const Value_* process_dense_slab(const std::pair<const Slab_*, Index_>& fetched, Value_* buffer, size_t secondary_length) {
-    auto ptr = fetched.first->data() + static_cast<size_t>(fetched.second) * secondary_length; // cast to size_t to avoid overflow.
+    auto ptr = fetched.first->data + static_cast<size_t>(fetched.second) * secondary_length; // cast to size_t to avoid overflow.
     std::copy_n(ptr, secondary_length, buffer);
     return buffer;
 }

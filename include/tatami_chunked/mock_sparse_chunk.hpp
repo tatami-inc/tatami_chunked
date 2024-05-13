@@ -107,29 +107,49 @@ private:
         Index_ secondary_end, 
         Index_ secondary_chunkdim,
         Workspace<value_type, index_type>& work, 
-        std::vector<value_type>& current_values, 
-        std::vector<index_type>& current_indices,
+        const std::vector<value_type*>& output_values, 
+        const std::vector<index_type*>& output_indices,
+        Index_* output_number,
         index_type shift)
     const {
-        auto start = work.indptrs[p], end = work.indptrs[p + 1];
+        size_t start = work.indptrs[p], end = work.indptrs[p + 1];
         if (start >= end) {
             return;
         }
 
         refine_start_and_end(start, end, secondary_start, secondary_end, secondary_chunkdim, work.indices);
 
+        auto& current_number = output_number[p];
+        const bool needs_value = !output_values.empty();
+        auto vptr = needs_value ? output_values[p] + current_number : NULL;
+        const bool needs_index = !output_indices.empty();
+        auto iptr = needs_index ? output_indices[p] + current_number : NULL;
+
         if constexpr(is_block_) {
-            current_values.insert(current_values.end(), work.values.begin() + start, work.values.begin() + end);
-            for (size_t i = start; i < end; ++i) {
-                current_indices.push_back(work.indices[i] + shift);
+            if (needs_value) {
+                std::copy(work.values.begin() + start, work.values.begin() + end, vptr);
             }
+            if (needs_index) {
+                for (size_t i = start; i < end; ++i, ++iptr) {
+                    *iptr = work.indices[i] + shift;
+                }
+            }
+            current_number += end - start;
+
         } else {
             // Assumes that work.remap has been properly configured, see configure_remap().
             for (size_t i = start; i < end; ++i) {
                 Index_ target = work.indices[i];
                 if (work.remap[target]) {
-                    current_values.push_back(work.values[i]);
-                    current_indices.push_back(target + shift);
+                    if (needs_value) {
+                        *vptr = work.values[i];
+                        ++vptr;
+                    }
+                    if (needs_index) {
+                        *iptr = target + shift;
+                        ++iptr;
+                    }
+                    ++current_number;
                 }
             }
         }
@@ -142,8 +162,9 @@ private:
         Index_ primary_end, 
         Index_ primary_chunkdim,
         Workspace<value_type, index_type>& work, 
-        std::vector<std::vector<value_type> >& output_values, 
-        std::vector<std::vector<index_type> >& output_indices,
+        const std::vector<value_type*>& output_values, 
+        const std::vector<index_type*>& output_indices,
+        Index_* output_number,
         index_type shift)
     const {
         auto start = work.indptrs[s], end = work.indptrs[s + 1];
@@ -153,19 +174,35 @@ private:
 
         refine_start_and_end(start, end, primary_start, primary_end, primary_chunkdim, work.indices);
 
+        bool needs_value = !output_values.empty();
+        bool needs_index = !output_indices.empty();
+
         if constexpr(is_block_) {
             for (size_t i = start; i < end; ++i) {
                 auto p = work.indices[i];
-                output_values[p].push_back(work.values[i]);
-                output_indices[p].push_back(s + shift);
+                auto& num = output_number[p];
+                if (needs_value) {
+                    output_values[p][num] = work.values[i];
+                }
+                if (needs_index) {
+                    output_indices[p][num] = s + shift;
+                }
+                ++num;
             }
+
         } else {
             // Assumes that work.remap has been properly configured, see configure_remap().
             for (size_t i = start; i < end; ++i) {
                 Index_ target = work.indices[i];
                 if (work.remap[target]) {
-                    output_values[target].push_back(work.values[i]);
-                    output_indices[target].push_back(s + shift);
+                    auto& num = output_number[target];
+                    if (needs_value) {
+                        output_values[target][num] = work.values[i];
+                    }
+                    if (needs_index) {
+                        output_indices[target][num] = s + shift;
+                    }
+                    ++num;
                 }
             }
         }
@@ -179,8 +216,9 @@ public:
         Index_ secondary_start,
         Index_ secondary_length,
         Workspace<value_type, index_type>& work,
-        std::vector<std::vector<value_type> >& output_values,
-        std::vector<std::vector<index_type> >& output_indices,
+        const std::vector<value_type*>& output_values, 
+        const std::vector<index_type*>& output_indices,
+        Index_* output_number,
         index_type shift)
     const {
         chunk.inflate(work.values, work.indices, work.indptrs);
@@ -190,12 +228,12 @@ public:
         if constexpr(Blob_::row_major == accrow_) {
             Index_ secondary_chunkdim = get_secondary_chunkdim<accrow_>();
             for (Index_ p = primary_start; p < primary_end; ++p) {
-                fill_primary<true>(p, secondary_start, secondary_end, secondary_chunkdim, work, output_values[p], output_indices[p], shift);
+                fill_primary<true>(p, secondary_start, secondary_end, secondary_chunkdim, work, output_values, output_indices, output_number, shift);
             }
         } else {
             Index_ primary_chunkdim = get_primary_chunkdim<accrow_>();
             for (Index_ s = secondary_start; s < secondary_end; ++s) {
-                fill_secondary<true>(s, primary_start, primary_end, primary_chunkdim, work, output_values, output_indices, shift);
+                fill_secondary<true>(s, primary_start, primary_end, primary_chunkdim, work, output_values, output_indices, output_number, shift);
             }
         }
     }
@@ -206,8 +244,9 @@ public:
         Index_ primary_length,
         const std::vector<Index_>& secondary_indices,
         Workspace<value_type, index_type>& work,
-        std::vector<std::vector<value_type> >& output_values,
-        std::vector<std::vector<index_type> >& output_indices,
+        const std::vector<value_type*>& output_values, 
+        const std::vector<index_type*>& output_indices,
+        Index_* output_number,
         index_type shift)
     const {
         chunk.inflate(work.values, work.indices, work.indptrs);
@@ -221,14 +260,14 @@ public:
 
             configure_remap(work, secondary_indices, secondary_chunkdim);
             for (Index_ p = primary_start; p < primary_end; ++p) {
-                fill_primary<false>(p, secondary_start, secondary_end, secondary_chunkdim, work, output_values[p], output_indices[p], shift);
+                fill_primary<false>(p, secondary_start, secondary_end, secondary_chunkdim, work, output_values, output_indices, output_number, shift);
             }
             reset_remap(work, secondary_indices);
 
         } else {
             Index_ primary_chunkdim = get_primary_chunkdim<accrow_>();
             for (auto s : secondary_indices) {
-                fill_secondary<true>(s, primary_start, primary_end, primary_chunkdim, work, output_values, output_indices, shift);
+                fill_secondary<true>(s, primary_start, primary_end, primary_chunkdim, work, output_values, output_indices, output_number, shift);
             }
         }
     }
@@ -240,8 +279,9 @@ public:
         Index_ secondary_start,
         Index_ secondary_length,
         Workspace<value_type, index_type>& work,
-        std::vector<std::vector<value_type> >& output_values,
-        std::vector<std::vector<index_type> >& output_indices,
+        const std::vector<value_type*>& output_values, 
+        const std::vector<index_type*>& output_indices,
+        Index_* output_number,
         index_type shift)
     const {
         chunk.inflate(work.values, work.indices, work.indptrs);
@@ -250,7 +290,7 @@ public:
         if constexpr(Blob_::row_major == accrow_) {
             Index_ secondary_chunkdim = get_secondary_chunkdim<accrow_>();
             for (auto p : primary_indices) {
-                fill_primary<true>(p, secondary_start, secondary_end, secondary_chunkdim, work, output_values[p], output_indices[p], shift);
+                fill_primary<true>(p, secondary_start, secondary_end, secondary_chunkdim, work, output_values, output_indices, output_number, shift);
             }
 
         } else {
@@ -261,7 +301,7 @@ public:
 
             configure_remap(work, primary_indices, primary_chunkdim);
             for (Index_ s = secondary_start; s < secondary_end; ++s) {
-                fill_secondary<false>(s, primary_start, primary_end, primary_chunkdim, work, output_values, output_indices, shift);
+                fill_secondary<false>(s, primary_start, primary_end, primary_chunkdim, work, output_values, output_indices, output_number, shift);
             }
             reset_remap(work, primary_indices);
         }
@@ -272,8 +312,9 @@ public:
         const std::vector<Index_>& primary_indices,
         const std::vector<Index_>& secondary_indices,
         Workspace<value_type, index_type>& work,
-        std::vector<std::vector<value_type> >& output_values,
-        std::vector<std::vector<index_type> >& output_indices,
+        const std::vector<value_type*>& output_values, 
+        const std::vector<index_type*>& output_indices,
+        Index_* output_number,
         index_type shift)
     const {
         chunk.inflate(work.values, work.indices, work.indptrs);
@@ -286,7 +327,7 @@ public:
 
             configure_remap(work, secondary_indices, secondary_chunkdim);
             for (auto p : primary_indices) {
-                fill_primary<false>(p, secondary_start, secondary_end, secondary_chunkdim, work, output_values[p], output_indices[p], shift);
+                fill_primary<false>(p, secondary_start, secondary_end, secondary_chunkdim, work, output_values, output_indices, output_number, shift);
             }
             reset_remap(work, secondary_indices);
 
@@ -298,7 +339,7 @@ public:
 
             configure_remap(work, primary_indices, primary_chunkdim);
             for (auto s : secondary_indices) {
-                fill_secondary<false>(s, primary_start, primary_end, primary_chunkdim, work, output_values, output_indices, shift);
+                fill_secondary<false>(s, primary_start, primary_end, primary_chunkdim, work, output_values, output_indices, output_number, shift);
             }
             reset_remap(work, primary_indices);
         }
@@ -350,9 +391,9 @@ public:
  *
  * Mock a simple sparse chunk for use inside a `CustomSparseChunkedMatrix`.
  * Each chunk should represent a 2-dimensional array of numeric values.
- * The interface is "simple" as extraction of any data involves realization of the entire blob along the primary dimension
- * (i.e., the dimension used to create instances of the various `tatami::SparseExtractor` classes),
- * with no optimization for subsets of interest along that dimension.
+ * The interface is "simple" as extraction of any data involves realization of the entire chunk's contents along the primary dimension
+ * (i.e., the dimension being iterated over/indexed into for data extraction from the matrix).
+ * Check out the `MockSubsettedSparseChunk` class for optimizations when only a subset of primary dimension elements are of interest.
  */
 struct MockSimpleSparseChunk {
     /**
@@ -415,17 +456,23 @@ public:
      * If `accrow_ = true`, this is the number of columns, otherwise it is the number of rows.
      * This is guaranteed to be positive.
      * @param work Re-usable workspace for extraction from one or more chunks.
-     * @param[out] output_values Vector of vectors in which to store the output values.
-     * The outer vector is of length no less than `primary_start + primary_length`; each inner vector corresponds to an element of the primary dimension.
-     * @param[out] output_indices Vector of vectors in which to store the output indices.
-     * The outer vector is of length no less than `primary_start + primary_length`; each inner vector corresponds to an element of the primary dimension.
+     * @param[out] output_values Vector of pointers in which to store the values of non-zero elements.
+     * This has length equal to the extent of the primary dimension for this chunk.
+     * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
+     * Alternatively, this vector may be empty, in which case no values should be stored.
+     * @param[out] output_indices Vector of vectors in which to store the indices of the non-zero elements along the secondary dimension.
+     * This has length equal to the extent of the primary dimension for this chunk.
+     * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
+     * Alternatively, this vector may be empty, in which case no indices should be stored.
+     * @param[in,out] output_number Pointer to an array of length equal to the extent of the primary dimension.
+     * Each entry `i` specifies the number of non-zero elements that are already present in `output_values[i]` and `output_indices[i]`.
      * @param shift Shift to be added to the chunk's reported indices when storing them in `output_indices`.
      *
      * If `accrow_ = true`, we would extract data for all rows and a block of columns `[secondary_start, secondary_start + secondary_length)`;
      * conversely, if `accrow_ = false`, we would extract data for all columns and a block of rows.
-     * For a non-zero entry in primary dimension index `p`, the value from the chunk should be appended to `output_values[p]`.
-     * The secondary index for this non-zero entry should be increased by `shift` and then appended to `output_indices[p]`.
-     * The method should maintain a strictly increasing order among the appended secondary indices.
+     * Given a primary dimension element `p`, the values of non-zero elements from the requested secondary block should be stored at `output_values[p] + output_number[p]`.
+     * The secondary indices for those non-zero elements should be increased by `shift` and stored at `output_indices[p] + output_number[p]` in ascending order.
+     * `output_number[p]` should then be increased by the number of non-zero entries stored in this manner.
      * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
@@ -436,8 +483,9 @@ public:
         Index_ secondary_start, 
         Index_ secondary_length, 
         Workspace& work, 
-        std::vector<std::vector<value_type> >& output_values,
-        std::vector<std::vector<index_type> >& output_indices,
+        const std::vector<value_type*>& output_values,
+        const std::vector<index_type*>& output_indices,
+        Index_* output_number,
         index_type shift)
     const {
         core.template extract<accrow_, Index_>(
@@ -448,6 +496,7 @@ public:
             work.work, 
             output_values, 
             output_indices, 
+            output_number,
             shift
         );
     }
@@ -460,17 +509,23 @@ public:
      * If `accrow_ = true`, these are column indices, otherwise these are row indices.
      * This is guaranteed to be non-empty with unique and sorted indices.
      * @param work Re-usable workspace for extraction from one or more chunks.
-     * @param[out] output_values Vector of vectors in which to store the output values.
-     * The outer vector is of length no less than `primary_start + primary_length`; each inner vector corresponds to an element of the primary dimension.
-     * @param[out] output_indices Vector of vectors in which to store the output indices.
-     * The outer vector is of length no less than `primary_start + primary_length`; each inner vector corresponds to an element of the primary dimension.
+     * @param[out] output_values Vector of pointers in which to store the values of non-zero elements.
+     * This has length equal to the extent of the primary dimension for this chunk.
+     * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
+     * Alternatively, this vector may be empty, in which case no values should be stored.
+     * @param[out] output_indices Vector of vectors in which to store the indices of the non-zero elements along the secondary dimension.
+     * This has length equal to the extent of the primary dimension for this chunk.
+     * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
+     * Alternatively, this vector may be empty, in which case no indices should be stored.
+     * @param[in,out] output_number Pointer to an array of length equal to the extent of the primary dimension.
+     * Each entry `i` specifies the number of non-zero elements that are already present in `output_values[i]` and `output_indices[i]`.
      * @param shift Shift to be added to the chunk's reported indices when storing them in `output_indices`.
      *
      * If `accrow_ = true`, we would extract all rows and a subset of columns in `secondary_indices`;
      * conversely, if `accrow_ = false`, we would extract data for all columns and a subset of rows.
-     * For a non-zero entry in primary dimension index `p`, the value from the chunk should be appended to `output_values[p]`.
-     * The secondary index for this non-zero entry should be increased by `shift` and then appended to `output_indices[p]`.
-     * The method should maintain a strictly increasing order among the appended secondary indices.
+     * Given a primary dimension element `p`, the values of non-zero elements from the requested secondary subset should be stored at `output_values[p] + output_number[p]`.
+     * The secondary indices for those non-zero elements should be increased by `shift` and stored at `output_indices[p] + output_number[p]` in ascending order.
+     * `output_number[p]` should then be increased by the number of non-zero entries stored in this manner.
      * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
@@ -480,8 +535,9 @@ public:
     void extract(
         const std::vector<Index_>& secondary_indices,
         Workspace& work, 
-        std::vector<std::vector<value_type> >& output_values,
-        std::vector<std::vector<index_type> >& output_indices,
+        const std::vector<value_type*>& output_values,
+        const std::vector<index_type*>& output_indices,
+        Index_* output_number,
         index_type shift)
     const {
         core.template extract<accrow_, Index_>(
@@ -491,6 +547,7 @@ public:
             work.work, 
             output_values, 
             output_indices,
+            output_number,
             shift
         );
     }
@@ -549,8 +606,9 @@ public:
         Index_ secondary_start, 
         Index_ secondary_length, 
         Workspace& work, 
-        std::vector<std::vector<value_type> >& output_values,
-        std::vector<std::vector<index_type> >& output_indices,
+        const std::vector<value_type*>& output_values,
+        const std::vector<index_type*>& output_indices,
+        Index_* output_number,
         index_type shift)
     const {
         core.template extract<accrow_, Index_>(
@@ -561,6 +619,7 @@ public:
             work, 
             output_values, 
             output_indices, 
+            output_number,
             shift
         );
     }
@@ -569,8 +628,9 @@ public:
     void extract(
         const std::vector<Index_>& secondary_indices,
         Workspace& work, 
-        std::vector<std::vector<value_type> >& output_values,
-        std::vector<std::vector<index_type> >& output_indices,
+        const std::vector<value_type*>& output_values,
+        const std::vector<index_type*>& output_indices,
+        Index_* output_number,
         index_type shift)
     const {
         core.template extract<accrow_, Index_>(
@@ -580,6 +640,7 @@ public:
             work, 
             output_values, 
             output_indices,
+            output_number,
             shift
         );
     }
@@ -594,7 +655,7 @@ public:
  * Mock a subsettable sparse chunk for use inside a `CustomSparseChunkedMatrix`.
  * Each chunk should represent a (possible compressed) 2-dimensional array of numeric values.
  * The interface is smarter as it only extracts elements of interest along the primary dimension
- * (i.e., the dimension used to create instances of the various `tatami::SparseExtractor` classes).
+ * (i.e., the dimension being iterated over/indexed into for data extraction from the matrix).
  * The elements of interest may be either as a contiguous block or a indexed subset,
  * as predicted for each chunk from the `OracularSubsettedSlabCache`.
  * This provides some opportunities for optimization if the chunk can be partially read.
@@ -664,17 +725,23 @@ public:
      * If `accrow_ = true`, this is the number of columns, otherwise it is the number of rows.
      * This is guaranteed to be positive.
      * @param work Re-usable workspace for extraction from one or more chunks.
-     * @param[out] output_values Vector of vectors in which to store the output values.
-     * The outer vector is of length no less than `primary_start + primary_length`; each inner vector corresponds to an element of the primary dimension.
-     * @param[out] output_indices Vector of vectors in which to store the output indices.
-     * The outer vector is of length no less than `primary_start + primary_length`; each inner vector corresponds to an element of the primary dimension.
+     * @param[out] output_values Vector of pointers in which to store the values of non-zero elements.
+     * This has length equal to the extent of the primary dimension for this chunk.
+     * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
+     * Alternatively, this vector may be empty, in which case no values should be stored.
+     * @param[out] output_indices Vector of vectors in which to store the indices of the non-zero elements along the secondary dimension.
+     * This has length equal to the extent of the primary dimension for this chunk.
+     * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
+     * Alternatively, this vector may be empty, in which case no indices should be stored.
+     * @param[in,out] output_number Pointer to an array of length equal to the extent of the primary dimension.
+     * Each entry `i` specifies the number of non-zero elements that are already present in `output_values[i]` and `output_indices[i]`.
      * @param shift Shift to be added to the chunk's reported indices when storing them in `output_indices`.
      *
      * If `accrow_ = true`, we would extract a block of rows `[primary_start, primary_start + length)` and a block of columns `[secondary_start, secondary_start + secondary_length)`;
-     * conversely, if `accrow_ = false`, we would extract a block of columns as the primary and the block of rows as the secondary.
-     * For a non-zero entry in primary dimension index `p`, the value from the chunk should be appended to `output_values[p]`.
-     * The secondary index for this non-zero entry should be increased by `shift` and then appended to `output_indices[p]`.
-     * The method should maintain a strictly increasing order among the appended secondary indices.
+     * conversely, if `accrow_ = false`, we would extract a block of columns from the `primary_*` arguments and the block of rows from the `secondary_*`arguments. 
+     * Given a primary dimension element `p`, the values of non-zero elements from the requested secondary block should be stored at `output_values[p] + output_number[p]`.
+     * The secondary indices for those non-zero elements should be increased by `shift` and stored at `output_indices[p] + output_number[p]` in ascending order.
+     * `output_number[p]` should then be increased by the number of non-zero entries stored in this manner.
      * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
@@ -687,8 +754,9 @@ public:
         Index_ secondary_start, 
         Index_ secondary_length, 
         Workspace& work, 
-        std::vector<std::vector<value_type> >& output_values,
-        std::vector<std::vector<index_type> >& output_indices,
+        const std::vector<value_type*>& output_values,
+        const std::vector<index_type*>& output_indices,
+        Index_* output_number,
         index_type shift)
     const {
         core.template extract<accrow_>(
@@ -699,6 +767,7 @@ public:
             work.work,
             output_values,
             output_indices,
+            output_number,
             shift
         );
     }
@@ -716,17 +785,23 @@ public:
      * If `accrow_ = true`, these are column indices, otherwise these are row indices.
      * This is guaranteed to be non-empty with unique and sorted indices.
      * @param work Re-usable workspace for extraction from one or more chunks.
-     * @param[out] output_values Vector of vectors in which to store the output values.
-     * The outer vector is of length no less than `primary_start + primary_length`; each inner vector corresponds to an element of the primary dimension.
-     * @param[out] output_indices Vector of vectors in which to store the output indices.
-     * The outer vector is of length no less than `primary_start + primary_length`; each inner vector corresponds to an element of the primary dimension.
+     * @param[out] output_values Vector of pointers in which to store the values of non-zero elements.
+     * This has length equal to the extent of the primary dimension for this chunk.
+     * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
+     * Alternatively, this vector may be empty, in which case no values should be stored.
+     * @param[out] output_indices Vector of vectors in which to store the indices of the non-zero elements along the secondary dimension.
+     * This has length equal to the extent of the primary dimension for this chunk.
+     * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
+     * Alternatively, this vector may be empty, in which case no indices should be stored.
+     * @param[in,out] output_number Pointer to an array of length equal to the extent of the primary dimension.
+     * Each entry `i` specifies the number of non-zero elements that are already present in `output_values[i]` and `output_indices[i]`.
      * @param shift Shift to be added to the chunk's reported indices when storing them in `output_indices`.
      *
      * If `accrow_ = true`, we would extract a block of rows `[primary_start, primary_start + length)` and a subset of columns in `secondary_indices`;
-     * conversely, if `accrow_ = false`, we would extract a block of columns as the primary and a subset of rows instead.
-     * For a non-zero entry in primary dimension index `p`, the value from the chunk should be appended to `output_values[p]`.
-     * The secondary index for this non-zero entry should be increased by `shift` and then appended to `output_indices[p]`.
-     * The method should maintain a strictly increasing order among the appended secondary indices.
+     * conversely, if `accrow_ = false`, we would extract a block of columns from the `primary_*` arguments and a subset of rows from `secondary_indices`.
+     * Given a primary dimension element `p`, the values of non-zero elements from the requested secondary subset should be stored at `output_values[p] + output_number[p]`.
+     * The secondary indices for those non-zero elements should be increased by `shift` and stored at `output_indices[p] + output_number[p]` in ascending order.
+     * `output_number[p]` should then be increased by the number of non-zero entries stored in this manner.
      * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
@@ -738,8 +813,9 @@ public:
         Index_ primary_length, 
         const std::vector<Index_>& secondary_indices, 
         Workspace& work, 
-        std::vector<std::vector<value_type> >& output_values,
-        std::vector<std::vector<index_type> >& output_indices,
+        const std::vector<value_type*>& output_values,
+        const std::vector<index_type*>& output_indices,
+        Index_* output_number,
         index_type shift)
     const {
         core.template extract<accrow_>(
@@ -749,6 +825,7 @@ public:
             work.work, 
             output_values, 
             output_indices, 
+            output_number,
             shift
         );
     }
@@ -767,17 +844,23 @@ public:
      * If `accrow_ = true`, this is the number of columns, otherwise it is the number of rows.
      * This is guaranteed to be positive.
      * @param work Re-usable workspace for extraction from one or more chunks.
-     * @param[out] output_values Vector of vectors in which to store the output values.
-     * The outer vector is of length no less than `primary_indices.back() + 1`; each inner vector corresponds to an element of the primary dimension.
-     * @param[out] output_indices Vector of vectors in which to store the output indices.
-     * The outer vector is of length no less than `primary_indices.back() + 1`; each inner vector corresponds to an element of the primary dimension.
+     * @param[out] output_values Vector of pointers in which to store the values of non-zero elements.
+     * This has length equal to the extent of the primary dimension for this chunk.
+     * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
+     * Alternatively, this vector may be empty, in which case no values should be stored.
+     * @param[out] output_indices Vector of vectors in which to store the indices of the non-zero elements along the secondary dimension.
+     * This has length equal to the extent of the primary dimension for this chunk.
+     * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
+     * Alternatively, this vector may be empty, in which case no indices should be stored.
+     * @param[in,out] output_number Pointer to an array of length equal to the extent of the primary dimension.
+     * Each entry `i` specifies the number of non-zero elements that are already present in `output_values[i]` and `output_indices[i]`.
      * @param shift Shift to be added to the chunk's reported indices when storing them in `output_indices`.
      *
      * If `accrow_ = true`, we would extract a subset of rows in `primary_indices` and a block of columns `[secondary_start, secondary_start + secondary_length)`,
-     * conversely, if `accrow_ = false`, we would extract a subset of columns as the primary and the block of rows as the secondary.
-     * For a non-zero entry in primary dimension index `p`, the value from the chunk should be appended to `output_values[p]`.
-     * The secondary index for this non-zero entry should be increased by `shift` and then appended to `output_indices[p]`.
-     * The method should maintain a strictly increasing order among the appended secondary indices.
+     * conversely, if `accrow_ = false`, we would extract a subset of columns from the `primary_*` arguments and the block of rows from the `secondary_*` arguments.
+     * Given a primary dimension element `p`, the values of non-zero elements from the requested secondary block should be stored at `output_values[p] + output_number[p]`.
+     * The secondary indices for those non-zero elements should be increased by `shift` and stored at `output_indices[p] + output_number[p]` in ascending order.
+     * `output_number[p]` should then be increased by the number of non-zero entries stored in this manner.
      * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
@@ -789,8 +872,9 @@ public:
         Index_ secondary_start, 
         Index_ secondary_length, 
         Workspace& work, 
-        std::vector<std::vector<value_type> >& output_values,
-        std::vector<std::vector<index_type> >& output_indices,
+        const std::vector<value_type*>& output_values,
+        const std::vector<index_type*>& output_indices,
+        Index_* output_number,
         index_type shift)
     const {
         core.template extract<accrow_>(
@@ -800,6 +884,7 @@ public:
             work.work, 
             output_values,
             output_indices,
+            output_number,
             shift
         );
     }
@@ -815,17 +900,23 @@ public:
      * If `accrow_ = true`, these are column indices, otherwise these are row indices.
      * This is guaranteed to be non-empty with unique and sorted indices.
      * @param work Re-usable workspace for extraction from one or more chunks.
-     * @param[out] output_values Vector of vectors in which to store the output values.
-     * The outer vector is of length no less than `primary_indices.back() + 1`; each inner vector corresponds to an element of the primary dimension.
-     * @param[out] output_indices Vector of vectors in which to store the output indices.
-     * The outer vector is of length no less than `primary_indices.back() + 1`; each inner vector corresponds to an element of the primary dimension.
+     * @param[out] output_values Vector of pointers in which to store the values of non-zero elements.
+     * This has length equal to the extent of the primary dimension for this chunk.
+     * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
+     * Alternatively, this vector may be empty, in which case no values should be stored.
+     * @param[out] output_indices Vector of vectors in which to store the indices of the non-zero elements along the secondary dimension.
+     * This has length equal to the extent of the primary dimension for this chunk.
+     * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
+     * Alternatively, this vector may be empty, in which case no indices should be stored.
+     * @param[in,out] output_number Pointer to an array of length equal to the extent of the primary dimension.
+     * Each entry `i` specifies the number of non-zero elements that are already present in `output_values[i]` and `output_indices[i]`.
      * @param shift Shift to be added to the chunk's reported indices when storing them in `output_indices`.
      *
-     * If `accrow_ = true`, we would extract a subset of rows in `primary_indices` and a subset columns in `secondary_indices`.
-     * conversely, if `accrow_ = false`, we would extract a subset of columns as the primary and the subset of rows as the secondary.
-     * For a non-zero entry in primary dimension index `p`, the value from the chunk should be appended to `output_values[p]`.
-     * The secondary index for this non-zero entry should be increased by `shift` and then appended to `output_indices[p]`.
-     * The method should maintain a strictly increasing order among the appended secondary indices.
+     * If `accrow_ = true`, we would extract a subset of rows in `primary_indices` and a subset of columns in `secondary_indices`.
+     * conversely, if `accrow_ = false`, we would extract a subset of columns in `primary_indices` and the subset of rows in `secondary_indices`.
+     * Given a primary dimension element `p`, the values of non-zero elements from the requested secondary subset should be stored at `output_values[p] + output_number[p]`.
+     * The secondary indices for those non-zero elements should be increased by `shift` and stored at `output_indices[p] + output_number[p]` in ascending order.
+     * `output_number[p]` should then be increased by the number of non-zero entries stored in this manner.
      * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
      * Note that implementions of this method do not need to have the exact same template arguments as shown here.
@@ -836,16 +927,18 @@ public:
         const std::vector<Index_>& primary_indices, 
         const std::vector<Index_>& secondary_indices, 
         Workspace& work, 
-        std::vector<std::vector<value_type> >& output_values,
-        std::vector<std::vector<index_type> >& output_indices,
+        const std::vector<value_type*>& output_values,
+        const std::vector<index_type*>& output_indices,
+        Index_* output_number,
         index_type shift)
     const {
         core.template extract<accrow_>(
             primary_indices, 
             secondary_indices, 
             work.work, 
-            output_values,
-            output_indices,
+            output_values, 
+            output_indices, 
+            output_number,
             shift 
         );
     }
