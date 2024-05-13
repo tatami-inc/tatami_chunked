@@ -459,13 +459,11 @@ public:
      * @param[out] output_values Vector of pointers in which to store the values of non-zero elements.
      * This has length equal to the extent of the primary dimension for this chunk.
      * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
-     * .
-     * Alternatively, this vector may be empty, in which case no output values should be stored.
+     * Alternatively, this vector may be empty, in which case no values should be stored.
      * @param[out] output_indices Vector of vectors in which to store the indices of the non-zero elements along the secondary dimension.
      * This has length equal to the extent of the primary dimension for this chunk.
      * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
-     * .
-     * Alternatively, this vector may be empty, in which case no output indices should be stored.
+     * Alternatively, this vector may be empty, in which case no indices should be stored.
      * @param[in,out] output_number Pointer to an array of length equal to the extent of the primary dimension.
      * Each entry `i` specifies the number of non-zero elements that are already present in `output_values[i]` and `output_indices[i]`.
      * @param shift Shift to be added to the chunk's reported indices when storing them in `output_indices`.
@@ -514,13 +512,11 @@ public:
      * @param[out] output_values Vector of pointers in which to store the values of non-zero elements.
      * This has length equal to the extent of the primary dimension for this chunk.
      * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
-     * .
-     * Alternatively, this vector may be empty, in which case no output values should be stored.
+     * Alternatively, this vector may be empty, in which case no values should be stored.
      * @param[out] output_indices Vector of vectors in which to store the indices of the non-zero elements along the secondary dimension.
      * This has length equal to the extent of the primary dimension for this chunk.
      * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
-     * .
-     * Alternatively, this vector may be empty, in which case no output indices should be stored.
+     * Alternatively, this vector may be empty, in which case no indices should be stored.
      * @param[in,out] output_number Pointer to an array of length equal to the extent of the primary dimension.
      * Each entry `i` specifies the number of non-zero elements that are already present in `output_values[i]` and `output_indices[i]`.
      * @param shift Shift to be added to the chunk's reported indices when storing them in `output_indices`.
@@ -732,13 +728,11 @@ public:
      * @param[out] output_values Vector of pointers in which to store the values of non-zero elements.
      * This has length equal to the extent of the primary dimension for this chunk.
      * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
-     * .
-     * Alternatively, this vector may be empty, in which case no output values should be stored.
+     * Alternatively, this vector may be empty, in which case no values should be stored.
      * @param[out] output_indices Vector of vectors in which to store the indices of the non-zero elements along the secondary dimension.
      * This has length equal to the extent of the primary dimension for this chunk.
      * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
-     * .
-     * Alternatively, this vector may be empty, in which case no output indices should be stored.
+     * Alternatively, this vector may be empty, in which case no indices should be stored.
      * @param[in,out] output_number Pointer to an array of length equal to the extent of the primary dimension.
      * Each entry `i` specifies the number of non-zero elements that are already present in `output_values[i]` and `output_indices[i]`.
      * @param shift Shift to be added to the chunk's reported indices when storing them in `output_indices`.
@@ -794,13 +788,11 @@ public:
      * @param[out] output_values Vector of pointers in which to store the values of non-zero elements.
      * This has length equal to the extent of the primary dimension for this chunk.
      * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
-     * .
-     * Alternatively, this vector may be empty, in which case no output values should be stored.
+     * Alternatively, this vector may be empty, in which case no values should be stored.
      * @param[out] output_indices Vector of vectors in which to store the indices of the non-zero elements along the secondary dimension.
      * This has length equal to the extent of the primary dimension for this chunk.
      * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
-     * .
-     * Alternatively, this vector may be empty, in which case no output indices should be stored.
+     * Alternatively, this vector may be empty, in which case no indices should be stored.
      * @param[in,out] output_number Pointer to an array of length equal to the extent of the primary dimension.
      * Each entry `i` specifies the number of non-zero elements that are already present in `output_values[i]` and `output_indices[i]`.
      * @param shift Shift to be added to the chunk's reported indices when storing them in `output_indices`.
@@ -855,13 +847,11 @@ public:
      * @param[out] output_values Vector of pointers in which to store the values of non-zero elements.
      * This has length equal to the extent of the primary dimension for this chunk.
      * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
-     * .
-     * Alternatively, this vector may be empty, in which case no output values should be stored.
+     * Alternatively, this vector may be empty, in which case no values should be stored.
      * @param[out] output_indices Vector of vectors in which to store the indices of the non-zero elements along the secondary dimension.
      * This has length equal to the extent of the primary dimension for this chunk.
      * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
-     * .
-     * Alternatively, this vector may be empty, in which case no output indices should be stored.
+     * Alternatively, this vector may be empty, in which case no indices should be stored.
      * @param[in,out] output_number Pointer to an array of length equal to the extent of the primary dimension.
      * Each entry `i` specifies the number of non-zero elements that are already present in `output_values[i]` and `output_indices[i]`.
      * @param shift Shift to be added to the chunk's reported indices when storing them in `output_indices`.
@@ -913,13 +903,11 @@ public:
      * @param[out] output_values Vector of pointers in which to store the values of non-zero elements.
      * This has length equal to the extent of the primary dimension for this chunk.
      * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
-     * .
-     * Alternatively, this vector may be empty, in which case no output values should be stored.
+     * Alternatively, this vector may be empty, in which case no values should be stored.
      * @param[out] output_indices Vector of vectors in which to store the indices of the non-zero elements along the secondary dimension.
      * This has length equal to the extent of the primary dimension for this chunk.
      * Each pointer corresponds to an element of the primary dimension and refers to an array of length no less than the extent of the secondary dimension of the chunk.
-     * .
-     * Alternatively, this vector may be empty, in which case no output indices should be stored.
+     * Alternatively, this vector may be empty, in which case no indices should be stored.
      * @param[in,out] output_number Pointer to an array of length equal to the extent of the primary dimension.
      * Each entry `i` specifies the number of non-zero elements that are already present in `output_values[i]` and `output_indices[i]`.
      * @param shift Shift to be added to the chunk's reported indices when storing them in `output_indices`.
