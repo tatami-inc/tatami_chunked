@@ -90,8 +90,10 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae78e3fb633f8ec3fd52b4118ca1213d6" id="r_ae78e3fb633f8ec3fd52b4118ca1213d6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1SlabCacheStats.html#ae78e3fb633f8ec3fd52b4118ca1213d6">SlabCacheStats</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">primary_length</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> secondary_length, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> cache_size_in_elements, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a> require_minimum_cache)</td></tr>
-<tr class="separator:ae78e3fb633f8ec3fd52b4118ca1213d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c3738245cdd773aaf14c93d51e841a2" id="r_a3c3738245cdd773aaf14c93d51e841a2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1SlabCacheStats.html#a3c3738245cdd773aaf14c93d51e841a2">SlabCacheStats</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">target_length</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">non_target_length</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">target_num_slabs</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> cache_size_in_elements, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a> require_minimum_cache)</td></tr>
+<tr class="separator:a3c3738245cdd773aaf14c93d51e841a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9dcda672552d3410362cfef7cd7dd2c4" id="r_a9dcda672552d3410362cfef7cd7dd2c4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1SlabCacheStats.html#a9dcda672552d3410362cfef7cd7dd2c4">SlabCacheStats</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">target_length</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">non_target_length</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">target_num_slabs</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> cache_size_in_bytes, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">element_size</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a> require_minimum_cache)</td></tr>
+<tr class="separator:a9dcda672552d3410362cfef7cd7dd2c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -103,8 +105,8 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Typical statistics for slab cache construction. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ae78e3fb633f8ec3fd52b4118ca1213d6" name="ae78e3fb633f8ec3fd52b4118ca1213d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae78e3fb633f8ec3fd52b4118ca1213d6">&#9670;&#160;</a></span>SlabCacheStats()</h2>
+<a id="a3c3738245cdd773aaf14c93d51e841a2" name="a3c3738245cdd773aaf14c93d51e841a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3c3738245cdd773aaf14c93d51e841a2">&#9670;&#160;</a></span>SlabCacheStats() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -116,13 +118,19 @@ Public Attributes</h2></td></tr>
           <td class="memname">tatami_chunked::SlabCacheStats::SlabCacheStats </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a>&#160;</td>
-          <td class="paramname"><em>primary_length</em>, </td>
+          <td class="paramname"><em>target_length</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a>&#160;</td>
-          <td class="paramname"><em>secondary_length</em>, </td>
+          <td class="paramname"><em>non_target_length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a>&#160;</td>
+          <td class="paramname"><em>target_num_slabs</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -150,10 +158,82 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">primary_length</td><td>Length of the primary dimension of each slab. The primary dimension contains the elements to be extracted from each cached slab. For example, if we were iterating through rows of a matrix, <code>primary_length</code> would be the number of rows spanned by each slab. </td></tr>
-    <tr><td class="paramname">secondary_length</td><td>Length of the secondary dimension of each slab. This is the dimension that is not the primary, e.g., if we were iterating through matrix rows, the <code>secondary_length</code> would be the number of columns spanned by each slab. </td></tr>
-    <tr><td class="paramname">cache_size_in_elements</td><td>Total size of the cache, in terms of the number of elements. </td></tr>
-    <tr><td class="paramname">require_minimum_cache</td><td>Whether to enforce a minimum size of the cache for efficient extraction of consecutive dimension elements, even if it exceeds <code>cache_size_in_cache</code>. </td></tr>
+    <tr><td class="paramname">target_length</td><td>Length of the target dimension of each slab. For example, if we were iterating through rows of a matrix, <code>target_length</code> would be the number of rows spanned by each slab. </td></tr>
+    <tr><td class="paramname">non_target_length</td><td>Length of the non-target dimension of each slab. For example, if we were iterating through matrix rows, the <code>non_target_length</code> would be the number of columns spanned by each slab. </td></tr>
+    <tr><td class="paramname">target_num_slabs</td><td>Number of slabs required to span the full extent of the target dimension of the matrix. This is used as an upper bound on the value of <code>num_slabs_in_cache</code>. For example, if we were iterating through matrix rows, the <code>target_num_slabs</code> would be the number of slabs required to span all rows of the matrix. </td></tr>
+    <tr><td class="paramname">cache_size_in_elements</td><td>Total size of the cache, in terms of the number of data elements. </td></tr>
+    <tr><td class="paramname">require_minimum_cache</td><td>Whether to enforce a minimum size of the cache for efficient extraction of consecutive dimension elements, even if it exceeds <code>cache_size_in_elements</code>. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a9dcda672552d3410362cfef7cd7dd2c4" name="a9dcda672552d3410362cfef7cd7dd2c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9dcda672552d3410362cfef7cd7dd2c4">&#9670;&#160;</a></span>SlabCacheStats() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">tatami_chunked::SlabCacheStats::SlabCacheStats </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a>&#160;</td>
+          <td class="paramname"><em>target_length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a>&#160;</td>
+          <td class="paramname"><em>non_target_length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a>&#160;</td>
+          <td class="paramname"><em>target_num_slabs</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a>&#160;</td>
+          <td class="paramname"><em>cache_size_in_bytes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a>&#160;</td>
+          <td class="paramname"><em>element_size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a>&#160;</td>
+          <td class="paramname"><em>require_minimum_cache</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">target_length</td><td>Length of the target dimension of each slab. For example, if we were iterating through rows of a matrix, <code>target_length</code> would be the number of rows spanned by each slab. </td></tr>
+    <tr><td class="paramname">non_target_length</td><td>Length of the non-target dimension of each slab. For example, if we were iterating through matrix rows, the <code>non_target_length</code> would be the number of columns spanned by each slab. </td></tr>
+    <tr><td class="paramname">target_num_slabs</td><td>Number of slabs required to span the full extent of the target dimension of the matrix. This is used as an upper bound on the value of <code>num_slabs_in_cache</code>. For example, if we were iterating through matrix rows, the <code>target_num_slabs</code> would be the number of slabs required to span all rows of the matrix. </td></tr>
+    <tr><td class="paramname">cache_size_in_bytes</td><td>Total size of the cache, in terms of the number of bytes. </td></tr>
+    <tr><td class="paramname">element_size</td><td>Size of each data element in the cache, in bytes. This may be zero, e.g., when neither the value nor the index are required during sparse extraction. </td></tr>
+    <tr><td class="paramname">require_minimum_cache</td><td>Whether to enforce a minimum size of the cache for efficient extraction of consecutive dimension elements, even if it exceeds <code>cache_size_in_bytes</code>. </td></tr>
   </table>
   </dd>
 </dl>
@@ -187,7 +267,7 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Number of slabs that can fit in the cache. This is used as <code>num_slabs</code> in <code><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html" title="Oracular-aware cache for slabs.">OracularSlabCache</a></code> and <code><a class="el" href="classtatami__chunked_1_1OracularSubsettedSlabCache.html" title="Oracle-aware cache for slabs, plus subsets.">OracularSubsettedSlabCache</a></code>, and as <code>m</code> in <code><a class="el" href="classtatami__chunked_1_1LruSlabCache.html" title="Least-recently-used cache for slabs.">LruSlabCache</a></code>. </p>
+<p>Number of slabs that can fit in the cache. This is used as <code>max_slabs</code> in <code><a class="el" href="classtatami__chunked_1_1LruSlabCache.html" title="Least-recently-used cache for slabs.">LruSlabCache</a></code>, <code><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html" title="Oracular-aware cache for slabs.">OracularSlabCache</a></code> and friends. </p>
 
 </div>
 </div>

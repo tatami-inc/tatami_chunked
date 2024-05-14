@@ -662,8 +662,15 @@
       <type></type>
       <name>SlabCacheStats</name>
       <anchorfile>structtatami__chunked_1_1SlabCacheStats.html</anchorfile>
-      <anchor>ae78e3fb633f8ec3fd52b4118ca1213d6</anchor>
-      <arglist>(size_t primary_length, size_t secondary_length, size_t cache_size_in_elements, bool require_minimum_cache)</arglist>
+      <anchor>a3c3738245cdd773aaf14c93d51e841a2</anchor>
+      <arglist>(size_t target_length, size_t non_target_length, size_t target_num_slabs, size_t cache_size_in_elements, bool require_minimum_cache)</arglist>
+    </member>
+    <member kind="function">
+      <type></type>
+      <name>SlabCacheStats</name>
+      <anchorfile>structtatami__chunked_1_1SlabCacheStats.html</anchorfile>
+      <anchor>a9dcda672552d3410362cfef7cd7dd2c4</anchor>
+      <arglist>(size_t target_length, size_t non_target_length, size_t target_num_slabs, size_t cache_size_in_bytes, size_t element_size, bool require_minimum_cache)</arglist>
     </member>
     <member kind="variable">
       <type>size_t</type>
