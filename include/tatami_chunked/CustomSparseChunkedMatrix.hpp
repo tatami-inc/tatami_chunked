@@ -506,21 +506,11 @@ private:
         typename ... Args_
     >
     std::unique_ptr<Interface_<oracle_, Value_, Index_> > raw_internal(bool row, Index_ secondary_length, const tatami::Options& opt, Args_&& ... args) const {
-        size_t element_size = 0;
-        if (opt.sparse_extract_value) {
-            element_size += sizeof(typename Chunk_::value_type); 
-        }
-        if (opt.sparse_extract_index) {
-            element_size += sizeof(typename Chunk_::index_type);
-        }
-        if (element_size < 1) {
-            element_size = 1;
-        }
-        size_t cache_size_in_elements = cache_size_in_bytes / element_size;
+        size_t element_size = (opt.sparse_extract_value ? sizeof(typename Chunk_::value_type) : 0) + (opt.sparse_extract_index ? sizeof(typename Chunk_::index_type) : 0);
 
         if (row) {
             // Remember, the num_chunks_per_column is the number of slabs needed to divide up all the *rows* of the matrix.
-            SlabCacheStats stats(coordinator.get_chunk_nrow(), secondary_length, coordinator.get_num_chunks_per_column(), cache_size_in_elements, require_minimum_cache);
+            SlabCacheStats stats(coordinator.get_chunk_nrow(), secondary_length, coordinator.get_num_chunks_per_column(), cache_size_in_bytes, element_size, require_minimum_cache);
             if (stats.num_slabs_in_cache > 0) {
                 return std::make_unique<Extractor_<true, false, oracle_, Value_, Index_, Chunk_> >(coordinator, stats.num_slabs_in_cache, std::forward<Args_>(args)...);
             } else {
@@ -528,7 +518,7 @@ private:
             }
         } else {
             // Remember, the num_chunks_per_row is the number of slabs needed to divide up all the *columns* of the matrix.
-            SlabCacheStats stats(coordinator.get_chunk_ncol(), secondary_length, coordinator.get_num_chunks_per_row(), cache_size_in_elements, require_minimum_cache);
+            SlabCacheStats stats(coordinator.get_chunk_ncol(), secondary_length, coordinator.get_num_chunks_per_row(), cache_size_in_bytes, element_size, require_minimum_cache);
             if (stats.num_slabs_in_cache > 0) {
                 return std::make_unique<Extractor_<false, false, oracle_, Value_, Index_, Chunk_> >(coordinator, stats.num_slabs_in_cache, std::forward<Args_>(args)...);
             } else {
