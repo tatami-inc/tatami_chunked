@@ -364,7 +364,7 @@ class tatami_chunked::CustomSparseChunkedMatrix&lt; Value_, Index_, Chunk_ &gt;<
   </table>
   </dd>
 </dl>
-<p>Implements a <code>Matrix</code> subclass where data is contained in sparse rectangular chunks. These chunks are typically compressed in some manner to reduce memory usage; on access, each chunk is decompressed and the desired values are extracted. All chunks should have the same dimensions, i.e., covering the same shape/area of the matrix. The matrix should be partitioned at regular intervals starting from zero - the first chunk should start at (0, 0), the next chunk should be immediately adjacent in one of the dimensions, and so on. The exception is for chunks at the non-zero boundaries of the matrix dimensions, which may be truncated. </p>
+<p>Implements a <code>Matrix</code> subclass where data is contained in sparse rectangular chunks. These chunks are typically compressed in some manner to reduce memory usage; on access, each chunk is decompressed and the desired values are extracted. Each dimension should be divided into chunk boundaries at regular intervals starting from zero; this partitions the matrix according to a regular grid where each grid entry is a single chunk of the same size. The exception is for chunks at the non-zero boundaries of the matrix dimensions, which may be truncated. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aaf8de32d64a64a80f2c8a7d3467871ee" name="aaf8de32d64a64a80f2c8a7d3467871ee"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aaf8de32d64a64a80f2c8a7d3467871ee">&#9670;&#160;</a></span>CustomSparseChunkedMatrix()</h2>
@@ -437,7 +437,7 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
     <tr><td class="paramname">mat_ncol</td><td>Number of columns in the matrix. </td></tr>
     <tr><td class="paramname">chunk_nrow</td><td>Number of rows in each chunk. </td></tr>
     <tr><td class="paramname">chunk_ncol</td><td>Number of columns in each chunk. </td></tr>
-    <tr><td class="paramname">chunks</td><td>Vector containing a 2D array of chunks that cover the entire matrix. This should have length equal to the product of the number of chunks along the rows and columns of the matrix, i.e., <code>ceil(mat_nrow / chunk_nrow) * ceil(mat_ncol / chunk_ncol)</code>. </td></tr>
+    <tr><td class="paramname">chunks</td><td>Vector containing a two-dimensional array of chunks that cover the entire matrix. This should have length equal to the product of the number of chunks along the rows and columns of the matrix, i.e., <code>ceil(mat_nrow / chunk_nrow) * ceil(mat_ncol / chunk_ncol)</code>. </td></tr>
     <tr><td class="paramname">row_major</td><td>Whether <code>chunks</code> is in row-major format. </td></tr>
     <tr><td class="paramname">opt</td><td>Further options for chunked extraction. </td></tr>
   </table>
