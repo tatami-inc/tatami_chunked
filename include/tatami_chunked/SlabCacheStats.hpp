@@ -11,11 +11,15 @@
 namespace tatami_chunked {
 
 /**
- * @brief Typical statistics for slab cache construction.
+ * @brief Statistics for slab caching.
+ *
+ * This computes the slab size and the number of slabs to be cached, given the dimensions of the slab and the cache size in bytes.
+ * The assumption is that all slabs are of the same shape, partitioning the matrix into regular intervals along the target dimension.
+ * Developers should check out `CustomDenseChunkedMatrix` for some usage examples.
  */
 struct SlabCacheStats {
     /**
-     * Size of each slab, in terms of the number of elements.
+     * Size of each slab, in terms of the number of data elements.
      */
     size_t slab_size_in_elements;
 
@@ -38,7 +42,7 @@ struct SlabCacheStats {
      */
     SlabCacheStats(size_t target_length, size_t non_target_length, size_t target_num_slabs, size_t cache_size_in_elements, bool require_minimum_cache) :
         slab_size_in_elements(target_length * non_target_length),
-        num_slabs_in_cache(std::min(compute_num_slabs_in_cache(slab_size_in_elements, cache_size_in_elements, require_minimum_cache), target_num_slabs))
+        num_slabs_in_cache(compute_num_slabs_in_cache(slab_size_in_elements, target_num_slabs, cache_size_in_elements, require_minimum_cache))
     {}
 
     /**
@@ -60,13 +64,13 @@ struct SlabCacheStats {
             if (element_size == 0) {
                 return target_num_slabs;
             } else {
-                return std::min(compute_num_slabs_in_cache(slab_size_in_elements, cache_size_in_bytes / element_size, require_minimum_cache), target_num_slabs);
+                return compute_num_slabs_in_cache(slab_size_in_elements, target_num_slabs, cache_size_in_bytes / element_size, require_minimum_cache); 
             }
         }())
     {}
 
 private:
-    static size_t compute_num_slabs_in_cache(size_t slab_size_in_elements, size_t cache_size_in_elements, bool require_minimum_cache) {
+    static size_t compute_num_slabs_in_cache(size_t slab_size_in_elements, size_t num_slabs, size_t cache_size_in_elements, bool require_minimum_cache) {
         if (slab_size_in_elements == 0) {
             return 0;
         }
@@ -76,7 +80,7 @@ private:
             return 1;
         } 
 
-        return tmp;
+        return std::min(tmp, num_slabs);
     }
 };
 
