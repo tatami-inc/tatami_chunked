@@ -433,8 +433,8 @@ private:
  *
  * Implements a `Matrix` subclass where data is contained in sparse rectangular chunks.
  * These chunks are typically compressed in some manner to reduce memory usage; on access, each chunk is decompressed and the desired values are extracted.
- * All chunks should have the same dimensions, i.e., covering the same shape/area of the matrix.
- * The matrix should be partitioned at regular intervals starting from zero - the first chunk should start at (0, 0), the next chunk should be immediately adjacent in one of the dimensions, and so on.
+ * Each dimension should be divided into chunk boundaries at regular intervals starting from zero;
+ * this partitions the matrix according to a regular grid where each grid entry is a single chunk of the same size.
  * The exception is for chunks at the non-zero boundaries of the matrix dimensions, which may be truncated.
  */
 template<typename Value_, typename Index_, typename Chunk_>
@@ -445,7 +445,7 @@ public:
      * @param mat_ncol Number of columns in the matrix.
      * @param chunk_nrow Number of rows in each chunk.
      * @param chunk_ncol Number of columns in each chunk.
-     * @param chunks Vector containing a 2D array of chunks that cover the entire matrix.
+     * @param chunks Vector containing a two-dimensional array of chunks that cover the entire matrix.
      * This should have length equal to the product of the number of chunks along the rows and columns of the matrix, i.e., `ceil(mat_nrow / chunk_nrow) * ceil(mat_ncol / chunk_ncol)`.
      * @param row_major Whether `chunks` is in row-major format.
      * @param opt Further options for chunked extraction.

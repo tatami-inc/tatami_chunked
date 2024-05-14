@@ -140,8 +140,9 @@ public:
  * @tparam Slab_ Class for a single slab.
  *
  * Implement an oracle-aware cache for slab subsets.
- * This is similar to the `OracleSlabCache` except that it remembers the subset of rows/columns that were requested for each slab.
- * Slab extractors can use this information to optimize the slab population process by ignoring rows/columns that are not needed.
+ * Each slab is defined as the set of chunks required to read an element of the target dimension (or a contiguous block/indexed subset thereof) from a `tatami::Matrix`.
+ * This cache is similar to the `OracleSlabCache` except that it remembers the subset of elements on the target dimension that were requested for each slab.
+ * Slab extractors can use this information to optimize slab loading by ignoring unneeded elements. 
  */
 template<typename Id_, typename Index_, class Slab_> 
 class OracularSubsettedSlabCache {
@@ -234,16 +235,18 @@ public:
      * @tparam Cfunction_ Function to create a new slab.
      * @tparam Pfunction_ Function to populate zero, one or more slabs with their contents.
      *
-     * @param identify Function that accepts an `i`, an `Index_` containing the predicted row/column index.
-     * This should return a pair containing (1) the identifier of the slab containing `i`, and (2) the index of row/column `i` inside that slab.
-     * This is typically defined as the index of the slab on the iteration dimension.
-     * For example, if each chunk takes up 10 rows, attempting to access row 21 would require retrieval of slab 2 and an offset of 1.
+     * @param identify Function that accepts an `i`, an `Index_` containing the predicted index of a single element on the target dimension.
+     * This should return a pair containing:
+     * 1. An `Id_`, the identifier of the slab containing `i`.
+     *    This is typically defined as the index of the slab on the target dimension.
+     * 2. An `Index_`, the index of row/column `i` inside that slab.
+     *    For example, if each chunk takes up 10 rows, attempting to access row 21 would yield an offset of 1.
      * @param create Function that accepts no arguments and returns a `Slab_` object with sufficient memory to hold a slab's contents when used in `populate()`.
      * This may also return a default-constructed `Slab_` object if the allocation is done dynamically per slab in `populate()`.
      * @param populate Function that accepts a `std::vector<std::pair<Id_, Slab_*, OracularSlabSubset<Index_>*> >&` specifying the slabs to be populated.
      * The first `Id_` element of each pair contains the slab identifier, i.e., the first element returned by the `identify` function.
      * The second `Slab_*` element specifies the object which to store the contents of each slab.
-     * The thid `OracularSlabSubset<Index_>*` element contains information about the subset of each slab that is required.
+     * The third `OracularSlabSubset<Index_>*` element contains information about the subset of each slab that is required.
      * This function should iterate over the vector and populate the desired subset of each slab.
      * Note that the vector is not guaranteed to be sorted. 
      *

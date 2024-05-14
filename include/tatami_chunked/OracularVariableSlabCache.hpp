@@ -23,10 +23,10 @@ namespace tatami_chunked {
  * @tparam Slab_ Class for a single slab.
  *
  * Implement an oracle-aware cache for variable-size slabs.
- * This is similar to `OracularSlabCache` but enables improved cache utilization when the slabs vary in size.
+ * Each slab is defined as the set of chunks required to read an element of the target dimension (or a contiguous block/indexed subset thereof) from a `tatami::Matrix`.
+ * This cache is similar to `OracularSlabCache` but enables improved cache utilization when the slabs vary in size.
  * For example, the number of non-zero entries in a sparse matrix might vary between slabs,
  * so the cache could be optimized to fit more slabs into memory when they have fewer non-zeros.
- * Similarly, a dense matrix may be chunked into a grid with arbitrary intervals on each dimension, resulting in variable slab sizes when iterating over either dimension. 
  *
  * The size of each slab is defined by `Size_`, which can be any non-negative measure of slab size.
  * This could be the number of non-zero elements, or the number of dimension elements, or the size of the slab in bytes, etc.,
@@ -119,10 +119,10 @@ public:
      * @tparam Cfunction_ Function to create a new slab.
      * @tparam Pfunction_ Function to populate zero, one or more slabs with their contents.
      *
-     * @param identify Function that accepts an `i`, an `Index_` containing the predicted row/column index.
+     * @param identify Function that accepts an `i`, an `Index_` containing the predicted index of a single element on the target dimension.
      * This should return a pair containing:
      * 1. An `Id_`, the identifier of the slab containing `i`.
-     *    This is typically defined as the index of the slab on its dimension.
+     *    This is typically defined as the index of the slab on the target dimension.
      *    For example, if each chunk takes up 10 rows, attempting to access row 21 would require retrieval of slab 2.
      * 2. An `Index_`, the index of row/column `i` inside that slab.
      *    For example, if each chunk takes up 10 rows, attempting to access row 21 would yield an offset of 1.

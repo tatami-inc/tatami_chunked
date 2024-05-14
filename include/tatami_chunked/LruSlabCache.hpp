@@ -18,8 +18,8 @@ namespace tatami_chunked {
  * @brief Least-recently-used cache for slabs.
  *
  * Implements a least-recently-used (LRU) cache, typically containing one or more "slabs" from a chunked matrix representation.
- * Each slab is defined as the set of chunks required to read a row/column (or a contiguous block/indexed subset thereof) during iteration through a `tatami::Matrix`.
- * The LRU cache can be used for chunked `tatami::Matrix` representations where the data is costly to load (e.g., from file) and no oracle is provided to predict future accesses.
+ * Each slab is defined as the set of chunks required to read an element of the target dimension (or a contiguous block/indexed subset thereof) from a `tatami::Matrix`.
+ * The LRU cache can be used for chunked `tatami::Matrix` representations where the data is costly to load (e.g., from file) and no oracle is provided to predict future accesses on the target dimension.
  * In such cases, chunks of data can be loaded and cached such that any possible future request for an already-loaded slab will just fetch it from cache.
  */
 template<typename Id_, class Slab_> 
@@ -78,7 +78,7 @@ public:
      * @tparam Pfunction_ Function to populate a `Slab_` object with the contents of a slab.
      *
      * @param id Identifier for the cached slab.
-     * This is typically defined as the index of the slab on the iteration dimension.
+     * This is typically defined as the index of the slab on the target dimension.
      * For example, if each chunk takes up 10 rows, attempting to access row 21 would require retrieval of slab 2.
      * @param create Function that accepts no arguments and returns a `Slab_` object.
      * @param populate Function that accepts a slab ID and a reference to a `Slab_` object,
