@@ -3,6 +3,7 @@
 
 #include "tatami/tatami.hpp"
 #include "custom_internals.hpp"
+#include "SlabCacheStats.hpp"
 #include "LruSlabCache.hpp"
 #include "OracularSlabCache.hpp"
 #include "OracularSubsettedSlabCache.hpp"
@@ -518,14 +519,16 @@ private:
         size_t cache_size_in_elements = cache_size_in_bytes / element_size;
 
         if (row) {
-            SlabCacheStats stats(coordinator.get_chunk_nrow(), secondary_length, cache_size_in_elements, require_minimum_cache);
+            // Remember, the num_chunks_per_column is the number of slabs needed to divide up all the *rows* of the matrix.
+            SlabCacheStats stats(coordinator.get_chunk_nrow(), secondary_length, coordinator.get_num_chunks_per_column(), cache_size_in_elements, require_minimum_cache);
             if (stats.num_slabs_in_cache > 0) {
                 return std::make_unique<Extractor_<true, false, oracle_, Value_, Index_, Chunk_> >(coordinator, stats.num_slabs_in_cache, std::forward<Args_>(args)...);
             } else {
                 return std::make_unique<Extractor_<true, true, oracle_, Value_, Index_, Chunk_> >(coordinator, stats.num_slabs_in_cache, std::forward<Args_>(args)...);
             }
         } else {
-            SlabCacheStats stats(coordinator.get_chunk_ncol(), secondary_length, cache_size_in_elements, require_minimum_cache);
+            // Remember, the num_chunks_per_row is the number of slabs needed to divide up all the *columns* of the matrix.
+            SlabCacheStats stats(coordinator.get_chunk_ncol(), secondary_length, coordinator.get_num_chunks_per_row(), cache_size_in_elements, require_minimum_cache);
             if (stats.num_slabs_in_cache > 0) {
                 return std::make_unique<Extractor_<false, false, oracle_, Value_, Index_, Chunk_> >(coordinator, stats.num_slabs_in_cache, std::forward<Args_>(args)...);
             } else {

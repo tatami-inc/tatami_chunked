@@ -4,7 +4,6 @@
 #include "tatami/tatami.hpp"
 #include "OracularSlabCache.hpp"
 #include "OracularSubsettedSlabCache.hpp"
-#include "SlabCacheStats.hpp"
 #include "ChunkDimensionStats.hpp"
 
 #include <vector>
@@ -190,6 +189,7 @@ private:
     std::vector<Chunk_> chunk_array;
     bool row_major;
 
+public:
     // Number of chunks along the rows is equal to the number of chunks for
     // each column, and vice versa; hence the flipped definitions.
     Index_ get_num_chunks_per_row() const {
@@ -200,7 +200,6 @@ private:
         return row_stats.num_chunks;
     }
 
-public:
     Index_ get_nrow() const {
         return row_stats.dimension_extent;
     }
