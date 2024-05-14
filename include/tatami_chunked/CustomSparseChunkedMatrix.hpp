@@ -482,11 +482,11 @@ public:
         return static_cast<double>(coordinator.prefer_rows_internal());
     }
 
-    bool sparse() const {
+    bool is_sparse() const {
         return true;
     }
 
-    double sparse_proportion() const {
+    double is_sparse_proportion() const {
         return 1;
     }
 

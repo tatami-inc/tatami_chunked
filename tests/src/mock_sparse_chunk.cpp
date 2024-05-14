@@ -38,7 +38,7 @@ protected:
         auto full = tatami_test::simulate_sparse_vector<double>(dim.first * dim.second, 0.2, -10, 10, /* seed = */ dim.first * dim.second);
         tatami::DenseRowMatrix<double, int> tmp(dim.first, dim.second, std::move(full));
 
-        auto compressed = tatami::retrieve_compressed_sparse_contents<true, double, int>(&tmp, true);
+        auto compressed = tatami::retrieve_compressed_sparse_contents<double, int>(&tmp, true, true);
         mock = tatami_chunked::MockSimpleSparseChunk(
             dim.first, 
             dim.second, 
@@ -57,7 +57,7 @@ protected:
 
         ref.reset(new tatami::CompressedSparseRowMatrix<double, int>(dim.first, dim.second, std::move(compressed.value), std::move(compressed.index), std::move(compressed.pointers)));
 
-        auto compressed2 = tatami::retrieve_compressed_sparse_contents<false, double, int>(ref.get(), true);
+        auto compressed2 = tatami::retrieve_compressed_sparse_contents<double, int>(ref.get(), false, true);
         dcm_chunk = tatami_chunked::SimpleSparseChunkWrapper<MockSparseBlob<false> >(MockSparseBlob<false>(
             dim.first, 
             dim.second, 
@@ -484,7 +484,7 @@ protected:
         auto full = tatami_test::simulate_sparse_vector<double>(dim.first * dim.second, 0.2, -10, 10, /* seed = */ dim.first * dim.second + 1);
         tatami::DenseRowMatrix<double, int> tmp(dim.first, dim.second, std::move(full));
 
-        auto compressed = tatami::retrieve_compressed_sparse_contents<true, double, int>(&tmp, true);
+        auto compressed = tatami::retrieve_compressed_sparse_contents<double, int>(&tmp, true, true);
         mock = tatami_chunked::MockSubsettedSparseChunk(
             dim.first, 
             dim.second, 
