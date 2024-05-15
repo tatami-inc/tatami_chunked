@@ -2,6 +2,8 @@
 #define TATAMI_CHUNKED_CUSTOM_CHUNK_COORDINATOR_HPP
 
 #include "tatami/tatami.hpp"
+#include "DenseSlabFactory.hpp"
+#include "SparseSlabFactory.hpp"
 #include "OracularSlabCache.hpp"
 #include "OracularSubsettedSlabCache.hpp"
 #include "ChunkDimensionStats.hpp"
@@ -12,116 +14,12 @@ namespace tatami_chunked {
 
 namespace CustomChunkedMatrix_internal {
 
-/*******************
- *** Dense slabs ***
- *******************/
-
-template<typename CachedValue_>
-struct DenseSlabFactory {
-    DenseSlabFactory(size_t primary_chunkdim, size_t secondary_length, size_t num_slabs) : 
-        slab_size(primary_chunkdim * secondary_length), 
-        pool(num_slabs * slab_size) 
-    {}
-
-    // Delete the copy constructors as we're passing out pointers.
-    DenseSlabFactory(const DenseSlabFactory&) = delete;
-    DenseSlabFactory& operator=(const DenseSlabFactory&) = delete;
-
-    // Move constructors are okay though.
-    DenseSlabFactory(DenseSlabFactory&&) = default;
-    DenseSlabFactory& operator=(DenseSlabFactory&&) = default;
-
-private:
-    size_t offset = 0, slab_size;
-    std::vector<CachedValue_> pool;
-
-public:
-    struct Slab {
-        CachedValue_* data;
-    };
-
-    Slab create() {
-        Slab output;
-        output.data = pool.data() + offset;
-        offset += slab_size;
-        return output;
-    }
-};
+/******************
+ *** Workspaces ***
+ ******************/
 
 template<typename CachedValue_>
 using DenseSingleWorkspace = std::vector<CachedValue_>;
-
-/********************
- *** Sparse slabs ***
- ********************/
-
-template<typename Index_, typename CachedValue_, typename CachedIndex_>
-struct SparseSlabFactory {
-    SparseSlabFactory(size_t primary_chunkdim, size_t secondary_length, size_t num_slabs, bool needs_value, bool needs_index) : 
-        primary_chunkdim(primary_chunkdim),
-        secondary_length(secondary_length),
-        slab_size(primary_chunkdim * secondary_length), 
-        needs_value(needs_value),
-        needs_index(needs_index),
-        number_pool(num_slabs * primary_chunkdim)
-    {
-        size_t total_size = num_slabs * slab_size;
-        if (needs_value) {
-            value_pool.resize(total_size);
-        }
-        if (needs_index) {
-            index_pool.resize(total_size);
-        }
-    }
-
-    // Delete the copy constructors as we're passing out pointers.
-    SparseSlabFactory(const SparseSlabFactory&) = delete;
-    SparseSlabFactory& operator=(const SparseSlabFactory&) = delete;
-
-    // Move constructors are okay though.
-    SparseSlabFactory(SparseSlabFactory&&) = default;
-    SparseSlabFactory& operator=(SparseSlabFactory&&) = default;
-
-private:
-    size_t offset_slab = 0, offset_number = 0;
-    size_t primary_chunkdim, secondary_length, slab_size;
-    bool needs_value, needs_index;
-    std::vector<CachedValue_> value_pool;
-    std::vector<CachedIndex_> index_pool;
-    std::vector<Index_> number_pool;
-
-public:
-    struct Slab {
-        Index_* number;
-        std::vector<CachedValue_*> values;
-        std::vector<CachedIndex_*> indices;
-    };
-
-    Slab create() {
-        Slab output;
-        output.number = number_pool.data() + offset_number;
-        offset_number += primary_chunkdim;
-
-        if (needs_value) {
-            output.values.reserve(primary_chunkdim);
-            auto vptr = value_pool.data() + offset_slab;
-            for (size_t p = 0; p < primary_chunkdim; ++p, vptr += secondary_length) {
-                output.values.push_back(vptr);
-            }
-        }
-
-        if (needs_index) {
-            output.indices.reserve(primary_chunkdim);
-            auto iptr = index_pool.data() + offset_slab;
-            for (size_t p = 0; p < primary_chunkdim; ++p, iptr += secondary_length) {
-                output.indices.push_back(iptr);
-            }
-        }
-
-        offset_slab += slab_size;
-        return output;
-    }
-};
 
 template<typename Index_, typename CachedValue_, typename CachedIndex_>
 struct SparseSingleWorkspace {
@@ -390,7 +288,7 @@ private:
     typedef typename Chunk_::Workspace ChunkWork;
     typedef typename Chunk_::value_type ChunkValue;
     typedef ChunkIndex_ ChunkIndex;
-    typedef typename std::conditional<sparse_, typename SparseSlabFactory<Index_, ChunkValue, ChunkIndex>::Slab, typename DenseSlabFactory<ChunkValue>::Slab>::type Slab;
+    typedef typename std::conditional<sparse_, typename SparseSlabFactory<ChunkValue, ChunkIndex, Index_>::Slab, typename DenseSlabFactory<ChunkValue>::Slab>::type Slab;
     typedef typename std::conditional<sparse_, SparseSingleWorkspace<Index_, ChunkValue, ChunkIndex>, DenseSingleWorkspace<ChunkValue> >::type SingleWorkspace;
 
 public:

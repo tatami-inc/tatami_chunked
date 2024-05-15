@@ -10,7 +10,11 @@
 #include "OracularSlabCache.hpp"
 #include "OracularVariableSlabCache.hpp"
 #include "OracularSubsettedSlabCache.hpp"
+
 #include "SlabCacheStats.hpp"
+#include "DenseSlabFactory.hpp"
+#include "SparseSlabFactory.hpp"
+
 #include "mock_dense_chunk.hpp"
 #include "mock_sparse_chunk.hpp"
 #include "CustomDenseChunkedMatrix.hpp"
