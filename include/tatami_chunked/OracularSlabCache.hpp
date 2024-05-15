@@ -109,6 +109,7 @@ public:
      * This should return a pair containing:
      * 1. An `Id_`, the identifier of the slab containing `i`.
      *    This is typically defined as the index of the slab on the target dimension.
+     *    For example, if each chunk takes up 10 rows, attempting to access row 21 would require retrieval of slab 2.
      * 2. An `Index_`, the index of row/column `i` inside that slab.
      *    For example, if each chunk takes up 10 rows, attempting to access row 21 would yield an offset of 1.
      * @param create Function that accepts no arguments and returns a `Slab_` object with sufficient memory to hold a slab's contents when used in `populate()`.

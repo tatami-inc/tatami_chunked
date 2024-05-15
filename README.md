@@ -18,11 +18,11 @@ The **tatami_chunked** library implements some common functionality for **tatami
 Given a rectangular grid of chunks that make up a chunked matrix,
 we define a "slab" as the set of chunks that overlap a single row or column (or some subset/contiguous block thereof).
 We typically want to load and cache an entire slab at once, ensuring that future requests to adjacent row/columns can just use the cached values rather than re-reading or decompressing the same chunks.
-The **tatami_chunked** library provides the `LruSlabCache` and `OracleSlabCache` classes to facilitate caching of the slabs in `tatami::Matrix` extractors.
+The **tatami_chunked** library provides the `LruSlabCache` and `OracularSlabCache` classes to facilitate caching of the slabs in `tatami::Matrix` extractors.
 The `TypicalSlabCacheWorkspace` class allows developers to easily switch between caching strategies, depending on whether an oracle is provided to predict the future access pattern.
 
 The `CustomDenseChunkedMatrix` and `CustomSparseChunkedMatrix` classes implement the `tatami::Matrix` interface on top of a matrix of custom chunks.
-These classes automatically perform slab caching given a set of options including the maximum cache size (see the `CustomDenseChunkedOptions` and `CustomSparseChunkedOptions` classes).
+These classes automatically perform slab caching given a set of options including the maximum cache size (see the `CustomDenseChunkedMatrixOptions` and `CustomSparseChunkedMatrixOptions` classes).
 Developers can use this to quickly create matrix representations with arbitrary chunk compression schemes that can reduce the memory footprint, e.g., DEFLATE, run length encodings.
 Obviously, this comes at the cost of speed whereby the chunks must be unpacked to extract the relevant data -
 developers are expected to define an appropriate extraction method for dense/sparse chunks.

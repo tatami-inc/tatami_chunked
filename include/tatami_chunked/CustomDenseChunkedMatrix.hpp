@@ -19,7 +19,7 @@
 namespace tatami_chunked {
 
 /**
- * @brief Options for custom dense chunk extraction.
+ * @brief Options for data extraction from a `CustomDenseChunkedMatrix`.
  */
 struct CustomDenseChunkedMatrixOptions {
     /**
@@ -260,7 +260,8 @@ private:
  * @tparam Chunk_ Class of the chunk, implementing either the `MockSimpleDenseChunk` or `MockSubsetDenseChunk` interfaces.
  *
  * Implements a `Matrix` subclass where data is contained in dense rectangular chunks.
- * These chunks are typically compressed in some manner to reduce memory usage; on access, each chunk is decompressed and the desired values are extracted.
+ * These chunks are typically compressed in some manner to reduce memory usage compared to, e.g., a `tatami::DenseMatrix`.
+ * On access, the relevant chunks are decompressed and the desired values are extracted.
  * Each dimension should be divided into chunk boundaries at regular intervals starting from zero;
  * this partitions the matrix according to a regular grid where each grid entry is a single chunk of the same size.
  * The exception is for chunks at the non-zero boundaries of the matrix dimensions, which may be truncated.
