@@ -10,5 +10,6 @@ var searchData=
   ['delayedsubsetunique_2ehpp_7',['DelayedSubsetUnique.hpp',['https://tatami-inc.github.io/tatami/DelayedSubsetUnique_8hpp.html',1,'']]],
   ['delayedtranspose_2ehpp_8',['DelayedTranspose.hpp',['https://tatami-inc.github.io/tatami/DelayedTranspose_8hpp.html',1,'']]],
   ['delayedunaryisometricop_2ehpp_9',['DelayedUnaryIsometricOp.hpp',['https://tatami-inc.github.io/tatami/DelayedUnaryIsometricOp_8hpp.html',1,'']]],
-  ['densematrix_2ehpp_10',['DenseMatrix.hpp',['https://tatami-inc.github.io/tatami/DenseMatrix_8hpp.html',1,'']]]
+  ['densematrix_2ehpp_10',['DenseMatrix.hpp',['https://tatami-inc.github.io/tatami/DenseMatrix_8hpp.html',1,'']]],
+  ['denseslabfactory_2ehpp_11',['DenseSlabFactory.hpp',['../DenseSlabFactory_8hpp.html',1,'']]]
 ];

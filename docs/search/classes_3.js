@@ -51,5 +51,6 @@ var searchData=
   ['delayedunaryisometricop_48',['DelayedUnaryIsometricOp',['https://tatami-inc.github.io/tatami/classtatami_1_1DelayedUnaryIsometricOp.html',1,'tatami']]],
   ['densecolumnmatrix_49',['DenseColumnMatrix',['https://tatami-inc.github.io/tatami/classtatami_1_1DenseColumnMatrix.html',1,'tatami']]],
   ['densematrix_50',['DenseMatrix',['https://tatami-inc.github.io/tatami/classtatami_1_1DenseMatrix.html',1,'tatami']]],
-  ['denserowmatrix_51',['DenseRowMatrix',['https://tatami-inc.github.io/tatami/classtatami_1_1DenseRowMatrix.html',1,'tatami']]]
+  ['denserowmatrix_51',['DenseRowMatrix',['https://tatami-inc.github.io/tatami/classtatami_1_1DenseRowMatrix.html',1,'tatami']]],
+  ['denseslabfactory_52',['DenseSlabFactory',['../structtatami__chunked_1_1DenseSlabFactory.html',1,'tatami_chunked']]]
 ];
