@@ -227,13 +227,6 @@
       <arglist>(const LruSlabCache &amp;)=delete</arglist>
     </member>
     <member kind="function">
-      <type></type>
-      <name>LruSlabCache</name>
-      <anchorfile>classtatami__chunked_1_1LruSlabCache.html</anchorfile>
-      <anchor>a53460d588554e0ed34bc27d1463d9e0e</anchor>
-      <arglist>(Oracle_ ora, size_t m)</arglist>
-    </member>
-    <member kind="function">
       <type>const Slab_ &amp;</type>
       <name>find</name>
       <anchorfile>classtatami__chunked_1_1LruSlabCache.html</anchorfile>

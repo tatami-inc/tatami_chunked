@@ -95,9 +95,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a11ebee4dd4514b76fa56dd21e3a2d5a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6eab8e76919ca8873fd4a5a5a816a1b2" id="r_a6eab8e76919ca8873fd4a5a5a816a1b2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classtatami__chunked_1_1LruSlabCache.html">LruSlabCache</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1LruSlabCache.html#a6eab8e76919ca8873fd4a5a5a816a1b2">operator=</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="classtatami__chunked_1_1LruSlabCache.html">LruSlabCache</a> &amp;)=<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">delete</a></td></tr>
 <tr class="separator:a6eab8e76919ca8873fd4a5a5a816a1b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a53460d588554e0ed34bc27d1463d9e0e" id="r_a53460d588554e0ed34bc27d1463d9e0e"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Oracle_</a> &gt; </td></tr>
-<tr class="memitem:a53460d588554e0ed34bc27d1463d9e0e"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1LruSlabCache.html#a53460d588554e0ed34bc27d1463d9e0e">LruSlabCache</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Oracle_</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">ora</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">m</a>)</td></tr>
-<tr class="separator:a53460d588554e0ed34bc27d1463d9e0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a022825f5749bba03b112fbe72d98ddd5" id="r_a022825f5749bba03b112fbe72d98ddd5"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Cfunction_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Pfunction_</a> &gt; </td></tr>
 <tr class="memitem:a022825f5749bba03b112fbe72d98ddd5"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1LruSlabCache.html#a022825f5749bba03b112fbe72d98ddd5">find</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">id</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Cfunction_</a> create, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Pfunction_</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">populate</a>)</td></tr>
 <tr class="separator:a022825f5749bba03b112fbe72d98ddd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -119,7 +116,7 @@ class tatami_chunked::LruSlabCache&lt; Id_, Slab_ &gt;</div><p>Least-recently-us
 <p>Implements a least-recently-used (LRU) cache, typically containing one or more "slabs" from a chunked matrix representation. Each slab is defined as the set of chunks required to read an element of the target dimension (or a contiguous block/indexed subset thereof) from a <code><a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a></code>. The LRU cache can be used for chunked <code><a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a></code> representations where the data is costly to load (e.g., from file) and no oracle is provided to predict future accesses on the target dimension. In such cases, chunks of data can be loaded and cached such that any possible future request for an already-loaded slab will just fetch it from cache. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a87ca1cc9cf8a138f3b1ce45b70f2d054" name="a87ca1cc9cf8a138f3b1ce45b70f2d054"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a87ca1cc9cf8a138f3b1ce45b70f2d054">&#9670;&#160;</a></span>LruSlabCache() <span class="overload">[1/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a87ca1cc9cf8a138f3b1ce45b70f2d054">&#9670;&#160;</a></span>LruSlabCache() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -153,7 +150,7 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
 </div>
 </div>
 <a id="a11ebee4dd4514b76fa56dd21e3a2d5a5" name="a11ebee4dd4514b76fa56dd21e3a2d5a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a11ebee4dd4514b76fa56dd21e3a2d5a5">&#9670;&#160;</a></span>LruSlabCache() <span class="overload">[2/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a11ebee4dd4514b76fa56dd21e3a2d5a5">&#9670;&#160;</a></span>LruSlabCache() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -178,52 +175,6 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
 </table>
 </div><div class="memdoc">
 <p>Deleted as the cache holds persistent iterators. </p>
-
-</div>
-</div>
-<a id="a53460d588554e0ed34bc27d1463d9e0e" name="a53460d588554e0ed34bc27d1463d9e0e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a53460d588554e0ed34bc27d1463d9e0e">&#9670;&#160;</a></span>LruSlabCache() <span class="overload">[3/3]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt; </div>
-<div class="memtemplate">
-template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Oracle_</a> &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classtatami__chunked_1_1LruSlabCache.html">tatami_chunked::LruSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt;::LruSlabCache </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Oracle_</a>&#160;</td>
-          <td class="paramname"><em>ora</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a>&#160;</td>
-          <td class="paramname"><em>m</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Overloaded constructor for consistency with <code>OracleSlabCache</code> and <code>SubsettedOracleSlabCache</code>. </p><dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Oracle_</td><td>Any class, to be ignored. </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>

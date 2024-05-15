@@ -364,7 +364,7 @@ class tatami_chunked::CustomSparseChunkedMatrix&lt; Value_, Index_, Chunk_ &gt;<
   </table>
   </dd>
 </dl>
-<p>Implements a <code>Matrix</code> subclass where data is contained in sparse rectangular chunks. These chunks are typically compressed in some manner to reduce memory usage; on access, each chunk is decompressed and the desired values are extracted. Each dimension should be divided into chunk boundaries at regular intervals starting from zero; this partitions the matrix according to a regular grid where each grid entry is a single chunk of the same size. The exception is for chunks at the non-zero boundaries of the matrix dimensions, which may be truncated. </p>
+<p>Implements a <code>Matrix</code> subclass where data is contained in sparse rectangular chunks. These chunks are typically compressed in some manner to reduce memory usage compared to, e.g., a <code>tatami:CompressedSparseMatrix</code>. On access, the relevant chunks are decompressed and the desired values are extracted. Each dimension should be divided into chunk boundaries at regular intervals starting from zero; this partitions the matrix according to a regular grid where each grid entry is a single chunk of the same size. The exception is for chunks at the non-zero boundaries of the matrix dimensions, which may be truncated. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a37234dc9888f04cb1683ad1295209438" name="a37234dc9888f04cb1683ad1295209438"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a37234dc9888f04cb1683ad1295209438">&#9670;&#160;</a></span>CustomSparseChunkedMatrix()</h2>
