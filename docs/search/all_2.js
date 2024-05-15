@@ -24,7 +24,7 @@ var searchData=
   ['convert_5fto_5ffragmented_5fsparse_2ehpp_21',['convert_to_fragmented_sparse.hpp',['https://tatami-inc.github.io/tatami/convert__to__fragmented__sparse_8hpp.html',1,'']]],
   ['copy_2ehpp_22',['copy.hpp',['https://tatami-inc.github.io/tatami/copy_8hpp.html',1,'']]],
   ['copy_5fn_23',['copy_n',['https://tatami-inc.github.io/tatami/namespacetatami.html#ab52a806e3f13a68741a9e1f77dccab14',1,'tatami']]],
-  ['create_24',['create',['../structtatami__chunked_1_1DenseSlabFactory.html#a41a55088b9e3180c350edbcb77d3fd26',1,'tatami_chunked::DenseSlabFactory::create()'],['../structtatami__chunked_1_1SparseSlabFactory.html#ad8f9dd256aa86885c3082e2b7c70f227',1,'tatami_chunked::SparseSlabFactory::create()']]],
+  ['create_24',['create',['../structtatami__chunked_1_1DenseSlabFactory.html#aa0490ff4d9fce6f4c25d335b666a69da',1,'tatami_chunked::DenseSlabFactory::create()'],['../structtatami__chunked_1_1SparseSlabFactory.html#a1db3ee0bbbab01c3835e3063a024bbf2',1,'tatami_chunked::SparseSlabFactory::create()']]],
   ['customdensechunkedmatrix_25',['customdensechunkedmatrix',['../classtatami__chunked_1_1CustomDenseChunkedMatrix.html',1,'tatami_chunked::CustomDenseChunkedMatrix&lt; Value_, Index_, Chunk_ &gt;'],['../classtatami__chunked_1_1CustomDenseChunkedMatrix.html#a30ee69d99a4a49b8be7cc234af72dce1',1,'tatami_chunked::CustomDenseChunkedMatrix::CustomDenseChunkedMatrix()']]],
   ['customdensechunkedmatrix_2ehpp_26',['CustomDenseChunkedMatrix.hpp',['../CustomDenseChunkedMatrix_8hpp.html',1,'']]],
   ['customdensechunkedmatrixoptions_27',['CustomDenseChunkedMatrixOptions',['../structtatami__chunked_1_1CustomDenseChunkedMatrixOptions.html',1,'tatami_chunked']]],

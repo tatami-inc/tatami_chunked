@@ -25,5 +25,5 @@ var searchData=
   ['densecolumnmatrix_22',['DenseColumnMatrix',['https://tatami-inc.github.io/tatami/classtatami_1_1DenseColumnMatrix.html#ad022cd6a2a9eb389b679ae431dc9f45c',1,'tatami::DenseColumnMatrix']]],
   ['densematrix_23',['DenseMatrix',['https://tatami-inc.github.io/tatami/classtatami_1_1DenseMatrix.html#a5bae9bca5af8a8f6dc2ce8eacebbe555',1,'tatami::DenseMatrix']]],
   ['denserowmatrix_24',['DenseRowMatrix',['https://tatami-inc.github.io/tatami/classtatami_1_1DenseRowMatrix.html#a8ea53ae014e400904d2382f8bcc594e7',1,'tatami::DenseRowMatrix']]],
-  ['denseslabfactory_25',['denseslabfactory',['../structtatami__chunked_1_1DenseSlabFactory.html#afef1b2e262740518b6d6e638da9869bf',1,'tatami_chunked::DenseSlabFactory::DenseSlabFactory(size_t slab_size, size_t max_slabs)'],['../structtatami__chunked_1_1DenseSlabFactory.html#a03d85db742615b07954056d38250997e',1,'tatami_chunked::DenseSlabFactory::DenseSlabFactory(const SlabCacheStats &amp;stats)']]]
+  ['denseslabfactory_25',['denseslabfactory',['../structtatami__chunked_1_1DenseSlabFactory.html#a5089d5951923fc130e34d8139c72f873',1,'tatami_chunked::DenseSlabFactory::DenseSlabFactory(size_t slab_size, size_t max_slabs)'],['../structtatami__chunked_1_1DenseSlabFactory.html#a8fd3b111df53b86a7a3cc4b5f092b1e4',1,'tatami_chunked::DenseSlabFactory::DenseSlabFactory(const SlabCacheStats &amp;stats)']]]
 ];

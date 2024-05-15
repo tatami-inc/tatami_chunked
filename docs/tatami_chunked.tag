@@ -219,27 +219,27 @@
   <compound kind="struct">
     <name>tatami_chunked::DenseSlabFactory</name>
     <filename>structtatami__chunked_1_1DenseSlabFactory.html</filename>
-    <templarg>typename CachedValue_</templarg>
+    <templarg>typename Value_</templarg>
     <class kind="struct">tatami_chunked::DenseSlabFactory::Slab</class>
     <member kind="function">
       <type></type>
       <name>DenseSlabFactory</name>
       <anchorfile>structtatami__chunked_1_1DenseSlabFactory.html</anchorfile>
-      <anchor>afef1b2e262740518b6d6e638da9869bf</anchor>
+      <anchor>a5089d5951923fc130e34d8139c72f873</anchor>
       <arglist>(size_t slab_size, size_t max_slabs)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>DenseSlabFactory</name>
       <anchorfile>structtatami__chunked_1_1DenseSlabFactory.html</anchorfile>
-      <anchor>a03d85db742615b07954056d38250997e</anchor>
+      <anchor>a8fd3b111df53b86a7a3cc4b5f092b1e4</anchor>
       <arglist>(const SlabCacheStats &amp;stats)</arglist>
     </member>
     <member kind="function">
       <type>Slab</type>
       <name>create</name>
       <anchorfile>structtatami__chunked_1_1DenseSlabFactory.html</anchorfile>
-      <anchor>a41a55088b9e3180c350edbcb77d3fd26</anchor>
+      <anchor>aa0490ff4d9fce6f4c25d335b666a69da</anchor>
       <arglist>()</arglist>
     </member>
   </compound>
@@ -335,26 +335,19 @@
       <anchor>ad6c1f27da026f8d947159884d5e4cd1f</anchor>
       <arglist></arglist>
     </member>
-    <member kind="typedef">
-      <type>int</type>
-      <name>index_type</name>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSimpleSparseChunk.html</anchorfile>
-      <anchor>a8aac93a4ea386e10341de5a0626fc6a5</anchor>
-      <arglist></arglist>
+      <anchor>a7b99f50fb3cb34c3918da691a5925ec0</anchor>
+      <arglist>(Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSimpleSparseChunk.html</anchorfile>
-      <anchor>ab3d09f3a96c583731023dc78d52a6fd9</anchor>
-      <arglist>(Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; index_type * &gt; &amp;output_indices, Index_ *output_number, index_type shift) const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>extract</name>
-      <anchorfile>structtatami__chunked_1_1MockSimpleSparseChunk.html</anchorfile>
-      <anchor>a921df1a7109fc06fbe087b73ccabff58</anchor>
-      <arglist>(const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; index_type * &gt; &amp;output_indices, Index_ *output_number, index_type shift) const</arglist>
+      <anchor>af4abb19cce529003ab57050c8d1d8c91</anchor>
+      <arglist>(const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static constexpr bool</type>
@@ -422,40 +415,33 @@
       <anchor>a3cfc7db47758a2d6d8252774185398de</anchor>
       <arglist></arglist>
     </member>
-    <member kind="typedef">
-      <type>int</type>
-      <name>index_type</name>
+    <member kind="function">
+      <type>void</type>
+      <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSubsettedSparseChunk.html</anchorfile>
-      <anchor>ae54626ea9a02a3ee38216f230f4ea790</anchor>
-      <arglist></arglist>
+      <anchor>a2081171c01f8309d3d5f3ce6ec92dbd6</anchor>
+      <arglist>(Index_ target_start, Index_ target_length, Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSubsettedSparseChunk.html</anchorfile>
-      <anchor>a423956f76bcf6de2dbb5cdb556773b38</anchor>
-      <arglist>(Index_ target_start, Index_ target_length, Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; index_type * &gt; &amp;output_indices, Index_ *output_number, index_type shift) const</arglist>
+      <anchor>ad32f1d94e7ed9ddb32dfc6ff334bb162</anchor>
+      <arglist>(Index_ target_start, Index_ target_length, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSubsettedSparseChunk.html</anchorfile>
-      <anchor>a87169460b16b3cc47f5bbc48a31e3c15</anchor>
-      <arglist>(Index_ target_start, Index_ target_length, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; index_type * &gt; &amp;output_indices, Index_ *output_number, index_type shift) const</arglist>
+      <anchor>a39058a033690fb88db6b58cc39805736</anchor>
+      <arglist>(const std::vector&lt; Index_ &gt; &amp;target_indices, Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSubsettedSparseChunk.html</anchorfile>
-      <anchor>a038cea5cdb050ed663745a99c6a11561</anchor>
-      <arglist>(const std::vector&lt; Index_ &gt; &amp;target_indices, Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; index_type * &gt; &amp;output_indices, Index_ *output_number, index_type shift) const</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>extract</name>
-      <anchorfile>structtatami__chunked_1_1MockSubsettedSparseChunk.html</anchorfile>
-      <anchor>aee3d05a2fb76139268c5ab1c73e7e8d0</anchor>
-      <arglist>(const std::vector&lt; Index_ &gt; &amp;target_indices, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; index_type * &gt; &amp;output_indices, Index_ *output_number, index_type shift) const</arglist>
+      <anchor>a93f15a4f05c5cb87e778616507155233</anchor>
+      <arglist>(const std::vector&lt; Index_ &gt; &amp;target_indices, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static constexpr bool</type>
@@ -695,10 +681,10 @@
     <name>tatami_chunked::DenseSlabFactory::Slab</name>
     <filename>structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html</filename>
     <member kind="variable">
-      <type>CachedValue_ *</type>
+      <type>Value_ *</type>
       <name>data</name>
       <anchorfile>structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html</anchorfile>
-      <anchor>ab79b325b7ea6a2ec4b1fff5d26959a0a</anchor>
+      <anchor>a608b22baa0ebd6398867d70b48cef6d9</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -706,24 +692,24 @@
     <name>tatami_chunked::SparseSlabFactory::Slab</name>
     <filename>structtatami__chunked_1_1SparseSlabFactory_1_1Slab.html</filename>
     <member kind="variable">
-      <type>std::vector&lt; CachedValue_ * &gt;</type>
+      <type>std::vector&lt; Value_ * &gt;</type>
       <name>values</name>
       <anchorfile>structtatami__chunked_1_1SparseSlabFactory_1_1Slab.html</anchorfile>
-      <anchor>ae15cea56c675f617c04e42e96033dacf</anchor>
+      <anchor>ab1390e39b6b7d05335f0ed009c2ffb99</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>std::vector&lt; CachedIndex_ * &gt;</type>
+      <type>std::vector&lt; Index_ * &gt;</type>
       <name>indices</name>
       <anchorfile>structtatami__chunked_1_1SparseSlabFactory_1_1Slab.html</anchorfile>
-      <anchor>aa53a673c879ab16739b235200c56e13c</anchor>
+      <anchor>a9aa74e0c52ffb90171b406c3023aceac</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>Count_ *</type>
       <name>number</name>
       <anchorfile>structtatami__chunked_1_1SparseSlabFactory_1_1Slab.html</anchorfile>
-      <anchor>a2bbf1af91694178718d45592ea119835</anchor>
+      <anchor>ac203879452a328acabf08db650737199</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -753,45 +739,45 @@
     </member>
     <member kind="variable">
       <type>size_t</type>
-      <name>num_slabs_in_cache</name>
+      <name>max_slabs_in_cache</name>
       <anchorfile>structtatami__chunked_1_1SlabCacheStats.html</anchorfile>
-      <anchor>ad8934008c5389594f7c227c590b26c82</anchor>
+      <anchor>ad18fd1c4f1a2c88b7355412f7c2a69fa</anchor>
       <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
     <name>tatami_chunked::SparseSlabFactory</name>
     <filename>structtatami__chunked_1_1SparseSlabFactory.html</filename>
-    <templarg>typename CachedValue_</templarg>
-    <templarg>typename CachedIndex_</templarg>
+    <templarg>typename Value_</templarg>
+    <templarg>typename Index_</templarg>
     <templarg>typename Count_</templarg>
     <class kind="struct">tatami_chunked::SparseSlabFactory::Slab</class>
     <member kind="function">
       <type></type>
       <name>SparseSlabFactory</name>
       <anchorfile>structtatami__chunked_1_1SparseSlabFactory.html</anchorfile>
-      <anchor>ae1b4ddd5f727062e7b2d04bd2996e74b</anchor>
+      <anchor>a848c3f69614ebe1729fb3d34279ca7cf</anchor>
       <arglist>(size_t target_dim, size_t non_target_dim, size_t slab_size, size_t max_slabs, bool needs_value, bool needs_index)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SparseSlabFactory</name>
       <anchorfile>structtatami__chunked_1_1SparseSlabFactory.html</anchorfile>
-      <anchor>a3d255eec91f12785f7cbde4dfe92abde</anchor>
+      <anchor>a5433f4aea1aac8fb2cec69e98c8bae53</anchor>
       <arglist>(size_t target_dim, size_t non_target_dim, size_t max_slabs, bool needs_value, bool needs_index)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SparseSlabFactory</name>
       <anchorfile>structtatami__chunked_1_1SparseSlabFactory.html</anchorfile>
-      <anchor>a7e4e65f9071f7100730eacbbf34951ce</anchor>
+      <anchor>a9e357d8ab8d2c939c1cd4da510b2be23</anchor>
       <arglist>(size_t target_dim, size_t non_target_dim, const SlabCacheStats &amp;stats, bool needs_value, bool needs_index)</arglist>
     </member>
     <member kind="function">
       <type>Slab</type>
       <name>create</name>
       <anchorfile>structtatami__chunked_1_1SparseSlabFactory.html</anchorfile>
-      <anchor>ad8f9dd256aa86885c3082e2b7c70f227</anchor>
+      <anchor>a1db3ee0bbbab01c3835e3063a024bbf2</anchor>
       <arglist>()</arglist>
     </member>
   </compound>
