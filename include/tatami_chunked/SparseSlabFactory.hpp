@@ -19,12 +19,12 @@ namespace tatami_chunked {
  * The idea is to allocate large blocks for caching in, e.g., `LruSlabCache`, improving performance by avoiding repeated requests to the allocator.
  * This also reduces fragmentation that could increase memory usage beyond the expected cache size.
  *
- * @tparam CachedValue_ Type of the data to be cached.
- * @tparam CachedIndex_ Integer type of the indices to be cached.
- * @tparam Count_ Integer type for counting non-zero values.
- * This should be large enough to store the extent of the non-target dimension.
+ * @tparam Value_ Type of the data in each slab.
+ * @tparam Index_ Integer type of the indices in each slab.
+ * @tparam Count_ Integer type for counting structural non-zeros.
+ * This should be large enough to store the extent of the non-target dimension of the slab.
  */
-template<typename CachedValue_, typename CachedIndex_, typename Count_ = CachedIndex_>
+template<typename Value_, typename Index_, typename Count_ = Index_>
 struct SparseSlabFactory {
     /**
      * @param target_dim Extent of the target dimension of the slab,
@@ -93,8 +93,8 @@ private:
     size_t offset_slab = 0, offset_number = 0;
     size_t target_dim, non_target_dim, slab_size;
     bool needs_value, needs_index;
-    std::vector<CachedValue_> value_pool;
-    std::vector<CachedIndex_> index_pool;
+    std::vector<Value_> value_pool;
+    std::vector<Index_> index_pool;
     std::vector<Count_> number_pool;
 
 public:
@@ -110,7 +110,7 @@ public:
          *
          * Alternatively, this vector may be empty if `needs_value = false` in the `SparseSlabFactory` constructor.
          */
-        std::vector<CachedValue_*> values;
+        std::vector<Value_*> values;
 
         /**
          * Vector of pointers of length equal to `target_dim`. 
@@ -120,7 +120,7 @@ public:
          *
          * Alternatively, this vector may be empty if `needs_index = false` in the `SparseSlabFactory` constructor.
          */
-        std::vector<CachedIndex_*> indices;
+        std::vector<Index_*> indices;
 
         /**
          * Pointer to an array with `target_dim` addressable elements.
