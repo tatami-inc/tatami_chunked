@@ -402,12 +402,6 @@ struct MockSimpleSparseChunk {
     typedef double value_type;
 
     /**
-     * Type of the index stored in this chunk.
-     * Implementations can use any integer type. 
-     */
-    typedef int index_type;
-
-    /**
      * Temporary workspace for extracting data from the chunk.
      * One instance of this workspace will be re-used in multiple `extract()` calls for the same or even different chunks.
      * Implementations may use any data structure here.
@@ -417,7 +411,7 @@ struct MockSimpleSparseChunk {
          * @cond
          */
         // Hiding this here to avoid giving the impression that we NEED to implement this.
-        MockSparseChunk_internal::Workspace<value_type, index_type> work;
+        MockSparseChunk_internal::Workspace<value_type, int> work;
         /**
          * @endcond
          */
@@ -486,9 +480,9 @@ public:
         Index_ non_target_length, 
         Workspace& work, 
         const std::vector<value_type*>& output_values,
-        const std::vector<index_type*>& output_indices,
+        const std::vector<Index_*>& output_indices,
         Index_* output_number,
-        index_type shift)
+        Index_ shift)
     const {
         core.template extract<accrow_, Index_>(
             0, 
@@ -541,9 +535,9 @@ public:
         const std::vector<Index_>& non_target_indices,
         Workspace& work, 
         const std::vector<value_type*>& output_values,
-        const std::vector<index_type*>& output_indices,
+        const std::vector<Index_*>& output_indices,
         Index_* output_number,
-        index_type shift)
+        Index_ shift)
     const {
         core.template extract<accrow_, Index_>(
             0, 
@@ -586,9 +580,7 @@ struct SimpleSparseChunkWrapper {
      */
     typedef typename Blob_::value_type value_type;
 
-    typedef typename Blob_::index_type index_type;
-
-    typedef MockSparseChunk_internal::Workspace<value_type, index_type> Workspace;
+    typedef MockSparseChunk_internal::Workspace<value_type, typename Blob_::index_type> Workspace;
 
     static constexpr bool use_subset = false;
 
@@ -612,9 +604,9 @@ public:
         Index_ non_target_length, 
         Workspace& work, 
         const std::vector<value_type*>& output_values,
-        const std::vector<index_type*>& output_indices,
+        const std::vector<Index_*>& output_indices,
         Index_* output_number,
-        index_type shift)
+        Index_ shift)
     const {
         core.template extract<accrow_, Index_>(
             0, 
@@ -634,9 +626,9 @@ public:
         const std::vector<Index_>& non_target_indices,
         Workspace& work, 
         const std::vector<value_type*>& output_values,
-        const std::vector<index_type*>& output_indices,
+        const std::vector<Index_*>& output_indices,
         Index_* output_number,
-        index_type shift)
+        Index_ shift)
     const {
         core.template extract<accrow_, Index_>(
             0, 
@@ -672,12 +664,6 @@ struct MockSubsettedSparseChunk {
     typedef double value_type;
 
     /**
-     * Type of the index stored in this chunk.
-     * Implementations can use any integer type. 
-     */
-    typedef int index_type;
-
-    /**
      * Workspace for chunk extraction.
      * One instance of this workspace will be re-used in multiple `extract()` calls for the same or even different chunks.
      * Implementations maye use any data structure here.
@@ -687,7 +673,7 @@ struct MockSubsettedSparseChunk {
          * @cond
          */
         // Hiding this here to avoid giving the impression that we NEED to implement this.
-        MockSparseChunk_internal::Workspace<value_type, index_type> work;
+        MockSparseChunk_internal::Workspace<value_type, int> work;
         /**
          * @endcond
          */
@@ -762,9 +748,9 @@ public:
         Index_ non_target_length, 
         Workspace& work, 
         const std::vector<value_type*>& output_values,
-        const std::vector<index_type*>& output_indices,
+        const std::vector<Index_*>& output_indices,
         Index_* output_number,
-        index_type shift)
+        Index_ shift)
     const {
         core.template extract<accrow_>(
             target_start, 
@@ -824,9 +810,9 @@ public:
         const std::vector<Index_>& non_target_indices, 
         Workspace& work, 
         const std::vector<value_type*>& output_values,
-        const std::vector<index_type*>& output_indices,
+        const std::vector<Index_*>& output_indices,
         Index_* output_number,
-        index_type shift)
+        Index_ shift)
     const {
         core.template extract<accrow_>(
             target_start, 
@@ -886,9 +872,9 @@ public:
         Index_ non_target_length, 
         Workspace& work, 
         const std::vector<value_type*>& output_values,
-        const std::vector<index_type*>& output_indices,
+        const std::vector<Index_*>& output_indices,
         Index_* output_number,
-        index_type shift)
+        Index_ shift)
     const {
         core.template extract<accrow_>(
             target_indices, 
@@ -944,9 +930,9 @@ public:
         const std::vector<Index_>& non_target_indices, 
         Workspace& work, 
         const std::vector<value_type*>& output_values,
-        const std::vector<index_type*>& output_indices,
+        const std::vector<Index_*>& output_indices,
         Index_* output_number,
-        index_type shift)
+        Index_ shift)
     const {
         core.template extract<accrow_>(
             target_indices, 

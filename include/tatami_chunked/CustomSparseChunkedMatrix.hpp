@@ -49,13 +49,13 @@ namespace CustomChunkedMatrix_internal {
 template<bool accrow_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
 struct SparseBaseSolo {
 protected:
-    const ChunkCoordinator<Index_, true, Chunk_, int>& coordinator;
+    const ChunkCoordinator<Index_, true, Chunk_>& coordinator;
     typename Chunk_::Workspace chunk_workspace;
 
     tatami::MaybeOracle<oracle_, Index_> oracle;
     typename std::conditional<oracle_, size_t, bool>::type counter = 0;
 
-    SparseSlabFactory<typename Chunk_::value_type, typename Chunk_::index_type, Index_> factory;
+    SparseSlabFactory<typename Chunk_::value_type, Index_, Index_> factory;
     typedef typename decltype(factory)::Slab Slab;
 
     // These two instances are not fully allocated Slabs; rather, tmp_solo just
@@ -63,12 +63,12 @@ protected:
     // across chunks but only for the requested dimension element. Both cases
     // are likely to be much smaller than a full Slab, so we're already more
     // memory-efficient than 'require_minimum_cache = true'.
-    SparseSingleWorkspace<Index_, typename Chunk_::value_type, typename Chunk_::index_type> tmp_solo;
+    SparseSingleWorkspace<typename Chunk_::value_type, Index_> tmp_solo;
     Slab final_solo;
 
 public:
     SparseBaseSolo(
-        const ChunkCoordinator<Index_, true, Chunk_, int>& coordinator, 
+        const ChunkCoordinator<Index_, true, Chunk_>& coordinator, 
         [[maybe_unused]] const SlabCacheStats& slab_stats, // for consistency with the other base classes.
         tatami::MaybeOracle<oracle_, Index_> ora,
         Index_ secondary_length,
@@ -99,17 +99,17 @@ protected:
 template<bool accrow_, typename Value_, typename Index_, typename Chunk_>
 struct SparseBaseMyopic {
 protected:
-    const ChunkCoordinator<Index_, true, Chunk_, int>& coordinator;
+    const ChunkCoordinator<Index_, true, Chunk_>& coordinator;
     typename Chunk_::Workspace chunk_workspace;
 
-    SparseSlabFactory<typename Chunk_::value_type, typename Chunk_::index_type, Index_> factory;
+    SparseSlabFactory<typename Chunk_::value_type, Index_, Index_> factory;
     typedef typename decltype(factory)::Slab Slab;
 
     LruSlabCache<Index_, Slab> cache;
 
 public:
     SparseBaseMyopic(
-        const ChunkCoordinator<Index_, true, Chunk_, int>& coordinator,
+        const ChunkCoordinator<Index_, true, Chunk_>& coordinator,
         const SlabCacheStats& slab_stats, 
         [[maybe_unused]] tatami::MaybeOracle<false, Index_> ora, // for consistency with the other base classes
         Index_ secondary_length,
@@ -130,17 +130,17 @@ protected:
 template<bool accrow_, typename Value_, typename Index_, typename Chunk_>
 struct SparseBaseOracular {
 protected:
-    const ChunkCoordinator<Index_, true, Chunk_, int>& coordinator;
+    const ChunkCoordinator<Index_, true, Chunk_>& coordinator;
     typename Chunk_::Workspace chunk_workspace;
 
-    SparseSlabFactory<typename Chunk_::value_type, typename Chunk_::index_type, Index_> factory;
+    SparseSlabFactory<typename Chunk_::value_type, Index_, Index_> factory;
     typedef typename decltype(factory)::Slab Slab;
 
     typename std::conditional<Chunk_::use_subset, OracularSubsettedSlabCache<Index_, Index_, Slab>, OracularSlabCache<Index_, Index_, Slab> >::type cache;
 
 public:
     SparseBaseOracular(
-        const ChunkCoordinator<Index_, true, Chunk_, int>& coordinator,
+        const ChunkCoordinator<Index_, true, Chunk_>& coordinator,
         const SlabCacheStats& slab_stats,
         tatami::MaybeOracle<true, Index_> ora,
         Index_ secondary_length,
@@ -502,7 +502,7 @@ private:
         typename ... Args_
     >
     std::unique_ptr<Interface_<oracle_, Value_, Index_> > raw_internal(bool row, Index_ secondary_length, const tatami::Options& opt, Args_&& ... args) const {
-        size_t element_size = (opt.sparse_extract_value ? sizeof(typename Chunk_::value_type) : 0) + (opt.sparse_extract_index ? sizeof(typename Chunk_::index_type) : 0);
+        size_t element_size = (opt.sparse_extract_value ? sizeof(typename Chunk_::value_type) : 0) + (opt.sparse_extract_index ? sizeof(Index_) : 0);
 
         if (row) {
             // Remember, the num_chunks_per_column is the number of slabs needed to divide up all the *rows* of the matrix.

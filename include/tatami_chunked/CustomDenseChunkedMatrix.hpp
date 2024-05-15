@@ -50,7 +50,7 @@ namespace CustomChunkedMatrix_internal {
 template<bool accrow_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
 struct DenseBaseSolo {
 protected:
-    const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator;
+    const ChunkCoordinator<Index_, false, Chunk_>& coordinator;
     typename Chunk_::Workspace chunk_workspace;
 
     tatami::MaybeOracle<oracle_, Index_> oracle;
@@ -69,7 +69,7 @@ protected:
 
 public:
     DenseBaseSolo(
-        const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator, 
+        const ChunkCoordinator<Index_, false, Chunk_>& coordinator, 
         [[maybe_unused]] const SlabCacheStats& slab_stats, // for consistency with the other base classes.
         tatami::MaybeOracle<oracle_, Index_> ora,
         Index_ secondary_length) :
@@ -93,7 +93,7 @@ protected:
 template<bool accrow_, typename Value_, typename Index_, typename Chunk_>
 struct DenseBaseMyopic {
 protected:
-    const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator;
+    const ChunkCoordinator<Index_, false, Chunk_>& coordinator;
     typename Chunk_::Workspace chunk_workspace;
 
     DenseSlabFactory<typename Chunk_::value_type> factory;
@@ -103,7 +103,7 @@ protected:
 
 public:
     DenseBaseMyopic(
-        const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator,
+        const ChunkCoordinator<Index_, false, Chunk_>& coordinator,
         const SlabCacheStats& slab_stats, 
         [[maybe_unused]] tatami::MaybeOracle<false, Index_> ora, // for consistency with the other base classes
         [[maybe_unused]] Index_ secondary_length) :
@@ -122,7 +122,7 @@ protected:
 template<bool accrow_, typename Value_, typename Index_, typename Chunk_>
 struct DenseBaseOracular {
 protected:
-    const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator;
+    const ChunkCoordinator<Index_, false, Chunk_>& coordinator;
     typename Chunk_::Workspace chunk_workspace;
 
     DenseSlabFactory<typename Chunk_::value_type> factory;
@@ -132,7 +132,7 @@ protected:
 
 public:
     DenseBaseOracular(
-        const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator,
+        const ChunkCoordinator<Index_, false, Chunk_>& coordinator,
         const SlabCacheStats& slab_stats,
         tatami::MaybeOracle<true, Index_> ora, 
         [[maybe_unused]] Index_ secondary_length) :
@@ -171,7 +171,7 @@ const Value_* process_dense_slab(const std::pair<const Slab_*, Index_>& fetched,
 template<bool accrow_, bool solo_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
 struct DenseFull : public tatami::DenseExtractor<oracle_, Value_, Index_>, public DenseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_> {
     DenseFull(
-        const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator, 
+        const ChunkCoordinator<Index_, false, Chunk_>& coordinator, 
         const SlabCacheStats& slab_stats,
         tatami::MaybeOracle<oracle_, Index_> ora) :
         DenseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_>(
@@ -192,7 +192,7 @@ struct DenseFull : public tatami::DenseExtractor<oracle_, Value_, Index_>, publi
 template<bool accrow_, bool solo_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
 struct DenseBlock : public tatami::DenseExtractor<oracle_, Value_, Index_>, public DenseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_> {
     DenseBlock(
-        const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator, 
+        const ChunkCoordinator<Index_, false, Chunk_>& coordinator, 
         const SlabCacheStats& slab_stats,
         tatami::MaybeOracle<oracle_, Index_> ora, 
         Index_ block_start, 
@@ -219,7 +219,7 @@ private:
 template<bool accrow_, bool solo_, bool oracle_, typename Value_, typename Index_, typename Chunk_>
 struct DenseIndex : public tatami::DenseExtractor<oracle_, Value_, Index_>, public DenseBase<accrow_, solo_, oracle_, Value_, Index_, Chunk_> {
     DenseIndex(
-        const ChunkCoordinator<Index_, false, Chunk_, int>& coordinator, 
+        const ChunkCoordinator<Index_, false, Chunk_>& coordinator, 
         const SlabCacheStats& slab_stats,
         tatami::MaybeOracle<oracle_, Index_> ora,
         tatami::VectorPtr<Index_> idx_ptr) :
@@ -281,7 +281,7 @@ public:
     {}
 
 private:
-    CustomChunkedMatrix_internal::ChunkCoordinator<Index_, false, Chunk_, int> coordinator;
+    CustomChunkedMatrix_internal::ChunkCoordinator<Index_, false, Chunk_> coordinator;
     size_t cache_size_in_elements;
     bool require_minimum_cache;
 

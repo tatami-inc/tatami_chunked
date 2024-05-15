@@ -21,7 +21,7 @@ namespace CustomChunkedMatrix_internal {
 template<typename CachedValue_>
 using DenseSingleWorkspace = std::vector<CachedValue_>;
 
-template<typename Index_, typename CachedValue_, typename CachedIndex_>
+template<typename CachedValue_, typename Index_>
 struct SparseSingleWorkspace {
     SparseSingleWorkspace(size_t primary_chunkdim, size_t secondary_chunkdim, bool needs_value, bool needs_index) : number(primary_chunkdim) {
         size_t total_size = primary_chunkdim * secondary_chunkdim;
@@ -53,11 +53,11 @@ struct SparseSingleWorkspace {
 
 private:
     std::vector<CachedValue_> value_pool;
-    std::vector<CachedIndex_> index_pool;
+    std::vector<Index_> index_pool;
 
 public:
     std::vector<CachedValue_*> values;
-    std::vector<CachedIndex_*> indices;
+    std::vector<Index_*> indices;
     std::vector<Index_> number;
 };
 
@@ -65,12 +65,7 @@ public:
  *** Coordinator ***
  *******************/
 
-template<
-    typename Index_, 
-    bool sparse_,   
-    class Chunk_, 
-    typename ChunkIndex_ = typename Chunk_::index_type // need to put this here as the dense Chunk_ contract doesn't have an index_type.
->
+template<typename Index_, bool sparse_,   class Chunk_>
 class ChunkCoordinator {
 public:
     ChunkCoordinator(ChunkDimensionStats<Index_> rows, ChunkDimensionStats<Index_> cols, std::vector<Chunk_> chunks, bool rm) :
@@ -287,9 +282,8 @@ private:
 
     typedef typename Chunk_::Workspace ChunkWork;
     typedef typename Chunk_::value_type ChunkValue;
-    typedef ChunkIndex_ ChunkIndex;
-    typedef typename std::conditional<sparse_, typename SparseSlabFactory<ChunkValue, ChunkIndex, Index_>::Slab, typename DenseSlabFactory<ChunkValue>::Slab>::type Slab;
-    typedef typename std::conditional<sparse_, SparseSingleWorkspace<Index_, ChunkValue, ChunkIndex>, DenseSingleWorkspace<ChunkValue> >::type SingleWorkspace;
+    typedef typename std::conditional<sparse_, typename SparseSlabFactory<ChunkValue, Index_>::Slab, typename DenseSlabFactory<ChunkValue>::Slab>::type Slab;
+    typedef typename std::conditional<sparse_, SparseSingleWorkspace<ChunkValue, Index_>, DenseSingleWorkspace<ChunkValue> >::type SingleWorkspace;
 
 public:
     // Extract a single element of the primary dimension, using a contiguous
