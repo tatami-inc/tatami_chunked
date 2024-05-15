@@ -7,7 +7,7 @@
 class OracularSubsettedSlabCacheTestMethods {
 protected:
     struct TestSlab {
-        tatami_chunked::OracularSlabSubset<int> subset;
+        tatami_chunked::OracularSubsettedSlabCacheSelectionDetails<int> subset;
         unsigned char chunk_id;
         int populate_number;
         int cycle;
@@ -23,7 +23,7 @@ protected:
                 ++nalloc;
                 return TestSlab();
             },
-            [&](std::vector<std::tuple<unsigned char, TestSlab*, tatami_chunked::OracularSlabSubset<int>*> >& in_need) -> void {
+            [&](std::vector<std::tuple<unsigned char, TestSlab*, tatami_chunked::OracularSubsettedSlabCacheSelectionDetails<int>*> >& in_need) -> void {
                 std::sort(in_need.begin(), in_need.end());
                 for (auto& x : in_need) {
                     auto current = std::get<1>(x);
@@ -95,7 +95,7 @@ TEST_F(OracularSubsettedSlabCacheTest, Consecutive) {
         EXPECT_EQ(out.first->cycle, 1);
         EXPECT_EQ(out.second, i + 1);
 
-        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::BLOCK);
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::BLOCK);
         EXPECT_EQ(out.first->subset.block_start, 1);
         EXPECT_EQ(out.first->subset.block_length, 2);
     }
@@ -107,7 +107,7 @@ TEST_F(OracularSubsettedSlabCacheTest, Consecutive) {
         EXPECT_EQ(out.first->cycle, 1);
         EXPECT_EQ(out.second, 2 - i);
 
-        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::BLOCK);
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::BLOCK);
         EXPECT_EQ(out.first->subset.block_start, 0);
         EXPECT_EQ(out.first->subset.block_length, 3);
     }
@@ -121,7 +121,7 @@ TEST_F(OracularSubsettedSlabCacheTest, Consecutive) {
             EXPECT_EQ(out.first->cycle, 1);
             EXPECT_EQ(out.second, offsets[i]);
 
-            EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::BLOCK);
+            EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::BLOCK);
             EXPECT_EQ(out.first->subset.block_start, 2);
             EXPECT_EQ(out.first->subset.block_length, 4);
         }
@@ -138,7 +138,7 @@ TEST_F(OracularSubsettedSlabCacheTest, Consecutive) {
             EXPECT_EQ(out.first->cycle, 2);
             EXPECT_EQ(out.second, offsets[i]);
 
-            EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::INDEX);
+            EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::INDEX);
             EXPECT_EQ(out.first->subset.indices, sorted);
             confirm_mapping_integrity(out.first->subset);
         }
@@ -155,7 +155,7 @@ TEST_F(OracularSubsettedSlabCacheTest, Consecutive) {
             EXPECT_EQ(out.first->cycle, 2);
             EXPECT_EQ(out.second, offsets[i]);
 
-            EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::INDEX);
+            EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::INDEX);
             EXPECT_EQ(out.first->subset.indices, sorted);
             confirm_mapping_integrity(out.first->subset);
         }
@@ -169,7 +169,7 @@ TEST_F(OracularSubsettedSlabCacheTest, Consecutive) {
             EXPECT_EQ(out.first->cycle, 2);
             EXPECT_EQ(out.second, 6);
 
-            EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::BLOCK);
+            EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::BLOCK);
             EXPECT_EQ(out.first->subset.block_start, 6);
             EXPECT_EQ(out.first->subset.block_length, 1);
         }
@@ -183,7 +183,7 @@ TEST_F(OracularSubsettedSlabCacheTest, Consecutive) {
             EXPECT_EQ(out.first->cycle, 3);
             EXPECT_EQ(out.second, 7 + i);
 
-            EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::BLOCK);
+            EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::BLOCK);
             EXPECT_EQ(out.first->subset.block_start, 7 + i);
             EXPECT_EQ(out.first->subset.block_length, 1);
         }
@@ -225,7 +225,7 @@ TEST_F(OracularSubsettedSlabCacheTest, FullFallback) {
         EXPECT_EQ(out.first->populate_number, 0);
         EXPECT_EQ(out.first->cycle, 1);
         EXPECT_EQ(out.second, 1);
-        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::FULL); // because it's used in the next cycle.
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::FULL); // because it's used in the next cycle.
     }
 
     {
@@ -235,7 +235,7 @@ TEST_F(OracularSubsettedSlabCacheTest, FullFallback) {
         EXPECT_EQ(out.first->cycle, 1);
         EXPECT_EQ(out.second, 2);
 
-        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::INDEX);
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::INDEX);
         std::vector<int> expected { 2, 4 };
         EXPECT_EQ(out.first->subset.indices, expected);
     }
@@ -247,7 +247,7 @@ TEST_F(OracularSubsettedSlabCacheTest, FullFallback) {
         EXPECT_EQ(out.first->cycle, 1);
         EXPECT_EQ(out.second, 3);
 
-        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::INDEX);
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::INDEX);
         std::vector<int> expected { 3, 6 };
         EXPECT_EQ(out.first->subset.indices, expected);
     }
@@ -282,7 +282,7 @@ TEST_F(OracularSubsettedSlabCacheTest, FullFallback) {
         EXPECT_EQ(out.first->populate_number, 4); // even though 55 occurs before 45, it sorts afterward in our populate() function, so it is populated later.
         EXPECT_EQ(out.first->cycle, 2);
         EXPECT_EQ(out.second, 5);
-        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::FULL); // used in the next cycle.
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::FULL); // used in the next cycle.
     }
 
     {
@@ -291,7 +291,7 @@ TEST_F(OracularSubsettedSlabCacheTest, FullFallback) {
         EXPECT_EQ(out.first->populate_number, 0);
         EXPECT_EQ(out.first->cycle, 1); // reused from the previous cycle.
         EXPECT_EQ(out.second, 3);
-        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::FULL); // not used in the next cycle, but it's already there, so we don't reallocate.
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::FULL); // not used in the next cycle, but it's already there, so we don't reallocate.
     }
 
     {
@@ -300,7 +300,7 @@ TEST_F(OracularSubsettedSlabCacheTest, FullFallback) {
         EXPECT_EQ(out.first->populate_number, 3); // see above for 55's explanation.
         EXPECT_EQ(out.first->cycle, 2);
         EXPECT_EQ(out.second, 5);
-        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::FULL); // used in the next cycle.
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::FULL); // used in the next cycle.
     }
 
     {
@@ -312,7 +312,7 @@ TEST_F(OracularSubsettedSlabCacheTest, FullFallback) {
             EXPECT_EQ(out.first->cycle, 3);
             EXPECT_EQ(out.second, offsets[i]);
 
-            EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::BLOCK);
+            EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::BLOCK);
             EXPECT_EQ(out.first->subset.block_start, 7);
             EXPECT_EQ(out.first->subset.block_length, 3);
         }
@@ -324,7 +324,7 @@ TEST_F(OracularSubsettedSlabCacheTest, FullFallback) {
         EXPECT_EQ(out.first->populate_number, 3);
         EXPECT_EQ(out.first->cycle, 2); // reused from the previous cycle.
         EXPECT_EQ(out.second, 0);
-        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::FULL); // not used in the next cycle, but it's already extracted.
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::FULL); // not used in the next cycle, but it's already extracted.
     }
 
     {
@@ -333,7 +333,7 @@ TEST_F(OracularSubsettedSlabCacheTest, FullFallback) {
         EXPECT_EQ(out.first->populate_number, 4);
         EXPECT_EQ(out.first->cycle, 2); // reused from the previous cycle
         EXPECT_EQ(out.second, 6);
-        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::FULL); // not used in the next cycle, but it's already extracted.
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::FULL); // not used in the next cycle, but it's already extracted.
     }
 
 
@@ -343,7 +343,7 @@ TEST_F(OracularSubsettedSlabCacheTest, FullFallback) {
         EXPECT_EQ(out.first->populate_number, 3);
         EXPECT_EQ(out.first->cycle, 2); // reused from the previous cycle
         EXPECT_EQ(out.second, 5);
-        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsetSelection::FULL); // not used in the next cycle, but it's already extracted.
+        EXPECT_EQ(out.first->subset.selection, tatami_chunked::OracularSubsettedSlabCacheSelectionType::FULL); // not used in the next cycle, but it's already extracted.
     }
 
     EXPECT_EQ(nalloc, 3); // respects the max cache size.
@@ -373,10 +373,10 @@ TEST_P(OracularSubsettedSlabCacheStressTest, Stressed) {
 
         // Checking the subset.
         const auto& sub = out.first->subset;
-        if (sub.selection == tatami_chunked::OracularSubsetSelection::BLOCK) {
+        if (sub.selection == tatami_chunked::OracularSubsettedSlabCacheSelectionType::BLOCK) {
             EXPECT_TRUE(out.second >= sub.block_start);
             EXPECT_TRUE(out.second < sub.block_start + sub.block_length);
-        } else if (sub.selection == tatami_chunked::OracularSubsetSelection::INDEX) {
+        } else if (sub.selection == tatami_chunked::OracularSubsettedSlabCacheSelectionType::INDEX) {
             confirm_mapping_integrity(sub);
             EXPECT_TRUE(sub.mapping.find(out.second) != sub.mapping.end());
         } 

@@ -775,19 +775,19 @@ private:
                 /* create = */ [&]() -> Slab {
                     return factory.create();
                 },
-                /* populate =*/ [&](std::vector<std::tuple<Index_, Slab*, OracularSlabSubset<Index_>*> >& in_need) -> void {
+                /* populate =*/ [&](std::vector<std::tuple<Index_, Slab*, OracularSubsettedSlabCacheSelectionDetails<Index_>*> >& in_need) -> void {
                     for (const auto& p : in_need) {
                         auto id = std::get<0>(p);
                         auto ptr = std::get<1>(p);
                         auto sub = std::get<2>(p);
                         switch (sub->selection) {
-                            case OracularSubsetSelection::FULL:
+                            case OracularSubsettedSlabCacheSelectionType::FULL:
                                 fetch_block(id, 0, get_primary_chunkdim<accrow_>(id), *ptr);
                                 break;
-                            case OracularSubsetSelection::BLOCK:
+                            case OracularSubsettedSlabCacheSelectionType::BLOCK:
                                 fetch_block(id, sub->block_start, sub->block_length, *ptr);
                                 break;
-                            case OracularSubsetSelection::INDEX:
+                            case OracularSubsettedSlabCacheSelectionType::INDEX:
                                 fetch_index(id, sub->indices, *ptr);
                                 break;
                         }

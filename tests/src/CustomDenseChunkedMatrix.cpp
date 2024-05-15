@@ -71,7 +71,7 @@ protected:
             }
         }
 
-        tatami_chunked::CustomDenseChunkedOptions opt;
+        tatami_chunked::CustomDenseChunkedMatrixOptions opt;
         opt.maximum_cache_size = cache_size;
         opt.require_minimum_cache = (cache_size > 0);
 

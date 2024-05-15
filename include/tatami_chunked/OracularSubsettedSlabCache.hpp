@@ -14,29 +14,29 @@
 namespace tatami_chunked {
 
 /**
- * Type of subset selection.
- * Used to determine the subsets to extract in `OracularSubsettedSlabCache::OracularSlabSubset`.
+ * Type of selection on the target dimension.
+ * Used to determine the subsets to extract in `OracularSubsettedSlabCache`.
  * 
  * - `FULL`: all rows/columns. 
  * - `BLOCK`: a contiguous block of rows/columns. 
  * - `INDEX`: an indexed subset of rows/columns.
  */
-enum class OracularSubsetSelection : char { FULL, BLOCK, INDEX };
+enum class OracularSubsettedSlabCacheSelectionType : char { FULL, BLOCK, INDEX };
 
 /**
  * @brief Details on the subset to extract in `OracularSubsettedSlabCache`.
  * @tparam Index_ Type of row/column index produced by the oracle.
  */
 template<typename Index_>
-struct OracularSlabSubset {
+struct OracularSubsettedSlabCacheSelectionDetails {
     /**
-     * Type of subset selection to extract from the slab.
+     * Type of subset to extract from the target dimension of the slab.
      */
-    OracularSubsetSelection selection;
+    OracularSubsettedSlabCacheSelectionType selection;
 
     /**
      * Row/column index representing the start of the block within the slab to be extracted.
-     * Only used if `selection` is set to `OracularSubsetSelection::BLOCK`.
+     * Only used if `selection` is set to `OracularSubsettedSlabCacheSelectionType::BLOCK`.
      *
      * Note that the index is relative to the start of the slab, not to the matrix containing the slab,
      * i.e., if the slab consists of rows 10-20 and we want to extract row 11, this will be reported here as an index of 1.
@@ -45,14 +45,14 @@ struct OracularSlabSubset {
 
     /**
      * Length of the block within the slab to be extracted.
-     * Only used if `selection` is set to `OracularSubsetSelection::BLOCK`.
+     * Only used if `selection` is set to `OracularSubsettedSlabCacheSelectionType::BLOCK`.
      */
     Index_ block_length;
 
     /**
      * Indices within the slab to be extracted.
      * Guaranteed to be sorted and unique.
-     * Only used if `selection` is set to `OracularSubsetSelection::INDEX`.
+     * Only used if `selection` is set to `OracularSubsettedSlabCacheSelectionType::INDEX`.
      *
      * Note that all indices is relative to the start of the slab, not to the matrix containing the slab,
      * i.e., if the slab consists of rows 10-20 and we want to extract row 11, this will be reported here as an index of 1.
@@ -60,9 +60,9 @@ struct OracularSlabSubset {
     std::vector<Index_> indices;
 
     /**
-     * Mapping of indices to be extracted to their positions inside `indices`.
+     * Mapping of indices-to-be-extracted to their positions inside `indices`.
      * All values of `indices` are present as keys here where `mapping[indices[i]] = i`.
-     * Only used if `selection` is set to `OracularSubsetSelection::INDEX`.
+     * Only used if `selection` is set to `OracularSubsettedSlabCacheSelectionType::INDEX`.
      */
     std::unordered_map<Index_, Index_> mapping;
 
@@ -80,7 +80,7 @@ public:
      * @cond
      */
     void set(Index_ i) {
-        selection = OracularSubsetSelection::BLOCK;
+        selection = OracularSubsettedSlabCacheSelectionType::BLOCK;
         block_start = i;
         block_end = i + 1;
         indices.clear();
@@ -88,11 +88,11 @@ public:
     }
 
     void add(Index_ i) {
-        if (selection == OracularSubsetSelection::FULL) {
+        if (selection == OracularSubsettedSlabCacheSelectionType::FULL) {
             return;
         }
 
-        if (selection == OracularSubsetSelection::BLOCK) {
+        if (selection == OracularSubsettedSlabCacheSelectionType::BLOCK) {
             if (i == block_end) {
                 block_end = i + 1;
                 return;
@@ -105,7 +105,7 @@ public:
                 return;
             }
 
-            selection = OracularSubsetSelection::INDEX;
+            selection = OracularSubsettedSlabCacheSelectionType::INDEX;
             indices.resize(block_end - block_start);
             std::iota(indices.begin(), indices.end(), block_start);
             fill_mapping();
@@ -118,9 +118,9 @@ public:
     }
 
     void finalize() {
-        if (selection == OracularSubsetSelection::BLOCK) {
+        if (selection == OracularSubsettedSlabCacheSelectionType::BLOCK) {
             block_length = block_end - block_start;
-        } else if (selection == OracularSubsetSelection::INDEX) {
+        } else if (selection == OracularSubsettedSlabCacheSelectionType::INDEX) {
             if (!std::is_sorted(indices.begin(), indices.end())) {
                 std::sort(indices.begin(), indices.end());
                 fill_mapping();
@@ -158,16 +158,16 @@ private:
     std::vector<Slab_> all_slabs;
     std::unordered_map<Id_, Slab_*> current_cache, future_cache;
 
-    std::vector<OracularSlabSubset<Index_> > all_subset_details;
-    std::vector<OracularSlabSubset<Index_>*> free_subset_details;
-    std::unordered_map<Id_, OracularSlabSubset<Index_>*> close_future_subset_cache, far_future_subset_cache;
+    std::vector<OracularSubsettedSlabCacheSelectionDetails<Index_> > all_subset_details;
+    std::vector<OracularSubsettedSlabCacheSelectionDetails<Index_>*> free_subset_details;
+    std::unordered_map<Id_, OracularSubsettedSlabCacheSelectionDetails<Index_>*> close_future_subset_cache, far_future_subset_cache;
     size_t close_refresh_point = 0;
     size_t far_refresh_point = 0;
     Id_ far_slab_id;
     Index_ far_slab_offset;
 
-    std::vector<std::pair<Id_, OracularSlabSubset<Index_>*> > to_reassign;
-    std::vector<std::tuple<Id_, Slab_*, OracularSlabSubset<Index_>*> > to_populate;
+    std::vector<std::pair<Id_, OracularSubsettedSlabCacheSelectionDetails<Index_>*> > to_reassign;
+    std::vector<std::tuple<Id_, Slab_*, OracularSubsettedSlabCacheSelectionDetails<Index_>*> > to_populate;
 
 public:
     /**
@@ -243,10 +243,10 @@ public:
      *    For example, if each chunk takes up 10 rows, attempting to access row 21 would yield an offset of 1.
      * @param create Function that accepts no arguments and returns a `Slab_` object with sufficient memory to hold a slab's contents when used in `populate()`.
      * This may also return a default-constructed `Slab_` object if the allocation is done dynamically per slab in `populate()`.
-     * @param populate Function that accepts a `std::vector<std::pair<Id_, Slab_*, OracularSlabSubset<Index_>*> >&` specifying the slabs to be populated.
-     * The first `Id_` element of each pair contains the slab identifier, i.e., the first element returned by the `identify` function.
+     * @param populate Function that accepts a `std::vector<std::tuple<Id_, Slab_*, OracularSubsettedSlabCacheSelectionDetails<Index_>*> >&` specifying the slabs to be populated.
+     * The first `Id_` element of each tuple contains the slab identifier, i.e., the first element returned by the `identify` function.
      * The second `Slab_*` element specifies the object which to store the contents of each slab.
-     * The third `OracularSlabSubset<Index_>*` element contains information about the subset of each slab that is required.
+     * The third `OracularSubsettedSlabCacheSelectionDetails<Index_>*` element contains information about the subset of each slab that is required.
      * This function should iterate over the vector and populate the desired subset of each slab.
      * Note that the vector is not guaranteed to be sorted. 
      *
@@ -389,8 +389,8 @@ private:
         // FULL extraction just to be safe.
         auto cfcIt = close_future_subset_cache.find(slab_id);
         if (cfcIt != close_future_subset_cache.end()) {
-            selected->selection = OracularSubsetSelection::FULL;
-            cfcIt->second->selection = OracularSubsetSelection::FULL;
+            selected->selection = OracularSubsettedSlabCacheSelectionType::FULL;
+            cfcIt->second->selection = OracularSubsettedSlabCacheSelectionType::FULL;
         }
     }
 

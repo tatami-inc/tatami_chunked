@@ -20,7 +20,7 @@ namespace tatami_chunked {
 /**
  * @brief Options for custom sparse chunk extraction.
  */
-struct CustomSparseChunkedOptions {
+struct CustomSparseChunkedMatrixOptions {
     /**
      * Size of the in-memory cache in bytes.
      * Larger caches improve access speed at the cost of memory usage.
@@ -451,7 +451,7 @@ public:
      * @param row_major Whether `chunks` is in row-major format.
      * @param opt Further options for chunked extraction.
      */
-    CustomSparseChunkedMatrix(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector<Chunk_> chunks, bool row_major, const CustomSparseChunkedOptions& opt) : 
+    CustomSparseChunkedMatrix(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector<Chunk_> chunks, bool row_major, const CustomSparseChunkedMatrixOptions& opt) : 
         coordinator(ChunkDimensionStats<Index_>(mat_nrow, chunk_nrow), ChunkDimensionStats<Index_>(mat_ncol, chunk_ncol), std::move(chunks), row_major),
         cache_size_in_bytes(opt.maximum_cache_size),
         require_minimum_cache(opt.require_minimum_cache)
