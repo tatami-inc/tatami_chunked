@@ -860,19 +860,19 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00775" name="l00775"></a><span class="lineno">  775</span>                <span class="comment">/* create = */</span> [&amp;]() -&gt; Slab {</div>
 <div class="line"><a id="l00776" name="l00776"></a><span class="lineno">  776</span>                    <span class="keywordflow">return</span> factory.create();</div>
 <div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>                },</div>
-<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>                <span class="comment">/* populate =*/</span> [&amp;](std::vector&lt;std::tuple&lt;Index_, Slab*, OracularSlabSubset&lt;Index_&gt;*&gt; &gt;&amp; in_need) -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>                <span class="comment">/* populate =*/</span> [&amp;](std::vector&lt;std::tuple&lt;Index_, Slab*, OracularSubsettedSlabCacheSelectionDetails&lt;Index_&gt;*&gt; &gt;&amp; in_need) -&gt; <span class="keywordtype">void</span> {</div>
 <div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>                    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; p : in_need) {</div>
 <div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>                        <span class="keyword">auto</span> <span class="keywordtype">id</span> = std::get&lt;0&gt;(p);</div>
 <div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>                        <span class="keyword">auto</span> ptr = std::get&lt;1&gt;(p);</div>
 <div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>                        <span class="keyword">auto</span> sub = std::get&lt;2&gt;(p);</div>
 <div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>                        <span class="keywordflow">switch</span> (sub-&gt;selection) {</div>
-<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>                            <span class="keywordflow">case</span> OracularSubsetSelection::FULL:</div>
+<div class="line"><a id="l00784" name="l00784"></a><span class="lineno">  784</span>                            <span class="keywordflow">case</span> OracularSubsettedSlabCacheSelectionType::FULL:</div>
 <div class="line"><a id="l00785" name="l00785"></a><span class="lineno">  785</span>                                fetch_block(<span class="keywordtype">id</span>, 0, get_primary_chunkdim&lt;accrow_&gt;(<span class="keywordtype">id</span>), *ptr);</div>
 <div class="line"><a id="l00786" name="l00786"></a><span class="lineno">  786</span>                                <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>                            <span class="keywordflow">case</span> OracularSubsetSelection::BLOCK:</div>
+<div class="line"><a id="l00787" name="l00787"></a><span class="lineno">  787</span>                            <span class="keywordflow">case</span> OracularSubsettedSlabCacheSelectionType::BLOCK:</div>
 <div class="line"><a id="l00788" name="l00788"></a><span class="lineno">  788</span>                                fetch_block(<span class="keywordtype">id</span>, sub-&gt;block_start, sub-&gt;block_length, *ptr);</div>
 <div class="line"><a id="l00789" name="l00789"></a><span class="lineno">  789</span>                                <span class="keywordflow">break</span>;</div>
-<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>                            <span class="keywordflow">case</span> OracularSubsetSelection::INDEX:</div>
+<div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>                            <span class="keywordflow">case</span> OracularSubsettedSlabCacheSelectionType::INDEX:</div>
 <div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>                                fetch_index(<span class="keywordtype">id</span>, sub-&gt;indices, *ptr);</div>
 <div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>                                <span class="keywordflow">break</span>;</div>
 <div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>                        }</div>

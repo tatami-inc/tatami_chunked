@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['selection_0',['selection',['../structtatami__chunked_1_1OracularSlabSubset.html#a6e27bbbc891041bd18158f94cce204d7',1,'tatami_chunked::OracularSlabSubset']]],
+  ['selection_0',['selection',['../structtatami__chunked_1_1OracularSubsettedSlabCacheSelectionDetails.html#aca6ae8fe281ea5f99f04d4fde9f4f92a',1,'tatami_chunked::OracularSubsettedSlabCacheSelectionDetails']]],
   ['simpledensechunkwrapper_1',['SimpleDenseChunkWrapper',['../structtatami__chunked_1_1SimpleDenseChunkWrapper.html',1,'tatami_chunked']]],
   ['simplesparsechunkwrapper_2',['SimpleSparseChunkWrapper',['../structtatami__chunked_1_1SimpleSparseChunkWrapper.html',1,'tatami_chunked']]],
   ['size_3',['size',['https://tatami-inc.github.io/tatami/classtatami_1_1ArrayView.html#a7983c151067c852f6382b76661937dfd',1,'tatami::ArrayView::size()'],['https://tatami-inc.github.io/tatami/structtatami_1_1SomeNumericArray.html#a6b23cda3aa1555f3605bdc425985e161',1,'tatami::SomeNumericArray::size()']]],

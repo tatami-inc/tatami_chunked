@@ -4,7 +4,7 @@
     <name>CustomDenseChunkedMatrix.hpp</name>
     <path>tatami_chunked/</path>
     <filename>CustomDenseChunkedMatrix_8hpp.html</filename>
-    <class kind="struct">tatami_chunked::CustomDenseChunkedOptions</class>
+    <class kind="struct">tatami_chunked::CustomDenseChunkedMatrixOptions</class>
     <class kind="class">tatami_chunked::CustomDenseChunkedMatrix</class>
     <namespace>tatami_chunked</namespace>
   </compound>
@@ -12,7 +12,7 @@
     <name>CustomSparseChunkedMatrix.hpp</name>
     <path>tatami_chunked/</path>
     <filename>CustomSparseChunkedMatrix_8hpp.html</filename>
-    <class kind="struct">tatami_chunked::CustomSparseChunkedOptions</class>
+    <class kind="struct">tatami_chunked::CustomSparseChunkedMatrixOptions</class>
     <class kind="class">tatami_chunked::CustomSparseChunkedMatrix</class>
     <namespace>tatami_chunked</namespace>
   </compound>
@@ -56,7 +56,7 @@
     <name>OracularSubsettedSlabCache.hpp</name>
     <path>tatami_chunked/</path>
     <filename>OracularSubsettedSlabCache_8hpp.html</filename>
-    <class kind="struct">tatami_chunked::OracularSlabSubset</class>
+    <class kind="struct">tatami_chunked::OracularSubsettedSlabCacheSelectionDetails</class>
     <class kind="class">tatami_chunked::OracularSubsettedSlabCache</class>
     <namespace>tatami_chunked</namespace>
   </compound>
@@ -145,25 +145,25 @@
       <type></type>
       <name>CustomDenseChunkedMatrix</name>
       <anchorfile>classtatami__chunked_1_1CustomDenseChunkedMatrix.html</anchorfile>
-      <anchor>ac60c324ee232ab578353f879e1540083</anchor>
-      <arglist>(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector&lt; Chunk_ &gt; chunks, bool row_major, const CustomDenseChunkedOptions &amp;opt)</arglist>
+      <anchor>a30ee69d99a4a49b8be7cc234af72dce1</anchor>
+      <arglist>(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector&lt; Chunk_ &gt; chunks, bool row_major, const CustomDenseChunkedMatrixOptions &amp;opt)</arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>tatami_chunked::CustomDenseChunkedOptions</name>
-    <filename>structtatami__chunked_1_1CustomDenseChunkedOptions.html</filename>
+    <name>tatami_chunked::CustomDenseChunkedMatrixOptions</name>
+    <filename>structtatami__chunked_1_1CustomDenseChunkedMatrixOptions.html</filename>
     <member kind="variable">
       <type>size_t</type>
       <name>maximum_cache_size</name>
-      <anchorfile>structtatami__chunked_1_1CustomDenseChunkedOptions.html</anchorfile>
-      <anchor>ac867e9ee92d981a4b64bdcd3922ba0ef</anchor>
+      <anchorfile>structtatami__chunked_1_1CustomDenseChunkedMatrixOptions.html</anchorfile>
+      <anchor>a3630f24fba130e82dba85f0fd3fc4f3f</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>bool</type>
       <name>require_minimum_cache</name>
-      <anchorfile>structtatami__chunked_1_1CustomDenseChunkedOptions.html</anchorfile>
-      <anchor>a371c078f772cc4b494988a7b96d6798e</anchor>
+      <anchorfile>structtatami__chunked_1_1CustomDenseChunkedMatrixOptions.html</anchorfile>
+      <anchor>a05aaeacefdb90ea4c7d793c2588b81a9</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -178,25 +178,25 @@
       <type></type>
       <name>CustomSparseChunkedMatrix</name>
       <anchorfile>classtatami__chunked_1_1CustomSparseChunkedMatrix.html</anchorfile>
-      <anchor>aaf8de32d64a64a80f2c8a7d3467871ee</anchor>
-      <arglist>(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector&lt; Chunk_ &gt; chunks, bool row_major, const CustomSparseChunkedOptions &amp;opt)</arglist>
+      <anchor>a37234dc9888f04cb1683ad1295209438</anchor>
+      <arglist>(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector&lt; Chunk_ &gt; chunks, bool row_major, const CustomSparseChunkedMatrixOptions &amp;opt)</arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>tatami_chunked::CustomSparseChunkedOptions</name>
-    <filename>structtatami__chunked_1_1CustomSparseChunkedOptions.html</filename>
+    <name>tatami_chunked::CustomSparseChunkedMatrixOptions</name>
+    <filename>structtatami__chunked_1_1CustomSparseChunkedMatrixOptions.html</filename>
     <member kind="variable">
       <type>size_t</type>
       <name>maximum_cache_size</name>
-      <anchorfile>structtatami__chunked_1_1CustomSparseChunkedOptions.html</anchorfile>
-      <anchor>a7590657e09265b2af90f3b493c82fc6e</anchor>
+      <anchorfile>structtatami__chunked_1_1CustomSparseChunkedMatrixOptions.html</anchorfile>
+      <anchor>af401ebdc5474b4ff5d5bb834df9a8cf3</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>bool</type>
       <name>require_minimum_cache</name>
-      <anchorfile>structtatami__chunked_1_1CustomSparseChunkedOptions.html</anchorfile>
-      <anchor>a35d3fd4f3063bfb2f8a5808c8e41b8f7</anchor>
+      <anchorfile>structtatami__chunked_1_1CustomSparseChunkedMatrixOptions.html</anchorfile>
+      <anchor>afee91b01418e16b219bf19b232c09aa8</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -485,46 +485,6 @@
       <arglist>() const</arglist>
     </member>
   </compound>
-  <compound kind="struct">
-    <name>tatami_chunked::OracularSlabSubset</name>
-    <filename>structtatami__chunked_1_1OracularSlabSubset.html</filename>
-    <templarg>typename Index_</templarg>
-    <member kind="variable">
-      <type>OracularSubsetSelection</type>
-      <name>selection</name>
-      <anchorfile>structtatami__chunked_1_1OracularSlabSubset.html</anchorfile>
-      <anchor>a6e27bbbc891041bd18158f94cce204d7</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>Index_</type>
-      <name>block_start</name>
-      <anchorfile>structtatami__chunked_1_1OracularSlabSubset.html</anchorfile>
-      <anchor>a1fa1b408099b044f2e52f3133a94ee45</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>Index_</type>
-      <name>block_length</name>
-      <anchorfile>structtatami__chunked_1_1OracularSlabSubset.html</anchorfile>
-      <anchor>af6020cf3bafb5302a990bc749ccde67c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>std::vector&lt; Index_ &gt;</type>
-      <name>indices</name>
-      <anchorfile>structtatami__chunked_1_1OracularSlabSubset.html</anchorfile>
-      <anchor>a402753ad9d8a9f2e7f3b92bb48bd2526</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>std::unordered_map&lt; Index_, Index_ &gt;</type>
-      <name>mapping</name>
-      <anchorfile>structtatami__chunked_1_1OracularSlabSubset.html</anchorfile>
-      <anchor>a353938d28f3b034e2808adb999e4548f</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
   <compound kind="class">
     <name>tatami_chunked::OracularSubsettedSlabCache</name>
     <filename>classtatami__chunked_1_1OracularSubsettedSlabCache.html</filename>
@@ -579,6 +539,46 @@
       <anchorfile>classtatami__chunked_1_1OracularSubsettedSlabCache.html</anchorfile>
       <anchor>a8a784316e939057aa052b632f9ee0853</anchor>
       <arglist>() const</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami_chunked::OracularSubsettedSlabCacheSelectionDetails</name>
+    <filename>structtatami__chunked_1_1OracularSubsettedSlabCacheSelectionDetails.html</filename>
+    <templarg>typename Index_</templarg>
+    <member kind="variable">
+      <type>OracularSubsettedSlabCacheSelectionType</type>
+      <name>selection</name>
+      <anchorfile>structtatami__chunked_1_1OracularSubsettedSlabCacheSelectionDetails.html</anchorfile>
+      <anchor>aca6ae8fe281ea5f99f04d4fde9f4f92a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>Index_</type>
+      <name>block_start</name>
+      <anchorfile>structtatami__chunked_1_1OracularSubsettedSlabCacheSelectionDetails.html</anchorfile>
+      <anchor>ad080a4b233d1f6e904b10a31b3fcb858</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>Index_</type>
+      <name>block_length</name>
+      <anchorfile>structtatami__chunked_1_1OracularSubsettedSlabCacheSelectionDetails.html</anchorfile>
+      <anchor>ab74bf7645027d9263d092e8d611bad6b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>std::vector&lt; Index_ &gt;</type>
+      <name>indices</name>
+      <anchorfile>structtatami__chunked_1_1OracularSubsettedSlabCacheSelectionDetails.html</anchorfile>
+      <anchor>ac937e89603b6c919ab92939cfb2e804b</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>std::unordered_map&lt; Index_, Index_ &gt;</type>
+      <name>mapping</name>
+      <anchorfile>structtatami__chunked_1_1OracularSubsettedSlabCacheSelectionDetails.html</anchorfile>
+      <anchor>ae16cb18d8ae9a184c0bff198a93a2540</anchor>
+      <arglist></arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -708,30 +708,30 @@
     <filename>namespacetatami__chunked.html</filename>
     <class kind="struct">tatami_chunked::ChunkDimensionStats</class>
     <class kind="class">tatami_chunked::CustomDenseChunkedMatrix</class>
-    <class kind="struct">tatami_chunked::CustomDenseChunkedOptions</class>
+    <class kind="struct">tatami_chunked::CustomDenseChunkedMatrixOptions</class>
     <class kind="class">tatami_chunked::CustomSparseChunkedMatrix</class>
-    <class kind="struct">tatami_chunked::CustomSparseChunkedOptions</class>
+    <class kind="struct">tatami_chunked::CustomSparseChunkedMatrixOptions</class>
     <class kind="class">tatami_chunked::LruSlabCache</class>
     <class kind="struct">tatami_chunked::MockSimpleDenseChunk</class>
     <class kind="struct">tatami_chunked::MockSimpleSparseChunk</class>
     <class kind="struct">tatami_chunked::MockSubsettedDenseChunk</class>
     <class kind="struct">tatami_chunked::MockSubsettedSparseChunk</class>
     <class kind="class">tatami_chunked::OracularSlabCache</class>
-    <class kind="struct">tatami_chunked::OracularSlabSubset</class>
     <class kind="class">tatami_chunked::OracularSubsettedSlabCache</class>
+    <class kind="struct">tatami_chunked::OracularSubsettedSlabCacheSelectionDetails</class>
     <class kind="class">tatami_chunked::OracularVariableSlabCache</class>
     <class kind="struct">tatami_chunked::SimpleDenseChunkWrapper</class>
     <class kind="struct">tatami_chunked::SimpleSparseChunkWrapper</class>
     <class kind="struct">tatami_chunked::SlabCacheStats</class>
     <member kind="enumeration">
       <type></type>
-      <name>OracularSubsetSelection</name>
+      <name>OracularSubsettedSlabCacheSelectionType</name>
       <anchorfile>namespacetatami__chunked.html</anchorfile>
-      <anchor>a55fabfb4a9c64f6074b7c72a37013528</anchor>
+      <anchor>a1cf9331362632bdb05005b01683f02b3</anchor>
       <arglist></arglist>
-      <enumvalue file="namespacetatami__chunked.html" anchor="a55fabfb4a9c64f6074b7c72a37013528aba7de5bc6888294e5884b024a4c894f1">FULL</enumvalue>
-      <enumvalue file="namespacetatami__chunked.html" anchor="a55fabfb4a9c64f6074b7c72a37013528a4d34f53389ed7f28ca91fc31ea360a66">BLOCK</enumvalue>
-      <enumvalue file="namespacetatami__chunked.html" anchor="a55fabfb4a9c64f6074b7c72a37013528acb4ae3b37047fb4b2c0d16f8bf84f076">INDEX</enumvalue>
+      <enumvalue file="namespacetatami__chunked.html" anchor="a1cf9331362632bdb05005b01683f02b3aba7de5bc6888294e5884b024a4c894f1">FULL</enumvalue>
+      <enumvalue file="namespacetatami__chunked.html" anchor="a1cf9331362632bdb05005b01683f02b3a4d34f53389ed7f28ca91fc31ea360a66">BLOCK</enumvalue>
+      <enumvalue file="namespacetatami__chunked.html" anchor="a1cf9331362632bdb05005b01683f02b3acb4ae3b37047fb4b2c0d16f8bf84f076">INDEX</enumvalue>
     </member>
     <member kind="function">
       <type>Index_</type>

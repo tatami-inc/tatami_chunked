@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['block_5flength_0',['block_length',['../structtatami__chunked_1_1OracularSlabSubset.html#af6020cf3bafb5302a990bc749ccde67c',1,'tatami_chunked::OracularSlabSubset']]],
-  ['block_5fstart_1',['block_start',['../structtatami__chunked_1_1OracularSlabSubset.html#a1fa1b408099b044f2e52f3133a94ee45',1,'tatami_chunked::OracularSlabSubset']]]
+  ['block_5flength_0',['block_length',['../structtatami__chunked_1_1OracularSubsettedSlabCacheSelectionDetails.html#ab74bf7645027d9263d092e8d611bad6b',1,'tatami_chunked::OracularSubsettedSlabCacheSelectionDetails']]],
+  ['block_5fstart_1',['block_start',['../structtatami__chunked_1_1OracularSubsettedSlabCacheSelectionDetails.html#ad080a4b233d1f6e904b10a31b3fcb858',1,'tatami_chunked::OracularSubsettedSlabCacheSelectionDetails']]]
 ];
