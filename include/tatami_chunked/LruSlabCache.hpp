@@ -63,13 +63,6 @@ public:
      * @endcond
      */
 
-    /**
-     * Overloaded constructor for consistency with `OracleSlabCache` and `SubsettedOracleSlabCache`.
-     * @tparam Oracle_ Any class, to be ignored.
-     */ 
-    template<class Oracle_>
-    LruSlabCache([[maybe_unused]] Oracle_ ora, size_t m) : LruSlabCache(m) {}
-
 public:
     /**
      * This method should only be called if `m > 0` in the constructor.
