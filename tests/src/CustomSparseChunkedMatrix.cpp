@@ -13,7 +13,7 @@ public:
         std::pair<int, int>, // matrix dimensions
         std::pair<int, int>, // chunk dimensions
         bool, // row major chunks
-        int   // cache size
+        double // cache fraction
     > SimulationParameters;
 
 protected:
@@ -34,10 +34,10 @@ protected:
         auto matdim = std::get<0>(params);
         auto chunkdim = std::get<1>(params);
         bool rowmajor = std::get<2>(params);
-        size_t cache_size = std::get<3>(params);
+        double cache_fraction = std::get<3>(params);
 
         auto full = tatami_test::simulate_sparse_compressed<double>(matdim.second, matdim.first, 0.1, -10, 10, 
-            /* seed = */ matdim.first * matdim.second + chunkdim.first * chunkdim.second + rowmajor + cache_size);
+            /* seed = */ matdim.first * matdim.second + chunkdim.first * chunkdim.second + rowmajor + 100 * cache_fraction);
         ref.reset(new tatami::CompressedSparseColumnMatrix<double, int>(matdim.first, matdim.second, std::move(full.value), std::move(full.index), std::move(full.ptr)));
 
         auto num_chunks_per_row = (matdim.second + chunkdim.second - 1) / chunkdim.second;
@@ -104,7 +104,7 @@ protected:
         }
 
         tatami_chunked::CustomSparseChunkedMatrixOptions opt;
-        opt.maximum_cache_size = cache_size;
+        size_t cache_size = static_cast<double>(matdim.first) * static_cast<double>(matdim.second) * cache_fraction * static_cast<double>(sizeof(double) + sizeof(int));
         opt.require_minimum_cache = (cache_size > 0);
 
         mock_mat.reset(new tatami_chunked::CustomSparseChunkedMatrix<double, int, SChunk>(
@@ -156,7 +156,7 @@ INSTANTIATE_TEST_SUITE_P(
             ),
 
             ::testing::Values(true, false), // row major
-            ::testing::Values(0, 1, 100000) // cache size
+            ::testing::Values(0, 0.01, 0.1) // cache fraction
         ),
 
         tatami_test::standard_test_access_parameter_combinations()
@@ -202,7 +202,7 @@ INSTANTIATE_TEST_SUITE_P(
             ),
 
             ::testing::Values(true, false), // row major
-            ::testing::Values(0, 1, 100000) // cache size
+            ::testing::Values(0, 0.01, 0.1) // cache fraction
         ),
 
         tatami_test::standard_test_access_parameter_combinations(),
@@ -254,7 +254,7 @@ INSTANTIATE_TEST_SUITE_P(
             ),
 
             ::testing::Values(true, false), // row major 
-            ::testing::Values(0, 1, 100000) // cache size
+            ::testing::Values(0, 0.01, 0.1) // cache fraction
         ),
 
         tatami_test::standard_test_access_parameter_combinations(),
