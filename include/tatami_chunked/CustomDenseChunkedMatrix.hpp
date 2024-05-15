@@ -63,7 +63,7 @@ protected:
     // holds the content for a single chunk, while final_solo holds the content
     // across chunks but only for the requested dimension element. Both cases
     // are likely to be much smaller than a full Slab, so we're already more
-    // memory-efficient than trying to use num_slabs_in_cache = 1.
+    // memory-efficient than 'require_minimum_cache = true`. 
     DenseSingleWorkspace<typename Chunk_::value_type> tmp_solo;
     Slab final_solo;
 
@@ -109,7 +109,7 @@ public:
         [[maybe_unused]] Index_ secondary_length) :
         coordinator(coordinator),
         factory(slab_stats),
-        cache(slab_stats.num_slabs_in_cache)
+        cache(slab_stats.max_slabs_in_cache)
     {}
 
 protected:
@@ -138,7 +138,7 @@ public:
         [[maybe_unused]] Index_ secondary_length) :
         coordinator(coordinator), 
         factory(slab_stats),
-        cache(std::move(ora), slab_stats.num_slabs_in_cache)
+        cache(std::move(ora), slab_stats.max_slabs_in_cache)
     {}
 
 protected:
@@ -327,7 +327,7 @@ private:
         if (row) {
             // Remember, the num_chunks_per_column is the number of slabs needed to divide up all the *rows* of the matrix.
             SlabCacheStats stats(coordinator.get_chunk_nrow(), secondary_length, coordinator.get_num_chunks_per_column(), cache_size_in_elements, require_minimum_cache);
-            if (stats.num_slabs_in_cache > 0) {
+            if (stats.max_slabs_in_cache > 0) {
                 return std::make_unique<Extractor_<true, false, oracle_, Value_, Index_, Chunk_> >(coordinator, stats, std::forward<Args_>(args)...);
             } else {
                 return std::make_unique<Extractor_<true, true, oracle_, Value_, Index_, Chunk_> >(coordinator, stats, std::forward<Args_>(args)...);
@@ -335,7 +335,7 @@ private:
         } else {
             // Remember, the num_chunks_per_row is the number of slabs needed to divide up all the *columns* of the matrix.
             SlabCacheStats stats(coordinator.get_chunk_ncol(), secondary_length, coordinator.get_num_chunks_per_row(), cache_size_in_elements, require_minimum_cache);
-            if (stats.num_slabs_in_cache > 0) {
+            if (stats.max_slabs_in_cache > 0) {
                 return std::make_unique<Extractor_<false, false, oracle_, Value_, Index_, Chunk_> >(coordinator, stats, std::forward<Args_>(args)...);
             } else {
                 return std::make_unique<Extractor_<false, true, oracle_, Value_, Index_, Chunk_> >(coordinator, stats, std::forward<Args_>(args)...);

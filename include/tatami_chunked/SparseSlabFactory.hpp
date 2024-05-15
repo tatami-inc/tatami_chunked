@@ -73,7 +73,7 @@ struct SparseSlabFactory {
      * @param needs_index Whether the indices of the structural non-zeros should be cached.
      */
     SparseSlabFactory(size_t target_dim, size_t non_target_dim, const SlabCacheStats& stats, bool needs_value, bool needs_index) : 
-        SparseSlabFactory(target_dim, non_target_dim, stats.slab_size_in_elements, stats.num_slabs_in_cache, needs_value, needs_index) {}
+        SparseSlabFactory(target_dim, non_target_dim, stats.slab_size_in_elements, stats.max_slabs_in_cache, needs_value, needs_index) {}
 
     /**
      * @cond

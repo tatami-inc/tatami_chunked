@@ -32,7 +32,7 @@ struct DenseSlabFactory {
     /**
      * @param stats Slab cache statistics.
      */
-    DenseSlabFactory(const SlabCacheStats& stats) : DenseSlabFactory(stats.slab_size_in_elements, stats.num_slabs_in_cache) {}
+    DenseSlabFactory(const SlabCacheStats& stats) : DenseSlabFactory(stats.slab_size_in_elements, stats.max_slabs_in_cache) {}
 
     /**
      * @cond
