@@ -79,8 +79,6 @@ public:
         final_solo(factory.create())
     {}
 
-    virtual ~DenseBaseSolo() = default;
-
 protected:
     template<typename ... Args_>
     std::pair<const Slab*, Index_> fetch_raw(Index_ i, Args_&& ... args) {
@@ -113,8 +111,6 @@ public:
         cache(max_slabs_in_cache)
     {}
 
-    virtual ~DenseBaseMyopic() = default;
-
 protected:
     template<typename ... Args_>
     std::pair<const Slab*, Index_> fetch_raw(Index_ i, Args_&& ... args) {
@@ -143,8 +139,6 @@ public:
         factory(coordinator.template get_primary_chunkdim<accrow_>(), secondary_length, max_slabs_in_cache),
         cache(std::move(ora), max_slabs_in_cache)
     {}
-
-    virtual ~DenseBaseOracular() = default;
 
 protected:
     template<typename ... Args_>

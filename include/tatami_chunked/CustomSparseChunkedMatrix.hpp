@@ -85,8 +85,6 @@ public:
         final_solo(factory.create())
     {}
 
-    virtual ~SparseBaseSolo() = default;
-
 protected:
     template<typename ... Args_>
     std::pair<const Slab*, Index_> fetch_raw(Index_ i, Args_&& ... args) {
@@ -121,8 +119,6 @@ public:
         cache(max_slabs_in_cache) 
     {}
 
-    virtual ~SparseBaseMyopic() = default;
-
 protected:
     template<typename ... Args_>
     std::pair<const Slab*, Index_> fetch_raw(Index_ i, Args_&& ... args) {
@@ -153,8 +149,6 @@ public:
         factory(coordinator.template get_primary_chunkdim<accrow_>(), secondary_length, max_slabs_in_cache, needs_value, needs_index),
         cache(std::move(ora), max_slabs_in_cache) 
     {}
-
-    virtual ~SparseBaseOracular() = default;
 
 protected:
     template<typename ... Args_>
