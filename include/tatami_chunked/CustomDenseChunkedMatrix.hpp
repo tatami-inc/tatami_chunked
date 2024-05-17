@@ -86,7 +86,7 @@ protected:
         if constexpr(oracle_) {
             i = oracle->get(counter++);
         }
-        return coordinator.fetch_single(i, row, std::forward<Args_>(args)..., chunk_workspace, tmp_solo, final_solo);
+        return coordinator.fetch_single(row, i, std::forward<Args_>(args)..., chunk_workspace, tmp_solo, final_solo);
     }
 };
 
@@ -115,7 +115,7 @@ public:
 protected:
     template<typename ... Args_>
     std::pair<const Slab*, Index_> fetch_raw(Index_ i, bool row, Args_&& ... args) {
-        return this->coordinator.fetch_myopic(i, row, std::forward<Args_>(args)..., chunk_workspace, cache, factory);
+        return this->coordinator.fetch_myopic(row, i, std::forward<Args_>(args)..., chunk_workspace, cache, factory);
     }
 };
 
@@ -134,7 +134,6 @@ public:
     DenseBaseOracular(
         const ChunkCoordinator<Index_, false, Chunk_>& coordinator,
         const SlabCacheStats& slab_stats,
-        bool row,
         tatami::MaybeOracle<true, Index_> ora, 
         [[maybe_unused]] Index_ secondary_length) :
         coordinator(coordinator), 
@@ -181,7 +180,7 @@ struct DenseFull : public tatami::DenseExtractor<oracle_, Value_, Index_>, publi
             slab_stats,
             std::move(ora),
             coordinator.get_secondary_dim(row)
-        )
+        ),
         my_row(row),
         my_secondary_dim(coordinator.get_secondary_dim(row))
     {}

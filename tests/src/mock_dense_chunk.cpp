@@ -91,9 +91,9 @@ TEST_P(MockSimpleDenseChunkBlockTest, Basic) {
         int stride = std::max(100, dim.second);
         size_t buffer_size = dim.first * stride;
         std::vector<double> mock_buffer(buffer_size), drm_buffer(buffer_size), dcm_buffer(buffer_size);
-        mock.template extract<true>(c_first, c_len, mock_work, mock_buffer.data(), stride);
-        drm_chunk.template extract<true>(c_first, c_len, drm_work, drm_buffer.data(), stride);
-        dcm_chunk.template extract<true>(c_first, c_len, dcm_work, dcm_buffer.data(), stride);
+        mock.extract(true, c_first, c_len, mock_work, mock_buffer.data(), stride);
+        drm_chunk.extract(true, c_first, c_len, drm_work, drm_buffer.data(), stride);
+        dcm_chunk.extract(true, c_first, c_len, dcm_work, dcm_buffer.data(), stride);
 
         auto ext = ref->dense_row(c_first, c_len);
         for (int r = 0; r < dim.first; ++r) {
@@ -114,9 +114,9 @@ TEST_P(MockSimpleDenseChunkBlockTest, Basic) {
         int stride = std::max(100, dim.first);
         size_t buffer_size = dim.second * stride;
         std::vector<double> mock_buffer(buffer_size), drm_buffer(buffer_size), dcm_buffer(buffer_size);
-        mock.template extract<false>(r_first, r_len, mock_work, mock_buffer.data(), stride);
-        drm_chunk.template extract<false>(r_first, r_len, drm_work, drm_buffer.data(), stride);
-        dcm_chunk.template extract<false>(r_first, r_len, dcm_work, dcm_buffer.data(), stride);
+        mock.extract(false, r_first, r_len, mock_work, mock_buffer.data(), stride);
+        drm_chunk.extract(false, r_first, r_len, drm_work, drm_buffer.data(), stride);
+        dcm_chunk.extract(false, r_first, r_len, dcm_work, dcm_buffer.data(), stride);
 
         auto ext = ref->dense_column(r_first, r_len);
         for (int c = 0; c < dim.second; ++c) {
@@ -176,9 +176,9 @@ TEST_P(MockSimpleDenseChunkIndexTest, Basic) {
         int stride = std::max(100, dim.second);
         size_t buffer_size = dim.first * stride;
         std::vector<double> mock_buffer(buffer_size), drm_buffer(buffer_size), dcm_buffer(buffer_size);
-        mock.template extract<true>(*c_indices, mock_work, mock_buffer.data(), stride);
-        drm_chunk.template extract<true>(*c_indices, drm_work, drm_buffer.data(), stride);
-        dcm_chunk.template extract<true>(*c_indices, dcm_work, dcm_buffer.data(), stride);
+        mock.extract(true, *c_indices, mock_work, mock_buffer.data(), stride);
+        drm_chunk.extract(true, *c_indices, drm_work, drm_buffer.data(), stride);
+        dcm_chunk.extract(true, *c_indices, dcm_work, dcm_buffer.data(), stride);
 
         auto ext = ref->dense_row(c_indices);
         size_t c_len = c_indices->size();
@@ -201,9 +201,9 @@ TEST_P(MockSimpleDenseChunkIndexTest, Basic) {
         int stride = std::max(100, dim.first);
         size_t buffer_size = dim.second * stride;
         std::vector<double> mock_buffer(buffer_size), drm_buffer(buffer_size), dcm_buffer(buffer_size);
-        mock.template extract<false>(*r_indices, mock_work, mock_buffer.data(), stride);
-        drm_chunk.template extract<false>(*r_indices, drm_work, drm_buffer.data(), stride);
-        dcm_chunk.template extract<false>(*r_indices, dcm_work, dcm_buffer.data(), stride);
+        mock.extract(false, *r_indices, mock_work, mock_buffer.data(), stride);
+        drm_chunk.extract(false, *r_indices, drm_work, drm_buffer.data(), stride);
+        dcm_chunk.extract(false, *r_indices, dcm_work, dcm_buffer.data(), stride);
 
         auto ext = ref->dense_column(r_indices);
         size_t r_len = r_indices->size();
@@ -290,7 +290,7 @@ TEST_P(MockSubsettedDenseChunkBlockBlockTest, Basic) {
 
         int stride = std::min(100, dim.second);
         std::vector<double> buffer(dim.first * stride);
-        mock.template extract<true>(r_first, r_len, c_first, c_len, work, buffer.data(), stride);
+        mock.extract(true, r_first, r_len, c_first, c_len, work, buffer.data(), stride);
 
         auto ext = ref->dense_row(c_first, c_len);
         for (int r = r_first; r < r_last; ++r) {
@@ -308,7 +308,7 @@ TEST_P(MockSubsettedDenseChunkBlockBlockTest, Basic) {
 
         int stride = std::min(98, dim.first);
         std::vector<double> buffer(dim.second * stride);
-        mock.template extract<false>(c_first, c_len, r_first, r_len, work, buffer.data(), stride);
+        mock.extract(false, c_first, c_len, r_first, r_len, work, buffer.data(), stride);
 
         auto ext = ref->dense_column(r_first, r_len);
         for (int c = c_first; c < c_last; ++c) {
@@ -367,7 +367,7 @@ TEST_P(MockSubsettedDenseChunkBlockIndexTest, Basic) {
 
         int stride = std::max(dim.second, 100);
         std::vector<double> buffer(dim.first * stride);
-        mock.template extract<true>(r_first, r_len, *c_indices, work, buffer.data(), stride);
+        mock.extract(true, r_first, r_len, *c_indices, work, buffer.data(), stride);
 
         auto ext = ref->dense_row(c_indices);
         for (int r = r_first; r < r_last; ++r) {
@@ -384,7 +384,7 @@ TEST_P(MockSubsettedDenseChunkBlockIndexTest, Basic) {
 
         int stride = std::max(dim.second, 87);
         std::vector<double> buffer(dim.second * stride);
-        mock.template extract<false>(c_first, c_len, *r_indices, work, buffer.data(), stride);
+        mock.extract(false, c_first, c_len, *r_indices, work, buffer.data(), stride);
 
         auto ext = ref->dense_column(r_indices);
         for (int c = c_first; c < c_last; ++c) {
@@ -445,7 +445,7 @@ TEST_P(MockSubsettedDenseChunkIndexBlockTest, Dense) {
 
         int stride = std::min(dim.second, 100);
         std::vector<double> buffer(dim.first * stride);
-        mock.template extract<true>(*r_indices, c_first, c_len, work, buffer.data(), stride);
+        mock.extract(true, *r_indices, c_first, c_len, work, buffer.data(), stride);
 
         auto ext = ref->dense_row(c_first, c_len);
         for (auto r : *r_indices) {
@@ -462,7 +462,7 @@ TEST_P(MockSubsettedDenseChunkIndexBlockTest, Dense) {
 
         int stride = std::min(dim.first, 98);
         std::vector<double> buffer(dim.second * stride);
-        mock.template extract<false>(*c_indices, r_first, r_len, work, buffer.data(), stride);
+        mock.extract(false, *c_indices, r_first, r_len, work, buffer.data(), stride);
 
         auto ext = ref->dense_column(r_first, r_len);
         for (auto c : *c_indices) {
@@ -523,7 +523,7 @@ TEST_P(MockSubsettedDenseChunkIndexIndexTest, Dense) {
 
         int stride = std::max(dim.second, 100);
         std::vector<double> buffer(dim.first * stride);
-        mock.template extract<true>(*r_indices, *c_indices, work, buffer.data(), stride);
+        mock.extract(true, *r_indices, *c_indices, work, buffer.data(), stride);
 
         auto ext = ref->dense_row(*c_indices);
         for (auto r : *r_indices) {
@@ -540,7 +540,7 @@ TEST_P(MockSubsettedDenseChunkIndexIndexTest, Dense) {
 
         int stride = std::max(dim.first, 98);
         std::vector<double> buffer(dim.second * stride);
-        mock.template extract<false>(*c_indices, *r_indices, work, buffer.data(), stride);
+        mock.extract(false, *c_indices, *r_indices, work, buffer.data(), stride);
 
         auto ext = ref->dense_column(*r_indices);
         for (auto c : *c_indices) {
