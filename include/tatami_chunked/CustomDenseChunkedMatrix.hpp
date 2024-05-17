@@ -82,7 +82,7 @@ public:
 
 protected:
     template<typename ... Args_>
-    std::pair<const Slab*, Index_> fetch_raw(Index_ i, bool row, Args_&& ... args) {
+    std::pair<const Slab*, Index_> fetch_raw(bool row, Index_ i, Args_&& ... args) {
         if constexpr(oracle_) {
             i = oracle->get(counter++);
         }
@@ -114,7 +114,7 @@ public:
 
 protected:
     template<typename ... Args_>
-    std::pair<const Slab*, Index_> fetch_raw(Index_ i, bool row, Args_&& ... args) {
+    std::pair<const Slab*, Index_> fetch_raw(bool row, Index_ i, Args_&& ... args) {
         return this->coordinator.fetch_myopic(row, i, std::forward<Args_>(args)..., chunk_workspace, cache, factory);
     }
 };
@@ -143,7 +143,7 @@ public:
 
 protected:
     template<typename ... Args_>
-    std::pair<const Slab*, Index_> fetch_raw([[maybe_unused]] Index_ i, bool row, Args_&& ... args) {
+    std::pair<const Slab*, Index_> fetch_raw(bool row, [[maybe_unused]] Index_ i, Args_&& ... args) {
         return this->coordinator.fetch_oracular(row, std::forward<Args_>(args)..., chunk_workspace, cache, factory);
     }
 };
@@ -186,7 +186,7 @@ struct DenseFull : public tatami::DenseExtractor<oracle_, Value_, Index_>, publi
     {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto fetched = this->fetch_raw(i, my_row, 0, my_secondary_dim);
+        auto fetched = this->fetch_raw(my_row, i, 0, my_secondary_dim);
         return process_dense_slab(fetched, buffer, my_secondary_dim);
     }
 
@@ -216,7 +216,7 @@ struct DenseBlock : public tatami::DenseExtractor<oracle_, Value_, Index_>, publ
     {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto fetched = this->fetch_raw(i, my_row, block_start, block_length);
+        auto fetched = this->fetch_raw(my_row, i, block_start, block_length);
         return process_dense_slab(fetched, buffer, block_length);
     }
 
@@ -244,7 +244,7 @@ struct DenseIndex : public tatami::DenseExtractor<oracle_, Value_, Index_>, publ
     {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto fetched = this->fetch_raw(i, my_row, *indices_ptr, tmp_indices);
+        auto fetched = this->fetch_raw(my_row, i, *indices_ptr, tmp_indices);
         return process_dense_slab(fetched, buffer, indices_ptr->size());
     }
 
