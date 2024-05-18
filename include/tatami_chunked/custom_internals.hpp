@@ -508,7 +508,7 @@ private:
             size_t stride = secondary_block_length;
 
             extract_secondary_block(
-                chunk_id, row, secondary_block_start, secondary_block_length,
+                row, chunk_id, secondary_block_start, secondary_block_length,
                 [&](const Chunk_& chunk, Index_ from, Index_ len) {
                     if constexpr(Chunk_::use_subset) {
                         chunk.extract(row, primary_indices, from, len, chunk_workspace, slab_ptr, stride);
