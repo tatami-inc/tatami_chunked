@@ -187,7 +187,7 @@ private:
 
 public:
     /**
-     * @param ora Pointer to an `tatami::Oracle` to be used for predictions.
+     * @param oracle Pointer to an `tatami::Oracle` to be used for predictions.
      * @param max_slabs Maximum number of slabs to store.
      */
     OracularSubsettedSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > oracle, size_t max_slabs) :

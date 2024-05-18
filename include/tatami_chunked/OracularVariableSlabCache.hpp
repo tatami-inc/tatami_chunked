@@ -63,7 +63,7 @@ private:
 
 public:
     /**
-     * @param ora Pointer to an `tatami::Oracle` to be used for predictions.
+     * @param oracle Pointer to an `tatami::Oracle` to be used for predictions.
      * @param max_size Total size of all slabs to store in the cache.
      * This may be zero, in which case no caching should be performed.
      */
