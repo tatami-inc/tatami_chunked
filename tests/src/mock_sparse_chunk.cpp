@@ -123,15 +123,15 @@ TEST_F(MockSparseChunkGeneralTest, AppendBlock) {
     // Injecting some initial 'number', to make sure the chunks append properly.
     ExtractSpace mock_data(dim.first, dim.second + 10);
     std::fill(mock_data.number.begin(), mock_data.number.end(), 10);
-    mock.template extract<true>(0, dim.second, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 0);
+    mock.extract(true, 0, dim.second, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 0);
 
     ExtractSpace drm_data(dim.first, dim.second + 20);
     std::fill(drm_data.number.begin(), drm_data.number.end(), 20);
-    drm_chunk.template extract<true>(0, dim.second, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 0);
+    drm_chunk.extract(true, 0, dim.second, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 0);
 
     ExtractSpace dcm_data(dim.first, dim.second + 5);
     std::fill(dcm_data.number.begin(), dcm_data.number.end(), 5);
-    dcm_chunk.template extract<true>(0, dim.second, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 0);
+    dcm_chunk.extract(true, 0, dim.second, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 0);
 
     auto ext = this->ref->sparse_row();
     for (int r = 0; r < dim.first; ++r) {
@@ -157,15 +157,15 @@ TEST_F(MockSparseChunkGeneralTest, AppendIndex) {
     // Injecting some initial 'number', to make sure the chunks append properly.
     ExtractSpace mock_data(dim.first, dim.second + 10);
     std::fill(mock_data.number.begin(), mock_data.number.end(), 10);
-    mock.template extract<true>(*c_indices, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 0);
+    mock.extract(true, *c_indices, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 0);
 
     ExtractSpace drm_data(dim.first, dim.second + 20);
     std::fill(drm_data.number.begin(), drm_data.number.end(), 20);
-    drm_chunk.template extract<true>(*c_indices, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 0);
+    drm_chunk.extract(true, *c_indices, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 0);
 
     ExtractSpace dcm_data(dim.first, dim.second + 5);
     std::fill(dcm_data.number.begin(), dcm_data.number.end(), 5);
-    dcm_chunk.template extract<true>(*c_indices, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 0);
+    dcm_chunk.extract(true, *c_indices, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 0);
 
     auto ext = this->ref->sparse_row(std::move(c_indices));
     for (int r = 0; r < dim.first; ++r) {
@@ -190,15 +190,15 @@ TEST_F(MockSparseChunkGeneralTest, SkippingBlock) {
     {
         ExtractSpace mock_data(dim.first, dim.second);
         mock_data.values.clear();
-        mock.template extract<true>(0, dim.second, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 0);
+        mock.extract(true, 0, dim.second, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 0);
 
         ExtractSpace drm_data(dim.first, dim.second);
         drm_data.values.clear();
-        drm_chunk.template extract<true>(0, dim.second, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 0);
+        drm_chunk.extract(true, 0, dim.second, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 0);
 
         ExtractSpace dcm_data(dim.first, dim.second);
         dcm_data.values.clear();
-        dcm_chunk.template extract<true>(0, dim.second, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 0);
+        dcm_chunk.extract(true, 0, dim.second, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 0);
 
         auto ext = this->ref->sparse_row();
         for (int r = 0; r < dim.first; ++r) {
@@ -213,15 +213,15 @@ TEST_F(MockSparseChunkGeneralTest, SkippingBlock) {
     {
         ExtractSpace mock_data(dim.first, dim.second);
         mock_data.indices.clear();
-        mock.template extract<true>(0, dim.second, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 0);
+        mock.extract(true, 0, dim.second, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 0);
 
         ExtractSpace drm_data(dim.first, dim.second);
         drm_data.indices.clear();
-        drm_chunk.template extract<true>(0, dim.second, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 0);
+        drm_chunk.extract(true, 0, dim.second, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 0);
 
         ExtractSpace dcm_data(dim.first, dim.second);
         dcm_data.indices.clear();
-        dcm_chunk.template extract<true>(0, dim.second, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 0);
+        dcm_chunk.extract(true, 0, dim.second, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 0);
 
         auto ext = this->ref->sparse_row();
         for (int r = 0; r < dim.first; ++r) {
@@ -246,15 +246,15 @@ TEST_F(MockSparseChunkGeneralTest, SkippingIndices) {
     {
         ExtractSpace mock_data(dim.first, dim.second);
         mock_data.values.clear();
-        mock.template extract<true>(*c_indices, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 0);
+        mock.extract(true, *c_indices, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 0);
 
         ExtractSpace drm_data(dim.first, dim.second);
         drm_data.values.clear();
-        drm_chunk.template extract<true>(*c_indices, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 0);
+        drm_chunk.extract(true, *c_indices, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 0);
 
         ExtractSpace dcm_data(dim.first, dim.second);
         dcm_data.values.clear();
-        dcm_chunk.template extract<true>(*c_indices, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 0);
+        dcm_chunk.extract(true, *c_indices, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 0);
 
         auto ext = this->ref->sparse_row(c_indices);
         for (int r = 0; r < dim.first; ++r) {
@@ -269,15 +269,15 @@ TEST_F(MockSparseChunkGeneralTest, SkippingIndices) {
     {
         ExtractSpace mock_data(dim.first, dim.second);
         mock_data.indices.clear();
-        mock.template extract<true>(*c_indices, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 0);
+        mock.extract(true, *c_indices, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 0);
 
         ExtractSpace drm_data(dim.first, dim.second);
         drm_data.indices.clear();
-        drm_chunk.template extract<true>(*c_indices, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 0);
+        drm_chunk.extract(true, *c_indices, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 0);
 
         ExtractSpace dcm_data(dim.first, dim.second);
         dcm_data.indices.clear();
-        dcm_chunk.template extract<true>(*c_indices, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 0);
+        dcm_chunk.extract(true, *c_indices, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 0);
 
         auto ext = this->ref->sparse_row(c_indices);
         for (int r = 0; r < dim.first; ++r) {
@@ -311,13 +311,13 @@ TEST_P(MockSimpleSparseChunkBlockTest, Basic) {
     int c_first = block.first * dim.second, c_last = block.second * dim.second, c_len = c_last - c_first;
     {
         ExtractSpace mock_data(dim.first, dim.second);
-        mock.template extract<true>(c_first, c_len, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 7);
+        mock.extract(true, c_first, c_len, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 7);
 
         ExtractSpace drm_data(dim.first, dim.second);
-        drm_chunk.template extract<true>(c_first, c_len, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 3);
+        drm_chunk.extract(true, c_first, c_len, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 3);
 
         ExtractSpace dcm_data(dim.first, dim.second);
-        dcm_chunk.template extract<true>(c_first, c_len, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 5);
+        dcm_chunk.extract(true, c_first, c_len, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 5);
 
         auto ext = this->ref->sparse_row(c_first, c_len);
         for (int r = 0; r < dim.first; ++r) {
@@ -335,13 +335,13 @@ TEST_P(MockSimpleSparseChunkBlockTest, Basic) {
     int r_first = block.first * dim.first, r_last = block.second * dim.first, r_len = r_last - r_first;
     {
         ExtractSpace mock_data(dim.second, dim.first);
-        mock.template extract<false>(r_first, r_len, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 1);
+        mock.extract(false, r_first, r_len, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 1);
 
         ExtractSpace drm_data(dim.second, dim.first);
-        drm_chunk.template extract<false>(r_first, r_len, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 6);
+        drm_chunk.extract(false, r_first, r_len, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 6);
 
         ExtractSpace dcm_data(dim.second, dim.first);
-        dcm_chunk.template extract<false>(r_first, r_len, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 10);
+        dcm_chunk.extract(false, r_first, r_len, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 10);
 
         auto ext = this->ref->sparse_column(r_first, r_len);
         for (int c = 0; c < dim.second; ++c) {
@@ -398,13 +398,13 @@ TEST_P(MockSimpleSparseChunkIndexTest, Basic) {
         auto c_indices = create_indices(dim.second, index);
 
         ExtractSpace mock_data(dim.first, dim.second);
-        mock.template extract<true>(*c_indices, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 17);
+        mock.extract(true, *c_indices, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 17);
 
         ExtractSpace drm_data(dim.first, dim.second);
-        drm_chunk.template extract<true>(*c_indices, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 72);
+        drm_chunk.extract(true, *c_indices, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 72);
 
         ExtractSpace dcm_data(dim.first, dim.second);
-        dcm_chunk.template extract<true>(*c_indices, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 5);
+        dcm_chunk.extract(true, *c_indices, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 5);
 
         auto ext = this->ref->sparse_row(c_indices);
         for (int r = 0; r < dim.first; ++r) {
@@ -423,13 +423,13 @@ TEST_P(MockSimpleSparseChunkIndexTest, Basic) {
         auto r_indices = create_indices(dim.first, index);
 
         ExtractSpace mock_data(dim.second, dim.first);
-        mock.template extract<false>(*r_indices, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 17);
+        mock.extract(false, *r_indices, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 17);
 
         ExtractSpace drm_data(dim.second, dim.first);
-        drm_chunk.template extract<false>(*r_indices, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 72);
+        drm_chunk.extract(false, *r_indices, drm_work, drm_data.values, drm_data.indices, drm_data.number.data(), 72);
 
         ExtractSpace dcm_data(dim.second, dim.first);
-        dcm_chunk.template extract<false>(*r_indices, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 5);
+        dcm_chunk.extract(false, *r_indices, dcm_work, dcm_data.values, dcm_data.indices, dcm_data.number.data(), 5);
 
         auto ext = this->ref->sparse_column(r_indices);
         for (int c = 0; c < dim.second; ++c) {
@@ -523,7 +523,7 @@ TEST_P(MockSubsettedSparseChunkBlockBlockTest, Basic) {
         int c_first = bounds.first * dim.second, c_last = bounds.second * dim.second, c_len = c_last - c_first;
 
         ExtractSpace mock_data(dim.first, dim.second);
-        mock.template extract<true>(r_first, r_len, c_first, c_len, work, mock_data.values, mock_data.indices, mock_data.number.data(), 10);
+        mock.extract(true, r_first, r_len, c_first, c_len, work, mock_data.values, mock_data.indices, mock_data.number.data(), 10);
 
         auto ext = ref->sparse_row(c_first, c_len);
         for (int r = r_first; r < r_last; ++r) {
@@ -539,7 +539,7 @@ TEST_P(MockSubsettedSparseChunkBlockBlockTest, Basic) {
         int c_first = block.first * dim.second, c_last = block.second * dim.second, c_len = c_last - c_first;
 
         ExtractSpace mock_data(dim.second, dim.first);
-        mock.template extract<false>(c_first, c_len, r_first, r_len, work, mock_data.values, mock_data.indices, mock_data.number.data(), 22);
+        mock.extract(false, c_first, c_len, r_first, r_len, work, mock_data.values, mock_data.indices, mock_data.number.data(), 22);
 
         auto ext = ref->sparse_column(r_first, r_len);
         for (int c = c_first; c < c_last; ++c) {
@@ -598,7 +598,7 @@ TEST_P(MockSubsettedSparseChunkBlockIndexTest, Basic) {
         auto c_indices = create_indices(dim.second, iparam);
 
         ExtractSpace mock_data(dim.first, dim.second);
-        mock.template extract<true>(r_first, r_len, *c_indices, work, mock_data.values, mock_data.indices, mock_data.number.data(), 10);
+        mock.extract(true, r_first, r_len, *c_indices, work, mock_data.values, mock_data.indices, mock_data.number.data(), 10);
 
         auto ext = ref->sparse_row(c_indices);
         for (int r = r_first; r < r_last; ++r) {
@@ -613,7 +613,7 @@ TEST_P(MockSubsettedSparseChunkBlockIndexTest, Basic) {
         auto r_indices = create_indices(dim.first, iparam);
 
         ExtractSpace mock_data(dim.second, dim.first);
-        mock.template extract<false>(c_first, c_len, *r_indices, work, mock_data.values, mock_data.indices, mock_data.number.data(), 5);
+        mock.extract(false, c_first, c_len, *r_indices, work, mock_data.values, mock_data.indices, mock_data.number.data(), 5);
 
         auto ext = ref->sparse_column(r_indices);
         for (int c = c_first; c < c_last; ++c) {
@@ -672,7 +672,7 @@ TEST_P(MockSubsettedSparseChunkIndexBlockTest, Sparse) {
         int c_first = block.first * dim.second, c_last = block.second * dim.second, c_len = c_last - c_first;
 
         ExtractSpace mock_data(dim.first, dim.second);
-        mock.template extract<true>(*r_indices, c_first, c_len, work, mock_data.values, mock_data.indices, mock_data.number.data(), 32);
+        mock.extract(true, *r_indices, c_first, c_len, work, mock_data.values, mock_data.indices, mock_data.number.data(), 32);
 
         auto ext = ref->sparse_row(c_first, c_len);
         for (auto r : *r_indices) {
@@ -687,7 +687,7 @@ TEST_P(MockSubsettedSparseChunkIndexBlockTest, Sparse) {
         int r_first = block.first * dim.first,  r_last = block.second * dim.first,  r_len = r_last - r_first;
 
         ExtractSpace mock_data(dim.second, dim.first);
-        mock.template extract<false>(*c_indices, r_first, r_len, work, mock_data.values, mock_data.indices, mock_data.number.data(), 99);
+        mock.extract(false, *c_indices, r_first, r_len, work, mock_data.values, mock_data.indices, mock_data.number.data(), 99);
 
         auto ext = ref->sparse_column(r_first, r_len);
         for (auto c : *c_indices) {
@@ -746,7 +746,7 @@ TEST_P(MockSubsettedSparseChunkIndexIndexTest, Sparse) {
         auto c_indices = create_indices(dim.second, iparam2);
 
         ExtractSpace mock_data(dim.first, dim.second);
-        mock.template extract<true>(*r_indices, *c_indices, work, mock_data.values, mock_data.indices, mock_data.number.data(), 9);
+        mock.extract(true, *r_indices, *c_indices, work, mock_data.values, mock_data.indices, mock_data.number.data(), 9);
 
         auto ext = ref->sparse_row(*c_indices);
         for (auto r : *r_indices) {
@@ -761,7 +761,7 @@ TEST_P(MockSubsettedSparseChunkIndexIndexTest, Sparse) {
         auto r_indices = create_indices(dim.first, iparam2);
 
         ExtractSpace mock_data(dim.second, dim.first);
-        mock.template extract<false>(*c_indices, *r_indices, work, mock_data.values, mock_data.indices, mock_data.number.data(), 19);
+        mock.extract(false, *c_indices, *r_indices, work, mock_data.values, mock_data.indices, mock_data.number.data(), 19);
 
         auto ext = ref->sparse_column(*r_indices);
         for (auto c : *c_indices) {

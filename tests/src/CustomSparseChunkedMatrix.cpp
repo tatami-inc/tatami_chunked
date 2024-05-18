@@ -105,6 +105,7 @@ protected:
 
         tatami_chunked::CustomSparseChunkedMatrixOptions opt;
         size_t cache_size = static_cast<double>(matdim.first) * static_cast<double>(matdim.second) * cache_fraction * static_cast<double>(sizeof(double) + sizeof(int));
+        opt.maximum_cache_size = cache_size;
         opt.require_minimum_cache = (cache_size > 0);
 
         mock_mat.reset(new tatami_chunked::CustomSparseChunkedMatrix<double, int, SChunk>(
