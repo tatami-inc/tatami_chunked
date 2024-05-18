@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami_chunked: tatami_chunked::SimpleSparseChunkWrapper&lt; Blob_ &gt; Struct Template Reference</title>
+<title>tatami_chunked: tatami_chunked::SimpleSparseChunkWrapper&lt; Blob_ &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -71,24 +71,22 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespacetatami__chunked.html">tatami_chunked</a></li><li class="navelem"><a class="el" href="structtatami__chunked_1_1SimpleSparseChunkWrapper.html">SimpleSparseChunkWrapper</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacetatami__chunked.html">tatami_chunked</a></li><li class="navelem"><a class="el" href="classtatami__chunked_1_1SimpleSparseChunkWrapper.html">SimpleSparseChunkWrapper</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
-  <div class="summary">
-<a href="structtatami__chunked_1_1SimpleSparseChunkWrapper-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">tatami_chunked::SimpleSparseChunkWrapper&lt; Blob_ &gt; Struct Template Reference</div></div>
+  <div class="headertitle"><div class="title">tatami_chunked::SimpleSparseChunkWrapper&lt; Blob_ &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>Create a sparse chunk for a <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrix.html" title="Matrix of custom sparse chunks.">CustomSparseChunkedMatrix</a></code>.  
- <a href="structtatami__chunked_1_1SimpleSparseChunkWrapper.html#details">More...</a></p>
+ <a href="classtatami__chunked_1_1SimpleSparseChunkWrapper.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="mock__sparse__chunk_8hpp_source.html">mock_sparse_chunk.hpp</a>&gt;</code></p>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Blob_</a>&gt;<br />
-struct tatami_chunked::SimpleSparseChunkWrapper&lt; Blob_ &gt;</div><p>Create a sparse chunk for a <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrix.html" title="Matrix of custom sparse chunks.">CustomSparseChunkedMatrix</a></code>. </p>
-<p>Wraps a sparse blob in a simple chunk interface for use inside a <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrix.html" title="Matrix of custom sparse chunks.">CustomSparseChunkedMatrix</a></code>. Each blob should hold a (possibly compressed) 2-dimensional sparse array of numeric values. The wrapper satisfies the <code><a class="el" href="structtatami__chunked_1_1MockSimpleSparseChunk.html" title="Mock a simple sparse chunk for a CustomSparseChunkedMatrix.">MockSimpleSparseChunk</a></code> interface, but is even simpler; extraction of any data involves realization of the entire blob, with no optimization for subsets of interest along either dimension.</p>
+class tatami_chunked::SimpleSparseChunkWrapper&lt; Blob_ &gt;</div><p>Create a sparse chunk for a <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrix.html" title="Matrix of custom sparse chunks.">CustomSparseChunkedMatrix</a></code>. </p>
+<p>Wraps a sparse blob in a simple chunk interface for use inside a <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrix.html" title="Matrix of custom sparse chunks.">CustomSparseChunkedMatrix</a></code>. Each blob should hold a (possibly compressed) 2-dimensional sparse array of numeric values. The wrapper satisfies the <code><a class="el" href="classtatami__chunked_1_1MockSimpleSparseChunk.html" title="Mock a simple sparse chunk for a CustomSparseChunkedMatrix.">MockSimpleSparseChunk</a></code> interface, but is even simpler; extraction of any data involves realization of the entire blob, with no optimization for subsets of interest along either dimension.</p>
 <p>The <code>Blob_</code> class should provide the following:</p>
 <ul>
 <li><code>typedef value_type</code>, specifying the type of the value in the array.</li>
@@ -104,7 +102,7 @@ struct tatami_chunked::SimpleSparseChunkWrapper&lt; Blob_ &gt;</div><p>Create a 
   </table>
   </dd>
 </dl>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>tatami_chunked/<a class="el" href="mock__sparse__chunk_8hpp_source.html">mock_sparse_chunk.hpp</a></li>
 </ul>
 </div><!-- contents -->

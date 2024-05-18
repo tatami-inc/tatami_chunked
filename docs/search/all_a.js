@@ -73,10 +73,10 @@ var searchData=
   ['mock_5fdense_5fchunk_2ehpp_70',['mock_dense_chunk.hpp',['../mock__dense__chunk_8hpp.html',1,'']]],
   ['mock_5fhelpers_2ehpp_71',['mock_helpers.hpp',['https://tatami-inc.github.io/tatami/binary_2mock__helpers_8hpp.html',1,'(Global Namespace)'],['https://tatami-inc.github.io/tatami/unary_2mock__helpers_8hpp.html',1,'(Global Namespace)']]],
   ['mock_5fsparse_5fchunk_2ehpp_72',['mock_sparse_chunk.hpp',['../mock__sparse__chunk_8hpp.html',1,'']]],
-  ['mocksimpledensechunk_73',['MockSimpleDenseChunk',['../structtatami__chunked_1_1MockSimpleDenseChunk.html',1,'tatami_chunked']]],
-  ['mocksimplesparsechunk_74',['MockSimpleSparseChunk',['../structtatami__chunked_1_1MockSimpleSparseChunk.html',1,'tatami_chunked']]],
-  ['mocksubsetteddensechunk_75',['MockSubsettedDenseChunk',['../structtatami__chunked_1_1MockSubsettedDenseChunk.html',1,'tatami_chunked']]],
-  ['mocksubsettedsparsechunk_76',['MockSubsettedSparseChunk',['../structtatami__chunked_1_1MockSubsettedSparseChunk.html',1,'tatami_chunked']]],
+  ['mocksimpledensechunk_73',['MockSimpleDenseChunk',['../classtatami__chunked_1_1MockSimpleDenseChunk.html',1,'tatami_chunked']]],
+  ['mocksimplesparsechunk_74',['MockSimpleSparseChunk',['../classtatami__chunked_1_1MockSimpleSparseChunk.html',1,'tatami_chunked']]],
+  ['mocksubsetteddensechunk_75',['MockSubsettedDenseChunk',['../classtatami__chunked_1_1MockSubsettedDenseChunk.html',1,'tatami_chunked']]],
+  ['mocksubsettedsparsechunk_76',['MockSubsettedSparseChunk',['../classtatami__chunked_1_1MockSubsettedSparseChunk.html',1,'tatami_chunked']]],
   ['myopicdenseextractor_77',['MyopicDenseExtractor',['https://tatami-inc.github.io/tatami/classtatami_1_1MyopicDenseExtractor.html',1,'tatami']]],
   ['myopicsparseextractor_78',['MyopicSparseExtractor',['https://tatami-inc.github.io/tatami/classtatami_1_1MyopicSparseExtractor.html',1,'tatami']]]
 ];

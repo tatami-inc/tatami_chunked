@@ -94,8 +94,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a409cdc30672f71a8346636bc14c8c859"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43f0bc21d26d193aaf186f14e9a49640" id="r_a43f0bc21d26d193aaf186f14e9a49640"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html#a43f0bc21d26d193aaf186f14e9a49640">ChunkDimensionStats</a> ()</td></tr>
 <tr class="separator:a43f0bc21d26d193aaf186f14e9a49640"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83ba437aa9dc119055748d78d3933a9b" id="r_a83ba437aa9dc119055748d78d3933a9b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html#a83ba437aa9dc119055748d78d3933a9b">get_chunk_length</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">i</a>) <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a></td></tr>
-<tr class="separator:a83ba437aa9dc119055748d78d3933a9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -192,42 +190,6 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
 
 </div>
 </div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a83ba437aa9dc119055748d78d3933a9b" name="a83ba437aa9dc119055748d78d3933a9b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83ba437aa9dc119055748d78d3933a9b">&#9670;&#160;</a></span>get_chunk_length()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">tatami_chunked::ChunkDimensionStats</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt;::get_chunk_length </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>&#160;</td>
-          <td class="paramname"><em>i</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">i</td><td>Zero-based index of the chunk of interest. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Length of chunk <code>i</code>. </dd></dl>
-
-</div>
-</div>
 <h2 class="groupheader">Member Data Documentation</h2>
 <a id="ab51e3f87f98cd77d7aa2aa47b7a4be92" name="ab51e3f87f98cd77d7aa2aa47b7a4be92"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab51e3f87f98cd77d7aa2aa47b7a4be92">&#9670;&#160;</a></span>dimension_extent</h2>
@@ -259,7 +221,7 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Length of the chunks, except for (possibly) the last chunk. </p>
+<p>Length of the chunks, except for (possibly) the last chunk. See also <code><a class="el" href="namespacetatami__chunked.html#a53cc9785dfa86632112d466f9ff7bc3b">get_chunk_length()</a></code>. </p>
 
 </div>
 </div>
@@ -293,7 +255,7 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Length of the last chunk. </p>
+<p>Length of the last chunk. This may be different from <code>chunk_length</code> if <code>dimension_extent</code> is not a multiple of <code>chunk_length</code>. See also <code><a class="el" href="namespacetatami__chunked.html#a53cc9785dfa86632112d466f9ff7bc3b">get_chunk_length()</a></code>. </p>
 
 </div>
 </div>

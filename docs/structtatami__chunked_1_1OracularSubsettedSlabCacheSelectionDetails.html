@@ -95,6 +95,8 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ad080a4b233d1f6e904b10a31b3fcb858"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab74bf7645027d9263d092e8d611bad6b" id="r_ab74bf7645027d9263d092e8d611bad6b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1OracularSubsettedSlabCacheSelectionDetails.html#ab74bf7645027d9263d092e8d611bad6b">block_length</a></td></tr>
 <tr class="separator:ab74bf7645027d9263d092e8d611bad6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5b37a4249c75dcd131af3523c2249876" id="r_a5b37a4249c75dcd131af3523c2249876"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1OracularSubsettedSlabCacheSelectionDetails.html#a5b37a4249c75dcd131af3523c2249876">block_end</a></td></tr>
+<tr class="separator:a5b37a4249c75dcd131af3523c2249876"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac937e89603b6c919ab92939cfb2e804b" id="r_ac937e89603b6c919ab92939cfb2e804b"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1OracularSubsettedSlabCacheSelectionDetails.html#ac937e89603b6c919ab92939cfb2e804b">indices</a></td></tr>
 <tr class="separator:ac937e89603b6c919ab92939cfb2e804b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae16cb18d8ae9a184c0bff198a93a2540" id="r_ae16cb18d8ae9a184c0bff198a93a2540"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami__chunked_1_1OracularSubsettedSlabCacheSelectionDetails.html#ae16cb18d8ae9a184c0bff198a93a2540">mapping</a></td></tr>
@@ -140,7 +142,7 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Row/column index representing the start of the block within the slab to be extracted. Only used if <code>selection</code> is set to <code>OracularSubsettedSlabCacheSelectionType::BLOCK</code>.</p>
+<p>Row/column index representing the start of the contiguous block of the target dimension to be extracted from the slab. Only used if <code>selection</code> is set to <code>OracularSubsettedSlabCacheSelectionType::BLOCK</code>.</p>
 <p>Note that the index is relative to the start of the slab, not to the matrix containing the slab, i.e., if the slab consists of rows 10-20 and we want to extract row 11, this will be reported here as an index of 1. </p>
 
 </div>
@@ -158,7 +160,24 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Length of the block within the slab to be extracted. Only used if <code>selection</code> is set to <code>OracularSubsettedSlabCacheSelectionType::BLOCK</code>. </p>
+<p>Length of the contiguous block of the target dimension to be extracted from the slab. Only used if <code>selection</code> is set to <code>OracularSubsettedSlabCacheSelectionType::BLOCK</code>. </p>
+
+</div>
+</div>
+<a id="a5b37a4249c75dcd131af3523c2249876" name="a5b37a4249c75dcd131af3523c2249876"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5b37a4249c75dcd131af3523c2249876">&#9670;&#160;</a></span>block_end</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> <a class="el" href="structtatami__chunked_1_1OracularSubsettedSlabCacheSelectionDetails.html">tatami_chunked::OracularSubsettedSlabCacheSelectionDetails</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt;::block_end</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Row/column index representing one-past-the-end of the contiguous block of the target dimension to be extracted from the slab. Only used if <code>selection</code> is set to <code>OracularSubsettedSlabCacheSelectionType::BLOCK</code>. This is also equal to <code>block_start + block_length</code>. </p>
 
 </div>
 </div>
@@ -175,7 +194,7 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Indices within the slab to be extracted. Guaranteed to be sorted and unique. Only used if <code>selection</code> is set to <code>OracularSubsettedSlabCacheSelectionType::INDEX</code>.</p>
+<p>Indices of the target dimension to be extracted from the slab. Guaranteed to be sorted and unique. Only used if <code>selection</code> is set to <code>OracularSubsettedSlabCacheSelectionType::INDEX</code>.</p>
 <p>Note that all indices is relative to the start of the slab, not to the matrix containing the slab, i.e., if the slab consists of rows 10-20 and we want to extract row 11, this will be reported here as an index of 1. </p>
 
 </div>

@@ -1,8 +1,8 @@
 var searchData=
 [
   ['selection_0',['selection',['../structtatami__chunked_1_1OracularSubsettedSlabCacheSelectionDetails.html#aca6ae8fe281ea5f99f04d4fde9f4f92a',1,'tatami_chunked::OracularSubsettedSlabCacheSelectionDetails']]],
-  ['simpledensechunkwrapper_1',['SimpleDenseChunkWrapper',['../structtatami__chunked_1_1SimpleDenseChunkWrapper.html',1,'tatami_chunked']]],
-  ['simplesparsechunkwrapper_2',['SimpleSparseChunkWrapper',['../structtatami__chunked_1_1SimpleSparseChunkWrapper.html',1,'tatami_chunked']]],
+  ['simpledensechunkwrapper_1',['SimpleDenseChunkWrapper',['../classtatami__chunked_1_1SimpleDenseChunkWrapper.html',1,'tatami_chunked']]],
+  ['simplesparsechunkwrapper_2',['SimpleSparseChunkWrapper',['../classtatami__chunked_1_1SimpleSparseChunkWrapper.html',1,'tatami_chunked']]],
   ['size_3',['size',['https://tatami-inc.github.io/tatami/classtatami_1_1SomeNumericArray.html#ada2335bab3c287700c1888ae1cb1d73f',1,'tatami::SomeNumericArray::size()'],['https://tatami-inc.github.io/tatami/classtatami_1_1ArrayView.html#a7983c151067c852f6382b76661937dfd',1,'tatami::ArrayView::size()']]],
   ['slab_4',['slab',['../structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html',1,'tatami_chunked::DenseSlabFactory&lt; Value_ &gt;::Slab'],['../structtatami__chunked_1_1SparseSlabFactory_1_1Slab.html',1,'tatami_chunked::SparseSlabFactory&lt; Value_, Index_, Count_ &gt;::Slab']]],
   ['slab_5fsize_5fin_5felements_5',['slab_size_in_elements',['../structtatami__chunked_1_1SlabCacheStats.html#aedb2b8a5f6d2aebe4e3eb951f5f65e7e',1,'tatami_chunked::SlabCacheStats']]],
