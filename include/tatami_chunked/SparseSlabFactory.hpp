@@ -37,19 +37,19 @@ struct SparseSlabFactory {
      * @param needs_index Whether the indices of the structural non-zeros should be cached.
      */
     SparseSlabFactory(size_t target_dim, size_t non_target_dim, size_t slab_size, size_t max_slabs, bool needs_value, bool needs_index) : 
-        target_dim(target_dim),
-        non_target_dim(non_target_dim),
-        slab_size(slab_size),
-        needs_value(needs_value),
-        needs_index(needs_index),
-        number_pool(max_slabs * target_dim)
+        my_target_dim(target_dim),
+        my_non_target_dim(non_target_dim),
+        my_slab_size(slab_size),
+        my_needs_value(needs_value),
+        my_needs_index(needs_index),
+        my_number_pool(max_slabs * target_dim)
     {
         size_t total_size = max_slabs * slab_size;
         if (needs_value) {
-            value_pool.resize(total_size);
+            my_value_pool.resize(total_size);
         }
         if (needs_index) {
-            index_pool.resize(total_size);
+            my_index_pool.resize(total_size);
         }
     }
 
@@ -90,12 +90,12 @@ struct SparseSlabFactory {
      */
 
 private:
-    size_t offset_slab = 0, offset_number = 0;
-    size_t target_dim, non_target_dim, slab_size;
-    bool needs_value, needs_index;
-    std::vector<Value_> value_pool;
-    std::vector<Index_> index_pool;
-    std::vector<Count_> number_pool;
+    size_t my_offset_slab = 0, my_offset_number = 0;
+    size_t my_target_dim, my_non_target_dim, my_slab_size;
+    bool my_needs_value, my_needs_index;
+    std::vector<Value_> my_value_pool;
+    std::vector<Index_> my_index_pool;
+    std::vector<Count_> my_number_pool;
 
 public:
     /**
@@ -139,26 +139,26 @@ public:
      */
     Slab create() {
         Slab output;
-        output.number = number_pool.data() + offset_number;
-        offset_number += target_dim;
+        output.number = my_number_pool.data() + my_offset_number;
+        my_offset_number += my_target_dim;
 
-        if (needs_value) {
-            output.values.reserve(target_dim);
-            auto vptr = value_pool.data() + offset_slab;
-            for (size_t p = 0; p < target_dim; ++p, vptr += non_target_dim) {
+        if (my_needs_value) {
+            output.values.reserve(my_target_dim);
+            auto vptr = my_value_pool.data() + my_offset_slab;
+            for (size_t p = 0; p < my_target_dim; ++p, vptr += my_non_target_dim) {
                 output.values.push_back(vptr);
             }
         }
 
-        if (needs_index) {
-            output.indices.reserve(target_dim);
-            auto iptr = index_pool.data() + offset_slab;
-            for (size_t p = 0; p < target_dim; ++p, iptr += non_target_dim) {
+        if (my_needs_index) {
+            output.indices.reserve(my_target_dim);
+            auto iptr = my_index_pool.data() + my_offset_slab;
+            for (size_t p = 0; p < my_target_dim; ++p, iptr += my_non_target_dim) {
                 output.indices.push_back(iptr);
             }
         }
 
-        offset_slab += slab_size;
+        my_offset_slab += my_slab_size;
         return output;
     }
 };

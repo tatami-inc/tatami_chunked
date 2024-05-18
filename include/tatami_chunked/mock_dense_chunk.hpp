@@ -19,40 +19,41 @@ template<typename InflatedValue_>
 using Workspace =  std::vector<InflatedValue_>; 
 
 template<class Blob_>
-struct Core {
+class Core {
+public:
     Core() = default;
 
-    Core(Blob_ c) : chunk(std::move(c)) {}
+    Core(Blob_ chunk) : my_chunk(std::move(chunk)) {}
 
 private:
-    Blob_ chunk;
+    Blob_ my_chunk;
 
     typedef typename Blob_::value_type value_type;
 
 public:
     auto get_target_chunkdim(bool row) const {
         if (row) {
-            return chunk.nrow();
+            return my_chunk.nrow();
         } else {
-            return chunk.ncol();
+            return my_chunk.ncol();
         }
     }
 
     auto get_non_target_chunkdim(bool row) const {
         if (row) {
-            return chunk.ncol();
+            return my_chunk.ncol();
         } else {
-            return chunk.nrow();
+            return my_chunk.nrow();
         }
     }
 
 public:
     template<typename Index_>
     void extract(bool row, Index_ target_start, Index_ target_length, Index_ non_target_start, Index_ non_target_length, Workspace<value_type>& work, value_type* output, size_t stride) const {
-        chunk.inflate(work);
+        my_chunk.inflate(work);
         output += static_cast<size_t>(target_start) * stride; // cast to size_t to avoid overflow.
 
-        if (chunk.is_row_major() == row) {
+        if (my_chunk.is_row_major() == row) {
             size_t non_target_chunkdim = get_non_target_chunkdim(row); // use size_t to avoid integer overflow with Index_.
             auto srcptr = work.data() + static_cast<size_t>(target_start) * non_target_chunkdim + static_cast<size_t>(non_target_start);
             for (Index_ p = 0; p < target_length; ++p) {
@@ -80,10 +81,10 @@ public:
 
     template<typename Index_>
     void extract(bool row, Index_ target_start, Index_ target_length, const std::vector<Index_>& non_target_indices, Workspace<value_type>& work, value_type* output, size_t stride) const {
-        chunk.inflate(work);
+        my_chunk.inflate(work);
         output += static_cast<size_t>(target_start) * stride; // cast to size_t to avoid overflow.
 
-        if (chunk.is_row_major() == row) {
+        if (my_chunk.is_row_major() == row) {
             size_t non_target_chunkdim = get_non_target_chunkdim(row); // use size_t to avoid integer overflow with Index_.
             auto srcptr = work.data() + static_cast<size_t>(target_start) * non_target_chunkdim;
             for (Index_ p = 0; p < target_length; ++p) {
@@ -114,9 +115,9 @@ public:
 public:
     template<typename Index_>
     void extract(bool row, const std::vector<Index_>& target_indices, Index_ non_target_start, Index_ non_target_length, Workspace<value_type>& work, value_type* output, size_t stride) const {
-        chunk.inflate(work);
+        my_chunk.inflate(work);
 
-        if (chunk.is_row_major() == row) {
+        if (my_chunk.is_row_major() == row) {
             size_t non_target_chunkdim = get_non_target_chunkdim(row); // use size_t to avoid integer overflow with Index_.
             size_t offset = non_target_start;
             for (size_t p : target_indices) {
@@ -141,9 +142,9 @@ public:
 
     template<typename Index_>
     void extract(bool row, const std::vector<Index_>& target_indices, const std::vector<Index_>& non_target_indices, Workspace<value_type>& work, value_type* output, size_t stride) const {
-        chunk.inflate(work);
+        my_chunk.inflate(work);
 
-        if (chunk.is_row_major() == row) {
+        if (my_chunk.is_row_major() == row) {
             size_t non_target_chunkdim = get_non_target_chunkdim(row); // use size_t to avoid integer overflow with Index_.
             for (size_t p : target_indices) {
                 auto srcptr = work.data() + p * non_target_chunkdim;
@@ -168,8 +169,9 @@ public:
     }
 };
 
-struct MockBlob {
-    MockBlob(std::vector<double> c, size_t nr, size_t nc) : data(std::move(c)), NR(nr), NC(nc) {}
+class MockBlob {
+public:
+    MockBlob(std::vector<double> data, size_t nrow, size_t ncol) : my_data(std::move(data)), my_nrow(nrow), my_ncol(ncol) {}
     MockBlob() = default;
 
     typedef double value_type;
@@ -179,22 +181,22 @@ struct MockBlob {
     }
 
 private:
-    std::vector<double> data;
-    size_t NR;
-    size_t NC;
+    std::vector<double> my_data;
+    size_t my_nrow;
+    size_t my_ncol;
 
 public:
     size_t nrow() const {
-        return NR;
+        return my_nrow;
     }
 
     size_t ncol() const {
-        return NC;
+        return my_ncol;
     }
 
     void inflate(std::vector<double>& buffer) const {
-        buffer.resize(data.size());
-        std::copy(data.begin(), data.end(), buffer.begin());
+        buffer.resize(my_data.size());
+        std::copy(my_data.begin(), my_data.end(), buffer.begin());
     }
 };
 
@@ -211,7 +213,8 @@ public:
  * The interface is "simple" as any extraction of data from the chunk retrieves the full extent of the target dimension, 
  * with no attempt at optimization if only a subset of dimension elements are of interest.
  */
-struct MockSimpleDenseChunk {
+class MockSimpleDenseChunk {
+public:
     /**
      * Type of the value stored in this chunk.
      * Implementations can use any numeric type. 
@@ -245,13 +248,13 @@ public:
      */
     // You can construct this however you like, I don't care.
     MockSimpleDenseChunk() = default;
-    MockSimpleDenseChunk(std::vector<double> c, size_t nr, size_t nc) : core(MockDenseChunk_internal::MockBlob(std::move(c), nr, nc)) {}
+    MockSimpleDenseChunk(std::vector<double> core, size_t nrow, size_t ncol) : my_core(MockDenseChunk_internal::MockBlob(std::move(core), nrow, ncol)) {}
     /**
      * @endcond
      */
 
 private:
-    MockDenseChunk_internal::Core<MockDenseChunk_internal::MockBlob> core;
+    MockDenseChunk_internal::Core<MockDenseChunk_internal::MockBlob> my_core;
 
 public:
     /**
@@ -282,7 +285,7 @@ public:
      */
     template<typename Index_>
     void extract(bool row, Index_ non_target_start, Index_ non_target_length, Workspace& work, value_type* output, size_t stride) const {
-        core.template extract<Index_>(row, 0, core.get_target_chunkdim(row), non_target_start, non_target_length, work.work, output, stride);
+        my_core.template extract<Index_>(row, 0, my_core.get_target_chunkdim(row), non_target_start, non_target_length, work.work, output, stride);
     }
 
     /**
@@ -311,7 +314,7 @@ public:
      */
     template<typename Index_>
     void extract(bool row, const std::vector<Index_>& non_target_indices, Workspace& work, value_type* output, size_t stride) const {
-        core.template extract<Index_>(row, 0, core.get_target_chunkdim(row), non_target_indices, work.work, output, stride);
+        my_core.template extract<Index_>(row, 0, my_core.get_target_chunkdim(row), non_target_indices, work.work, output, stride);
     }
 };
 
@@ -332,10 +335,11 @@ public:
  * - A `void inflate(std::vector<value_type>& buffer) const` method that fills `buffer` with the contents of the array.
  *   This should be filled in row-major format if `row_major = true` and in column-major format otherwise.
  *
- * @tparam Blob_ Class to represent a simple chunk.
+ * @tparam Blob_ Class to represent a dense blob.
  */
 template<class Blob_>
-struct SimpleDenseChunkWrapper {
+class SimpleDenseChunkWrapper {
+public:
     /**
      * @cond
      */
@@ -347,13 +351,13 @@ struct SimpleDenseChunkWrapper {
 
     SimpleDenseChunkWrapper() = default;
 
-    SimpleDenseChunkWrapper(Blob_ c) : core(std::move(c)) {}
+    SimpleDenseChunkWrapper(Blob_ core) : my_core(std::move(core)) {}
     /**
      * @endcond
      */
 
 private:
-    MockDenseChunk_internal::Core<Blob_> core;
+    MockDenseChunk_internal::Core<Blob_> my_core;
 
 public:
     /**
@@ -361,12 +365,12 @@ public:
      */
     template<typename Index_>
     void extract(bool row, Index_ non_target_start, Index_ non_target_length, Workspace& work, value_type* output, size_t stride) const {
-        core.extract(row, 0, core.get_target_chunkdim(row), non_target_start, non_target_length, work, output, stride);
+        my_core.extract(row, 0, my_core.get_target_chunkdim(row), non_target_start, non_target_length, work, output, stride);
     }
 
     template<typename Index_>
     void extract(bool row, const std::vector<Index_>& non_target_indices, Workspace& work, value_type* output, size_t stride) const {
-        core.extract(row, 0, core.get_target_chunkdim(row), non_target_indices, work, output, stride);
+        my_core.extract(row, 0, my_core.get_target_chunkdim(row), non_target_indices, work, output, stride);
     }
     /**
      * @endcond
@@ -383,7 +387,8 @@ public:
  * as predicted for each chunk from the `OracularSubsettedSlabCache`.
  * This provides some opportunities for optimization if the chunk supports partial reads.
  */
-struct MockSubsettedDenseChunk {
+class MockSubsettedDenseChunk {
+public:
     /**
      * Type of the value stored in this chunk.
      * Implementations can use any numeric type. 
@@ -411,18 +416,17 @@ struct MockSubsettedDenseChunk {
      */
     static constexpr bool use_subset = true;
 
-public:
     /**
      * @cond
      */
     MockSubsettedDenseChunk() = default;
-    MockSubsettedDenseChunk(std::vector<double> c, size_t nr, size_t nc) : core(MockDenseChunk_internal::MockBlob(std::move(c), nr, nc)) {}
+    MockSubsettedDenseChunk(std::vector<double> core, size_t nrow, size_t ncol) : my_core(MockDenseChunk_internal::MockBlob(std::move(core), nrow, ncol)) {}
     /**
      * @endcond
      */
 
 private:
-    MockDenseChunk_internal::Core<MockDenseChunk_internal::MockBlob> core;
+    MockDenseChunk_internal::Core<MockDenseChunk_internal::MockBlob> my_core;
 
 public:
     /**
@@ -457,7 +461,7 @@ public:
      */
     template<typename Index_>
     void extract(bool row, Index_ target_start, Index_ target_length, Index_ non_target_start, Index_ non_target_length, Workspace& work, value_type* output, size_t stride) const {
-        core.extract(row, target_start, target_length, non_target_start, non_target_length, work.work, output, stride);
+        my_core.extract(row, target_start, target_length, non_target_start, non_target_length, work.work, output, stride);
     }
 
     /**
@@ -490,7 +494,7 @@ public:
      */
     template<typename Index_>
     void extract(bool row, Index_ target_start, Index_ target_length, const std::vector<Index_>& non_target_indices, Workspace& work, value_type* output, size_t stride) const {
-        core.extract(row, target_start, target_length, non_target_indices, work.work, output, stride);
+        my_core.extract(row, target_start, target_length, non_target_indices, work.work, output, stride);
     }
 
 public:
@@ -524,7 +528,7 @@ public:
      */
     template<typename Index_>
     void extract(bool row, const std::vector<Index_>& target_indices, Index_ non_target_start, Index_ non_target_length, Workspace& work, value_type* output, size_t stride) const {
-        core.extract(row, target_indices, non_target_start, non_target_length, work.work, output, stride);
+        my_core.extract(row, target_indices, non_target_start, non_target_length, work.work, output, stride);
     }
 
     /**
@@ -555,7 +559,7 @@ public:
      */
     template<typename Index_>
     void extract(bool row, const std::vector<Index_>& target_indices, const std::vector<Index_>& non_target_indices, Workspace& work, value_type* output, size_t stride) const {
-        core.extract(row, target_indices, non_target_indices, work.work, output, stride);
+        my_core.extract(row, target_indices, non_target_indices, work.work, output, stride);
     }
 };
 

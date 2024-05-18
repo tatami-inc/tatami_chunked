@@ -56,6 +56,7 @@ struct ChunkDimensionStats {
 
     /**
      * Length of the chunks, except for (possibly) the last chunk.
+     * See also `get_chunk_length()`.
      */
     Index_ chunk_length;
 
@@ -66,17 +67,24 @@ struct ChunkDimensionStats {
 
     /**
      * Length of the last chunk.
+     * This may be different from `chunk_length` if `dimension_extent` is not a multiple of `chunk_length`.
+     * See also `get_chunk_length()`.
      */
     Index_ last_chunk_length;
-
-    /**
-     * @param i Zero-based index of the chunk of interest.
-     * @return Length of chunk `i`.
-     */
-    Index_ get_chunk_length(Index_ i) const {
-        return (i + 1 == num_chunks ? last_chunk_length : chunk_length);
-    }
 };
+
+/**
+ * @tparam Index_ Integer type for the various dimensions.
+ * @param stats Chunk dimension statistics.
+ * @param i Zero-based index of the chunk of interest along the relevant dimension.
+ * @return Length of chunk `i`.
+ * This is either `ChunkDimensionStats::chunk_length` or `ChunkDimensionStats::last_chunk_length`,
+ * depending on whether `i` is the last chunk.
+ */
+template<typename Index_>
+Index_ get_chunk_length(const ChunkDimensionStats<Index_>& stats, Index_ i) {
+    return (i + 1 == stats.num_chunks ? stats.last_chunk_length : stats.chunk_length);
+}
 
 }
 

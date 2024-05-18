@@ -22,23 +22,24 @@ template<typename CachedValue_>
 using DenseSingleWorkspace = std::vector<CachedValue_>;
 
 template<typename CachedValue_, typename Index_>
-struct SparseSingleWorkspace {
-    SparseSingleWorkspace(size_t primary_chunkdim, size_t secondary_chunkdim, bool needs_value, bool needs_index) : number(primary_chunkdim) {
+class SparseSingleWorkspace {
+public:
+    SparseSingleWorkspace(size_t primary_chunkdim, size_t secondary_chunkdim, bool needs_value, bool needs_index) : my_number(primary_chunkdim) {
         size_t total_size = primary_chunkdim * secondary_chunkdim;
         if (needs_value) {
-            value_pool.resize(total_size);
-            values.reserve(primary_chunkdim);
-            auto vptr = value_pool.data();
+            my_value_pool.resize(total_size);
+            my_values.reserve(primary_chunkdim);
+            auto vptr = my_value_pool.data();
             for (size_t p = 0; p < primary_chunkdim; ++p, vptr += secondary_chunkdim) {
-                values.push_back(vptr);
+                my_values.push_back(vptr);
             }
         }
         if (needs_index) {
-            index_pool.resize(total_size);
-            indices.reserve(primary_chunkdim);
-            auto iptr = index_pool.data();
+            my_index_pool.resize(total_size);
+            my_indices.reserve(primary_chunkdim);
+            auto iptr = my_index_pool.data();
             for (size_t p = 0; p < primary_chunkdim; ++p, iptr += secondary_chunkdim) {
-                indices.push_back(iptr);
+                my_indices.push_back(iptr);
             }
         }
     }
@@ -52,13 +53,24 @@ struct SparseSingleWorkspace {
     SparseSingleWorkspace& operator=(SparseSingleWorkspace&&) = default;
 
 private:
-    std::vector<CachedValue_> value_pool;
-    std::vector<Index_> index_pool;
+    std::vector<CachedValue_> my_value_pool;
+    std::vector<Index_> my_index_pool;
+    std::vector<CachedValue_*> my_values;
+    std::vector<Index_*> my_indices;
+    std::vector<Index_> my_number;
 
 public:
-    std::vector<CachedValue_*> values;
-    std::vector<Index_*> indices;
-    std::vector<Index_> number;
+    std::vector<CachedValue_*>& get_values() {
+        return my_values;
+    }
+
+    std::vector<Index_*>& get_indices() {
+        return my_indices;
+    }
+
+    std::vector<Index_>& get_number() {
+        return my_number;
+    }
 };
 
 /*******************
@@ -68,37 +80,37 @@ public:
 template<typename Index_, bool sparse_, class Chunk_>
 class ChunkCoordinator {
 public:
-    ChunkCoordinator(ChunkDimensionStats<Index_> rows, ChunkDimensionStats<Index_> cols, std::vector<Chunk_> chunks, bool rm) :
-        row_stats(std::move(rows)), col_stats(std::move(cols)), chunk_array(std::move(chunks)), row_major(rm)
+    ChunkCoordinator(ChunkDimensionStats<Index_> row_stats, ChunkDimensionStats<Index_> col_stats, std::vector<Chunk_> chunk_array, bool row_major) :
+        my_row_stats(std::move(row_stats)), my_col_stats(std::move(col_stats)), my_chunk_array(std::move(chunk_array)), my_row_major(row_major)
     {
-        if (static_cast<size_t>(row_stats.num_chunks) * static_cast<size_t>(col_stats.num_chunks) != chunk_array.size()) {
+        if (static_cast<size_t>(my_row_stats.num_chunks) * static_cast<size_t>(my_col_stats.num_chunks) != my_chunk_array.size()) {
             throw std::runtime_error("length of 'chunks' should be equal to the product of the number of chunks along each row and column");
         }
     }
 
 private:
-    ChunkDimensionStats<Index_> row_stats;
-    ChunkDimensionStats<Index_> col_stats;
-    std::vector<Chunk_> chunk_array;
-    bool row_major;
+    ChunkDimensionStats<Index_> my_row_stats;
+    ChunkDimensionStats<Index_> my_col_stats;
+    std::vector<Chunk_> my_chunk_array;
+    bool my_row_major;
 
 public:
     // Number of chunks along the rows is equal to the number of chunks for
     // each column, and vice versa; hence the flipped definitions.
     Index_ get_num_chunks_per_row() const {
-        return col_stats.num_chunks;
+        return my_col_stats.num_chunks;
     }
 
     Index_ get_num_chunks_per_column() const {
-        return row_stats.num_chunks;
+        return my_row_stats.num_chunks;
     }
 
     Index_ get_nrow() const {
-        return row_stats.dimension_extent;
+        return my_row_stats.dimension_extent;
     }
 
     Index_ get_ncol() const {
-        return col_stats.dimension_extent;
+        return my_col_stats.dimension_extent;
     }
 
     bool prefer_rows_internal() const {
@@ -107,51 +119,47 @@ public:
     }
 
     Index_ get_chunk_nrow() const {
-        return row_stats.chunk_length;
+        return my_row_stats.chunk_length;
     }
 
     Index_ get_chunk_ncol() const {
-        return col_stats.chunk_length;
+        return my_col_stats.chunk_length;
     }
 
 public:
     Index_ get_secondary_dim(bool row) const {
         if (row) {
-            return col_stats.dimension_extent;
+            return my_col_stats.dimension_extent;
         } else {
-            return row_stats.dimension_extent;
+            return my_row_stats.dimension_extent;
         }
     }
 
     Index_ get_primary_chunkdim(bool row) const {
         if (row) {
-            return row_stats.chunk_length;
+            return my_row_stats.chunk_length;
         } else {
-            return col_stats.chunk_length;
+            return my_col_stats.chunk_length;
         }
     }
 
     Index_ get_secondary_chunkdim(bool row) const {
         if (row) {
-            return col_stats.chunk_length;
+            return my_col_stats.chunk_length;
         } else {
-            return row_stats.chunk_length;
+            return my_row_stats.chunk_length;
         }
     }
 
     // Overload that handles the truncated chunk at the bottom/right edges of each matrix.
     Index_ get_primary_chunkdim(bool row, Index_ chunk_id) const {
-        if (row) {
-            return row_stats.get_chunk_length(chunk_id);
-        } else {
-            return col_stats.get_chunk_length(chunk_id);
-        }
+        return get_chunk_length(row ? my_row_stats : my_col_stats, chunk_id);
     }
 
 private:
     std::pair<size_t, size_t> offset_and_increment(bool row, Index_ chunk_id) const {
-        size_t num_chunks = (row_major ? get_num_chunks_per_row() : get_num_chunks_per_column()); // use size_t to avoid overflow.
-        if (row == row_major) {
+        size_t num_chunks = (my_row_major ? get_num_chunks_per_row() : get_num_chunks_per_column()); // use size_t to avoid overflow.
+        if (row == my_row_major) {
             return std::pair<size_t, size_t>(static_cast<size_t>(chunk_id) * num_chunks, 1);
         } else {
             return std::pair<size_t, size_t>(chunk_id, num_chunks);
@@ -178,7 +186,7 @@ private:
         offset += increment * static_cast<size_t>(start_chunk_index); // size_t to avoid integer overflow.
 
         for (Index_ c = start_chunk_index; c < end_chunk_index; ++c) {
-            const auto& chunk = chunk_array[offset];
+            const auto& chunk = my_chunk_array[offset];
             Index_ from = (c == start_chunk_index ? secondary_block_start - secondary_start_pos : 0);
             Index_ to = (c + 1 == end_chunk_index ? secondary_block_end - secondary_start_pos : secondary_chunkdim);
             Index_ len = to - from;
@@ -221,7 +229,7 @@ private:
         auto iIt = secondary_indices.begin();
         auto iEnd = secondary_indices.end();
         while (iIt != iEnd) {
-            const auto& chunk = chunk_array[offset];
+            const auto& chunk = my_chunk_array[offset];
 
             Index_ secondary_end_pos = std::min(secondary_dim - secondary_start_pos, secondary_chunkdim) + secondary_start_pos; // this convoluted method avoids overflow.
             chunk_indices_buffer.clear();
@@ -282,20 +290,23 @@ public:
             extract_secondary_block(
                 row, chunk_id, secondary_block_start, secondary_block_length, 
                 [&](const Chunk_& chunk, Index_ from, Index_ len, Index_ secondary_start_pos) {
-                    std::fill_n(tmp_work.number.begin(), primary_chunkdim, 0);
+                    auto& tmp_values = tmp_work.get_values();
+                    auto& tmp_indices = tmp_work.get_indices();
+                    auto& tmp_number = tmp_work.get_number();
+                    std::fill_n(tmp_number.begin(), primary_chunkdim, 0);
 
                     if constexpr(Chunk_::use_subset) {
-                        chunk.extract(row, chunk_offset, 1, from, len, chunk_workspace, tmp_work.values, tmp_work.indices, tmp_work.number.data(), secondary_start_pos);
+                        chunk.extract(row, chunk_offset, 1, from, len, chunk_workspace, tmp_values, tmp_indices, tmp_number.data(), secondary_start_pos);
                     } else {
-                        chunk.extract(row, from, len, chunk_workspace, tmp_work.values, tmp_work.indices, tmp_work.number.data(), secondary_start_pos);
+                        chunk.extract(row, from, len, chunk_workspace, tmp_values, tmp_indices, tmp_number.data(), secondary_start_pos);
                     }
 
-                    auto count = tmp_work.number[chunk_offset];
+                    auto count = tmp_number[chunk_offset];
                     if (needs_value) {
-                        std::copy_n(tmp_work.values[chunk_offset], count, final_slab.values[0] + final_num);
+                        std::copy_n(tmp_values[chunk_offset], count, final_slab.values[0] + final_num);
                     }
                     if (needs_index) {
-                        std::copy_n(tmp_work.indices[chunk_offset], count, final_slab.indices[0] + final_num);
+                        std::copy_n(tmp_indices[chunk_offset], count, final_slab.indices[0] + final_num);
                     }
                     final_num += count;
                 }
@@ -348,20 +359,23 @@ public:
             extract_secondary_index(
                 row, chunk_id, secondary_indices, chunk_indices_buffer,
                 [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices, Index_ secondary_start_pos) {
-                    std::fill_n(tmp_work.number.begin(), primary_chunkdim, 0);
+                    auto& tmp_values = tmp_work.get_values();
+                    auto& tmp_indices = tmp_work.get_indices();
+                    auto& tmp_number = tmp_work.get_number();
+                    std::fill_n(tmp_number.begin(), primary_chunkdim, 0);
 
                     if constexpr(Chunk_::use_subset) {
-                        chunk.extract(row, chunk_offset, 1, chunk_indices, chunk_workspace, tmp_work.values, tmp_work.indices, tmp_work.number.data(), secondary_start_pos);
+                        chunk.extract(row, chunk_offset, 1, chunk_indices, chunk_workspace, tmp_values, tmp_indices, tmp_number.data(), secondary_start_pos);
                     } else {
-                        chunk.extract(row, chunk_indices, chunk_workspace, tmp_work.values, tmp_work.indices, tmp_work.number.data(), secondary_start_pos);
+                        chunk.extract(row, chunk_indices, chunk_workspace, tmp_values, tmp_indices, tmp_number.data(), secondary_start_pos);
                     }
 
-                    auto count = tmp_work.number[chunk_offset];
+                    auto count = tmp_number[chunk_offset];
                     if (needs_value) {
-                        std::copy_n(tmp_work.values[chunk_offset], count, final_slab.values[0] + final_num);
+                        std::copy_n(tmp_values[chunk_offset], count, final_slab.values[0] + final_num);
                     }
                     if (needs_index) {
-                        std::copy_n(tmp_work.indices[chunk_offset], count, final_slab.indices[0] + final_num);
+                        std::copy_n(tmp_indices[chunk_offset], count, final_slab.indices[0] + final_num);
                     }
                     final_num += count;
                 }
@@ -633,7 +647,7 @@ private:
                 /* create = */ [&]() -> Slab {
                     return factory.create();
                 },
-                /* populate =*/ [&](std::vector<std::tuple<Index_, Slab*, OracularSubsettedSlabCacheSelectionDetails<Index_>*> >& in_need) -> void {
+                /* populate =*/ [&](std::vector<std::tuple<Index_, Slab*, const OracularSubsettedSlabCacheSelectionDetails<Index_>*> >& in_need) -> void {
                     for (const auto& p : in_need) {
                         auto id = std::get<0>(p);
                         auto ptr = std::get<1>(p);

@@ -31,34 +31,33 @@ namespace tatami_chunked {
 template<typename Id_, typename Index_, class Slab_> 
 class OracularSlabCache {
 private:
-    std::shared_ptr<const tatami::Oracle<Index_> > oracle;
-    size_t total;
-    size_t counter = 0;
+    std::shared_ptr<const tatami::Oracle<Index_> > my_oracle;
+    size_t my_total;
+    size_t my_counter = 0;
 
-    Index_ last_slab_id = 0;
-    Slab_* last_slab = NULL;
+    Index_ my_last_slab_id = 0;
+    Slab_* my_last_slab = NULL;
 
-    size_t max_slabs;
-    std::vector<Slab_> all_slabs;
-    std::unordered_map<Id_, Slab_*> current_cache, future_cache;
-    std::vector<std::pair<Id_, Slab_*> > to_populate;
-    std::vector<Id_> in_need;
-    size_t refresh_point = 0;
+    size_t my_max_slabs;
+    std::vector<Slab_> my_all_slabs;
+    std::unordered_map<Id_, Slab_*> my_current_cache, my_future_cache;
+    std::vector<std::pair<Id_, Slab_*> > my_to_populate;
+    std::vector<Id_> my_in_need;
+    size_t my_refresh_point = 0;
 
 public:
     /**
-     * @param ora Pointer to an `tatami::Oracle` to be used for predictions.
+     * @param oracle Pointer to an `tatami::Oracle` to be used for predictions.
      * @param max_slabs Maximum number of slabs to store in the cache.
      */
-    OracularSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > ora, size_t max_slabs) : 
-        oracle(std::move(ora)), 
-        total(oracle->total()),
-        max_slabs(max_slabs) 
-
+    OracularSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > oracle, size_t max_slabs) : 
+        my_oracle(std::move(oracle)), 
+        my_total(my_oracle->total()),
+        my_max_slabs(max_slabs) 
     {
-        all_slabs.reserve(max_slabs);
-        current_cache.reserve(max_slabs);
-        future_cache.reserve(max_slabs);
+        my_all_slabs.reserve(max_slabs);
+        my_current_cache.reserve(max_slabs);
+        my_future_cache.reserve(max_slabs);
     } 
 
     /**
@@ -93,7 +92,7 @@ public:
      * @return The next prediction from the oracle.
      */
     Index_ next() {
-        return oracle->get(counter++);
+        return my_oracle->get(my_counter++);
     }
 
 public:
@@ -126,85 +125,85 @@ public:
     std::pair<const Slab_*, Index_> next(Ifunction_ identify, Cfunction_ create, Pfunction_ populate) {
         Index_ index = this->next(); 
         auto slab_info = identify(index);
-        if (slab_info.first == last_slab_id && last_slab) {
-            return std::make_pair(last_slab, slab_info.second);
+        if (slab_info.first == my_last_slab_id && my_last_slab) {
+            return std::make_pair(my_last_slab, slab_info.second);
         }
-        last_slab_id = slab_info.first;
+        my_last_slab_id = slab_info.first;
 
         // Updating the cache if we hit the refresh point.
-        if (counter - 1 == refresh_point) {
+        if (my_counter - 1 == my_refresh_point) {
             // Note that, for any given populate cycle, the first prediction's
             // slab cannot already be in the cache, otherwise it would have
             // incorporated into the previous cycle. So we can skip some code.
-            future_cache[slab_info.first] = NULL;
-            in_need.push_back(slab_info.first);
+            my_future_cache[slab_info.first] = NULL;
+            my_in_need.push_back(slab_info.first);
             size_t used_slabs = 1;
             auto last_future_slab_id = slab_info.first;
 
-            while (++refresh_point < total) {
-                auto future_index = oracle->get(refresh_point);
+            while (++my_refresh_point < my_total) {
+                auto future_index = my_oracle->get(my_refresh_point);
                 auto future_slab_info = identify(future_index);
                 if (last_future_slab_id == future_slab_info.first) {
                     continue;
                 }
 
                 last_future_slab_id = future_slab_info.first;
-                if (future_cache.find(future_slab_info.first) != future_cache.end()) {
+                if (my_future_cache.find(future_slab_info.first) != my_future_cache.end()) {
                     continue;
                 }
 
-                if (used_slabs == max_slabs) {
+                if (used_slabs == my_max_slabs) {
                     break;
                 } 
                 ++used_slabs;
 
-                auto ccIt = current_cache.find(future_slab_info.first);
-                if (ccIt != current_cache.end()) {
+                auto ccIt = my_current_cache.find(future_slab_info.first);
+                if (ccIt != my_current_cache.end()) {
                     auto slab_ptr = ccIt->second;
-                    future_cache[future_slab_info.first] = slab_ptr;
-                    current_cache.erase(ccIt);
+                    my_future_cache[future_slab_info.first] = slab_ptr;
+                    my_current_cache.erase(ccIt);
                 } else {
-                    future_cache[future_slab_info.first] = NULL;
-                    in_need.push_back(future_slab_info.first);
+                    my_future_cache[future_slab_info.first] = NULL;
+                    my_in_need.push_back(future_slab_info.first);
                 }
             }
 
-            auto cIt = current_cache.begin();
-            for (auto a : in_need) {
-                if (cIt != current_cache.end()) {
-                    to_populate.emplace_back(a, cIt->second);
-                    future_cache[a] = cIt->second;
+            auto cIt = my_current_cache.begin();
+            for (auto a : my_in_need) {
+                if (cIt != my_current_cache.end()) {
+                    my_to_populate.emplace_back(a, cIt->second);
+                    my_future_cache[a] = cIt->second;
                     ++cIt;
                 } else {
-                    // We reserved all_slabs so further push_backs() should not 
+                    // We reserved my_all_slabs so further push_backs() should not 
                     // trigger any reallocation or invalidation of the pointers.
-                    all_slabs.push_back(create());
-                    auto slab_ptr = &(all_slabs.back());
-                    to_populate.emplace_back(a, slab_ptr);
-                    future_cache[a] = slab_ptr;
+                    my_all_slabs.push_back(create());
+                    auto slab_ptr = &(my_all_slabs.back());
+                    my_to_populate.emplace_back(a, slab_ptr);
+                    my_future_cache[a] = slab_ptr;
                 }
             }
-            in_need.clear();
+            my_in_need.clear();
 
-            populate(to_populate);
-            to_populate.clear();
+            populate(my_to_populate);
+            my_to_populate.clear();
 
-            // We always fill future_cache to the brim so every entry of
-            // all_slabs should be referenced by a pointer in future_cache.
-            // There shouldn't be any free cache entries remaining in
-            // current_cache i.e., at this point, cIt should equal
-            // current_cache.end(), as we transferred everything to
-            // future_cache. Thus it is safe to clear current_cache without
-            // worrying about leaking memory. The only exception is if we're at
-            // the end of the predictions, in which case it doesn't matter.
-            current_cache.clear();
-            current_cache.swap(future_cache);
+            // We always fill my_future_cache to the brim so every entry of
+            // my_all_slabs should be referenced by a pointer in
+            // my_future_cache.  There shouldn't be any free cache entries
+            // remaining in my_current_cache i.e., at this point, cIt should
+            // equal my_current_cache.end(), as we transferred everything to
+            // my_future_cache. Thus it is safe to clear my_current_cache
+            // without worrying about leaking memory. The only exception is if
+            // we run out of predictions, in which case it doesn't matter.
+            my_current_cache.clear();
+            my_current_cache.swap(my_future_cache);
         }
 
         // We know it must exist, so no need to check ccIt's validity.
-        auto ccIt = current_cache.find(slab_info.first);
-        last_slab = ccIt->second;
-        return std::make_pair(last_slab, slab_info.second);
+        auto ccIt = my_current_cache.find(slab_info.first);
+        my_last_slab = ccIt->second;
+        return std::make_pair(my_last_slab, slab_info.second);
     }
 
 public:
@@ -212,14 +211,14 @@ public:
      * @return Maximum number of slabs in the cache.
      */
     size_t get_max_slabs() const {
-        return max_slabs;
+        return my_max_slabs;
     }
 
     /**
      * @return Number of slabs currently in the cache.
      */
     size_t get_num_slabs() const {
-        return current_cache.size();
+        return my_current_cache.size();
     }
 };
 

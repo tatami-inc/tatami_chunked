@@ -23,7 +23,7 @@ protected:
                 ++nalloc;
                 return TestSlab();
             },
-            [&](std::vector<std::tuple<unsigned char, TestSlab*, tatami_chunked::OracularSubsettedSlabCacheSelectionDetails<int>*> >& in_need) -> void {
+            [&](std::vector<std::tuple<unsigned char, TestSlab*, const tatami_chunked::OracularSubsettedSlabCacheSelectionDetails<int>*> >& in_need) -> void {
                 std::sort(in_need.begin(), in_need.end());
                 for (auto& x : in_need) {
                     auto current = std::get<1>(x);

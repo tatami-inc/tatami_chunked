@@ -29,13 +29,14 @@ struct Workspace {
 };
 
 template<class Blob_>
-struct Core {
+class Core {
+public:
     Core() = default;
 
-    Core(Blob_ c) : chunk(std::move(c)) {}
+    Core(Blob_ chunk) : my_chunk(std::move(chunk)) {}
 
 private:
-    Blob_ chunk;
+    Blob_ my_chunk;
 
     typedef typename Blob_::value_type value_type;
 
@@ -44,17 +45,17 @@ private:
 public:
     auto get_target_chunkdim(bool row) const {
         if (row) {
-            return chunk.nrow();
+            return my_chunk.nrow();
         } else {
-            return chunk.ncol();
+            return my_chunk.ncol();
         }
     }
 
     auto get_non_target_chunkdim(bool row) const {
         if (row) {
-            return chunk.ncol();
+            return my_chunk.ncol();
         } else {
-            return chunk.nrow();
+            return my_chunk.nrow();
         }
     }
 
@@ -220,11 +221,11 @@ public:
         Index_* output_number,
         index_type shift)
     const {
-        chunk.inflate(work.values, work.indices, work.indptrs);
+        my_chunk.inflate(work.values, work.indices, work.indptrs);
         Index_ target_end = target_start + target_length;
         Index_ non_target_end = non_target_start + non_target_length;
 
-        if (chunk.is_csr() == row) {
+        if (my_chunk.is_csr() == row) {
             Index_ non_target_chunkdim = get_non_target_chunkdim(row);
             for (Index_ p = target_start; p < target_end; ++p) {
                 fill_target<true>(p, non_target_start, non_target_end, non_target_chunkdim, work, output_values, output_indices, output_number, shift);
@@ -249,10 +250,10 @@ public:
         Index_* output_number,
         index_type shift)
     const {
-        chunk.inflate(work.values, work.indices, work.indptrs);
+        my_chunk.inflate(work.values, work.indices, work.indptrs);
         Index_ target_end = target_start + target_length;
 
-        if (chunk.is_csr() == row) {
+        if (my_chunk.is_csr() == row) {
             // non_target_indices is guaranteed to be non-empty, see contracts below.
             auto non_target_start = non_target_indices.front();
             auto non_target_end = non_target_indices.back() + 1; // need 1 past end.
@@ -285,10 +286,10 @@ public:
         Index_* output_number,
         index_type shift)
     const {
-        chunk.inflate(work.values, work.indices, work.indptrs);
+        my_chunk.inflate(work.values, work.indices, work.indptrs);
         Index_ non_target_end = non_target_start + non_target_length;
 
-        if (chunk.is_csr() == row) {
+        if (my_chunk.is_csr() == row) {
             Index_ non_target_chunkdim = get_non_target_chunkdim(row);
             for (auto p : target_indices) {
                 fill_target<true>(p, non_target_start, non_target_end, non_target_chunkdim, work, output_values, output_indices, output_number, shift);
@@ -319,9 +320,9 @@ public:
         Index_* output_number,
         index_type shift)
     const {
-        chunk.inflate(work.values, work.indices, work.indptrs);
+        my_chunk.inflate(work.values, work.indices, work.indptrs);
 
-        if (chunk.is_csr() == row) {
+        if (my_chunk.is_csr() == row) {
             // non_target_indices is guaranteed to be non-empty, see contracts below.
             auto non_target_start = non_target_indices.front();
             auto non_target_end = non_target_indices.back() + 1; // need 1 past end.
@@ -348,7 +349,8 @@ public:
     }
 };
 
-struct MockBlob {
+class MockBlob {
+public:
     typedef int index_type;
     typedef double value_type;
 
@@ -357,32 +359,32 @@ struct MockBlob {
     }
 
 private:
-    int nrows, ncols;
-    std::vector<double> vcontents;
-    std::vector<int> icontents;
-    std::vector<size_t> pcontents;
+    int my_nrow, my_ncol;
+    std::vector<double> my_values;
+    std::vector<int> my_indices;
+    std::vector<size_t> my_pointers;
 
 public:
     MockBlob() = default;
 
-    MockBlob(int nr, int nc, std::vector<double> v, std::vector<int> i, std::vector<size_t> p) : 
-        nrows(nr), ncols(nc), vcontents(std::move(v)), icontents(std::move(i)), pcontents(std::move(p)) {}
+    MockBlob(int nrow, int ncol, std::vector<double> values, std::vector<int> indices, std::vector<size_t> pointers) : 
+        my_nrow(nrow), my_ncol(ncol), my_values(std::move(values)), my_indices(std::move(indices)), my_pointers(std::move(pointers)) {}
 
     int nrow() const {
-        return nrows;
+        return my_nrow;
     }
 
     int ncol() const {
-        return ncols;
+        return my_ncol;
     }
 
     void inflate(std::vector<double>& vbuffer, std::vector<int>& ibuffer, std::vector<size_t>& pbuffer) const {
-        vbuffer.resize(vcontents.size());
-        std::copy(vcontents.begin(), vcontents.end(), vbuffer.begin());
-        ibuffer.resize(icontents.size());
-        std::copy(icontents.begin(), icontents.end(), ibuffer.begin());
-        pbuffer.resize(pcontents.size());
-        std::copy(pcontents.begin(), pcontents.end(), pbuffer.begin());
+        vbuffer.resize(my_values.size());
+        std::copy(my_values.begin(), my_values.end(), vbuffer.begin());
+        ibuffer.resize(my_indices.size());
+        std::copy(my_indices.begin(), my_indices.end(), ibuffer.begin());
+        pbuffer.resize(my_pointers.size());
+        std::copy(my_pointers.begin(), my_pointers.end(), pbuffer.begin());
     }
 };
 
@@ -399,7 +401,8 @@ public:
  * The interface is "simple" as extraction of any data involves realization of the entire chunk's contents along the target dimension,
  * with no attempt at optimization if only a subset of dimension elements are of interest.
  */
-struct MockSimpleSparseChunk {
+class MockSimpleSparseChunk {
+public:
     /**
      * Type of the value stored in this chunk.
      * Implementations can use any numeric type. 
@@ -583,10 +586,11 @@ public:
  * @tparam Blob_ Class to represent a simple chunk.
  */
 template<class Blob_>
-struct SimpleSparseChunkWrapper {
+class SimpleSparseChunkWrapper {
     /**
      * @cond
      */
+public:
     typedef typename Blob_::value_type value_type;
 
     typedef MockSparseChunk_internal::Workspace<value_type, typename Blob_::index_type> Workspace;
@@ -595,18 +599,12 @@ struct SimpleSparseChunkWrapper {
 
     SimpleSparseChunkWrapper() = default;
 
-    SimpleSparseChunkWrapper(Blob_ c) : core(std::move(c)) {}
-    /**
-     * @endcond
-     */
+    SimpleSparseChunkWrapper(Blob_ core) : my_core(std::move(core)) {}
 
 private:
-    MockSparseChunk_internal::Core<Blob_> core;
+    MockSparseChunk_internal::Core<Blob_> my_core;
 
 public:
-    /**
-     * @cond
-     */
     template<typename Index_>
     void extract(
         bool row,
@@ -618,10 +616,10 @@ public:
         Index_* output_number,
         Index_ shift)
     const {
-        core.template extract<Index_>(
+        my_core.template extract<Index_>(
             row, 
             0, 
-            core.get_target_chunkdim(row), 
+            my_core.get_target_chunkdim(row), 
             non_target_start, 
             non_target_length, 
             work, 
@@ -642,10 +640,10 @@ public:
         Index_* output_number,
         Index_ shift)
     const {
-        core.template extract<Index_>(
+        my_core.template extract<Index_>(
             row, 
             0, 
-            core.get_target_chunkdim(row), 
+            my_core.get_target_chunkdim(row), 
             non_target_indices, 
             work, 
             output_values, 
@@ -669,7 +667,8 @@ public:
  * as predicted for each chunk from the `OracularSubsettedSlabCache`.
  * This provides some opportunities for optimization if the chunk supports partial reads.
  */
-struct MockSubsettedSparseChunk {
+class MockSubsettedSparseChunk {
+public:
     /**
      * Type of the value stored in this chunk.
      * Implementations can use any numeric type. 
@@ -698,19 +697,18 @@ struct MockSubsettedSparseChunk {
      */
     static constexpr bool use_subset = true;
 
-public:
     /**
      * @cond
      */
     MockSubsettedSparseChunk() = default;
-    MockSubsettedSparseChunk(int nr, int nc, std::vector<double> x, std::vector<int> i, std::vector<size_t> p) : 
-        core(MockSparseChunk_internal::MockBlob(nr, nc, std::move(x), std::move(i), std::move(p))) {}
+    MockSubsettedSparseChunk(int nrow, int ncol, std::vector<double> values, std::vector<int> indices, std::vector<size_t> pointers) : 
+        my_core(MockSparseChunk_internal::MockBlob(nrow, ncol, std::move(values), std::move(indices), std::move(pointers))) {}
     /**
      * @endcond
      */
 
 private:
-    MockSparseChunk_internal::Core<MockSparseChunk_internal::MockBlob> core;
+    MockSparseChunk_internal::Core<MockSparseChunk_internal::MockBlob> my_core;
 
 public:
     /**
@@ -766,7 +764,7 @@ public:
         Index_* output_number,
         Index_ shift)
     const {
-        core.extract(
+        my_core.extract(
             row, 
             target_start, 
             target_length, 
@@ -830,7 +828,7 @@ public:
         Index_* output_number,
         Index_ shift)
     const {
-        core.extract(
+        my_core.extract(
             row, 
             target_start, 
             target_length, 
@@ -894,7 +892,7 @@ public:
         Index_* output_number,
         Index_ shift)
     const {
-        core.extract(
+        my_core.extract(
             row, 
             target_indices, 
             non_target_start, 
@@ -954,7 +952,7 @@ public:
         Index_* output_number,
         Index_ shift)
     const {
-        core.extract(
+        my_core.extract(
             row, 
             target_indices, 
             non_target_indices, 

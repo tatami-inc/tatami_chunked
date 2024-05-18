@@ -27,7 +27,7 @@ struct DenseSlabFactory {
      * @param slab_size Size of the slab, in terms of data elements.
      * @param max_slabs Maximum number of slabs.
      */
-    DenseSlabFactory(size_t slab_size, size_t max_slabs) : slab_size(slab_size), pool(max_slabs * slab_size) {}
+    DenseSlabFactory(size_t slab_size, size_t max_slabs) : my_slab_size(slab_size), my_pool(max_slabs * slab_size) {}
 
     /**
      * @param stats Slab cache statistics.
@@ -49,8 +49,8 @@ struct DenseSlabFactory {
      */
 
 private:
-    size_t offset = 0, slab_size;
-    std::vector<Value_> pool;
+    size_t my_offset = 0, my_slab_size;
+    std::vector<Value_> my_pool;
 
 public:
     /**
@@ -71,8 +71,8 @@ public:
      */
     Slab create() {
         Slab output;
-        output.data = pool.data() + offset;
-        offset += slab_size;
+        output.data = my_pool.data() + my_offset;
+        my_offset += my_slab_size;
         return output;
     }
 };
