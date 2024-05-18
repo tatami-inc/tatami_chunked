@@ -91,10 +91,10 @@ struct tatami_chunked::SimpleDenseChunkWrapper&lt; Blob_ &gt;</div><p>Create a d
 <p>Wraps a dense blob in a simple chunk interface for use inside a <code><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html" title="Matrix of custom dense chunks.">CustomDenseChunkedMatrix</a></code>. Each blob should hold a (possibly compressed) 2-dimensional array of numeric values. The wrapper satisfies the <code><a class="el" href="structtatami__chunked_1_1MockSimpleDenseChunk.html" title="Mock a simple dense chunk for a CustomDenseChunkedMatrix.">MockSimpleDenseChunk</a></code> interface, but is even simpler; extraction of any data involves realization of the entire blob, with no optimization for subsets of interest along either dimension.</p>
 <p>The <code>Blob_</code> class should provide the following:</p>
 <ul>
-<li><code>static constexpr bool row_major</code>, specifying whether the array is row-major.</li>
 <li><code>typedef value_type</code>, specifying the type of the value in the array.</li>
 <li>A <code>nrow() const</code> method, defining the number of rows in the array.</li>
 <li>A <code>ncol() const</code> method, defining the number of columns in the array.</li>
+<li><code>bool is_row_major() const</code>, indicating whether the realized array is row-major.</li>
 <li>A <code>void inflate(std::vector&lt;value_type&gt;&amp; buffer) const</code> method that fills <code>buffer</code> with the contents of the array. This should be filled in row-major format if <code>row_major = true</code> and in column-major format otherwise.</li>
 </ul>
 <dl class="tparams"><dt>Template Parameters</dt><dd>

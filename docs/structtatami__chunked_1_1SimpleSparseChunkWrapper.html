@@ -91,12 +91,12 @@ struct tatami_chunked::SimpleSparseChunkWrapper&lt; Blob_ &gt;</div><p>Create a 
 <p>Wraps a sparse blob in a simple chunk interface for use inside a <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrix.html" title="Matrix of custom sparse chunks.">CustomSparseChunkedMatrix</a></code>. Each blob should hold a (possibly compressed) 2-dimensional sparse array of numeric values. The wrapper satisfies the <code><a class="el" href="structtatami__chunked_1_1MockSimpleSparseChunk.html" title="Mock a simple sparse chunk for a CustomSparseChunkedMatrix.">MockSimpleSparseChunk</a></code> interface, but is even simpler; extraction of any data involves realization of the entire blob, with no optimization for subsets of interest along either dimension.</p>
 <p>The <code>Blob_</code> class should provide the following:</p>
 <ul>
-<li><code>static constexpr bool row_major</code>, specifying whether the array is row-major.</li>
 <li><code>typedef value_type</code>, specifying the type of the value in the array.</li>
 <li><code>typedef index_type</code>, specifying the type of the index in the submatrix.</li>
-<li>A <code>nrow() const</code> method, defining the number of rows in the array.</li>
-<li>A <code>ncol() const</code> method, defining the number of columns in the array.</li>
-<li>A <code>void inflate(std::vector&lt;value_type&gt;&amp; values, std::vector&lt;index_type&gt;&amp; indices, std::vector&lt;size_t&gt;&amp; pointers) const</code> method that fills <code>values</code>, <code>indices</code> and <code>pointers</code>, each with the corresponding field for compressed sparse matrix format. This should constitute a CSR matrix if <code>row_major = true</code> and a CSC matrix otherwise.</li>
+<li>A <code>nrow() const</code> method, returning the number of rows in the array as an integer.</li>
+<li>A <code>ncol() const</code> method, returning the numbr of columns in the array as an integer.</li>
+<li>A <code>bool is_csr() const</code> method, indicating whether the realized data is in compressed sparse row (CSR) format.</li>
+<li>A <code>void inflate(std::vector&lt;value_type&gt;&amp; values, std::vector&lt;index_type&gt;&amp; indices, std::vector&lt;size_t&gt;&amp; pointers) const</code> method that fills <code>values</code>, <code>indices</code> and <code>pointers</code>, each with the corresponding field for compressed sparse matrix format. This should constitute a CSR matrix if <code>is_csr()</code> returns true, and a CSC matrix otherwise.</li>
 </ul>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">

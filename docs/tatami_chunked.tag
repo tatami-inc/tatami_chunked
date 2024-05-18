@@ -306,15 +306,15 @@
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSimpleDenseChunk.html</anchorfile>
-      <anchor>a77beab93c21ac42e3a7b6a30ac1be1f4</anchor>
-      <arglist>(Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
+      <anchor>ab5bdb0241882bf66cdaec4fc5264a353</anchor>
+      <arglist>(bool row, Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSimpleDenseChunk.html</anchorfile>
-      <anchor>a9ab4f22882fa43b61caa3895cb997363</anchor>
-      <arglist>(const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
+      <anchor>acca76886df9330697f31e00ab1afa1fb</anchor>
+      <arglist>(bool row, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static constexpr bool</type>
@@ -339,15 +339,15 @@
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSimpleSparseChunk.html</anchorfile>
-      <anchor>a7b99f50fb3cb34c3918da691a5925ec0</anchor>
-      <arglist>(Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
+      <anchor>ae9fd80fc0efa359b4150697e7ce6dfa6</anchor>
+      <arglist>(bool row, Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSimpleSparseChunk.html</anchorfile>
-      <anchor>af4abb19cce529003ab57050c8d1d8c91</anchor>
-      <arglist>(const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
+      <anchor>af0d265eba927944ca0342fa5fb52795c</anchor>
+      <arglist>(bool row, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static constexpr bool</type>
@@ -372,29 +372,29 @@
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSubsettedDenseChunk.html</anchorfile>
-      <anchor>ac82c5b7b041b0186cc355ae4cca21f86</anchor>
-      <arglist>(Index_ target_start, Index_ target_length, Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
+      <anchor>a09842a54eae0c477e0a13286b8b94d22</anchor>
+      <arglist>(bool row, Index_ target_start, Index_ target_length, Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSubsettedDenseChunk.html</anchorfile>
-      <anchor>aef1fc512892a6ef2b46b906580ce00c3</anchor>
-      <arglist>(Index_ target_start, Index_ target_length, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
+      <anchor>a9afe106edab41245cf88243f1b549315</anchor>
+      <arglist>(bool row, Index_ target_start, Index_ target_length, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSubsettedDenseChunk.html</anchorfile>
-      <anchor>abb0606067823ea4946df731cd0bd1e40</anchor>
-      <arglist>(const std::vector&lt; Index_ &gt; &amp;target_indices, Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
+      <anchor>a801d5c232ec65fd8f35421a63a5c797f</anchor>
+      <arglist>(bool row, const std::vector&lt; Index_ &gt; &amp;target_indices, Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSubsettedDenseChunk.html</anchorfile>
-      <anchor>a5f6d221e922156f425713ad5fc96309f</anchor>
-      <arglist>(const std::vector&lt; Index_ &gt; &amp;target_indices, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
+      <anchor>a0c2cdf5b003dda42318e2e3090b0050c</anchor>
+      <arglist>(bool row, const std::vector&lt; Index_ &gt; &amp;target_indices, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static constexpr bool</type>
@@ -419,29 +419,29 @@
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSubsettedSparseChunk.html</anchorfile>
-      <anchor>a2081171c01f8309d3d5f3ce6ec92dbd6</anchor>
-      <arglist>(Index_ target_start, Index_ target_length, Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
+      <anchor>a2f753d18f844e925cc259404f5aa0eab</anchor>
+      <arglist>(bool row, Index_ target_start, Index_ target_length, Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSubsettedSparseChunk.html</anchorfile>
-      <anchor>ad32f1d94e7ed9ddb32dfc6ff334bb162</anchor>
-      <arglist>(Index_ target_start, Index_ target_length, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
+      <anchor>a2f727b3f9246f4e45068a5e0e8b8260c</anchor>
+      <arglist>(bool row, Index_ target_start, Index_ target_length, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSubsettedSparseChunk.html</anchorfile>
-      <anchor>a39058a033690fb88db6b58cc39805736</anchor>
-      <arglist>(const std::vector&lt; Index_ &gt; &amp;target_indices, Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
+      <anchor>a2b86bbf0c392dd64a900e7ea3606e207</anchor>
+      <arglist>(bool row, const std::vector&lt; Index_ &gt; &amp;target_indices, Index_ non_target_start, Index_ non_target_length, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>extract</name>
       <anchorfile>structtatami__chunked_1_1MockSubsettedSparseChunk.html</anchorfile>
-      <anchor>a93f15a4f05c5cb87e778616507155233</anchor>
-      <arglist>(const std::vector&lt; Index_ &gt; &amp;target_indices, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
+      <anchor>ab874b69a33a69d160b4e2aad659818c1</anchor>
+      <arglist>(bool row, const std::vector&lt; Index_ &gt; &amp;target_indices, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static constexpr bool</type>
