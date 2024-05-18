@@ -7,7 +7,10 @@
 template<bool row_major_>
 struct MockDenseBlob {
     typedef double value_type;
-    static constexpr bool row_major = row_major_;
+
+    bool is_row_major() const {
+        return row_major_;
+    }
 
 private:
     int nrows, ncols;
@@ -32,11 +35,14 @@ public:
     }
 };
 
-template<bool row_major_>
+template<bool csr_>
 struct MockSparseBlob {
     typedef int index_type;
     typedef double value_type;
-    static constexpr bool row_major = row_major_;
+
+    bool is_csr() const {
+        return csr_;
+    }
 
 private:
     int nrows, ncols;

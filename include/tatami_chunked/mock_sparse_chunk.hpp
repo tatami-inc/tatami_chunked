@@ -224,7 +224,7 @@ public:
         Index_ target_end = target_start + target_length;
         Index_ non_target_end = non_target_start + non_target_length;
 
-        if (Blob_::row_major == row) {
+        if (chunk.is_csr() == row) {
             Index_ non_target_chunkdim = get_non_target_chunkdim(row);
             for (Index_ p = target_start; p < target_end; ++p) {
                 fill_target<true>(p, non_target_start, non_target_end, non_target_chunkdim, work, output_values, output_indices, output_number, shift);
@@ -252,7 +252,7 @@ public:
         chunk.inflate(work.values, work.indices, work.indptrs);
         Index_ target_end = target_start + target_length;
 
-        if (Blob_::row_major == row) {
+        if (chunk.is_csr() == row) {
             // non_target_indices is guaranteed to be non-empty, see contracts below.
             auto non_target_start = non_target_indices.front();
             auto non_target_end = non_target_indices.back() + 1; // need 1 past end.
@@ -288,7 +288,7 @@ public:
         chunk.inflate(work.values, work.indices, work.indptrs);
         Index_ non_target_end = non_target_start + non_target_length;
 
-        if (Blob_::row_major == row) {
+        if (chunk.is_csr() == row) {
             Index_ non_target_chunkdim = get_non_target_chunkdim(row);
             for (auto p : target_indices) {
                 fill_target<true>(p, non_target_start, non_target_end, non_target_chunkdim, work, output_values, output_indices, output_number, shift);
@@ -321,7 +321,7 @@ public:
     const {
         chunk.inflate(work.values, work.indices, work.indptrs);
 
-        if (Blob_::row_major == row) {
+        if (chunk.is_csr() == row) {
             // non_target_indices is guaranteed to be non-empty, see contracts below.
             auto non_target_start = non_target_indices.front();
             auto non_target_end = non_target_indices.back() + 1; // need 1 past end.
@@ -351,7 +351,10 @@ public:
 struct MockBlob {
     typedef int index_type;
     typedef double value_type;
-    static constexpr bool row_major = true;
+
+    bool is_csr() const {
+        return true;
+    }
 
 private:
     int nrows, ncols;
@@ -568,14 +571,14 @@ public:
  *
  * The `Blob_` class should provide the following:
  *
- * - `static constexpr bool row_major`, specifying whether the array is row-major.
  * - `typedef value_type`, specifying the type of the value in the array.
  * - `typedef index_type`, specifying the type of the index in the submatrix.
- * - A `nrow() const` method, defining the number of rows in the array.
- * - A `ncol() const` method, defining the number of columns in the array.
+ * - A `nrow() const` method, returning the number of rows in the array as an integer.
+ * - A `ncol() const` method, returning the numbr of columns in the array as an integer.
+ * - A `bool is_csr() const` method, indicating whether the realized data is in compressed sparse row (CSR) format. 
  * - A `void inflate(std::vector<value_type>& values, std::vector<index_type>& indices, std::vector<size_t>& pointers) const` method that fills `values`, `indices` and `pointers`,
  *   each with the corresponding field for compressed sparse matrix format.
- *   This should constitute a CSR matrix if `row_major = true` and a CSC matrix otherwise.
+ *   This should constitute a CSR matrix if `is_csr()` returns true, and a CSC matrix otherwise.
  *
  * @tparam Blob_ Class to represent a simple chunk.
  */

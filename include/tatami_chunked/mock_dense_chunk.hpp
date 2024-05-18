@@ -52,7 +52,7 @@ public:
         chunk.inflate(work);
         output += static_cast<size_t>(target_start) * stride; // cast to size_t to avoid overflow.
 
-        if (Blob_::row_major == row) {
+        if (chunk.is_row_major() == row) {
             size_t non_target_chunkdim = get_non_target_chunkdim(row); // use size_t to avoid integer overflow with Index_.
             auto srcptr = work.data() + static_cast<size_t>(target_start) * non_target_chunkdim + static_cast<size_t>(non_target_start);
             for (Index_ p = 0; p < target_length; ++p) {
@@ -83,7 +83,7 @@ public:
         chunk.inflate(work);
         output += static_cast<size_t>(target_start) * stride; // cast to size_t to avoid overflow.
 
-        if (Blob_::row_major == row) {
+        if (chunk.is_row_major() == row) {
             size_t non_target_chunkdim = get_non_target_chunkdim(row); // use size_t to avoid integer overflow with Index_.
             auto srcptr = work.data() + static_cast<size_t>(target_start) * non_target_chunkdim;
             for (Index_ p = 0; p < target_length; ++p) {
@@ -116,7 +116,7 @@ public:
     void extract(bool row, const std::vector<Index_>& target_indices, Index_ non_target_start, Index_ non_target_length, Workspace<value_type>& work, value_type* output, size_t stride) const {
         chunk.inflate(work);
 
-        if (Blob_::row_major == row) {
+        if (chunk.is_row_major() == row) {
             size_t non_target_chunkdim = get_non_target_chunkdim(row); // use size_t to avoid integer overflow with Index_.
             size_t offset = non_target_start;
             for (size_t p : target_indices) {
@@ -143,7 +143,7 @@ public:
     void extract(bool row, const std::vector<Index_>& target_indices, const std::vector<Index_>& non_target_indices, Workspace<value_type>& work, value_type* output, size_t stride) const {
         chunk.inflate(work);
 
-        if (Blob_::row_major == row) {
+        if (chunk.is_row_major() == row) {
             size_t non_target_chunkdim = get_non_target_chunkdim(row); // use size_t to avoid integer overflow with Index_.
             for (size_t p : target_indices) {
                 auto srcptr = work.data() + p * non_target_chunkdim;
@@ -174,7 +174,9 @@ struct MockBlob {
 
     typedef double value_type;
 
-    static constexpr bool row_major = true;
+    bool is_row_major() const {
+        return true;
+    }
 
 private:
     std::vector<double> data;
@@ -323,10 +325,10 @@ public:
  *
  * The `Blob_` class should provide the following:
  *
- * - `static constexpr bool row_major`, specifying whether the array is row-major.
  * - `typedef value_type`, specifying the type of the value in the array.
  * - A `nrow() const` method, defining the number of rows in the array.
  * - A `ncol() const` method, defining the number of columns in the array.
+ * - `bool is_row_major() const`, indicating whether the realized array is row-major.
  * - A `void inflate(std::vector<value_type>& buffer) const` method that fills `buffer` with the contents of the array.
  *   This should be filled in row-major format if `row_major = true` and in column-major format otherwise.
  *
