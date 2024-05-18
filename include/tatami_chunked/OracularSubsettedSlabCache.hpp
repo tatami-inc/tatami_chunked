@@ -35,7 +35,7 @@ struct OracularSubsettedSlabCacheSelectionDetails {
     OracularSubsettedSlabCacheSelectionType selection;
 
     /**
-     * Row/column index representing the start of the block within the slab to be extracted.
+     * Row/column index representing the start of the contiguous block of the target dimension to be extracted from the slab.
      * Only used if `selection` is set to `OracularSubsettedSlabCacheSelectionType::BLOCK`.
      *
      * Note that the index is relative to the start of the slab, not to the matrix containing the slab,
@@ -44,13 +44,20 @@ struct OracularSubsettedSlabCacheSelectionDetails {
     Index_ block_start;
 
     /**
-     * Length of the block within the slab to be extracted.
+     * Length of the contiguous block of the target dimension to be extracted from the slab.
      * Only used if `selection` is set to `OracularSubsettedSlabCacheSelectionType::BLOCK`.
      */
     Index_ block_length;
 
     /**
-     * Indices within the slab to be extracted.
+     * Row/column index representing one-past-the-end of the contiguous block of the target dimension to be extracted from the slab.
+     * Only used if `selection` is set to `OracularSubsettedSlabCacheSelectionType::BLOCK`.
+     * This is also equal to `block_start + block_length`.
+     */
+    Index_ block_end;
+
+    /**
+     * Indices of the target dimension to be extracted from the slab.
      * Guaranteed to be sorted and unique.
      * Only used if `selection` is set to `OracularSubsettedSlabCacheSelectionType::INDEX`.
      *
@@ -65,72 +72,81 @@ struct OracularSubsettedSlabCacheSelectionDetails {
      * Only used if `selection` is set to `OracularSubsettedSlabCacheSelectionType::INDEX`.
      */
     std::unordered_map<Index_, Index_> mapping;
+};
 
-private:
-    Index_ block_end = 0;
+/**
+ * @cond
+ */
+namespace OracularSubsettedSlabCache_internals {
 
-    void fill_mapping() {
-        for (size_t i = 0, end = indices.size(); i < end; ++i) {
-            mapping[indices[i]] = i;
-        }
+// We put these functions in here as struct{} usage policy forbids methods
+// (outside of the constructor). The Details class should be a passive data
+// carrier only.
+
+template<typename Index_>
+void fill_mapping_in_details(OracularSubsettedSlabCacheSelectionDetails<Index_>& details) {
+    for (size_t i = 0, end = details.indices.size(); i < end; ++i) {
+        details.mapping[details.indices[i]] = i;
+    }
+}
+
+template<typename Index_>
+void set_details(OracularSubsettedSlabCacheSelectionDetails<Index_>& details, Index_ i) {
+    details.selection = OracularSubsettedSlabCacheSelectionType::BLOCK;
+    details.block_start = i;
+    details.block_end = i + 1;
+    details.indices.clear();
+    details.mapping.clear();
+}
+
+template<typename Index_>
+void add_to_details(OracularSubsettedSlabCacheSelectionDetails<Index_>& details, Index_ i) {
+    if (details.selection == OracularSubsettedSlabCacheSelectionType::FULL) {
+        return;
     }
 
-public:
-    /**
-     * @cond
-     */
-    void set(Index_ i) {
-        selection = OracularSubsettedSlabCacheSelectionType::BLOCK;
-        block_start = i;
-        block_end = i + 1;
-        indices.clear();
-        mapping.clear();
-    }
+    if (details.selection == OracularSubsettedSlabCacheSelectionType::BLOCK) {
+        if (i == details.block_end) {
+            details.block_end = i + 1;
+            return;
 
-    void add(Index_ i) {
-        if (selection == OracularSubsettedSlabCacheSelectionType::FULL) {
+        } else if (i + 1 == details.block_start) {
+            details.block_start = i;
+            return;
+
+        } else if (i >= details.block_start && i < details.block_end) {
             return;
         }
 
-        if (selection == OracularSubsettedSlabCacheSelectionType::BLOCK) {
-            if (i == block_end) {
-                block_end = i + 1;
-                return;
-
-            } else if (i + 1 == block_start) {
-                block_start = i;
-                return;
-
-            } else if (i >= block_start && i < block_end) {
-                return;
-            }
-
-            selection = OracularSubsettedSlabCacheSelectionType::INDEX;
-            indices.resize(block_end - block_start);
-            std::iota(indices.begin(), indices.end(), block_start);
-            fill_mapping();
-        }
-
-        if (mapping.find(i) == mapping.end()) {
-            mapping[i] = indices.size();
-            indices.push_back(i);
-        }
+        details.selection = OracularSubsettedSlabCacheSelectionType::INDEX;
+        details.indices.resize(details.block_end - details.block_start);
+        std::iota(details.indices.begin(), details.indices.end(), details.block_start);
+        fill_mapping_in_details(details);
     }
 
-    void finalize() {
-        if (selection == OracularSubsettedSlabCacheSelectionType::BLOCK) {
-            block_length = block_end - block_start;
-        } else if (selection == OracularSubsettedSlabCacheSelectionType::INDEX) {
-            if (!std::is_sorted(indices.begin(), indices.end())) {
-                std::sort(indices.begin(), indices.end());
-                fill_mapping();
-            }
+    if (details.mapping.find(i) == details.mapping.end()) {
+        details.mapping[i] = details.indices.size();
+        details.indices.push_back(i);
+    }
+}
+
+template<typename Index_>
+void finalize_details(OracularSubsettedSlabCacheSelectionDetails<Index_>& details) {
+    if (details.selection == OracularSubsettedSlabCacheSelectionType::BLOCK) {
+        details.block_length = details.block_end - details.block_start;
+    } else if (details.selection == OracularSubsettedSlabCacheSelectionType::INDEX) {
+        if (!std::is_sorted(details.indices.begin(), details.indices.end())) {
+            std::sort(details.indices.begin(), details.indices.end());
+            fill_mapping_in_details(details);
         }
     }
-    /**
-     * @endcond
-     */
-};
+}
+
+}
+/**
+ * @endcond
+ */
+
 
 /**
  * @brief Oracle-aware cache for slabs, plus subsets.
@@ -167,7 +183,7 @@ private:
     Index_ my_far_slab_offset;
 
     std::vector<std::pair<Id_, OracularSubsettedSlabCacheSelectionDetails<Index_>*> > my_to_reassign;
-    std::vector<std::tuple<Id_, Slab_*, OracularSubsettedSlabCacheSelectionDetails<Index_>*> > my_to_populate;
+    std::vector<std::tuple<Id_, Slab_*, const OracularSubsettedSlabCacheSelectionDetails<Index_>*> > my_to_populate;
 
 public:
     /**
@@ -244,7 +260,7 @@ public:
      *    For example, if each chunk takes up 10 rows, attempting to access row 21 would yield an offset of 1.
      * @param create Function that accepts no arguments and returns a `Slab_` object with sufficient memory to hold a slab's contents when used in `populate()`.
      * This may also return a default-constructed `Slab_` object if the allocation is done dynamically per slab in `populate()`.
-     * @param populate Function that accepts a `std::vector<std::tuple<Id_, Slab_*, OracularSubsettedSlabCacheSelectionDetails<Index_>*> >&` specifying the slabs to be populated.
+     * @param populate Function that accepts a `std::vector<std::tuple<Id_, Slab_*, const OracularSubsettedSlabCacheSelectionDetails<Index_>*> >&` specifying the slabs to be populated.
      * The first `Id_` element of each tuple contains the slab identifier, i.e., the first element returned by the `identify` function.
      * The second `Slab_*` element specifies the object which to store the contents of the slab.
      * The third `OracularSubsettedSlabCacheSelectionDetails<Index_>*` element contains information about the desired subset of elements on the target dimension of the slab.
@@ -274,7 +290,7 @@ public:
                     auto future_slab_info = identify(future_index);
                     auto cfcIt = my_close_future_subset_cache.find(future_slab_info.first);
                     if (cfcIt != my_close_future_subset_cache.end()) {
-                        cfcIt->second->add(future_slab_info.second);
+                        OracularSubsettedSlabCache_internals::add_to_details(*(cfcIt->second), future_slab_info.second);
                     } else if (used_slabs < my_max_slabs) {
                         requisition_subset_close(future_slab_info.first, future_slab_info.second);
                         ++used_slabs;
@@ -300,7 +316,7 @@ public:
                     auto future_slab_info = identify(future_index);
                     auto ffcIt = my_far_future_subset_cache.find(future_slab_info.first);
                     if (ffcIt != my_far_future_subset_cache.end()) {
-                        ffcIt->second->add(future_slab_info.second);
+                        OracularSubsettedSlabCache_internals::add_to_details(*(ffcIt->second), future_slab_info.second);
                     } else if (used_slabs < my_max_slabs) {
                         requisition_subset_far(future_slab_info.first, future_slab_info.second);
                         ++used_slabs;
@@ -335,13 +351,11 @@ public:
                     ++cIt;
                 }
                 my_future_cache[a.first] = slab_ptr;
+                OracularSubsettedSlabCache_internals::finalize_details(*(a.second));
                 my_to_populate.emplace_back(a.first, slab_ptr, a.second);
             }
             my_to_reassign.clear();
 
-            for (auto p : my_to_populate) {
-                std::get<2>(p)->finalize();
-            }
             populate(my_to_populate);
             my_to_populate.clear();
 
@@ -374,14 +388,14 @@ public:
 private:
     void requisition_subset_close(Id_ slab_id, Index_ slab_offset) {
         auto selected = my_free_subset_details.back();
-        selected->set(slab_offset);
+        OracularSubsettedSlabCache_internals::set_details(*selected, slab_offset);
         my_close_future_subset_cache[slab_id] = selected;
         my_free_subset_details.pop_back();
     }
 
     void requisition_subset_far(Id_ slab_id, Index_ slab_offset) {
         auto selected = my_free_subset_details.back();
-        selected->set(slab_offset);
+        OracularSubsettedSlabCache_internals::set_details(*selected, slab_offset);
         my_far_future_subset_cache[slab_id] = selected;
         my_free_subset_details.pop_back();
 

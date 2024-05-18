@@ -153,11 +153,7 @@ public:
 
     // Overload that handles the truncated chunk at the bottom/right edges of each matrix.
     Index_ get_primary_chunkdim(bool row, Index_ chunk_id) const {
-        if (row) {
-            return my_row_stats.get_chunk_length(chunk_id);
-        } else {
-            return my_col_stats.get_chunk_length(chunk_id);
-        }
+        return get_chunk_length(row ? my_row_stats : my_col_stats, chunk_id);
     }
 
 private:
@@ -651,7 +647,7 @@ private:
                 /* create = */ [&]() -> Slab {
                     return factory.create();
                 },
-                /* populate =*/ [&](std::vector<std::tuple<Index_, Slab*, OracularSubsettedSlabCacheSelectionDetails<Index_>*> >& in_need) -> void {
+                /* populate =*/ [&](std::vector<std::tuple<Index_, Slab*, const OracularSubsettedSlabCacheSelectionDetails<Index_>*> >& in_need) -> void {
                     for (const auto& p : in_need) {
                         auto id = std::get<0>(p);
                         auto ptr = std::get<1>(p);

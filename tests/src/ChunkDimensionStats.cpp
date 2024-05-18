@@ -8,8 +8,8 @@ TEST(ChunkDimensionStats, Basic) {
         EXPECT_EQ(stuff.chunk_length, 20);
         EXPECT_EQ(stuff.num_chunks, 5);
         EXPECT_EQ(stuff.last_chunk_length, 20);
-        EXPECT_EQ(stuff.get_chunk_length(0), 20);
-        EXPECT_EQ(stuff.get_chunk_length(4), 20);
+        EXPECT_EQ(tatami_chunked::get_chunk_length(stuff, 0), 20);
+        EXPECT_EQ(tatami_chunked::get_chunk_length(stuff, 4), 20);
     }
 
     {
@@ -18,8 +18,8 @@ TEST(ChunkDimensionStats, Basic) {
         EXPECT_EQ(stuff.chunk_length, 20);
         EXPECT_EQ(stuff.num_chunks, 3);
         EXPECT_EQ(stuff.last_chunk_length, 15);
-        EXPECT_EQ(stuff.get_chunk_length(0), 20);
-        EXPECT_EQ(stuff.get_chunk_length(2), 15);
+        EXPECT_EQ(tatami_chunked::get_chunk_length(stuff, 0), 20);
+        EXPECT_EQ(tatami_chunked::get_chunk_length(stuff, 2), 15);
     }
 
     {
@@ -28,7 +28,7 @@ TEST(ChunkDimensionStats, Basic) {
         EXPECT_EQ(stuff.chunk_length, 40);
         EXPECT_EQ(stuff.num_chunks, 1);
         EXPECT_EQ(stuff.last_chunk_length, 19);
-        EXPECT_EQ(stuff.get_chunk_length(0), 19);
+        EXPECT_EQ(tatami_chunked::get_chunk_length(stuff, 0), 19);
     }
 
     {
