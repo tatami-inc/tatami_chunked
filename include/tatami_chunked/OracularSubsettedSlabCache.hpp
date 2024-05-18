@@ -147,47 +147,47 @@ public:
 template<typename Id_, typename Index_, class Slab_> 
 class OracularSubsettedSlabCache {
 private:
-    std::shared_ptr<const tatami::Oracle<Index_> > oracle;
-    size_t total;
-    size_t counter = 0;
+    std::shared_ptr<const tatami::Oracle<Index_> > my_oracle;
+    size_t my_total;
+    size_t my_counter = 0;
 
-    Index_ last_slab_id = 0;
-    Slab_* last_slab = NULL;
+    Index_ my_last_slab_id = 0;
+    Slab_* my_last_slab = NULL;
 
-    size_t max_slabs;
-    std::vector<Slab_> all_slabs;
-    std::unordered_map<Id_, Slab_*> current_cache, future_cache;
+    size_t my_max_slabs;
+    std::vector<Slab_> my_all_slabs;
+    std::unordered_map<Id_, Slab_*> my_current_cache, my_future_cache;
 
-    std::vector<OracularSubsettedSlabCacheSelectionDetails<Index_> > all_subset_details;
-    std::vector<OracularSubsettedSlabCacheSelectionDetails<Index_>*> free_subset_details;
-    std::unordered_map<Id_, OracularSubsettedSlabCacheSelectionDetails<Index_>*> close_future_subset_cache, far_future_subset_cache;
-    size_t close_refresh_point = 0;
-    size_t far_refresh_point = 0;
-    Id_ far_slab_id;
-    Index_ far_slab_offset;
+    std::vector<OracularSubsettedSlabCacheSelectionDetails<Index_> > my_all_subset_details;
+    std::vector<OracularSubsettedSlabCacheSelectionDetails<Index_>*> my_free_subset_details;
+    std::unordered_map<Id_, OracularSubsettedSlabCacheSelectionDetails<Index_>*> my_close_future_subset_cache, my_far_future_subset_cache;
+    size_t my_close_refresh_point = 0;
+    size_t my_far_refresh_point = 0;
+    Id_ my_far_slab_id;
+    Index_ my_far_slab_offset;
 
-    std::vector<std::pair<Id_, OracularSubsettedSlabCacheSelectionDetails<Index_>*> > to_reassign;
-    std::vector<std::tuple<Id_, Slab_*, OracularSubsettedSlabCacheSelectionDetails<Index_>*> > to_populate;
+    std::vector<std::pair<Id_, OracularSubsettedSlabCacheSelectionDetails<Index_>*> > my_to_reassign;
+    std::vector<std::tuple<Id_, Slab_*, OracularSubsettedSlabCacheSelectionDetails<Index_>*> > my_to_populate;
 
 public:
     /**
      * @param ora Pointer to an `tatami::Oracle` to be used for predictions.
      * @param max_slabs Maximum number of slabs to store.
      */
-    OracularSubsettedSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > ora, size_t max_slabs) :
-        oracle(std::move(ora)), 
-        total(oracle->total()),
-        max_slabs(max_slabs)
+    OracularSubsettedSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > oracle, size_t max_slabs) :
+        my_oracle(std::move(oracle)), 
+        my_total(my_oracle->total()),
+        my_max_slabs(max_slabs)
     {
-        all_slabs.reserve(max_slabs);
-        current_cache.reserve(max_slabs);
-        future_cache.reserve(max_slabs);
-        close_future_subset_cache.reserve(max_slabs);
-        far_future_subset_cache.reserve(max_slabs);
+        my_all_slabs.reserve(max_slabs);
+        my_current_cache.reserve(max_slabs);
+        my_future_cache.reserve(max_slabs);
+        my_close_future_subset_cache.reserve(max_slabs);
+        my_far_future_subset_cache.reserve(max_slabs);
 
-        all_subset_details.resize(max_slabs * 2);
-        for (auto& as : all_subset_details) {
-            free_subset_details.push_back(&as);
+        my_all_subset_details.resize(max_slabs * 2);
+        for (auto& as : my_all_subset_details) {
+            my_free_subset_details.push_back(&as);
         }
     }
 
@@ -223,7 +223,7 @@ public:
      * @return The next prediction from the oracle.
      */
     Index_ next() {
-        return oracle->get(counter++);
+        return my_oracle->get(my_counter++);
     }
 
 public:
@@ -257,139 +257,139 @@ public:
     std::pair<const Slab_*, Index_> next(Ifunction_ identify, Cfunction_ create, Pfunction_ populate) {
         Index_ index = this->next(); 
         auto slab_info = identify(index);
-        if (slab_info.first == last_slab_id && last_slab) {
-            return std::make_pair(last_slab, slab_info.second);
+        if (slab_info.first == my_last_slab_id && my_last_slab) {
+            return std::make_pair(my_last_slab, slab_info.second);
         }
-        last_slab_id = slab_info.first;
+        my_last_slab_id = slab_info.first;
 
         // Updating the cache if we hit the refresh point.
-        if (counter - 1 == close_refresh_point) {
-            if (all_slabs.empty()) {
-                // This section only runs once, at the start, to populate the close_future_subset_cache.
+        if (my_counter - 1 == my_close_refresh_point) {
+            if (my_all_slabs.empty()) {
+                // This section only runs once, at the start, to populate the my_close_future_subset_cache.
                 requisition_subset_close(slab_info.first, slab_info.second);
                 size_t used_slabs = 1;
 
-                while (++close_refresh_point < total) {
-                    auto future_index = oracle->get(close_refresh_point);
+                while (++my_close_refresh_point < my_total) {
+                    auto future_index = my_oracle->get(my_close_refresh_point);
                     auto future_slab_info = identify(future_index);
-                    auto cfcIt = close_future_subset_cache.find(future_slab_info.first);
-                    if (cfcIt != close_future_subset_cache.end()) {
+                    auto cfcIt = my_close_future_subset_cache.find(future_slab_info.first);
+                    if (cfcIt != my_close_future_subset_cache.end()) {
                         cfcIt->second->add(future_slab_info.second);
-                    } else if (used_slabs < max_slabs) {
+                    } else if (used_slabs < my_max_slabs) {
                         requisition_subset_close(future_slab_info.first, future_slab_info.second);
                         ++used_slabs;
                     } else {
-                        far_slab_id = future_slab_info.first;
-                        far_slab_offset = future_slab_info.second;
+                        my_far_slab_id = future_slab_info.first;
+                        my_far_slab_offset = future_slab_info.second;
                         break;
                     }
                 }
 
-                far_refresh_point = close_refresh_point;
+                my_far_refresh_point = my_close_refresh_point;
             } else {
-                close_refresh_point = far_refresh_point;
+                my_close_refresh_point = my_far_refresh_point;
             }
 
             // Populating the far future cache. 
-            if (far_refresh_point < total) {
-                requisition_subset_far(far_slab_id, far_slab_offset);
+            if (my_far_refresh_point < my_total) {
+                requisition_subset_far(my_far_slab_id, my_far_slab_offset);
                 size_t used_slabs = 1;
 
-                while (++far_refresh_point < total) {
-                    auto future_index = oracle->get(far_refresh_point);
+                while (++my_far_refresh_point < my_total) {
+                    auto future_index = my_oracle->get(my_far_refresh_point);
                     auto future_slab_info = identify(future_index);
-                    auto ffcIt = far_future_subset_cache.find(future_slab_info.first);
-                    if (ffcIt != far_future_subset_cache.end()) {
+                    auto ffcIt = my_far_future_subset_cache.find(future_slab_info.first);
+                    if (ffcIt != my_far_future_subset_cache.end()) {
                         ffcIt->second->add(future_slab_info.second);
-                    } else if (used_slabs < max_slabs) {
+                    } else if (used_slabs < my_max_slabs) {
                         requisition_subset_far(future_slab_info.first, future_slab_info.second);
                         ++used_slabs;
                     } else {
-                        far_slab_id = future_slab_info.first;
-                        far_slab_offset = future_slab_info.second;
+                        my_far_slab_id = future_slab_info.first;
+                        my_far_slab_offset = future_slab_info.second;
                         break;
                     }
                 }
             }
 
-            // Reusing slabs from current_cache; these should all have FULL selections already.
-            for (auto& cf : close_future_subset_cache) {
-                auto cIt = current_cache.find(cf.first);
-                if (cIt == current_cache.end()) {
-                    to_reassign.emplace_back(cf.first, cf.second);
+            // Reusing slabs from my_current_cache; these should all have FULL selections already.
+            for (auto& cf : my_close_future_subset_cache) {
+                auto cIt = my_current_cache.find(cf.first);
+                if (cIt == my_current_cache.end()) {
+                    my_to_reassign.emplace_back(cf.first, cf.second);
                 } else {
-                    future_cache[cf.first] = cIt->second;
-                    current_cache.erase(cIt);
+                    my_future_cache[cf.first] = cIt->second;
+                    my_current_cache.erase(cIt);
                 }
             }
 
             // Creating new slabs for everything that's left.
-            auto cIt = current_cache.begin();
-            for (auto a : to_reassign) {
+            auto cIt = my_current_cache.begin();
+            for (auto a : my_to_reassign) {
                 Slab_* slab_ptr;
-                if (cIt == current_cache.end()) {
-                    all_slabs.emplace_back(create());
-                    slab_ptr = &(all_slabs.back());
+                if (cIt == my_current_cache.end()) {
+                    my_all_slabs.emplace_back(create());
+                    slab_ptr = &(my_all_slabs.back());
                 } else {
                     slab_ptr = cIt->second;
                     ++cIt;
                 }
-                future_cache[a.first] = slab_ptr;
-                to_populate.emplace_back(a.first, slab_ptr, a.second);
+                my_future_cache[a.first] = slab_ptr;
+                my_to_populate.emplace_back(a.first, slab_ptr, a.second);
             }
-            to_reassign.clear();
+            my_to_reassign.clear();
 
-            for (auto p : to_populate) {
+            for (auto p : my_to_populate) {
                 std::get<2>(p)->finalize();
             }
-            populate(to_populate);
-            to_populate.clear();
+            populate(my_to_populate);
+            my_to_populate.clear();
 
-            // We always fill future_cache to the brim so every entry of
-            // all_slabs should be referenced by a pointer in future_cache.
-            // There shouldn't be any free cache entries remaining in
-            // current_cache i.e., at this point, cIt should equal
-            // current_cache.end(), as we transferred everything to
-            // future_cache. Thus it is safe to clear current_cache without
-            // worrying about leaking memory. The only exception is if we're at
-            // the end of the predictions, in which case it doesn't matter.
-            current_cache.clear();
-            current_cache.swap(future_cache);
+            // We always fill my_future_cache to the brim so every entry of
+            // my_all_slabs should be referenced by a pointer in
+            // my_future_cache.  There shouldn't be any free cache entries
+            // remaining in my_current_cache i.e., at this point, cIt should
+            // equal my_current_cache.end(), as we transferred everything to
+            // my_future_cache. Thus it is safe to clear my_current_cache
+            // without worrying about leaking memory. The only exception is if
+            // we run out of predictions, in which case it doesn't matter.
+            my_current_cache.clear();
+            my_current_cache.swap(my_future_cache);
 
             // Putting the no-longer-used subset pointers back in the free pool
             // before we swap the close and far futures.
-            for (auto& cfc : close_future_subset_cache) {
-                free_subset_details.push_back(cfc.second);
+            for (auto& cfc : my_close_future_subset_cache) {
+                my_free_subset_details.push_back(cfc.second);
             }
-            close_future_subset_cache.clear();
-            close_future_subset_cache.swap(far_future_subset_cache);
+            my_close_future_subset_cache.clear();
+            my_close_future_subset_cache.swap(my_far_future_subset_cache);
         }
 
         // We know it must exist, so no need to check ccIt's validity.
-        auto ccIt = current_cache.find(slab_info.first);
-        last_slab = ccIt->second;
-        return std::make_pair(last_slab, slab_info.second);
+        auto ccIt = my_current_cache.find(slab_info.first);
+        my_last_slab = ccIt->second;
+        return std::make_pair(my_last_slab, slab_info.second);
     }
 
 private:
     void requisition_subset_close(Id_ slab_id, Index_ slab_offset) {
-        auto selected = free_subset_details.back();
+        auto selected = my_free_subset_details.back();
         selected->set(slab_offset);
-        close_future_subset_cache[slab_id] = selected;
-        free_subset_details.pop_back();
+        my_close_future_subset_cache[slab_id] = selected;
+        my_free_subset_details.pop_back();
     }
 
     void requisition_subset_far(Id_ slab_id, Index_ slab_offset) {
-        auto selected = free_subset_details.back();
+        auto selected = my_free_subset_details.back();
         selected->set(slab_offset);
-        far_future_subset_cache[slab_id] = selected;
-        free_subset_details.pop_back();
+        my_far_future_subset_cache[slab_id] = selected;
+        my_free_subset_details.pop_back();
 
         // If a slab is still being used in the far future, it might continue
         // to be used in an even further future, in which case we need to do a
         // FULL extraction just to be safe.
-        auto cfcIt = close_future_subset_cache.find(slab_id);
-        if (cfcIt != close_future_subset_cache.end()) {
+        auto cfcIt = my_close_future_subset_cache.find(slab_id);
+        if (cfcIt != my_close_future_subset_cache.end()) {
             selected->selection = OracularSubsettedSlabCacheSelectionType::FULL;
             cfcIt->second->selection = OracularSubsettedSlabCacheSelectionType::FULL;
         }
@@ -400,14 +400,14 @@ public:
      * @return Maximum number of slabs in the cache.
      */
     size_t get_max_slabs() const {
-        return max_slabs;
+        return my_max_slabs;
     }
 
     /**
      * @return Number of slabs currently in the cache.
      */
     size_t get_num_slabs() const {
-        return current_cache.size();
+        return my_current_cache.size();
     }
 };
 

@@ -26,17 +26,17 @@ template<typename Id_, class Slab_>
 class LruSlabCache {
 private:
     typedef std::pair<Slab_, Id_> Element;
-    std::list<Element> cache_data;
-    std::unordered_map<Id_, typename std::list<Element>::iterator> cache_exists;
-    size_t max_slabs;
-    Id_ last_id = 0;
-    Slab_* last_slab = NULL;
+    std::list<Element> my_cache_data;
+    std::unordered_map<Id_, typename std::list<Element>::iterator> my_cache_exists;
+    size_t my_max_slabs;
+    Id_ my_last_id = 0;
+    Slab_* my_last_slab = NULL;
 
 public:
     /**
      * @param max_slabs Maximum number of slabs to store in the cache.
      */
-    LruSlabCache(size_t max_slabs) : max_slabs(max_slabs) {}
+    LruSlabCache(size_t max_slabs) : my_max_slabs(max_slabs) {}
 
     /**
      * Deleted as the cache holds persistent iterators.
@@ -84,34 +84,34 @@ public:
      */
     template<class Cfunction_, class Pfunction_>
     const Slab_& find(Id_ id, Cfunction_ create, Pfunction_ populate) {
-        if (id == last_id && last_slab) {
-            return *last_slab;
+        if (id == my_last_id && my_last_slab) {
+            return *my_last_slab;
         }
-        last_id = id;
+        my_last_id = id;
 
-        auto it = cache_exists.find(id);
-        if (it != cache_exists.end()) {
+        auto it = my_cache_exists.find(id);
+        if (it != my_cache_exists.end()) {
             auto chosen = it->second;
-            cache_data.splice(cache_data.end(), cache_data, chosen); // move to end.
-            last_slab = &(chosen->first);
+            my_cache_data.splice(my_cache_data.end(), my_cache_data, chosen); // move to end.
+            my_last_slab = &(chosen->first);
             return chosen->first;
         } 
 
         typename std::list<Element>::iterator location;
-        if (cache_data.size() < max_slabs) {
-            cache_data.emplace_back(create(), id);
-            location = std::prev(cache_data.end());
+        if (my_cache_data.size() < my_max_slabs) {
+            my_cache_data.emplace_back(create(), id);
+            location = std::prev(my_cache_data.end());
         } else {
-            location = cache_data.begin();
-            cache_exists.erase(location->second);
+            location = my_cache_data.begin();
+            my_cache_exists.erase(location->second);
             location->second = id;
-            cache_data.splice(cache_data.end(), cache_data, location); // move to end.
+            my_cache_data.splice(my_cache_data.end(), my_cache_data, location); // move to end.
         }
-        cache_exists[id] = location;
+        my_cache_exists[id] = location;
 
         auto& slab = location->first;
         populate(id, slab);
-        last_slab = &slab;
+        my_last_slab = &slab;
         return slab;
     }
 
@@ -120,14 +120,14 @@ public:
      * @return Maximum number of slabs in the cache.
      */
     size_t get_max_slabs() const {
-        return max_slabs;
+        return my_max_slabs;
     }
 
     /**
      * @return Number of slabs currently in the cache.
      */
     size_t get_num_slabs() const {
-        return cache_data.size();
+        return my_cache_data.size();
     }
 };
 
