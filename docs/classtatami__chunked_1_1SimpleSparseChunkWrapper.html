@@ -93,8 +93,8 @@ class tatami_chunked::SimpleSparseChunkWrapper&lt; Blob_ &gt;</div><p>Create a s
 <li><code>typedef index_type</code>, specifying the type of the index in the submatrix.</li>
 <li>A <code>nrow() const</code> method, returning the number of rows in the array as an integer.</li>
 <li>A <code>ncol() const</code> method, returning the numbr of columns in the array as an integer.</li>
-<li>A <code>bool is_csr() const</code> method, indicating whether the realized data is in compressed sparse row (CSR) format.</li>
-<li>A <code>void inflate(std::vector&lt;value_type&gt;&amp; values, std::vector&lt;Index_&gt;&amp; indices, std::vector&lt;size_t&gt;&amp; pointers) const</code> method that fills <code>values</code>, <code>indices</code> and <code>pointers</code>, each with the corresponding field for compressed sparse matrix format. (The type of <code>Index_</code> is the same as that used in the <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrix.html" title="Matrix of custom sparse chunks.">CustomSparseChunkedMatrix</a></code>.) This should constitute a CSR matrix if <code>is_csr()</code> returns true, and a CSC matrix otherwise.</li>
+<li><code>static constexpr bool csr</code>, indicating whether the realized array from <code>inflate()</code> (see below) is in compressed sparse row (CSR) format.</li>
+<li>A <code>void inflate(std::vector&lt;value_type&gt;&amp; values, std::vector&lt;Index_&gt;&amp; indices, std::vector&lt;size_t&gt;&amp; pointers) const</code> method that fills <code>values</code>, <code>indices</code> and <code>pointers</code>, each with the corresponding field for compressed sparse matrix format. (The type of <code>Index_</code> is the same as that used in the <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrix.html" title="Matrix of custom sparse chunks.">CustomSparseChunkedMatrix</a></code>.) This should constitute a CSR matrix if <code>csr = true</code>, and a CSC matrix otherwise.</li>
 </ul>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
