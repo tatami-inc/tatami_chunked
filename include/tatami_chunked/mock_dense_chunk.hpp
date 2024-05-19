@@ -333,7 +333,7 @@ public:
  * - A `ncol() const` method, defining the number of columns in the array.
  * - `bool is_row_major() const`, indicating whether the realized array is row-major.
  * - A `void inflate(std::vector<value_type>& buffer) const` method that fills `buffer` with the contents of the array.
- *   This should be filled in row-major format if `row_major = true` and in column-major format otherwise.
+ *   This should be filled in row-major format if `is_row_major()` returns true and in column-major format otherwise.
  *
  * @tparam Blob_ Class to represent a dense blob.
  */

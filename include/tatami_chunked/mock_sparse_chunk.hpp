@@ -59,31 +59,34 @@ public:
         }
     }
 
+    typedef Workspace<value_type, index_type> MyWorkspace;
+
+private:
     template<typename Index_>
     static void refine_start_and_end(size_t& start, size_t& end, Index_ desired_start, Index_ desired_end, Index_ max_end, const std::vector<index_type>& indices) {
         if (desired_start) {
             auto it = indices.begin();
-            start = std::lower_bound(it + start, it + end, static_cast<index_type>(desired_start)) - it;
+            // Using custom comparator to ensure that we cast to Index_ for signedness-safe comparisons.
+            start = std::lower_bound(it + start, it + end, desired_start, [](Index_ a, Index_ b) -> bool { return a < b; }) - it;
         }
 
         if (desired_end != max_end) {
             if (desired_end == desired_start + 1) {
-                if (start != end && indices[start] == desired_start) {
+                if (start != end && static_cast<Index_>(indices[start]) == desired_start) {
                     end = start + 1;
                 } else {
                     end = start;
                 }
             } else {
                 auto it = indices.begin();
-                end = std::lower_bound(it + start, it + end, static_cast<index_type>(desired_end)) - it;
+                end = std::lower_bound(it + start, it + end, desired_end, [](Index_ a, Index_ b) -> bool { return a < b; }) - it;
             }
         }
     }
 
-private:
     // Building a present/absent mapping for the requested indices to allow O(1) look-up from the sparse matrix indices.
     template<typename Index_>
-    static void configure_remap(Workspace<value_type, index_type>& work, const std::vector<Index_>& indices, size_t full) {
+    static void configure_remap(MyWorkspace& work, const std::vector<Index_>& indices, size_t full) {
         work.remap.resize(full);
         for (auto i : indices) {
             work.remap[i] = 1;
@@ -92,7 +95,7 @@ private:
 
     // Resetting just the affected indices so we can avoid a fill operation over the entire array.
     template<typename Index_>
-    static void reset_remap(Workspace<value_type, index_type>& work, const std::vector<Index_>& indices) {
+    static void reset_remap(MyWorkspace& work, const std::vector<Index_>& indices) {
         for (auto i : indices) {
             work.remap[i] = 0;
         }
@@ -105,11 +108,11 @@ private:
         Index_ non_target_start, 
         Index_ non_target_end, 
         Index_ non_target_chunkdim,
-        Workspace<value_type, index_type>& work, 
+        MyWorkspace& work, 
         const std::vector<value_type*>& output_values, 
-        const std::vector<index_type*>& output_indices,
+        const std::vector<Index_*>& output_indices,
         Index_* output_number,
-        index_type shift)
+        Index_ shift)
     const {
         size_t start = work.indptrs[p], end = work.indptrs[p + 1];
         if (start >= end) {
@@ -160,11 +163,11 @@ private:
         Index_ target_start, 
         Index_ target_end, 
         Index_ target_chunkdim,
-        Workspace<value_type, index_type>& work, 
+        MyWorkspace& work, 
         const std::vector<value_type*>& output_values, 
-        const std::vector<index_type*>& output_indices,
+        const std::vector<Index_*>& output_indices,
         Index_* output_number,
-        index_type shift)
+        Index_ shift)
     const {
         auto start = work.indptrs[s], end = work.indptrs[s + 1];
         if (start >= end) {
@@ -215,11 +218,11 @@ public:
         Index_ target_length,
         Index_ non_target_start,
         Index_ non_target_length,
-        Workspace<value_type, index_type>& work,
+        MyWorkspace& work,
         const std::vector<value_type*>& output_values, 
-        const std::vector<index_type*>& output_indices,
+        const std::vector<Index_*>& output_indices,
         Index_* output_number,
-        index_type shift)
+        Index_ shift)
     const {
         my_chunk.inflate(work.values, work.indices, work.indptrs);
         Index_ target_end = target_start + target_length;
@@ -244,11 +247,11 @@ public:
         Index_ target_start,
         Index_ target_length,
         const std::vector<Index_>& non_target_indices,
-        Workspace<value_type, index_type>& work,
+        MyWorkspace& work,
         const std::vector<value_type*>& output_values, 
-        const std::vector<index_type*>& output_indices,
+        const std::vector<Index_*>& output_indices,
         Index_* output_number,
-        index_type shift)
+        Index_ shift)
     const {
         my_chunk.inflate(work.values, work.indices, work.indptrs);
         Index_ target_end = target_start + target_length;
@@ -280,11 +283,11 @@ public:
         const std::vector<Index_>& target_indices,
         Index_ non_target_start,
         Index_ non_target_length,
-        Workspace<value_type, index_type>& work,
+        MyWorkspace& work,
         const std::vector<value_type*>& output_values, 
-        const std::vector<index_type*>& output_indices,
+        const std::vector<Index_*>& output_indices,
         Index_* output_number,
-        index_type shift)
+        Index_ shift)
     const {
         my_chunk.inflate(work.values, work.indices, work.indptrs);
         Index_ non_target_end = non_target_start + non_target_length;
@@ -314,11 +317,11 @@ public:
         bool row,
         const std::vector<Index_>& target_indices,
         const std::vector<Index_>& non_target_indices,
-        Workspace<value_type, index_type>& work,
+        MyWorkspace& work,
         const std::vector<value_type*>& output_values, 
-        const std::vector<index_type*>& output_indices,
+        const std::vector<Index_*>& output_indices,
         Index_* output_number,
-        index_type shift)
+        Index_ shift)
     const {
         my_chunk.inflate(work.values, work.indices, work.indptrs);
 
@@ -579,8 +582,9 @@ public:
  * - A `nrow() const` method, returning the number of rows in the array as an integer.
  * - A `ncol() const` method, returning the numbr of columns in the array as an integer.
  * - A `bool is_csr() const` method, indicating whether the realized data is in compressed sparse row (CSR) format. 
- * - A `void inflate(std::vector<value_type>& values, std::vector<index_type>& indices, std::vector<size_t>& pointers) const` method that fills `values`, `indices` and `pointers`,
+ * - A `void inflate(std::vector<value_type>& values, std::vector<Index_>& indices, std::vector<size_t>& pointers) const` method that fills `values`, `indices` and `pointers`,
  *   each with the corresponding field for compressed sparse matrix format.
+ *   (The type of `Index_` is the same as that used in the `CustomSparseChunkedMatrix`.)
  *   This should constitute a CSR matrix if `is_csr()` returns true, and a CSC matrix otherwise.
  *
  * @tparam Blob_ Class to represent a simple chunk.
