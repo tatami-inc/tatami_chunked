@@ -79,6 +79,7 @@ $(function() {
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classtatami__chunked_1_1MockSubsettedSparseChunk-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">tatami_chunked::MockSubsettedSparseChunk Class Reference</div></div>
 </div><!--header-->
@@ -113,6 +114,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ab874b69a33a69d160b4e2aad659818c1" id="r_ab874b69a33a69d160b4e2aad659818c1"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt; </td></tr>
 <tr class="memitem:ab874b69a33a69d160b4e2aad659818c1"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">void</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1MockSubsettedSparseChunk.html#ab874b69a33a69d160b4e2aad659818c1">extract</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">row</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> std::vector&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt; &amp;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">target_indices</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> std::vector&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt; &amp;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">non_target_indices</a>, <a class="el" href="structtatami__chunked_1_1MockSubsettedSparseChunk_1_1Workspace.html">Workspace</a> &amp;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">work</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> std::vector&lt; <a class="el" href="classtatami__chunked_1_1MockSubsettedSparseChunk.html#a3cfc7db47758a2d6d8252774185398de">value_type</a> * &gt; &amp;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">output_values</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> std::vector&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> * &gt; &amp;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">output_indices</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> *<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">output_number</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">shift</a>) <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a></td></tr>
 <tr class="separator:ab874b69a33a69d160b4e2aad659818c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:aeebcdcc7698b434223d503e96a8dd55d" id="r_aeebcdcc7698b434223d503e96a8dd55d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">static</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">constexpr</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1MockSubsettedSparseChunk.html#aeebcdcc7698b434223d503e96a8dd55d">use_subset</a> = <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">true</a></td></tr>
+<tr class="separator:aeebcdcc7698b434223d503e96a8dd55d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Mock a subsettable sparse chunk for a <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrix.html" title="Matrix of custom sparse chunks.">CustomSparseChunkedMatrix</a></code>. </p>
@@ -240,7 +246,7 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
   </dd>
 </dl>
 <p>If <code>row = true</code>, we would extract a block of rows <code>[target_start, target_start + length)</code> and a block of columns <code>[non_target_start, non_target_start + non_target_length)</code>; conversely, if <code>row = false</code>, we would extract a block of columns from the <code>target_*</code> arguments and the block of rows from the <code>non_target_*</code>arguments. Given a target dimension element <code>p</code>, the values of non-zero elements from the requested non-target block should be stored at <code>output_values[p] + output_number[p]</code>. The non-target indices for those non-zero elements should be increased by <code>shift</code> and stored at <code>output_indices[p] + output_number[p]</code> in ascending order. <code>output_number[p]</code> should then be increased by the number of non-zero entries stored in this manner. This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrix.html" title="Matrix of custom sparse chunks.">CustomSparseChunkedMatrix</a></code>.</p>
-<p>Note that implementions of this method do not need to have the exact same template arguments as shown here. </p>
+<p>Note that implementions of this method do not need to have the exact same template arguments as shown here, as long as the types can be deduced. </p>
 
 </div>
 </div>
@@ -343,7 +349,7 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
   </dd>
 </dl>
 <p>If <code>row = true</code>, we would extract a block of rows <code>[target_start, target_start + length)</code> and a subset of columns in <code>non_target_indices</code>; conversely, if <code>row = false</code>, we would extract a block of columns from the <code>target_*</code> arguments and a subset of rows from <code>non_target_indices</code>. Given a target dimension element <code>p</code>, the values of non-zero elements from the requested non-target subset should be stored at <code>output_values[p] + output_number[p]</code>. The non-target indices for those non-zero elements should be increased by <code>shift</code> and stored at <code>output_indices[p] + output_number[p]</code> in ascending order. <code>output_number[p]</code> should then be increased by the number of non-zero entries stored in this manner. This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrix.html" title="Matrix of custom sparse chunks.">CustomSparseChunkedMatrix</a></code>.</p>
-<p>Note that implementions of this method do not need to have the exact same template arguments as shown here. </p>
+<p>Note that implementions of this method do not need to have the exact same template arguments as shown here, as long as the types can be deduced. </p>
 
 </div>
 </div>
@@ -446,7 +452,7 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
   </dd>
 </dl>
 <p>If <code>row = true</code>, we would extract a subset of rows in <code>target_indices</code> and a block of columns <code>[non_target_start, non_target_start + non_target_length)</code>, conversely, if <code>row = false</code>, we would extract a subset of columns from the <code>target_*</code> arguments and the block of rows from the <code>non_target_*</code> arguments. Given a target dimension element <code>p</code>, the values of non-zero elements from the requested non-target block should be stored at <code>output_values[p] + output_number[p]</code>. The non-target indices for those non-zero elements should be increased by <code>shift</code> and stored at <code>output_indices[p] + output_number[p]</code> in ascending order. <code>output_number[p]</code> should then be increased by the number of non-zero entries stored in this manner. This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrix.html" title="Matrix of custom sparse chunks.">CustomSparseChunkedMatrix</a></code>.</p>
-<p>Note that implementions of this method do not need to have the exact same template arguments as shown here. </p>
+<p>Note that implementions of this method do not need to have the exact same template arguments as shown here, as long as the types can be deduced. </p>
 
 </div>
 </div>
@@ -542,7 +548,31 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
   </dd>
 </dl>
 <p>If <code>row = true</code>, we would extract a subset of rows in <code>target_indices</code> and a subset of columns in <code>non_target_indices</code>. conversely, if <code>row = false</code>, we would extract a subset of columns in <code>target_indices</code> and the subset of rows in <code>non_target_indices</code>. Given a target dimension element <code>p</code>, the values of non-zero elements from the requested non-target subset should be stored at <code>output_values[p] + output_number[p]</code>. The non-target indices for those non-zero elements should be increased by <code>shift</code> and stored at <code>output_indices[p] + output_number[p]</code> in ascending order. <code>output_number[p]</code> should then be increased by the number of non-zero entries stored in this manner. This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrix.html" title="Matrix of custom sparse chunks.">CustomSparseChunkedMatrix</a></code>.</p>
-<p>Note that implementions of this method do not need to have the exact same template arguments as shown here. </p>
+<p>Note that implementions of this method do not need to have the exact same template arguments as shown here, as long as the types can be deduced. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="aeebcdcc7698b434223d503e96a8dd55d" name="aeebcdcc7698b434223d503e96a8dd55d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeebcdcc7698b434223d503e96a8dd55d">&#9670;&#160;</a></span>use_subset</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">constexpr</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a> tatami_chunked::MockSubsettedSparseChunk::use_subset = <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">true</a></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Whether to extract a subset of elements on the target dimension. This should be set to <code>true</code>, otherwise a <code><a class="el" href="classtatami__chunked_1_1MockSimpleSparseChunk.html" title="Mock a simple sparse chunk for a CustomSparseChunkedMatrix.">MockSimpleSparseChunk</a></code> is expected. </p>
 
 </div>
 </div>

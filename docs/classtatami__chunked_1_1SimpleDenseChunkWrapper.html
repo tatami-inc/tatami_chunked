@@ -94,8 +94,8 @@ class tatami_chunked::SimpleDenseChunkWrapper&lt; Blob_ &gt;</div><p>Create a de
 <li><code>typedef value_type</code>, specifying the type of the value in the array.</li>
 <li>A <code>nrow() const</code> method, defining the number of rows in the array.</li>
 <li>A <code>ncol() const</code> method, defining the number of columns in the array.</li>
-<li><code>static constexpr bool row_major</code>, indicating whether the realized array from <code>inflate()</code> (see below) is row-major.</li>
-<li>A <code>void inflate(std::vector&lt;value_type&gt;&amp; buffer) const</code> method that fills <code>buffer</code> with the contents of the array. This should be filled in row-major format if <code>row_major = true</code> and in column-major format otherwise.</li>
+<li><code>bool is_row_major() const</code>, indicating whether the realized array is row-major.</li>
+<li>A <code>void inflate(std::vector&lt;value_type&gt;&amp; buffer) const</code> method that fills <code>buffer</code> with the contents of the array. This should be filled in row-major format if <code>is_row_major()</code> returns true and in column-major format otherwise.</li>
 </ul>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">

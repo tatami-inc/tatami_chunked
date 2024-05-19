@@ -200,7 +200,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>    SparseSlabFactory&lt;typename Chunk_::value_type, Index_, Index_&gt; my_factory;</div>
 <div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>    <span class="keyword">typedef</span> <span class="keyword">typename</span> <span class="keyword">decltype</span>(my_factory)::Slab Slab;</div>
 <div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span> </div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    <span class="keyword">typename</span> std::conditional&lt;sparse_uses_subset&lt;Chunk_&gt;::value, OracularSubsettedSlabCache&lt;Index_, Index_, Slab&gt;, OracularSlabCache&lt;Index_, Index_, Slab&gt; &gt;::type my_cache;</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>    <span class="keyword">typename</span> std::conditional&lt;Chunk_::use_subset, OracularSubsettedSlabCache&lt;Index_, Index_, Slab&gt;, OracularSlabCache&lt;Index_, Index_, Slab&gt; &gt;::type my_cache;</div>
 <div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span> </div>
 <div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>    OracularSparseCore(</div>

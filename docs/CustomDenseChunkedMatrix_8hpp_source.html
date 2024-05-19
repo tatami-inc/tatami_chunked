@@ -192,7 +192,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>    DenseSlabFactory&lt;typename Chunk_::value_type&gt; my_factory;</div>
 <div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>    <span class="keyword">typedef</span> <span class="keyword">typename</span> <span class="keyword">decltype</span>(my_factory)::Slab Slab;</div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span> </div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    <span class="keyword">typename</span> std::conditional&lt;dense_uses_subset&lt;Chunk_&gt;::value, OracularSubsettedSlabCache&lt;Index_, Index_, Slab&gt;, OracularSlabCache&lt;Index_, Index_, Slab&gt; &gt;::type my_cache;</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>    <span class="keyword">typename</span> std::conditional&lt;Chunk_::use_subset, OracularSubsettedSlabCache&lt;Index_, Index_, Slab&gt;, OracularSlabCache&lt;Index_, Index_, Slab&gt; &gt;::type my_cache;</div>
 <div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span> </div>
 <div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>    OracularDenseCore(</div>

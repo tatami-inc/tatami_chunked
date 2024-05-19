@@ -309,6 +309,13 @@
       <anchor>acca76886df9330697f31e00ab1afa1fb</anchor>
       <arglist>(bool row, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
     </member>
+    <member kind="variable" static="yes">
+      <type>static constexpr bool</type>
+      <name>use_subset</name>
+      <anchorfile>classtatami__chunked_1_1MockSimpleDenseChunk.html</anchorfile>
+      <anchor>ab8b6933c5a77ea1d9e29ee4d91413b3d</anchor>
+      <arglist></arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>tatami_chunked::MockSimpleSparseChunk</name>
@@ -334,6 +341,13 @@
       <anchorfile>classtatami__chunked_1_1MockSimpleSparseChunk.html</anchorfile>
       <anchor>af0d265eba927944ca0342fa5fb52795c</anchor>
       <arglist>(bool row, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static constexpr bool</type>
+      <name>use_subset</name>
+      <anchorfile>classtatami__chunked_1_1MockSimpleSparseChunk.html</anchorfile>
+      <anchor>aacc656011869b48792e99e90b393110a</anchor>
+      <arglist></arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -375,6 +389,13 @@
       <anchor>a0c2cdf5b003dda42318e2e3090b0050c</anchor>
       <arglist>(bool row, const std::vector&lt; Index_ &gt; &amp;target_indices, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, value_type *output, size_t stride) const</arglist>
     </member>
+    <member kind="variable" static="yes">
+      <type>static constexpr bool</type>
+      <name>use_subset</name>
+      <anchorfile>classtatami__chunked_1_1MockSubsettedDenseChunk.html</anchorfile>
+      <anchor>a4c649f1fc69e5e9df0290ff5c3079275</anchor>
+      <arglist></arglist>
+    </member>
   </compound>
   <compound kind="class">
     <name>tatami_chunked::MockSubsettedSparseChunk</name>
@@ -414,6 +435,13 @@
       <anchorfile>classtatami__chunked_1_1MockSubsettedSparseChunk.html</anchorfile>
       <anchor>ab874b69a33a69d160b4e2aad659818c1</anchor>
       <arglist>(bool row, const std::vector&lt; Index_ &gt; &amp;target_indices, const std::vector&lt; Index_ &gt; &amp;non_target_indices, Workspace &amp;work, const std::vector&lt; value_type * &gt; &amp;output_values, const std::vector&lt; Index_ * &gt; &amp;output_indices, Index_ *output_number, Index_ shift) const</arglist>
+    </member>
+    <member kind="variable" static="yes">
+      <type>static constexpr bool</type>
+      <name>use_subset</name>
+      <anchorfile>classtatami__chunked_1_1MockSubsettedSparseChunk.html</anchorfile>
+      <anchor>aeebcdcc7698b434223d503e96a8dd55d</anchor>
+      <arglist></arglist>
     </member>
   </compound>
   <compound kind="class">
