@@ -280,8 +280,7 @@ public:
      * For a target dimension index `p` and non-target dimension index `non_target_start + i`, the value from the chunk should be stored in `output[p * stride + i]`.
      * The `stride` option allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomDenseChunkedMatrix`.
      *
-     * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `row` template parameter is explicitly passed when this method is called by `CustomDenseChunkedMatrix`.
+     * Note that implementions of this method do not need to have the exact same template arguments as shown here, as long as the types can be deduced.
      */
     template<typename Index_>
     void extract(bool row, Index_ non_target_start, Index_ non_target_length, Workspace& work, value_type* output, size_t stride) const {
@@ -309,8 +308,7 @@ public:
      * For a target dimension index `p` and non-target dimension index `non_target_indices[i]`, the value from the chunk should be stored in `output[p * stride + i]`.
      * The `stride` option allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomDenseChunkedMatrix`.
      *
-     * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `row` template parameter is explicitly passed when this method is called by `CustomDenseChunkedMatrix`.
+     * Note that implementions of this method do not need to have the exact same template arguments as shown here, as long as the types can be deduced.
      */
     template<typename Index_>
     void extract(bool row, const std::vector<Index_>& non_target_indices, Workspace& work, value_type* output, size_t stride) const {
@@ -456,8 +454,7 @@ public:
      * For a target dimension index `target_start + p` and non-target dimension index `non_target_start + i`, the value from the chunk should be stored in `output[p * stride + i]`.
      * This layout allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedMatrix`.
      *
-     * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `row` template parameter is explicitly passed when this method is called by `CustomDenseChunkedMatrix`.
+     * Note that implementions of this method do not need to have the exact same template arguments as shown here, as long as the types can be deduced.
      */
     template<typename Index_>
     void extract(bool row, Index_ target_start, Index_ target_length, Index_ non_target_start, Index_ non_target_length, Workspace& work, value_type* output, size_t stride) const {
@@ -489,8 +486,7 @@ public:
      * For a target dimension index `p` and non-target dimension index `non_target_indices[i]`, the value from the chunk should be stored in `output[p * stride + i]`.
      * This layout allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedMatrix`.
      *
-     * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `row` template parameter is explicitly passed when this method is called by `CustomDenseChunkedMatrix`.
+     * Note that implementions of this method do not need to have the exact same template arguments as shown here, as long as the types can be deduced.
      */
     template<typename Index_>
     void extract(bool row, Index_ target_start, Index_ target_length, const std::vector<Index_>& non_target_indices, Workspace& work, value_type* output, size_t stride) const {
@@ -523,8 +519,7 @@ public:
      * For a target dimension index `p` and non-target dimension index `non_target_start + i`, the value from the chunk should be stored in `output[p * stride + i]`.
      * This layout allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedMatrix`.
      *
-     * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `row` template parameter is explicitly passed when this method is called by `CustomDenseChunkedMatrix`.
+     * Note that implementions of this method do not need to have the exact same template arguments as shown here, as long as the types can be deduced.
      */
     template<typename Index_>
     void extract(bool row, const std::vector<Index_>& target_indices, Index_ non_target_start, Index_ non_target_length, Workspace& work, value_type* output, size_t stride) const {
@@ -554,8 +549,7 @@ public:
      * For a target dimension index `p` and non-target dimension index `non_target_indices[i]`, the value from the chunk should be stored in `output[p * stride + i]`.
      * This layout allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedMatrix`.
      *
-     * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `row` template parameter is explicitly passed when this method is called by `CustomDenseChunkedMatrix`.
+     * Note that implementions of this method do not need to have the exact same template arguments as shown here, as long as the types can be deduced.
      */
     template<typename Index_>
     void extract(bool row, const std::vector<Index_>& target_indices, const std::vector<Index_>& non_target_indices, Workspace& work, value_type* output, size_t stride) const {

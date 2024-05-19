@@ -482,8 +482,7 @@ public:
      * `output_number[p]` should then be increased by the number of non-zero entries stored in this manner.
      * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
-     * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `row` template parameter is explicitly passed when this method is called by `CustomSparseChunkedMatrix`.
+     * Note that implementions of this method do not need to have the exact same template arguments as shown here, as long as the types can be deduced.
      */
     template<typename Index_>
     void extract(
@@ -540,8 +539,7 @@ public:
      * `output_number[p]` should then be increased by the number of non-zero entries stored in this manner.
      * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
-     * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `row` template parameter is explicitly passed when this method is called by `CustomSparseChunkedMatrix`.
+     * Note that implementions of this method do not need to have the exact same template arguments as shown here, as long as the types can be deduced.
      */
     template<typename Index_>
     void extract(
@@ -752,8 +750,7 @@ public:
      * `output_number[p]` should then be increased by the number of non-zero entries stored in this manner.
      * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
-     * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `row` template parameter is explicitly passed when this method is called by `CustomSparseChunkedMatrix`.
+     * Note that implementions of this method do not need to have the exact same template arguments as shown here, as long as the types can be deduced.
      */
     template<typename Index_>
     void extract(
@@ -817,8 +814,7 @@ public:
      * `output_number[p]` should then be increased by the number of non-zero entries stored in this manner.
      * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
-     * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `row` template parameter is explicitly passed when this method is called by `CustomSparseChunkedMatrix`.
+     * Note that implementions of this method do not need to have the exact same template arguments as shown here, as long as the types can be deduced.
      */
     template<typename Index_>
     void extract(
@@ -881,8 +877,7 @@ public:
      * `output_number[p]` should then be increased by the number of non-zero entries stored in this manner.
      * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
-     * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `row` template parameter is explicitly passed when this method is called by `CustomSparseChunkedMatrix`.
+     * Note that implementions of this method do not need to have the exact same template arguments as shown here, as long as the types can be deduced.
      */
     template<typename Index_>
     void extract(
@@ -942,8 +937,7 @@ public:
      * `output_number[p]` should then be increased by the number of non-zero entries stored in this manner.
      * This layout allows concatenation of multiple sparse chunks into a single set of vectors for easier fetching in the `CustomSparseChunkedMatrix`.
      *
-     * Note that implementions of this method do not need to have the exact same template arguments as shown here.
-     * Only the `row` template parameter is explicitly passed when this method is called by `CustomSparseChunkedMatrix`.
+     * Note that implementions of this method do not need to have the exact same template arguments as shown here, as long as the types can be deduced.
      */
     template<typename Index_>
     void extract(
