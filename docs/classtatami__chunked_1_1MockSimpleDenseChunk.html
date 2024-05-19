@@ -79,7 +79,6 @@ $(function() {
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classtatami__chunked_1_1MockSimpleDenseChunk-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">tatami_chunked::MockSimpleDenseChunk Class Reference</div></div>
 </div><!--header-->
@@ -108,11 +107,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:acca76886df9330697f31e00ab1afa1fb" id="r_acca76886df9330697f31e00ab1afa1fb"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt; </td></tr>
 <tr class="memitem:acca76886df9330697f31e00ab1afa1fb"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">void</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1MockSimpleDenseChunk.html#acca76886df9330697f31e00ab1afa1fb">extract</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">row</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> std::vector&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt; &amp;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">non_target_indices</a>, <a class="el" href="structtatami__chunked_1_1MockSimpleDenseChunk_1_1Workspace.html">Workspace</a> &amp;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">work</a>, <a class="el" href="classtatami__chunked_1_1MockSimpleDenseChunk.html#a88f07a7b34a0d7a0f9fbd296467f24aa">value_type</a> *<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">output</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">stride</a>) <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a></td></tr>
 <tr class="separator:acca76886df9330697f31e00ab1afa1fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
-Static Public Attributes</h2></td></tr>
-<tr class="memitem:ab8b6933c5a77ea1d9e29ee4d91413b3d" id="r_ab8b6933c5a77ea1d9e29ee4d91413b3d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">static</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">constexpr</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1MockSimpleDenseChunk.html#ab8b6933c5a77ea1d9e29ee4d91413b3d">use_subset</a> = <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">false</a></td></tr>
-<tr class="separator:ab8b6933c5a77ea1d9e29ee4d91413b3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Mock a simple dense chunk for a <code><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html" title="Matrix of custom dense chunks.">CustomDenseChunkedMatrix</a></code>. </p>
@@ -212,7 +206,7 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
   </dd>
 </dl>
 <p>If <code>row = true</code>, we would extract data for all rows and a block of columns <code>[non_target_start, non_target_start + non_target_length)</code>; conversely, if <code>row = false</code>, we would extract data for all columns and a block of rows. For a target dimension index <code>p</code> and non-target dimension index <code>non_target_start + i</code>, the value from the chunk should be stored in <code>output[p * stride + i]</code>. The <code>stride</code> option allows concatenation of multiple chunks into a single contiguous array for easier fetching in the <code><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html" title="Matrix of custom dense chunks.">CustomDenseChunkedMatrix</a></code>.</p>
-<p>Note that implementions of this method do not need to have the exact same template arguments as shown here. Only the <code>row</code> template parameter is explicitly passed when this method is called by <code><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html" title="Matrix of custom dense chunks.">CustomDenseChunkedMatrix</a></code>. </p>
+<p>Note that implementions of this method do not need to have the exact same template arguments as shown here. </p>
 
 </div>
 </div>
@@ -287,31 +281,7 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
   </dd>
 </dl>
 <p>If <code>row = true</code>, we would extract all rows and a subset of columns in <code>non_target_indices</code>; conversely, if <code>row = false</code>, we would extract data for all columns and a subset of rows. For a target dimension index <code>p</code> and non-target dimension index <code>non_target_indices[i]</code>, the value from the chunk should be stored in <code>output[p * stride + i]</code>. The <code>stride</code> option allows concatenation of multiple chunks into a single contiguous array for easier fetching in the <code><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html" title="Matrix of custom dense chunks.">CustomDenseChunkedMatrix</a></code>.</p>
-<p>Note that implementions of this method do not need to have the exact same template arguments as shown here. Only the <code>row</code> template parameter is explicitly passed when this method is called by <code><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html" title="Matrix of custom dense chunks.">CustomDenseChunkedMatrix</a></code>. </p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="ab8b6933c5a77ea1d9e29ee4d91413b3d" name="ab8b6933c5a77ea1d9e29ee4d91413b3d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab8b6933c5a77ea1d9e29ee4d91413b3d">&#9670;&#160;</a></span>use_subset</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">constexpr</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a> tatami_chunked::MockSimpleDenseChunk::use_subset = <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">false</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Whether to extract a subset of elements on the target dimension. This should be set to <code>false</code>, otherwise a <code><a class="el" href="classtatami__chunked_1_1MockSubsettedDenseChunk.html" title="Mock a subsettable dense chunk for a CustomDenseChunkedMatrix.">MockSubsettedDenseChunk</a></code> is expected. </p>
+<p>Note that implementions of this method do not need to have the exact same template arguments as shown here. </p>
 
 </div>
 </div>
