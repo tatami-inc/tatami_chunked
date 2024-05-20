@@ -72,7 +72,7 @@ struct SlabCacheStats {
 private:
     static size_t compute_max_slabs_in_cache(size_t slab_size_in_elements, size_t num_slabs, size_t cache_size_in_elements, bool require_minimum_cache) {
         if (slab_size_in_elements == 0) {
-            return 0;
+            return num_slabs;
         }
 
         auto tmp = cache_size_in_elements / slab_size_in_elements;

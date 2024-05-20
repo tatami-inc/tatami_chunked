@@ -26,6 +26,12 @@ TEST(SlabCacheStats, Basic) {
         EXPECT_EQ(stats.slab_size_in_elements, 200);
         EXPECT_EQ(stats.max_slabs_in_cache, 50);
     }
+
+    {
+        tatami_chunked::SlabCacheStats stats(10, 0, 50, -1, false);
+        EXPECT_EQ(stats.slab_size_in_elements, 0);
+        EXPECT_EQ(stats.max_slabs_in_cache, 50);
+    }
 }
 
 TEST(SlabCacheStats, ElementSize) {
