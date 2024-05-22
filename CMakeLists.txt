@@ -1,7 +1,7 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.24)
 
 project(tatami_chunked
-    VERSION 1.0.1
+    VERSION 2.0.0
     DESCRIPTION "tatami bindings for chunked matrices"
     LANGUAGES CXX)
 
@@ -14,7 +14,7 @@ option(TATAMI_CHUNKED_FETCH_EXTERN "Automatically fetch tatami_chunked's externa
 if(TATAMI_CHUNKED_FETCH_EXTERN)
     add_subdirectory(extern)
 else()
-    find_package(tatami_tatami CONFIG REQUIRED)
+    find_package(tatami_tatami 3.0.0 CONFIG REQUIRED)
 endif()
 
 target_link_libraries(tatami_chunked INTERFACE tatami::tatami)
@@ -60,7 +60,12 @@ configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in
     "${CMAKE_CURRENT_BINARY_DIR}/tatami_tatami_chunkedConfig.cmake"
     INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tatami_tatami_chunked)
 
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/tatami_tatami_chunkedConfigVersion.cmake
+    COMPATIBILITY SameMajorVersion)
+
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/tatami_tatami_chunkedConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/tatami_tatami_chunkedConfigVersion.cmake"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tatami_tatami_chunked)
 
 
