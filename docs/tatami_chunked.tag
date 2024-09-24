@@ -642,8 +642,8 @@
       <type>std::pair&lt; const Slab_ *, Index_ &gt;</type>
       <name>next</name>
       <anchorfile>classtatami__chunked_1_1OracularVariableSlabCache.html</anchorfile>
-      <anchor>a1e467ed4f5891bfc18535578dbadc842</anchor>
-      <arglist>(Ifunction_ identify, Efunction_ estimated_size, Afunction_ actual_size, Cfunction_ create, Pfunction_ populate)</arglist>
+      <anchor>a8d30b8acb09e2efb2a68f55b1b2f1812</anchor>
+      <arglist>(Ifunction_ identify, Ufunction_ upper_size, Afunction_ actual_size, Cfunction_ create, Pfunction_ populate)</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
