@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami_chunked: tatami_chunked::OracularSlabCache&lt; Id_, Index_, Slab_ &gt; Class Template Reference</title>
+<title>tatami_chunked: tatami_chunked::OracularSlabCache&lt; Id_, Index_, Slab_, track_reuse_ &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -78,7 +78,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classtatami__chunked_1_1OracularSlabCache-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">tatami_chunked::OracularSlabCache&lt; Id_, Index_, Slab_ &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">tatami_chunked::OracularSlabCache&lt; Id_, Index_, Slab_, track_reuse_ &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -89,49 +89,50 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a6e24680e15d3a47cd22733c010069468" id="r_a6e24680e15d3a47cd22733c010069468"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html#a6e24680e15d3a47cd22733c010069468">OracularSlabCache</a> (std::shared_ptr&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt; &gt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">oracle</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">max_slabs</a>)</td></tr>
-<tr class="separator:a6e24680e15d3a47cd22733c010069468"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac74750409b9fac40f6c46cd32db69ccf" id="r_ac74750409b9fac40f6c46cd32db69ccf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html#ac74750409b9fac40f6c46cd32db69ccf">OracularSlabCache</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">OracularSlabCache</a> &amp;)=<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">delete</a></td></tr>
-<tr class="separator:ac74750409b9fac40f6c46cd32db69ccf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a999b0596c2285f6f62a55b2bc73d7416" id="r_a999b0596c2285f6f62a55b2bc73d7416"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">OracularSlabCache</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html#a999b0596c2285f6f62a55b2bc73d7416">operator=</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">OracularSlabCache</a> &amp;)=<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">delete</a></td></tr>
-<tr class="separator:a999b0596c2285f6f62a55b2bc73d7416"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6dda098e33d10e43dd9b6eb7974eb572" id="r_a6dda098e33d10e43dd9b6eb7974eb572"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html#a6dda098e33d10e43dd9b6eb7974eb572">next</a> ()</td></tr>
-<tr class="separator:a6dda098e33d10e43dd9b6eb7974eb572"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0c939e10e4e2a6677394cc0aa1b8e04" id="r_ac0c939e10e4e2a6677394cc0aa1b8e04"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Ifunction_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Cfunction_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Pfunction_</a> &gt; </td></tr>
-<tr class="memitem:ac0c939e10e4e2a6677394cc0aa1b8e04"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> *, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html#ac0c939e10e4e2a6677394cc0aa1b8e04">next</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Ifunction_</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">identify</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Cfunction_</a> create, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Pfunction_</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">populate</a>)</td></tr>
-<tr class="separator:ac0c939e10e4e2a6677394cc0aa1b8e04"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ed5ecf793e1a278c19322a30e85d65b" id="r_a2ed5ecf793e1a278c19322a30e85d65b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html#a2ed5ecf793e1a278c19322a30e85d65b">get_max_slabs</a> () <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a></td></tr>
-<tr class="separator:a2ed5ecf793e1a278c19322a30e85d65b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa6b5c45da93c504a2b69aecd652afc6" id="r_aaa6b5c45da93c504a2b69aecd652afc6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html#aaa6b5c45da93c504a2b69aecd652afc6">get_num_slabs</a> () <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a></td></tr>
-<tr class="separator:aaa6b5c45da93c504a2b69aecd652afc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aae1905bc74caccd708962cdba3299b2e" id="r_aae1905bc74caccd708962cdba3299b2e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html#aae1905bc74caccd708962cdba3299b2e">OracularSlabCache</a> (std::shared_ptr&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt; &gt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">oracle</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">max_slabs</a>)</td></tr>
+<tr class="separator:aae1905bc74caccd708962cdba3299b2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa14e9361cc33e214559b04d95407c069" id="r_aa14e9361cc33e214559b04d95407c069"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html#aa14e9361cc33e214559b04d95407c069">OracularSlabCache</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">OracularSlabCache</a> &amp;)=<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">delete</a></td></tr>
+<tr class="separator:aa14e9361cc33e214559b04d95407c069"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a3291bb537bdf6a8d2b15119ac453fd" id="r_a5a3291bb537bdf6a8d2b15119ac453fd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">OracularSlabCache</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html#a5a3291bb537bdf6a8d2b15119ac453fd">operator=</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">OracularSlabCache</a> &amp;)=<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">delete</a></td></tr>
+<tr class="separator:a5a3291bb537bdf6a8d2b15119ac453fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a153e738473945fedc492568a7837c0c8" id="r_a153e738473945fedc492568a7837c0c8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html#a153e738473945fedc492568a7837c0c8">next</a> ()</td></tr>
+<tr class="separator:a153e738473945fedc492568a7837c0c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4fdee11205e1574cf2b3c195a840695" id="r_ac4fdee11205e1574cf2b3c195a840695"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Ifunction_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Cfunction_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Pfunction_</a> &gt; </td></tr>
+<tr class="memitem:ac4fdee11205e1574cf2b3c195a840695"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> *, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html#ac4fdee11205e1574cf2b3c195a840695">next</a> (<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Ifunction_</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">identify</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Cfunction_</a> create, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Pfunction_</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">populate</a>)</td></tr>
+<tr class="separator:ac4fdee11205e1574cf2b3c195a840695"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a76ec5b5617309cf452fef9a609d62dff" id="r_a76ec5b5617309cf452fef9a609d62dff"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html#a76ec5b5617309cf452fef9a609d62dff">get_max_slabs</a> () <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a></td></tr>
+<tr class="separator:a76ec5b5617309cf452fef9a609d62dff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7f2ab37ec2ca12392346a1f8b3b3b83" id="r_af7f2ab37ec2ca12392346a1f8b3b3b83"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html#af7f2ab37ec2ca12392346a1f8b3b3b83">get_num_slabs</a> () <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a></td></tr>
+<tr class="separator:af7f2ab37ec2ca12392346a1f8b3b3b83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a>&gt;<br />
-class tatami_chunked::OracularSlabCache&lt; Id_, Index_, Slab_ &gt;</div><p>Oracular-aware cache for slabs. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a> track_reuse_ = false&gt;<br />
+class tatami_chunked::OracularSlabCache&lt; Id_, Index_, Slab_, track_reuse_ &gt;</div><p>Oracular-aware cache for slabs. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Id_</td><td>Type of slab identifier, typically integer. </td></tr>
     <tr><td class="paramname">Index_</td><td>Type of row/column index produced by the oracle. </td></tr>
-    <tr><td class="paramname">Slab_</td><td>Class for a single slab.</td></tr>
+    <tr><td class="paramname">Slab_</td><td>Class for a single slab. </td></tr>
+    <tr><td class="paramname">track_reuse_</td><td>Whether to track slabs in the cache that are re-used.</td></tr>
   </table>
   </dd>
 </dl>
 <p>Implement an oracle-aware cache for slabs. Each slab is defined as the set of chunks required to read an element of the target dimension (or a contiguous block/indexed subset thereof) from a <code><a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a></code>. This cache can be used for <code>Matrix</code> representations where the data is costly to load (e.g., from file) and a <code><a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a></code> is provided to predict future accesses on the target dimension. In such cases, chunks of data can be loaded and cached such that any possible future request for an already-loaded slab will just fetch it from cache.</p>
 <p>It is assumed that each slab has the same size such that <code>Slab_</code> instances can be effectively reused between slabs without requiring any reallocation of memory. For variable-sized slabs, consider using <code><a class="el" href="classtatami__chunked_1_1OracularVariableSlabCache.html" title="Oracle-aware cache for variable-size slabs.">OracularVariableSlabCache</a></code> instead. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a6e24680e15d3a47cd22733c010069468" name="a6e24680e15d3a47cd22733c010069468"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e24680e15d3a47cd22733c010069468">&#9670;&#160;</a></span>OracularSlabCache() <span class="overload">[1/2]</span></h2>
+<a id="aae1905bc74caccd708962cdba3299b2e" name="aae1905bc74caccd708962cdba3299b2e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aae1905bc74caccd708962cdba3299b2e">&#9670;&#160;</a></span>OracularSlabCache() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt; </div>
+template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a> track_reuse_ = false&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">tatami_chunked::OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt;::OracularSlabCache </td>
+          <td class="memname"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">tatami_chunked::OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">track_reuse_</a> &gt;::OracularSlabCache </td>
           <td>(</td>
           <td class="paramtype">std::shared_ptr&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt; &gt;&#160;</td>
           <td class="paramname"><em>oracle</em>, </td>
@@ -164,21 +165,21 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
 
 </div>
 </div>
-<a id="ac74750409b9fac40f6c46cd32db69ccf" name="ac74750409b9fac40f6c46cd32db69ccf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac74750409b9fac40f6c46cd32db69ccf">&#9670;&#160;</a></span>OracularSlabCache() <span class="overload">[2/2]</span></h2>
+<a id="aa14e9361cc33e214559b04d95407c069" name="aa14e9361cc33e214559b04d95407c069"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa14e9361cc33e214559b04d95407c069">&#9670;&#160;</a></span>OracularSlabCache() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt; </div>
+template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a> track_reuse_ = false&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">tatami_chunked::OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt;::OracularSlabCache </td>
+          <td class="memname"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">tatami_chunked::OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">track_reuse_</a> &gt;::OracularSlabCache </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">track_reuse_</a> &gt; &amp;&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -194,21 +195,21 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a999b0596c2285f6f62a55b2bc73d7416" name="a999b0596c2285f6f62a55b2bc73d7416"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a999b0596c2285f6f62a55b2bc73d7416">&#9670;&#160;</a></span>operator=()</h2>
+<a id="a5a3291bb537bdf6a8d2b15119ac453fd" name="a5a3291bb537bdf6a8d2b15119ac453fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a3291bb537bdf6a8d2b15119ac453fd">&#9670;&#160;</a></span>operator=()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt; </div>
+template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a> track_reuse_ = false&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">OracularSlabCache</a> &amp; <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">tatami_chunked::OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt;::operator= </td>
+          <td class="memname"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">OracularSlabCache</a> &amp; <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">tatami_chunked::OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">track_reuse_</a> &gt;::operator= </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt; &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">track_reuse_</a> &gt; &amp;&#160;</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
@@ -223,19 +224,19 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
 
 </div>
 </div>
-<a id="a6dda098e33d10e43dd9b6eb7974eb572" name="a6dda098e33d10e43dd9b6eb7974eb572"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6dda098e33d10e43dd9b6eb7974eb572">&#9670;&#160;</a></span>next() <span class="overload">[1/2]</span></h2>
+<a id="a153e738473945fedc492568a7837c0c8" name="a153e738473945fedc492568a7837c0c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a153e738473945fedc492568a7837c0c8">&#9670;&#160;</a></span>next() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt; </div>
+template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a> track_reuse_ = false&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">tatami_chunked::OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt;::next </td>
+          <td class="memname"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">tatami_chunked::OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">track_reuse_</a> &gt;::next </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -252,13 +253,13 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
 
 </div>
 </div>
-<a id="ac0c939e10e4e2a6677394cc0aa1b8e04" name="ac0c939e10e4e2a6677394cc0aa1b8e04"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac0c939e10e4e2a6677394cc0aa1b8e04">&#9670;&#160;</a></span>next() <span class="overload">[2/2]</span></h2>
+<a id="ac4fdee11205e1574cf2b3c195a840695" name="ac4fdee11205e1574cf2b3c195a840695"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4fdee11205e1574cf2b3c195a840695">&#9670;&#160;</a></span>next() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt; </div>
+template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a> track_reuse_ = false&gt; </div>
 <div class="memtemplate">
 template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Ifunction_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Cfunction_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Pfunction_</a> &gt; </div>
 <table class="mlabels">
@@ -266,7 +267,7 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::pair&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> *, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt; <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">tatami_chunked::OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt;::next </td>
+          <td class="memname">std::pair&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">const</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> *, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> &gt; <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">tatami_chunked::OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">track_reuse_</a> &gt;::next </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Ifunction_</a>&#160;</td>
           <td class="paramname"><em>identify</em>, </td>
@@ -312,7 +313,11 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
 </ol>
 </td></tr>
     <tr><td class="paramname">create</td><td>Function that accepts no arguments and returns a <code>Slab_</code> object with sufficient memory to hold a slab's contents when used in <code>populate()</code>. This may also return a default-constructed <code>Slab_</code> object if the allocation is done dynamically per slab in <code>populate()</code>. </td></tr>
-    <tr><td class="paramname">populate</td><td>Function that accepts a <code>std::vector&lt;std::pair&lt;Id_, Slab_*&gt; &gt;&amp;</code> specifying the slabs to be populated. The first <code>Id_</code> element of each pair contains the slab identifier, i.e., the first element returned by the <code>identify</code> function. The second <code>Slab_*</code> element contains a pointer to a <code>Slab_</code> returned by <code>create()</code>. This function should iterate over the vector and populate each slab. Note that the vector is not guaranteed to be sorted.</td></tr>
+    <tr><td class="paramname">populate</td><td>Function where the arguments depend on <code>track_reuse_</code>. The return value is ignored.<ul>
+<li>If <code>track_reuse = false</code>, this function accepts a single <code>std::vector&lt;std::pair&lt;Id_, Slab_*&gt; &gt;&amp;</code> specifying the slabs to be populated. The first <code>Id_</code> element of each pair contains the slab identifier, i.e., the first element returned by the <code>identify</code> function. The second <code>Slab_*</code> element contains a pointer to a <code>Slab_</code> returned by <code>create()</code>. This function should iterate over the vector and populate each slab. Note that the vector is not guaranteed to be sorted.</li>
+<li>If <code>track_reuse_ = true</code>, this function accepts two <code>std::vector&lt;std::pair&lt;Id_, Slab_*&gt; &gt;&amp;</code> arguments. The first vector specifies the slabs to be populated, identical to the sole expected argument when <code>track_reuse_ = false</code>. The second vector specifies the existing slabs in the cache to be reused. This function should iterate over the first vector and populate each slab. The function may also iterate over the second vector to perform some housekeeping on the existing slabs (e.g., defragmentation). Again, neither vector is guaranteed to be sorted.</li>
+</ul>
+</td></tr>
   </table>
   </dd>
 </dl>
@@ -320,19 +325,19 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
 
 </div>
 </div>
-<a id="a2ed5ecf793e1a278c19322a30e85d65b" name="a2ed5ecf793e1a278c19322a30e85d65b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2ed5ecf793e1a278c19322a30e85d65b">&#9670;&#160;</a></span>get_max_slabs()</h2>
+<a id="a76ec5b5617309cf452fef9a609d62dff" name="a76ec5b5617309cf452fef9a609d62dff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a76ec5b5617309cf452fef9a609d62dff">&#9670;&#160;</a></span>get_max_slabs()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt; </div>
+template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a> track_reuse_ = false&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">tatami_chunked::OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt;::get_max_slabs </td>
+          <td class="memname"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">tatami_chunked::OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">track_reuse_</a> &gt;::get_max_slabs </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -348,19 +353,19 @@ template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.htm
 
 </div>
 </div>
-<a id="aaa6b5c45da93c504a2b69aecd652afc6" name="aaa6b5c45da93c504a2b69aecd652afc6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa6b5c45da93c504a2b69aecd652afc6">&#9670;&#160;</a></span>get_num_slabs()</h2>
+<a id="af7f2ab37ec2ca12392346a1f8b3b3b83" name="af7f2ab37ec2ca12392346a1f8b3b3b83"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7f2ab37ec2ca12392346a1f8b3b3b83">&#9670;&#160;</a></span>get_num_slabs()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt; </div>
+template&lt;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">typename</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">class</a> <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> , <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">bool</a> track_reuse_ = false&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">tatami_chunked::OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a> &gt;::get_num_slabs </td>
+          <td class="memname"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">size_t</a> <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">tatami_chunked::OracularSlabCache</a>&lt; <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Id_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Index_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">Slab_</a>, <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">track_reuse_</a> &gt;::get_num_slabs </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>

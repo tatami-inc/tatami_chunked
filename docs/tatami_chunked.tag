@@ -450,53 +450,54 @@
     <templarg>typename Id_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>class Slab_</templarg>
+    <templarg>bool track_reuse_</templarg>
     <member kind="function">
       <type></type>
       <name>OracularSlabCache</name>
       <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
-      <anchor>a6e24680e15d3a47cd22733c010069468</anchor>
+      <anchor>aae1905bc74caccd708962cdba3299b2e</anchor>
       <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; oracle, size_t max_slabs)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>OracularSlabCache</name>
       <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
-      <anchor>ac74750409b9fac40f6c46cd32db69ccf</anchor>
+      <anchor>aa14e9361cc33e214559b04d95407c069</anchor>
       <arglist>(const OracularSlabCache &amp;)=delete</arglist>
     </member>
     <member kind="function">
       <type>OracularSlabCache &amp;</type>
       <name>operator=</name>
       <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
-      <anchor>a999b0596c2285f6f62a55b2bc73d7416</anchor>
+      <anchor>a5a3291bb537bdf6a8d2b15119ac453fd</anchor>
       <arglist>(const OracularSlabCache &amp;)=delete</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
       <name>next</name>
       <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
-      <anchor>a6dda098e33d10e43dd9b6eb7974eb572</anchor>
+      <anchor>a153e738473945fedc492568a7837c0c8</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>std::pair&lt; const Slab_ *, Index_ &gt;</type>
       <name>next</name>
       <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
-      <anchor>ac0c939e10e4e2a6677394cc0aa1b8e04</anchor>
+      <anchor>ac4fdee11205e1574cf2b3c195a840695</anchor>
       <arglist>(Ifunction_ identify, Cfunction_ create, Pfunction_ populate)</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
       <name>get_max_slabs</name>
       <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
-      <anchor>a2ed5ecf793e1a278c19322a30e85d65b</anchor>
+      <anchor>a76ec5b5617309cf452fef9a609d62dff</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
       <name>get_num_slabs</name>
       <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
-      <anchor>aaa6b5c45da93c504a2b69aecd652afc6</anchor>
+      <anchor>af7f2ab37ec2ca12392346a1f8b3b3b83</anchor>
       <arglist>() const</arglist>
     </member>
   </compound>
