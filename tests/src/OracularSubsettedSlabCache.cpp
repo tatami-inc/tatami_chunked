@@ -24,6 +24,7 @@ protected:
                 return TestSlab();
             },
             [&](std::vector<std::tuple<unsigned char, TestSlab*, const tatami_chunked::OracularSubsettedSlabCacheSelectionDetails<int>*> >& in_need) -> void {
+                EXPECT_FALSE(in_need.empty());
                 std::sort(in_need.begin(), in_need.end());
                 for (auto& x : in_need) {
                     auto current = std::get<1>(x);

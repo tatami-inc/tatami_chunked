@@ -125,13 +125,14 @@ public:
      *   The first `Id_` element of each pair contains the slab identifier, i.e., the first element returned by the `identify` function.
      *   The second `Slab_*` element contains a pointer to a `Slab_` returned by `create()`.
      *   This function should iterate over the vector and populate each slab.
-     *   Note that the vector is not guaranteed to be sorted. 
+     *   The vector is guaranteed to be non-empty but is not guaranteed to be sorted. 
      * - If `track_reuse_ = true`, this function accepts two `std::vector<std::pair<Id_, Slab_*> >&` arguments.
-     *   The first vector specifies the slabs to be populated, identical to the sole expected argument when `track_reuse_ = false`.
-     *   The second vector specifies the existing slabs in the cache to be reused.
-     *   This function should iterate over the first vector and populate each slab.
-     *   The function may also iterate over the second vector to perform some housekeeping on the existing slabs (e.g., defragmentation).
-     *   Again, neither vector is guaranteed to be sorted. 
+     *   The first vector (`to_populate`) specifies the slabs to be populated, identical to the sole expected argument when `track_reuse_ = false`.
+     *   The second vector (`to_reuse`) specifies the existing slabs in the cache to be reused.
+     *   This function should iterate over `to_populate` and populate each slab. 
+     *   The function may also iterate over `to_reuse` to perform some housekeeping on the existing slabs (e.g., defragmentation).
+     *   `to_populate` is guaranteed to be non-empty but `to_reuse` is not.
+     *   Neither vector is guaranteed to be sorted. 
      *
      * @return Pair containing (1) a pointer to a slab's contents and (2) the index of the next predicted row/column inside the retrieved slab.
      */

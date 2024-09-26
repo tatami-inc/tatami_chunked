@@ -137,13 +137,13 @@ public:
      * @param populate Function that accepts three arguments - `to_populate`, `to_reuse` and `all_slabs`.
      * - The `to_populate` argument is a `std::vector<std::pair<Id_, size_t> >&` specifying the slabs to be populated.
      *   The first `Id_` element of each pair contains the slab identifier, i.e., the first element returned by the `identify` function.
-     *   The second `size_t` element specifies the entry of `all_slabs` containing the corresponding `Slab_` instance, as returned by `create()`.
+     *   The second `size_t` element is the index of the entry of `all_slabs` containing the corresponding `Slab_` instance, as returned by `create()`.
      *   This argument can be modified in any manner.
-     *   It is not guaranteed to be sorted.
+     *   It is guaranteed to be non-empty but is not guaranteed to be sorted.
      * - The `to_reuse` argument is a `std::vector<std::pair<Id_, size_t> >&` specifying the cached slabs that were re-used in the upcoming set of predictions.
      *   The elements of each pair are interpreted in the same manner as `to_populate`. 
      *   This argument can be modified in any manner.
-     *   It is not guaranteed to be sorted.
+     *   It is not guaranteed to be non-empty or sorted.
      * - The `all_slabs` argument is a `std::vector<Slab_>&` containing all slabs in the cache.
      *   This may include instances that are not referenced by `to_populate` or `to_reuse`.
      *   Each element of this argument can be modified but the length should not change.

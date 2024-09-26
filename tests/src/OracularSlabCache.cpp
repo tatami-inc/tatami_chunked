@@ -22,6 +22,7 @@ protected:
                 return TestSlab();
             },
             [&](std::vector<std::pair<unsigned char, TestSlab*> >& in_need) -> void {
+                EXPECT_FALSE(in_need.empty());
                 for (auto& x : in_need) {
                     auto& current = *(x.second);
                     current.chunk_id = x.first;
@@ -44,6 +45,7 @@ protected:
                 return TestSlab();
             },
             [&](std::vector<std::pair<unsigned char, TestSlab*> >& in_need, std::vector<std::pair<unsigned char, TestSlab*> >& to_reuse) -> void {
+                EXPECT_FALSE(in_need.empty());
                 for (auto& x : in_need) {
                     auto& current = *(x.second);
                     current.chunk_id = x.first;
