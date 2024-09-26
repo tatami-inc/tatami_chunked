@@ -3,6 +3,8 @@
 
 #include <random>
 #include <algorithm>
+#include <unordered_set>
+#include <vector>
 
 class OracularSubsettedSlabCacheTestMethods {
 protected:
@@ -354,6 +356,7 @@ class OracularSubsettedSlabCacheStressTest : public ::testing::TestWithParam<int
 
 TEST_P(OracularSubsettedSlabCacheStressTest, Stressed) {
     auto cache_size = GetParam();
+    int expected_max_cache = std::min(5, cache_size);
 
     std::mt19937_64 rng(cache_size + 1);
     std::vector<int> predictions(10000);
@@ -366,8 +369,11 @@ TEST_P(OracularSubsettedSlabCacheStressTest, Stressed) {
     int counter = 0;
     int nalloc = 0;
     int cycle = 1;
+    std::unordered_set<int> previous_chunks;
 
     for (size_t i = 0; i < predictions.size(); ++i) {
+        int last_cycle = cycle;
+
         auto out = next(cache, counter, nalloc, cycle);
         EXPECT_EQ(out.first->chunk_id, predictions[i] / 10);
         EXPECT_EQ(out.second, predictions[i] % 10);
@@ -381,9 +387,18 @@ TEST_P(OracularSubsettedSlabCacheStressTest, Stressed) {
             confirm_mapping_integrity(sub);
             EXPECT_TRUE(sub.mapping.find(out.second) != sub.mapping.end());
         } 
+
+        auto cid = out.first->chunk_id;
+        if (cycle != last_cycle && last_cycle != 1) {
+            EXPECT_FALSE(previous_chunks.find(cid) != previous_chunks.end());
+            EXPECT_EQ(expected_max_cache, previous_chunks.size());
+            previous_chunks.clear();
+        }
+        previous_chunks.insert(cid);
+        EXPECT_LE(previous_chunks.size(), cache_size);
     }
 
-    EXPECT_EQ(nalloc, std::min({ 5, cache_size }));
+    EXPECT_EQ(nalloc, expected_max_cache);
 }
 
 INSTANTIATE_TEST_SUITE_P(

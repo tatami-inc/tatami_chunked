@@ -2,6 +2,8 @@
 #include "tatami_chunked/OracularVariableSlabCache.hpp"
 
 #include <random>
+#include <unordered_set>
+#include <vector>
 
 class OracularVariableSlabCacheTestMethods {
 protected:
@@ -394,7 +396,6 @@ TEST_F(OracularVariableSlabCacheTest, ReusedContracted) {
     EXPECT_EQ(nalloc, 3);
 }
 
-
 TEST_F(OracularVariableSlabCacheTest, ConsecutiveReuse) {
     // This just checks that the short-circuiting works correctly for
     // consecutive requests to the same slab.
@@ -454,12 +455,17 @@ TEST_F(OracularVariableSlabCacheTest, ConsecutiveReuse) {
         EXPECT_EQ(out.second, predictions[i] % 10);
         EXPECT_EQ(cache.get_used_size(), 60);
     }
+
+    // Max of 3 slabs in circulation at any given time.
+    EXPECT_EQ(nalloc, 3);
 }
 
-class OracularVariableSlabCacheStressTest : public ::testing::TestWithParam<int>, public OracularVariableSlabCacheTestMethods {};
+class OracularVariableSlabCacheStressTest : public ::testing::TestWithParam<std::tuple<int, bool> >, public OracularVariableSlabCacheTestMethods {};
 
 TEST_P(OracularVariableSlabCacheStressTest, Stressed) {
-    auto cache_size = GetParam();
+    auto params = GetParam();
+    auto cache_size = std::get<0>(params);
+    auto is_complex = std::get<1>(params);
 
     std::mt19937_64 rng(cache_size + 1);
     std::vector<int> predictions(10000);
@@ -471,18 +477,52 @@ TEST_P(OracularVariableSlabCacheStressTest, Stressed) {
     int counter = 0;
     int nalloc = 0;
     int cycle = 1;
+    std::unordered_set<int> previous_chunks;
+    int lower_cache_cost = 0, upper_cache_cost = 0;
 
     for (size_t i = 0; i < predictions.size(); ++i) {
-        auto out = simple_next(cache, counter, nalloc, cycle);
+        int last_cycle = cycle;
+
+        std::pair<const TestSlab*, int> out;
+        int lower_slab_cost = 0, upper_slab_cost = 0;
+        if (is_complex) {
+            out = complex_next(cache, counter, nalloc, cycle);
+            lower_slab_cost = out.first->chunk_id * 5; // see the actual and estimated sizes in complex_next().
+            upper_slab_cost = out.first->chunk_id * 10;
+        } else {
+            out = simple_next(cache, counter, nalloc, cycle);
+            lower_slab_cost = out.first->chunk_id * 10; // actual and estimated sizes are the same in simple_next().
+            upper_slab_cost = lower_slab_cost;
+        }
+
         EXPECT_EQ(out.first->chunk_id, predictions[i] / 10);
         EXPECT_EQ(out.second, predictions[i] % 10);
-    }
 
-    EXPECT_TRUE(nalloc <= 5);
+        auto cid = out.first->chunk_id;
+        if (cycle != last_cycle && last_cycle != 1) {
+            EXPECT_FALSE(previous_chunks.find(cid) != previous_chunks.end());
+            EXPECT_GT(upper_slab_cost + upper_cache_cost, cache_size);
+            previous_chunks.clear();
+            upper_cache_cost = 0;
+            lower_cache_cost = 0;
+        }
+
+        if (previous_chunks.find(cid) == previous_chunks.end()) {
+            lower_cache_cost += lower_slab_cost;
+            upper_cache_cost += upper_slab_cost;
+            previous_chunks.insert(cid);
+            if (previous_chunks.size() != 1) { // if there's only one chunk, then it must be stored, regardless of the cost.
+                EXPECT_LE(lower_cache_cost, cache_size);
+            }
+        }
+    }
 }
 
 INSTANTIATE_TEST_SUITE_P(
     OracularVariableSlabCache,
     OracularVariableSlabCacheStressTest,
-    ::testing::Values(30, 50, 100)  // max cache size
+    ::testing::Combine(
+        ::testing::Values(30, 50, 100), // max cache size
+        ::testing::Values(false, true) // whether it's optimal
+    )
 );
