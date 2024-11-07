@@ -168,9 +168,25 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>};</div>
 </div>
 <div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span> </div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>}</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span> </div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span><span class="comment">// COMMENT:</span></div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span><span class="comment">// As tempting as it is to implement an LruVariableSlabCache, this doesn&#39;t work out well in practice.</span></div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span><span class="comment">// This is because the Slab_ objects are re-used, and in the worst case, each object would have to be large enough to fit the largest slab.</span></div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span><span class="comment">// At this point, we have several options:</span></div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span><span class="comment">//</span></div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span><span class="comment">// - Pre-allocate each Slab_ instance to have enough memory to fit the largest slab, in which case the slabs are not variable.</span></div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span><span class="comment">// - Allow Slab_ instances to grow/shrink their memory allocation according to the size of its assigned slab.</span></div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span><span class="comment">//   This reduces efficiency due to repeated reallocations, and memory usage might end up exceeding the nominal limit anyway due to fragmentation.</span></div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span><span class="comment">// - Share a single memory pool across slabs, and manually handle defragmentation to free up enough contiguous memory for each new slab.</span></div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span><span class="comment">//   Unlike the oracular case, we don&#39;t have the luxury of defragmenting once for multiple slabs.</span></div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span><span class="comment">//   Instead, we might potentially need to defragment on every newly requested slab, which is computationally expensive.</span></div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span><span class="comment">//</span></div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span><span class="comment">// See also https://softwareengineering.stackexchange.com/questions/398503/is-lru-still-a-good-algorithm-for-a-cache-with-diferent-size-elements.</span></div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span><span class="comment">// This lists a few methods for dealing with fragmentation, but none of them are particularly clean.</span></div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span><span class="comment">// It&#39;s likely that just using the existing LruSlabCache with the maximum possible slab size is good enough for most applications.</span></div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span> </div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>}</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span> </div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasstatami__chunked_1_1LruSlabCache_html"><div class="ttname"><a href="classtatami__chunked_1_1LruSlabCache.html">tatami_chunked::LruSlabCache</a></div><div class="ttdoc">Least-recently-used cache for slabs.</div><div class="ttdef"><b>Definition</b> LruSlabCache.hpp:26</div></div>
 <div class="ttc" id="aclasstatami__chunked_1_1LruSlabCache_html_a022825f5749bba03b112fbe72d98ddd5"><div class="ttname"><a href="classtatami__chunked_1_1LruSlabCache.html#a022825f5749bba03b112fbe72d98ddd5">tatami_chunked::LruSlabCache::find</a></div><div class="ttdeci">const Slab_ &amp; find(Id_ id, Cfunction_ create, Pfunction_ populate)</div><div class="ttdef"><b>Definition</b> LruSlabCache.hpp:86</div></div>
 <div class="ttc" id="aclasstatami__chunked_1_1LruSlabCache_html_a11ebee4dd4514b76fa56dd21e3a2d5a5"><div class="ttname"><a href="classtatami__chunked_1_1LruSlabCache.html#a11ebee4dd4514b76fa56dd21e3a2d5a5">tatami_chunked::LruSlabCache::LruSlabCache</a></div><div class="ttdeci">LruSlabCache(const LruSlabCache &amp;)=delete</div></div>
