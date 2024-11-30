@@ -35,8 +35,13 @@ protected:
         bool rowmajor = std::get<2>(params);
         double cache_fraction = std::get<3>(params);
 
-        auto full = tatami_test::simulate_dense_vector<double>(matdim.first * matdim.second, -10, 10, 
-            /* seed = */ matdim.first * matdim.second + chunkdim.first * chunkdim.second + rowmajor + 100 * cache_fraction);
+        auto full = tatami_test::simulate_vector<double>(matdim.first * matdim.second, [&]{
+            tatami_test::SimulateVectorOptions opt;
+            opt.lower = -10;
+            opt.upper = 10;
+            opt.seed = matdim.first * matdim.second + chunkdim.first * chunkdim.second + rowmajor + 100 * cache_fraction;
+            return opt;
+        }());
         ref.reset(new tatami::DenseRowMatrix<double, int>(matdim.first, matdim.second, std::move(full)));
 
         auto num_chunks_per_row = (matdim.second + chunkdim.second - 1) / chunkdim.second;
@@ -93,7 +98,7 @@ protected:
 /*******************************************************/
 
 class CustomDenseChunkedMatrixFullTest :
-    public ::testing::TestWithParam<std::tuple<typename CustomDenseChunkedMatrixCore::SimulationParameters, tatami_test::StandardTestAccessParameters> >, 
+    public ::testing::TestWithParam<std::tuple<typename CustomDenseChunkedMatrixCore::SimulationParameters, tatami_test::StandardTestAccessOptions> >, 
     public CustomDenseChunkedMatrixCore {
 protected:
     void SetUp() {
@@ -102,10 +107,10 @@ protected:
 };
 
 TEST_P(CustomDenseChunkedMatrixFullTest, Basic) {
-    auto params = tatami_test::convert_access_parameters(std::get<1>(GetParam()));
-    tatami_test::test_full_access(params, mock_mat.get(), ref.get());
-    tatami_test::test_full_access(params, simple_mat.get(), ref.get());
-    tatami_test::test_full_access(params, subset_mat.get(), ref.get());
+    auto opts = tatami_test::convert_test_access_options(std::get<1>(GetParam()));
+    tatami_test::test_full_access(*mock_mat, *ref, opts);
+    tatami_test::test_full_access(*simple_mat, *ref, opts);
+    tatami_test::test_full_access(*subset_mat, *ref, opts);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -128,14 +133,14 @@ INSTANTIATE_TEST_SUITE_P(
             ::testing::Values(0, 0.01, 0.1) // cache fraction
         ),
 
-        tatami_test::standard_test_access_parameter_combinations()
+        tatami_test::standard_test_access_options_combinations()
     )
 );
 
 /*******************************************************/
 
 class CustomDenseChunkedMatrixBlockTest :
-    public ::testing::TestWithParam<std::tuple<typename CustomDenseChunkedMatrixCore::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, double> > >, 
+    public ::testing::TestWithParam<std::tuple<typename CustomDenseChunkedMatrixCore::SimulationParameters, tatami_test::StandardTestAccessOptions, std::pair<double, double> > >, 
     public CustomDenseChunkedMatrixCore {
 protected:
     void SetUp() {
@@ -145,13 +150,11 @@ protected:
 
 TEST_P(CustomDenseChunkedMatrixBlockTest, Basic) {
     auto tparam = GetParam();
-    auto params = tatami_test::convert_access_parameters(std::get<1>(tparam));
+    auto opt = tatami_test::convert_test_access_options(std::get<1>(tparam));
     auto block = std::get<2>(tparam);
-    auto len = params.use_row ? ref->ncol() : ref->nrow();
-    size_t FIRST = block.first * len, LAST = block.second * len;
-    tatami_test::test_block_access(params, mock_mat.get(), ref.get(), FIRST, LAST);
-    tatami_test::test_block_access(params, simple_mat.get(), ref.get(), FIRST, LAST);
-    tatami_test::test_block_access(params, subset_mat.get(), ref.get(), FIRST, LAST);
+    tatami_test::test_block_access(*mock_mat, *ref, block.first, block.second, opt);
+    tatami_test::test_block_access(*simple_mat, *ref, block.first, block.second, opt);
+    tatami_test::test_block_access(*subset_mat, *ref, block.first, block.second, opt);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -174,12 +177,12 @@ INSTANTIATE_TEST_SUITE_P(
             ::testing::Values(0, 0.01, 0.1) // cache fraction
         ),
 
-        tatami_test::standard_test_access_parameter_combinations(),
+        tatami_test::standard_test_access_options_combinations(),
 
         ::testing::Values( // block boundaries
             std::make_pair(0.0, 0.35),
-            std::make_pair(0.15, 0.87),
-            std::make_pair(0.38, 1.0)
+            std::make_pair(0.15, 0.72),
+            std::make_pair(0.38, 0.62)
         )
     )
 );
@@ -187,7 +190,7 @@ INSTANTIATE_TEST_SUITE_P(
 /*******************************************************/
 
 class CustomDenseChunkedMatrixIndexTest :
-    public ::testing::TestWithParam<std::tuple<typename CustomDenseChunkedMatrixCore::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, int> > >, 
+    public ::testing::TestWithParam<std::tuple<typename CustomDenseChunkedMatrixCore::SimulationParameters, tatami_test::StandardTestAccessOptions, std::pair<double, double> > >, 
     public CustomDenseChunkedMatrixCore {
 protected:
     void SetUp() {
@@ -197,13 +200,11 @@ protected:
 
 TEST_P(CustomDenseChunkedMatrixIndexTest, Basic) {
     auto tparam = GetParam();
-    auto params = tatami_test::convert_access_parameters(std::get<1>(tparam));
+    auto opt = tatami_test::convert_test_access_options(std::get<1>(tparam));
     auto index = std::get<2>(tparam);
-    auto len = params.use_row ? ref->ncol() : ref->nrow();
-    size_t FIRST = index.first * len, STEP = index.second;
-    tatami_test::test_indexed_access(params, mock_mat.get(), ref.get(), FIRST, STEP);
-    tatami_test::test_indexed_access(params, simple_mat.get(), ref.get(), FIRST, STEP);
-    tatami_test::test_indexed_access(params, subset_mat.get(), ref.get(), FIRST, STEP);
+    tatami_test::test_indexed_access(*mock_mat, *ref, index.first, index.second, opt);
+    tatami_test::test_indexed_access(*simple_mat, *ref, index.first, index.second, opt);
+    tatami_test::test_indexed_access(*subset_mat, *ref, index.first, index.second, opt);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -226,12 +227,12 @@ INSTANTIATE_TEST_SUITE_P(
             ::testing::Values(0, 0.01, 0.1) // cache fraction
         ),
 
-        tatami_test::standard_test_access_parameter_combinations(),
+        tatami_test::standard_test_access_options_combinations(),
 
         ::testing::Values( // index information.
-            std::make_pair(0.0, 10),
-            std::make_pair(0.2, 5),
-            std::make_pair(0.7, 3)
+            std::make_pair(0.0, 0.1),
+            std::make_pair(0.2, 0.2),
+            std::make_pair(0.7, 0.3)
         )
     )
 );

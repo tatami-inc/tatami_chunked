@@ -4,15 +4,13 @@
 #include "tatami_chunked/mock_sparse_chunk.hpp"
 #include "mock_blob.h"
 
-static tatami::VectorPtr<int> create_indices(int dim, const std::pair<double, int>& config) {
-    auto output = std::make_shared<std::vector<int> >();
-    auto& indices = *output;
-    int start = config.first * dim, step = config.second;
-    while (start < dim) {
-        indices.push_back(start);
-        start += step;
-    } 
-    return output;
+static tatami::VectorPtr<int> create_indices(int extent, const std::pair<double, double>& config) {
+    return tatami_test::create_indexed_subset(
+        extent,
+        config.first,
+        config.second,
+        extent + 997 * config.first + 2003 * config.second
+    );
 }
 
 /**********************************************************
@@ -35,7 +33,15 @@ protected:
         last_params = params;
 
         const auto& dim = params;
-        auto full = tatami_test::simulate_sparse_vector<double>(dim.first * dim.second, 0.2, -10, 10, /* seed = */ dim.first * dim.second);
+        auto full = tatami_test::simulate_vector<double>(dim.first * dim.second, [&]{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.2;
+            opt.lower = -10;
+            opt.upper = 10;
+            opt.seed = dim.first * dim.second + 17;
+            return opt;
+        }());
+
         tatami::DenseRowMatrix<double, int> tmp(dim.first, dim.second, std::move(full));
 
         auto compressed = tatami::retrieve_compressed_sparse_contents<double, int>(&tmp, true, true);
@@ -107,7 +113,10 @@ public:
 /**********************************************************
  **********************************************************/
 
-class MockSparseChunkGeneralTest : public MockSimpleSparseChunkUtils, public ::testing::Test {
+class MockSparseChunkGeneralTest : 
+    public MockSimpleSparseChunkUtils,
+    public ::testing::Test {
+protected:
     void SetUp() {
         assemble({ 20, 20 });
     }
@@ -135,7 +144,7 @@ TEST_F(MockSparseChunkGeneralTest, AppendBlock) {
 
     auto ext = this->ref->sparse_row();
     for (int r = 0; r < dim.first; ++r) {
-        auto refrow = tatami_test::fetch(ext.get(), r, dim.second);
+        auto refrow = tatami_test::fetch(*ext, r, dim.second);
         EXPECT_EQ(refrow.value, mock_data.values_as_vector(r, 10));
         EXPECT_EQ(refrow.value, drm_data.values_as_vector(r, 20));
         EXPECT_EQ(refrow.value, dcm_data.values_as_vector(r, 5));
@@ -169,7 +178,7 @@ TEST_F(MockSparseChunkGeneralTest, AppendIndex) {
 
     auto ext = this->ref->sparse_row(std::move(c_indices));
     for (int r = 0; r < dim.first; ++r) {
-        auto refrow = tatami_test::fetch(ext.get(), r, dim.second);
+        auto refrow = tatami_test::fetch(*ext, r, dim.second);
         EXPECT_EQ(refrow.value, mock_data.values_as_vector(r, 10));
         EXPECT_EQ(refrow.value, drm_data.values_as_vector(r, 20));
         EXPECT_EQ(refrow.value, dcm_data.values_as_vector(r, 5));
@@ -202,7 +211,7 @@ TEST_F(MockSparseChunkGeneralTest, SkippingBlock) {
 
         auto ext = this->ref->sparse_row();
         for (int r = 0; r < dim.first; ++r) {
-            auto refrow = tatami_test::fetch(ext.get(), r, dim.second);
+            auto refrow = tatami_test::fetch(*ext, r, dim.second);
             EXPECT_EQ(refrow.index, mock_data.indices_as_vector(r));
             EXPECT_EQ(refrow.index, drm_data.indices_as_vector(r));
             EXPECT_EQ(refrow.index, dcm_data.indices_as_vector(r));
@@ -225,7 +234,7 @@ TEST_F(MockSparseChunkGeneralTest, SkippingBlock) {
 
         auto ext = this->ref->sparse_row();
         for (int r = 0; r < dim.first; ++r) {
-            auto refrow = tatami_test::fetch(ext.get(), r, dim.second);
+            auto refrow = tatami_test::fetch(*ext, r, dim.second);
             EXPECT_EQ(refrow.value, mock_data.values_as_vector(r));
             EXPECT_EQ(refrow.value, drm_data.values_as_vector(r));
             EXPECT_EQ(refrow.value, dcm_data.values_as_vector(r));
@@ -258,7 +267,7 @@ TEST_F(MockSparseChunkGeneralTest, SkippingIndices) {
 
         auto ext = this->ref->sparse_row(c_indices);
         for (int r = 0; r < dim.first; ++r) {
-            auto refrow = tatami_test::fetch(ext.get(), r, dim.second);
+            auto refrow = tatami_test::fetch(*ext, r, dim.second);
             EXPECT_EQ(refrow.index, mock_data.indices_as_vector(r));
             EXPECT_EQ(refrow.index, drm_data.indices_as_vector(r));
             EXPECT_EQ(refrow.index, dcm_data.indices_as_vector(r));
@@ -281,7 +290,7 @@ TEST_F(MockSparseChunkGeneralTest, SkippingIndices) {
 
         auto ext = this->ref->sparse_row(c_indices);
         for (int r = 0; r < dim.first; ++r) {
-            auto refrow = tatami_test::fetch(ext.get(), r, dim.second);
+            auto refrow = tatami_test::fetch(*ext, r, dim.second);
             EXPECT_EQ(refrow.value, mock_data.values_as_vector(r));
             EXPECT_EQ(refrow.value, drm_data.values_as_vector(r));
             EXPECT_EQ(refrow.value, dcm_data.values_as_vector(r));
@@ -292,7 +301,10 @@ TEST_F(MockSparseChunkGeneralTest, SkippingIndices) {
 /**********************************************************
  **********************************************************/
 
-class MockSimpleSparseChunkBlockTest : public MockSimpleSparseChunkUtils, public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<double, double> > > {
+class MockSimpleSparseChunkBlockTest : 
+    public MockSimpleSparseChunkUtils,
+    public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<double, double> > > {
+protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
     }
@@ -308,7 +320,7 @@ TEST_P(MockSimpleSparseChunkBlockTest, Basic) {
     typename tatami_chunked::SimpleSparseChunkWrapper<MockSparseBlob<false> >::Workspace dcm_work;
 
     // First extracting row-wise blocks.
-    int c_first = block.first * dim.second, c_last = block.second * dim.second, c_len = c_last - c_first;
+    int c_first = block.first * dim.second, c_len = block.second * dim.second;
     {
         ExtractSpace mock_data(dim.first, dim.second);
         mock.extract(true, c_first, c_len, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 7);
@@ -321,7 +333,7 @@ TEST_P(MockSimpleSparseChunkBlockTest, Basic) {
 
         auto ext = this->ref->sparse_row(c_first, c_len);
         for (int r = 0; r < dim.first; ++r) {
-            auto refrow = tatami_test::fetch(ext.get(), r, c_len);
+            auto refrow = tatami_test::fetch(*ext, r, c_len);
             EXPECT_EQ(refrow.value, mock_data.values_as_vector(r));
             EXPECT_EQ(refrow.value, drm_data.values_as_vector(r));
             EXPECT_EQ(refrow.value, dcm_data.values_as_vector(r));
@@ -332,7 +344,7 @@ TEST_P(MockSimpleSparseChunkBlockTest, Basic) {
     }
 
     // Then extracting column-wise blocks.
-    int r_first = block.first * dim.first, r_last = block.second * dim.first, r_len = r_last - r_first;
+    int r_first = block.first * dim.first, r_len = block.second * dim.first;
     {
         ExtractSpace mock_data(dim.second, dim.first);
         mock.extract(false, r_first, r_len, mock_work, mock_data.values, mock_data.indices, mock_data.number.data(), 1);
@@ -345,7 +357,7 @@ TEST_P(MockSimpleSparseChunkBlockTest, Basic) {
 
         auto ext = this->ref->sparse_column(r_first, r_len);
         for (int c = 0; c < dim.second; ++c) {
-            auto refcol = tatami_test::fetch(ext.get(), c, r_len);
+            auto refcol = tatami_test::fetch(*ext, c, r_len);
             EXPECT_EQ(refcol.value, mock_data.values_as_vector(c));
             EXPECT_EQ(refcol.value, drm_data.values_as_vector(c));
             EXPECT_EQ(refcol.value, dcm_data.values_as_vector(c));
@@ -368,9 +380,9 @@ INSTANTIATE_TEST_SUITE_P(
             std::make_pair(190, 150)
         ),
         ::testing::Values( // secondary block
-            std::make_pair(0.0, 1.0),
-            std::make_pair(0.25, 0.75),
-            std::make_pair(0.33, 0.66)
+            std::make_pair(0.0, 0.6),
+            std::make_pair(0.25, 0.55),
+            std::make_pair(0.33, 0.44)
         )
     )
 );
@@ -378,7 +390,10 @@ INSTANTIATE_TEST_SUITE_P(
 /**********************************************************
  **********************************************************/
 
-class MockSimpleSparseChunkIndexTest : public MockSimpleSparseChunkUtils, public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<double, int> > > {
+class MockSimpleSparseChunkIndexTest : 
+    public MockSimpleSparseChunkUtils,
+    public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<double, double> > > {
+protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
     }
@@ -408,7 +423,7 @@ TEST_P(MockSimpleSparseChunkIndexTest, Basic) {
 
         auto ext = this->ref->sparse_row(c_indices);
         for (int r = 0; r < dim.first; ++r) {
-            auto refrow = tatami_test::fetch(ext.get(), r, c_indices->size());
+            auto refrow = tatami_test::fetch(*ext, r, c_indices->size());
             EXPECT_EQ(refrow.value, mock_data.values_as_vector(r));
             EXPECT_EQ(refrow.value, drm_data.values_as_vector(r));
             EXPECT_EQ(refrow.value, dcm_data.values_as_vector(r));
@@ -433,7 +448,7 @@ TEST_P(MockSimpleSparseChunkIndexTest, Basic) {
 
         auto ext = this->ref->sparse_column(r_indices);
         for (int c = 0; c < dim.second; ++c) {
-            auto refcol = tatami_test::fetch(ext.get(), c, r_indices->size());
+            auto refcol = tatami_test::fetch(*ext, c, r_indices->size());
             EXPECT_EQ(refcol.value, mock_data.values_as_vector(c));
             EXPECT_EQ(refcol.value, drm_data.values_as_vector(c));
             EXPECT_EQ(refcol.value, dcm_data.values_as_vector(c));
@@ -481,7 +496,15 @@ protected:
         last_params = params;
 
         const auto& dim = params;
-        auto full = tatami_test::simulate_sparse_vector<double>(dim.first * dim.second, 0.2, -10, 10, /* seed = */ dim.first * dim.second + 1);
+        auto full = tatami_test::simulate_vector<double>(dim.first * dim.second, [&]{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.2;
+            opt.lower = -10;
+            opt.upper = 10;
+            opt.seed = dim.first * dim.second + 1333;
+            return opt;
+        }());
+
         tatami::DenseRowMatrix<double, int> tmp(dim.first, dim.second, std::move(full));
 
         auto compressed = tatami::retrieve_compressed_sparse_contents<double, int>(&tmp, true, true);
@@ -519,15 +542,15 @@ TEST_P(MockSubsettedSparseChunkBlockBlockTest, Basic) {
 
     // Row extraction.
     {
-        int r_first = bounds.first * dim.first,  r_last = bounds.second * dim.first,  r_len = r_last - r_first;
-        int c_first = bounds.first * dim.second, c_last = bounds.second * dim.second, c_len = c_last - c_first;
+        int r_first = bounds.first * dim.first, r_len = bounds.second * dim.first;
+        int c_first = bounds.first * dim.second, c_len = bounds.second * dim.second;
 
         ExtractSpace mock_data(dim.first, dim.second);
         mock.extract(true, r_first, r_len, c_first, c_len, work, mock_data.values, mock_data.indices, mock_data.number.data(), 10);
 
         auto ext = ref->sparse_row(c_first, c_len);
-        for (int r = r_first; r < r_last; ++r) {
-            auto refrow = tatami_test::fetch(ext.get(), r, c_len);
+        for (int r = r_first, r_last = r_first + r_len; r < r_last; ++r) {
+            auto refrow = tatami_test::fetch(*ext, r, c_len);
             EXPECT_EQ(refrow.value, mock_data.values_as_vector(r));
             EXPECT_EQ(refrow.index, mock_data.indices_as_vector(r, 10));
         }
@@ -535,15 +558,15 @@ TEST_P(MockSubsettedSparseChunkBlockBlockTest, Basic) {
 
     // Column extraction.
     {
-        int r_first = block.first * dim.first,  r_last = block.second * dim.first,  r_len = r_last - r_first;
-        int c_first = block.first * dim.second, c_last = block.second * dim.second, c_len = c_last - c_first;
+        int r_first = block.first * dim.first, r_len = block.second * dim.first;
+        int c_first = block.first * dim.second, c_len = block.second * dim.second;
 
         ExtractSpace mock_data(dim.second, dim.first);
         mock.extract(false, c_first, c_len, r_first, r_len, work, mock_data.values, mock_data.indices, mock_data.number.data(), 22);
 
         auto ext = ref->sparse_column(r_first, r_len);
-        for (int c = c_first; c < c_last; ++c) {
-            auto refcol = tatami_test::fetch(ext.get(), c, r_len);
+        for (int c = c_first, c_last = c_first + c_len; c < c_last; ++c) {
+            auto refcol = tatami_test::fetch(*ext, c, r_len);
             EXPECT_EQ(refcol.value, mock_data.values_as_vector(c));
             EXPECT_EQ(refcol.index, mock_data.indices_as_vector(c, 22));
         }
@@ -561,14 +584,14 @@ INSTANTIATE_TEST_SUITE_P(
             std::make_pair(27, 23) 
         ),
         ::testing::Values( // primary range
-            std::make_pair(0.0, 1.0),
-            std::make_pair(0.2, 0.8),
-            std::make_pair(0.4, 0.6)
+            std::make_pair(0.0, 0.7),
+            std::make_pair(0.2, 0.6),
+            std::make_pair(0.4, 0.5)
         ),
         ::testing::Values( // secondary block
-            std::make_pair(0.0, 1.0),
-            std::make_pair(0.25, 0.75),
-            std::make_pair(0.33, 0.66)
+            std::make_pair(0.0, 0.51),
+            std::make_pair(0.25, 0.52),
+            std::make_pair(0.33, 0.53)
         )
     )
 );
@@ -578,7 +601,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 class MockSubsettedSparseChunkBlockIndexTest : 
     public MockSubsettedSparseChunkUtils, 
-    public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<double, double>, std::pair<double, int> > > {
+    public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<double, double>, std::pair<double, double> > > {
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
@@ -594,30 +617,30 @@ TEST_P(MockSubsettedSparseChunkBlockIndexTest, Basic) {
     typename tatami_chunked::MockSubsettedSparseChunk::Workspace work;
 
     {
-        int r_first = bounds.first * dim.first,  r_last = bounds.second * dim.first,  r_len = r_last - r_first;
+        int r_first = bounds.first * dim.first, r_len = bounds.second * dim.first;
         auto c_indices = create_indices(dim.second, iparam);
 
         ExtractSpace mock_data(dim.first, dim.second);
         mock.extract(true, r_first, r_len, *c_indices, work, mock_data.values, mock_data.indices, mock_data.number.data(), 10);
 
         auto ext = ref->sparse_row(c_indices);
-        for (int r = r_first; r < r_last; ++r) {
-            auto refrow = tatami_test::fetch(ext.get(), r, c_indices->size());
+        for (int r = r_first, r_last = r_first + r_len; r < r_last; ++r) {
+            auto refrow = tatami_test::fetch(*ext, r, c_indices->size());
             EXPECT_EQ(refrow.value, mock_data.values_as_vector(r));
             EXPECT_EQ(refrow.index, mock_data.indices_as_vector(r, 10));
         }
     }
 
     {
-        int c_first = bounds.first * dim.second, c_last = bounds.second * dim.second, c_len = c_last - c_first;
+        int c_first = bounds.first * dim.second, c_len = bounds.second * dim.second;
         auto r_indices = create_indices(dim.first, iparam);
 
         ExtractSpace mock_data(dim.second, dim.first);
         mock.extract(false, c_first, c_len, *r_indices, work, mock_data.values, mock_data.indices, mock_data.number.data(), 5);
 
         auto ext = ref->sparse_column(r_indices);
-        for (int c = c_first; c < c_last; ++c) {
-            auto refcol = tatami_test::fetch(ext.get(), c, r_indices->size());
+        for (int c = c_first, c_last = c_first + c_len; c < c_last; ++c) {
+            auto refcol = tatami_test::fetch(*ext, c, r_indices->size());
             EXPECT_EQ(refcol.value, mock_data.values_as_vector(c));
             EXPECT_EQ(refcol.index, mock_data.indices_as_vector(c, 5));
         }
@@ -635,14 +658,14 @@ INSTANTIATE_TEST_SUITE_P(
             std::make_pair(27, 23) 
         ),
         ::testing::Values( // primary range
-            std::make_pair(0.0, 1.0),
-            std::make_pair(0.2, 0.8),
+            std::make_pair(0.0, 0.6),
+            std::make_pair(0.2, 0.6),
             std::make_pair(0.4, 0.6)
         ),
         ::testing::Values( // secondary indices
-            std::make_pair(0.0, 10),
-            std::make_pair(0.25, 5),
-            std::make_pair(0.33, 3)
+            std::make_pair(0.0, 0.15),
+            std::make_pair(0.25, 0.2),
+            std::make_pair(0.33, 0.25)
         )
     )
 );
@@ -652,7 +675,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 class MockSubsettedSparseChunkIndexBlockTest : 
     public MockSubsettedSparseChunkUtils, 
-    public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<double, int>, std::pair<double, double> > > {
+    public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<double, double>, std::pair<double, double> > > {
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
@@ -669,14 +692,14 @@ TEST_P(MockSubsettedSparseChunkIndexBlockTest, Sparse) {
 
     {
         auto r_indices = create_indices(dim.first, bounds);
-        int c_first = block.first * dim.second, c_last = block.second * dim.second, c_len = c_last - c_first;
+        int c_first = block.first * dim.second, c_len = block.second * dim.second;
 
         ExtractSpace mock_data(dim.first, dim.second);
         mock.extract(true, *r_indices, c_first, c_len, work, mock_data.values, mock_data.indices, mock_data.number.data(), 32);
 
         auto ext = ref->sparse_row(c_first, c_len);
         for (auto r : *r_indices) {
-            auto refrow = tatami_test::fetch(ext.get(), r, c_len);
+            auto refrow = tatami_test::fetch(*ext, r, c_len);
             EXPECT_EQ(refrow.value, mock_data.values_as_vector(r));
             EXPECT_EQ(refrow.index, mock_data.indices_as_vector(r, 32));
         }
@@ -684,14 +707,14 @@ TEST_P(MockSubsettedSparseChunkIndexBlockTest, Sparse) {
 
     {
         auto c_indices = create_indices(dim.second, bounds);
-        int r_first = block.first * dim.first,  r_last = block.second * dim.first,  r_len = r_last - r_first;
+        int r_first = block.first * dim.first, r_len = block.second * dim.first;
 
         ExtractSpace mock_data(dim.second, dim.first);
         mock.extract(false, *c_indices, r_first, r_len, work, mock_data.values, mock_data.indices, mock_data.number.data(), 99);
 
         auto ext = ref->sparse_column(r_first, r_len);
         for (auto c : *c_indices) {
-            auto refcol = tatami_test::fetch(ext.get(), c, r_len);
+            auto refcol = tatami_test::fetch(*ext, c, r_len);
             EXPECT_EQ(refcol.value, mock_data.values_as_vector(c));
             EXPECT_EQ(refcol.index, mock_data.indices_as_vector(c, 99));
         }
@@ -709,14 +732,14 @@ INSTANTIATE_TEST_SUITE_P(
             std::make_pair(27, 23) 
         ),
         ::testing::Values( // primary indices 
-            std::make_pair(0.0, 10),
-            std::make_pair(0.2, 5),
-            std::make_pair(0.4, 3)
+            std::make_pair(0.0, 0.2),
+            std::make_pair(0.2, 0.2),
+            std::make_pair(0.4, 0.2)
         ),
         ::testing::Values( // secondary block
-            std::make_pair(0.0, 1.0),
-            std::make_pair(0.25, 0.75),
-            std::make_pair(0.33, 0.66)
+            std::make_pair(0.0, 0.5),
+            std::make_pair(0.25, 0.45),
+            std::make_pair(0.33, 0.65)
         )
     )
 );
@@ -726,7 +749,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 class MockSubsettedSparseChunkIndexIndexTest : 
     public MockSubsettedSparseChunkUtils, 
-    public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<double, int>, std::pair<double, int> > > {
+    public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<double, double>, std::pair<double, double> > > {
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
@@ -750,7 +773,7 @@ TEST_P(MockSubsettedSparseChunkIndexIndexTest, Sparse) {
 
         auto ext = ref->sparse_row(*c_indices);
         for (auto r : *r_indices) {
-            auto refrow = tatami_test::fetch(ext.get(), r, c_indices->size());
+            auto refrow = tatami_test::fetch(*ext, r, c_indices->size());
             EXPECT_EQ(refrow.value, mock_data.values_as_vector(r));
             EXPECT_EQ(refrow.index, mock_data.indices_as_vector(r, 9));
         }
@@ -765,7 +788,7 @@ TEST_P(MockSubsettedSparseChunkIndexIndexTest, Sparse) {
 
         auto ext = ref->sparse_column(*r_indices);
         for (auto c : *c_indices) {
-            auto refcol = tatami_test::fetch(ext.get(), c, r_indices->size());
+            auto refcol = tatami_test::fetch(*ext, c, r_indices->size());
             EXPECT_EQ(refcol.value, mock_data.values_as_vector(c));
             EXPECT_EQ(refcol.index, mock_data.indices_as_vector(c, 19));
         }
@@ -783,14 +806,14 @@ INSTANTIATE_TEST_SUITE_P(
             std::make_pair(27, 23) 
         ),
         ::testing::Values( // primary indices
-            std::make_pair(0.0, 10),
-            std::make_pair(0.3, 5),
-            std::make_pair(0.5, 3)
+            std::make_pair(0.0, 0.2),
+            std::make_pair(0.3, 0.15),
+            std::make_pair(0.5, 0.35)
         ),
         ::testing::Values( // secondary indices
-            std::make_pair(0.0, 10),
-            std::make_pair(0.25, 5),
-            std::make_pair(0.33, 3)
+            std::make_pair(0.0, 0.1),
+            std::make_pair(0.25, 0.3),
+            std::make_pair(0.33, 0.2)
         )
     )
 );
