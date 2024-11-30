@@ -2,7 +2,7 @@
 
 ![Unit tests](https://github.com/tatami-inc/tatami_chunked/actions/workflows/run-tests.yaml/badge.svg)
 ![Documentation](https://github.com/tatami-inc/tatami_chunked/actions/workflows/doxygenate.yaml/badge.svg)
-[![Codecov](https://codecov.io/gh/tatami-inc/tatami_chunked/branch/master/graph/badge.svg?token=Z189ORCLLR)](https://codecov.io/gh/tatami-inc/tatami_chunked)
+[![codecov](https://codecov.io/gh/tatami-inc/tatami_chunked/graph/badge.svg?token=7ptQtWCi16)](https://codecov.io/gh/tatami-inc/tatami_chunked)
 
 ## Overview
 
