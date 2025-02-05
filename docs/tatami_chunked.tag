@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-<tagfile doxygen_version="1.9.8">
+<tagfile doxygen_version="1.12.0">
   <compound kind="file">
     <name>CustomDenseChunkedMatrix.hpp</name>
     <path>tatami_chunked/</path>
@@ -149,7 +149,7 @@
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>typename Chunk_</templarg>
-    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <base>tatami::Matrix&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>CustomDenseChunkedMatrix</name>
@@ -182,7 +182,7 @@
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>typename Chunk_</templarg>
-    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <base>tatami::Matrix&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>CustomSparseChunkedMatrix</name>
@@ -292,7 +292,7 @@
       <type>double</type>
       <name>value_type</name>
       <anchorfile>classtatami__chunked_1_1MockSimpleDenseChunk.html</anchorfile>
-      <anchor>a88f07a7b34a0d7a0f9fbd296467f24aa</anchor>
+      <anchor>a7cc639611a3c12e14ba650c799f39396</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -325,7 +325,7 @@
       <type>double</type>
       <name>value_type</name>
       <anchorfile>classtatami__chunked_1_1MockSimpleSparseChunk.html</anchorfile>
-      <anchor>ad6c1f27da026f8d947159884d5e4cd1f</anchor>
+      <anchor>ae9b3c43e0ac3b5895077605e86d0c5c5</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -358,7 +358,7 @@
       <type>double</type>
       <name>value_type</name>
       <anchorfile>classtatami__chunked_1_1MockSubsettedDenseChunk.html</anchorfile>
-      <anchor>a9fb4893a712b987e07cf64f1b2db1073</anchor>
+      <anchor>a03070dd8e410ddf3cdd30c6011a0bd69</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
@@ -405,7 +405,7 @@
       <type>double</type>
       <name>value_type</name>
       <anchorfile>classtatami__chunked_1_1MockSubsettedSparseChunk.html</anchorfile>
-      <anchor>a3cfc7db47758a2d6d8252774185398de</anchor>
+      <anchor>aa6cebef3901756452995d85f80aa891b</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
