@@ -60,7 +60,7 @@ struct SlabCacheStats {
      */
     SlabCacheStats(size_t target_length, size_t non_target_length, size_t target_num_slabs, size_t cache_size_in_bytes, size_t element_size, bool require_minimum_cache) :
         slab_size_in_elements(target_length * non_target_length),
-        max_slabs_in_cache([&]() {
+        max_slabs_in_cache([&]{
             if (element_size == 0) {
                 return target_num_slabs;
             } else {

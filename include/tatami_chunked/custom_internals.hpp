@@ -289,7 +289,7 @@ public:
 
             extract_secondary_block(
                 row, chunk_id, secondary_block_start, secondary_block_length, 
-                [&](const Chunk_& chunk, Index_ from, Index_ len, Index_ secondary_start_pos) {
+                [&](const Chunk_& chunk, Index_ from, Index_ len, Index_ secondary_start_pos) -> void {
                     auto& tmp_values = tmp_work.get_values();
                     auto& tmp_indices = tmp_work.get_indices();
                     auto& tmp_number = tmp_work.get_number();
@@ -318,7 +318,7 @@ public:
 
             extract_secondary_block(
                 row, chunk_id, secondary_block_start, secondary_block_length, 
-                [&](const Chunk_& chunk, Index_ from, Index_ len) {
+                [&](const Chunk_& chunk, Index_ from, Index_ len) -> void {
                     if constexpr(Chunk_::use_subset) {
                         chunk.extract(row, chunk_offset, 1, from, len, chunk_workspace, tmp_buffer_ptr, len);
                     } else {
@@ -358,7 +358,7 @@ public:
 
             extract_secondary_index(
                 row, chunk_id, secondary_indices, chunk_indices_buffer,
-                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices, Index_ secondary_start_pos) {
+                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices, Index_ secondary_start_pos) -> void {
                     auto& tmp_values = tmp_work.get_values();
                     auto& tmp_indices = tmp_work.get_indices();
                     auto& tmp_number = tmp_work.get_number();
@@ -387,7 +387,7 @@ public:
 
             extract_secondary_index(
                 row, chunk_id, secondary_indices, chunk_indices_buffer,
-                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices) {
+                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices) -> void {
                     size_t nidx = chunk_indices.size();
                     if constexpr(Chunk_::use_subset) {
                         chunk.extract(row, chunk_offset, 1, chunk_indices, chunk_workspace, tmp_buffer_ptr, nidx);
@@ -422,7 +422,7 @@ private:
 
             extract_secondary_block(
                 row, chunk_id, secondary_block_start, secondary_block_length, 
-                [&](const Chunk_& chunk, Index_ from, Index_ len, Index_ secondary_start_pos) {
+                [&](const Chunk_& chunk, Index_ from, Index_ len, Index_ secondary_start_pos) -> void {
                     if constexpr(Chunk_::use_subset) {
                         chunk.extract(row, chunk_offset, chunk_length, from, len, chunk_workspace, slab.values, slab.indices, slab.number, secondary_start_pos);
                     } else {
@@ -437,7 +437,7 @@ private:
 
             extract_secondary_block(
                 row, chunk_id, secondary_block_start, secondary_block_length, 
-                [&](const Chunk_& chunk, Index_ from, Index_ len) {
+                [&](const Chunk_& chunk, Index_ from, Index_ len) -> void {
                     if constexpr(Chunk_::use_subset) {
                         chunk.extract(row, chunk_offset, chunk_length, from, len, chunk_workspace, slab_ptr, stride);
                     } else {
@@ -465,7 +465,7 @@ private:
 
             extract_secondary_index(
                 row, chunk_id, secondary_indices, chunk_indices_buffer,
-                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices, Index_ secondary_start_pos) {
+                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices, Index_ secondary_start_pos) -> void {
                     if constexpr(Chunk_::use_subset) {
                         chunk.extract(row, chunk_offset, chunk_length, chunk_indices, chunk_workspace, slab.values, slab.indices, slab.number, secondary_start_pos);
                     } else {
@@ -480,7 +480,7 @@ private:
 
             extract_secondary_index(
                 row, chunk_id, secondary_indices, chunk_indices_buffer,
-                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices) {
+                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices) -> void {
                     if constexpr(Chunk_::use_subset) {
                         chunk.extract(row, chunk_offset, chunk_length, chunk_indices, chunk_workspace, slab_ptr, stride);
                     } else {
@@ -508,7 +508,7 @@ private:
 
             extract_secondary_block(
                 row, chunk_id, secondary_block_start, secondary_block_length,
-                [&](const Chunk_& chunk, Index_ from, Index_ len, Index_ secondary_start_pos) {
+                [&](const Chunk_& chunk, Index_ from, Index_ len, Index_ secondary_start_pos) -> void {
                     if constexpr(Chunk_::use_subset) {
                         chunk.extract(row, primary_indices, from, len, chunk_workspace, slab.values, slab.indices, slab.number, secondary_start_pos);
                     } else {
@@ -523,7 +523,7 @@ private:
 
             extract_secondary_block(
                 row, chunk_id, secondary_block_start, secondary_block_length,
-                [&](const Chunk_& chunk, Index_ from, Index_ len) {
+                [&](const Chunk_& chunk, Index_ from, Index_ len) -> void {
                     if constexpr(Chunk_::use_subset) {
                         chunk.extract(row, primary_indices, from, len, chunk_workspace, slab_ptr, stride);
                     } else {
@@ -550,7 +550,7 @@ private:
 
             extract_secondary_index(
                 row, chunk_id, secondary_indices, chunk_indices_buffer,
-                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices, Index_ secondary_start_pos) {
+                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices, Index_ secondary_start_pos) -> void {
                     if constexpr(Chunk_::use_subset) {
                         chunk.extract(row, primary_indices, chunk_indices, chunk_workspace, slab.values, slab.indices, slab.number, secondary_start_pos);
                     } else {
@@ -565,7 +565,7 @@ private:
 
             extract_secondary_index(
                 row, chunk_id, secondary_indices, chunk_indices_buffer, 
-                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices) {
+                [&](const Chunk_& chunk, const std::vector<Index_>& chunk_indices) -> void {
                     if constexpr(Chunk_::use_subset) {
                         chunk.extract(row, primary_indices, chunk_indices, chunk_workspace, slab_ptr, stride);
                     } else {
@@ -698,10 +698,10 @@ public:
             row,
             cache,
             factory,
-            [&](Index_ pid, Index_ pstart, Index_ plen, Slab& slab) {
+            [&](Index_ pid, Index_ pstart, Index_ plen, Slab& slab) -> void {
                 fetch_block(row, pid, pstart, plen, block_start, block_length, slab, chunk_workspace);
             },
-            [&](Index_ pid, const std::vector<Index_>& pindices, Slab& slab) {
+            [&](Index_ pid, const std::vector<Index_>& pindices, Slab& slab) -> void {
                 fetch_index(row, pid, pindices, block_start, block_length, slab, chunk_workspace);
             }
         );
@@ -720,10 +720,10 @@ public:
             row,
             cache,
             factory,
-            [&](Index_ pid, Index_ pstart, Index_ plen, Slab& slab) {
+            [&](Index_ pid, Index_ pstart, Index_ plen, Slab& slab) -> void {
                 fetch_block(row, pid, pstart, plen, indices, chunk_indices_buffer, slab, chunk_workspace);
             },
-            [&](Index_ pid, const std::vector<Index_>& pindices, Slab& slab) {
+            [&](Index_ pid, const std::vector<Index_>& pindices, Slab& slab) -> void {
                 fetch_index(row, pid, pindices, indices, chunk_indices_buffer, slab, chunk_workspace);
             }
         );
