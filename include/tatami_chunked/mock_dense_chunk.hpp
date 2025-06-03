@@ -213,14 +213,9 @@ public:
  * The interface is "simple" as any extraction of data from the chunk retrieves the full extent of the target dimension, 
  * with no attempt at optimization if only a subset of dimension elements are of interest.
  */
-class MockSimpleDenseChunk {
+template<typename Data_>
+class SimpleDenseChunk {
 public:
-    /**
-     * Type of the value stored in this chunk.
-     * Implementations can use any numeric type. 
-     */
-    typedef double value_type;
-
     /**
      * Temporary workspace for extracting data from the chunk.
      * One instance of this workspace will be re-used in multiple `extract()` calls for the same or even different chunks.

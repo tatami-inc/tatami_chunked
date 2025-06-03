@@ -36,6 +36,192 @@ struct CustomDenseChunkedMatrixOptions {
      * so that the same chunks are not repeatedly re-read when iterating over consecutive rows/columns of the matrix.
      */
     bool require_minimum_cache = true;
+
+    /**
+     * Whether to only extract and cache a subset of elements along the target dimension when an oracle is available.
+     * This involves more overhead to determine which elements are needed but may improve access speed for chunking strategies that support partial extraction.
+     */
+    bool cache_subset = false;
+};
+
+/**
+ * @brief Workspace for extracting data from a `CustomDenseChunkedMatrixManager`.
+ * @tparam Value_ Numeric type for the data values in the `CustomDenseChunkedMatrix`.
+ * @tparam Index_ Integer type for the row/column indices of the `CustomDenseChunkedMatrix`.
+ */
+template<typename Value_, typename Index_>
+class CustomDenseChunkedMatrixWorkspace {
+public:
+    /**
+     * @cond
+     */
+    CustomDenseChunkedMatrixWorkspace() = default;
+    CustomDenseChunkedMatrixWorkspace(const CustomDenseChunkedMatrixWorkspace&) = default;
+    CustomDenseChunkedMatrixWorkspace(CustomDenseChunkedMatrixWorkspace&&) = default;
+    CustomDenseChunkedMatrixWorkspace& operator=(const CustomDenseChunkedMatrixWorkspace&) = default;
+    CustomDenseChunkedMatrixWorkspace& operator=(CustomDenseChunkedMatrixWorkspace&&) = default;
+    virtual ~CustomDenseChunkedMatrixWorkspace() = default;
+    /**
+     * @endcond
+     */
+
+    /**
+     * @param chunk_row Row of chunk grid containing the chunk of interest.
+     * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
+     * @param chunk_row Column of chunk grid containing the chunk of interest.
+     * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
+     * @param row Whether to extract rows from the chunk, i.e., the rows are the target dimension.
+     * @param non_target_start Index of the start of the continguous block of the non-target dimension to be extracted.
+     * If `row = true`, this is the first column, otherwise it is the first row.
+     * @param non_target_length Length of the contiguous block of the non-target dimension to be extracted.
+     * If `row = true`, this is the number of columns, otherwise it is the number of rows.
+     * This is guaranteed to be positive.
+     * @param[out] output Pointer to an output array of length no less than `stride * P`,
+     * where `P` is the number of rows (if `row = true`) or columns (otherwise) in this chunk.
+     * @param stride Distance between corresponding values from adjacent elements of the target dimension when they are being stored in `output`.
+     * This is guaranteed to be greater than or equal to `non_target_length`.
+     *
+     * Given a chunk of interest, this method extracts a contiguous block of rows/columns.
+     * If `row = true`, we consider a block of rows `[target_start, target_start + target_length) * and a block of columns `[non_target_start, non_target_start + non_target_length)`;
+     * conversely, if `row = false`, we would consider a block of target columns and a block of non-target rows.
+     * For a target dimension index `target_start + p` and non-target dimension index `non_target_start + q`, the value from the chunk should be stored in `output[p * stride + q]`.
+     * The `stride` option allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomDenseChunkedMatrix`.
+     */
+    virtual void extract(
+        Index_ chunk_row,
+        Index_ chunk_column,
+        bool row,
+        Index_ target_start,
+        Index_ target_length,
+        Index_ non_target_start,
+        Index_ non_target_length,
+        Value_* output,
+        Index_ stride
+    ) = 0;
+
+    /**
+     * @param chunk_row Row of chunk grid containing the chunk of interest.
+     * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
+     * @param chunk_row Column of chunk grid containing the chunk of interest.
+     * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
+     * @param row Whether to extract rows from the chunk, i.e., the rows are the target dimension.
+     * @param non_target_indices Indexed subset of the non-target dimension to be extracted.
+     * If `row = true`, these are column indices, otherwise these are row indices.
+     * This is guaranteed to be non-empty with unique and sorted indices.
+     * @param[out] output Pointer to an output array of length no less than `stride * P`,
+     * where `P` is the number of rows (if `row = true`) or columns (otherwise) in this chunk.
+     * @param stride Distance between corresponding values from consecutive target dimension elements when stored in `output`.
+     * This is guaranteed to be greater than or equal to `non_target_indices.size()`.
+     *
+     * Given a chunk of interest, this method extracts a contiguous block along the target dimension and an indexed subset along the non-target dimension.
+     * If `row = true`, we consider a block of rows `[target_start, target_start + target_length` and a subset of columns `non_target_indices`;
+     * conversely, if `row = false`, we would extract data for all columns and a subset of rows.
+     * For a target dimension index `target_start + p` and non-target dimension index `non_target_indices[q]`, the value from the chunk should be stored in `output[p * stride + q]`.
+     * The `stride` option allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomDenseChunkedMatrix`.
+     */
+    virtual void extract(
+        Index_ chunk_row,
+        Index_ chunk_column,
+        bool row,
+        Index_ target_start,
+        Index_ target_length,
+        const std::vector<Index_>& non_target_indices,
+        Value_* output,
+        Index_ stride
+    ) = 0;
+
+    /**
+     * @param chunk_row Row of chunk grid containing the chunk of interest.
+     * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
+     * @param chunk_row Column of chunk grid containing the chunk of interest.
+     * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
+     * @param row Whether to extract rows from the chunk, i.e., the rows are the target dimension.
+     * @param target_indices Indices of the elements of the target dimension to be extracted.
+     * If `row = true`, these are row indices, otherwise these are column indices.
+     * @param non_target_start Index of the start of the contiguous block of the non-target dimension to be extracted.
+     * If `row = true`, this is the first column, otherwise it is the first row.
+     * @param non_target_length Length of the contiguous block of the non-target dimension to be extracted.
+     * If `row = true`, this is the number of columns, otherwise it is the number of rows.
+     * This is guaranteed to be positive.
+     * @param[out] output Pointer to an output array of length no less than `stride * target_length + non_target_length`.
+     * @param stride Distance between corresponding values from consecutive target dimension elements when stored in `output`.
+     * This is guaranteed to be greater than or equal to `non_target_length`.
+     *
+     * Given a chunk of interest, this method extracts an indexed subset along the target dimension and a contiguous block along the non-target dimension.
+     * If `row = true`, we consider a subset of rows `target_indices` and a block of columns `[non_target_start, non_target_start + non_target_length)`;
+     * conversely, if `row = false`, we would extract a block of columns as the target and the block of rows as the secondary.
+     * For a target dimension index `target_indices[p]` and non-target dimension index `non_target_start + q`, the value from the chunk should be stored in `output[p * stride + q]`.
+     * This layout allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedDenseMatrix`.
+     */
+    virtual void extract(
+        Index_ chunk_row,
+        Index_ chunk_column,
+        bool row,
+        const std::vector<Index_>& target_indices,
+        Index_ non_target_start,
+        Index_ non_target_length,
+        Value_* output,
+        Index_ stride
+    ) = 0;
+
+    /**
+     * @param chunk_row Row of chunk grid containing the chunk of interest.
+     * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
+     * @param chunk_row Column of chunk grid containing the chunk of interest.
+     * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
+     * @param row Whether to extract rows from the chunk, i.e., the rows are the target dimension.
+     * @param target_indices Indices of the elements on the target dimension to be extracted.
+     * If `row = true`, these are row indices, otherwise these are column indices.
+     * This is guaranteed to be non-empty with unique and sorted indices.
+     * @param non_target_indices Indices of the elements on the non-target dimension to be extracted.
+     * If `row = true`, these are column indices, otherwise these are row indices.
+     * This is guaranteed to be non-empty with unique and sorted indices.
+     * @param[out] output Pointer to an output array of length no less than `stride * (target_indices.back() + 1)`.
+     * @param stride Distance between corresponding values from consecutive target dimension elements when stored in `output`.
+     * This is guaranteed to be greater than or equal to `non_target_indices.size()`.
+     *
+     * Given a chunk of interest, this method extracts data for an indexed subset of rows/columns.
+     * If `row = true`, we would extract a subset of rows in `target_indices` and a subset columns in `non_target_indices`.
+     * conversely, if `row = false`, we would consider a subset of target columns and a subset of non-target rows.
+     * For a target dimension index `target_indices[p]` and non-target dimension index `non_target_indices[q]`, the value from the chunk should be stored in `output[p * stride + q]`.
+     * This layout allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedDenseMatrix`.
+     */
+    virtual void extract(
+        Index_ chunk_row,
+        Index_ chunk_column,
+        bool row,
+        const std::vector<Index_>& target_indices,
+        const std::vector<Index_>& non_target_indices,
+        Value_* output,
+        Index_ stride
+    ) = 0;
+};
+
+/**
+ * @brief Manager of chunks for a `CustomDenseChunkedMatrix`.
+ * @tparam Value_ Numeric type for the data values in the `CustomDenseChunkedMatrix`.
+ * @tparam Index_ Integer type for the row/column indices of the `CustomDenseChunkedMatrix`.
+ */
+template<typename Value_, typename Index_>
+class CustomDenseChunkedMatrixManager {
+public:
+    /**
+     * @cond
+     */
+    CustomDenseChunkedMatrixManager() = default;
+    CustomDenseChunkedMatrixManager(const CustomDenseChunkedMatrixManager&) = default;
+    CustomDenseChunkedMatrixManager(CustomDenseChunkedMatrixManager&&) = default;
+    CustomDenseChunkedMatrixManager& operator=(const CustomDenseChunkedMatrixManager&) = default;
+    CustomDenseChunkedMatrixManager& operator=(CustomDenseChunkedMatrixManager&&) = default;
+    virtual ~CustomDenseChunkedMatrixManager() = default;
+    /**
+     * @endcond
+     */
+
+    /**
+     * @return A `CustomDenseChunkedMatrixWorkspace` instance to unpack each chunk of interest.
+     */
+    virtual std::unique_ptr<CustomDenseChunkedMatrixWorkspace> new_workspace() const = 0;
 };
 
 /**
