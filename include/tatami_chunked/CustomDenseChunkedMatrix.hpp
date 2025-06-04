@@ -66,9 +66,9 @@ public:
      */
 
     /**
-     * @param chunk_row Row of chunk grid containing the chunk of interest.
+     * @param chunk_row Row of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
-     * @param chunk_row Column of chunk grid containing the chunk of interest.
+     * @param chunk_row Column of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
      * @param row Whether to extract rows from the chunk, i.e., the rows are the target dimension.
      * @param non_target_start Index of the start of the continguous block of the non-target dimension to be extracted.
@@ -84,7 +84,7 @@ public:
      * Given a chunk of interest, this method extracts a contiguous block of rows/columns.
      * If `row = true`, we consider a block of rows `[target_start, target_start + target_length) * and a block of columns `[non_target_start, non_target_start + non_target_length)`;
      * conversely, if `row = false`, we would consider a block of target columns and a block of non-target rows.
-     * For a target dimension index `target_start + p` and non-target dimension index `non_target_start + q`, the value from the chunk should be stored in `output[p * stride + q]`.
+     * For a target dimension index `p` and non-target dimension index `non_target_start + q`, the value from the chunk should be stored in `output[p * stride + q]`.
      * The `stride` option allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomDenseChunkedMatrix`.
      */
     virtual void extract(
@@ -100,9 +100,9 @@ public:
     ) = 0;
 
     /**
-     * @param chunk_row Row of chunk grid containing the chunk of interest.
+     * @param chunk_row Row of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
-     * @param chunk_row Column of chunk grid containing the chunk of interest.
+     * @param chunk_row Column of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
      * @param row Whether to extract rows from the chunk, i.e., the rows are the target dimension.
      * @param non_target_indices Indexed subset of the non-target dimension to be extracted.
@@ -114,9 +114,9 @@ public:
      * This is guaranteed to be greater than or equal to `non_target_indices.size()`.
      *
      * Given a chunk of interest, this method extracts a contiguous block along the target dimension and an indexed subset along the non-target dimension.
-     * If `row = true`, we consider a block of rows `[target_start, target_start + target_length` and a subset of columns `non_target_indices`;
+     * If `row = true`, we consider a block of rows `[target_start, target_start + target_length)` and a subset of columns `non_target_indices`;
      * conversely, if `row = false`, we would extract data for all columns and a subset of rows.
-     * For a target dimension index `target_start + p` and non-target dimension index `non_target_indices[q]`, the value from the chunk should be stored in `output[p * stride + q]`.
+     * For a target dimension index `p` and non-target dimension index `non_target_indices[q]`, the value from the chunk should be stored in `output[p * stride + q]`.
      * The `stride` option allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomDenseChunkedMatrix`.
      */
     virtual void extract(
@@ -131,9 +131,9 @@ public:
     ) = 0;
 
     /**
-     * @param chunk_row Row of chunk grid containing the chunk of interest.
+     * @param chunk_row Row of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
-     * @param chunk_row Column of chunk grid containing the chunk of interest.
+     * @param chunk_row Column of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
      * @param row Whether to extract rows from the chunk, i.e., the rows are the target dimension.
      * @param target_indices Indices of the elements of the target dimension to be extracted.
@@ -150,7 +150,7 @@ public:
      * Given a chunk of interest, this method extracts an indexed subset along the target dimension and a contiguous block along the non-target dimension.
      * If `row = true`, we consider a subset of rows `target_indices` and a block of columns `[non_target_start, non_target_start + non_target_length)`;
      * conversely, if `row = false`, we would extract a block of columns as the target and the block of rows as the secondary.
-     * For a target dimension index `target_indices[p]` and non-target dimension index `non_target_start + q`, the value from the chunk should be stored in `output[p * stride + q]`.
+     * For a target dimension index `p` and non-target dimension index `non_target_start + q`, the value from the chunk should be stored in `output[p * stride + q]`.
      * This layout allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedDenseMatrix`.
      */
     virtual void extract(
@@ -165,9 +165,9 @@ public:
     ) = 0;
 
     /**
-     * @param chunk_row Row of chunk grid containing the chunk of interest.
+     * @param chunk_row Row of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
-     * @param chunk_row Column of chunk grid containing the chunk of interest.
+     * @param chunk_row Column of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
      * @param row Whether to extract rows from the chunk, i.e., the rows are the target dimension.
      * @param target_indices Indices of the elements on the target dimension to be extracted.
@@ -183,7 +183,7 @@ public:
      * Given a chunk of interest, this method extracts data for an indexed subset of rows/columns.
      * If `row = true`, we would extract a subset of rows in `target_indices` and a subset columns in `non_target_indices`.
      * conversely, if `row = false`, we would consider a subset of target columns and a subset of non-target rows.
-     * For a target dimension index `target_indices[p]` and non-target dimension index `non_target_indices[q]`, the value from the chunk should be stored in `output[p * stride + q]`.
+     * For a target dimension index `p` and non-target dimension index `non_target_indices[q]`, the value from the chunk should be stored in `output[p * stride + q]`.
      * This layout allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedDenseMatrix`.
      */
     virtual void extract(
@@ -195,6 +195,8 @@ public:
         Value_* output,
         Index_ stride
     ) = 0;
+
+    virtual bool prefer_rows() const = 0;
 };
 
 /**
@@ -453,7 +455,7 @@ private:
  *
  * @tparam Value_ Numeric type for the matrix value.
  * @tparam Index_ Integer type for the row/column indices.
- * @tparam Chunk_ Class of the chunk, implementing either the `MockSimpleDenseChunk` or `MockSubsetDenseChunk` interfaces.
+ * @tparam Manager_ Class that implements the `CustomDenseChunkedManager` interface.
  *
  * Implements a `Matrix` subclass where data is contained in dense rectangular chunks.
  * These chunks are typically compressed in some manner to reduce memory usage compared to, e.g., a `tatami::DenseMatrix`.
@@ -462,7 +464,7 @@ private:
  * this partitions the matrix according to a regular grid where each grid entry is a single chunk of the same size.
  * The exception is for chunks at the non-zero boundaries of the matrix dimensions, which may be truncated.
  */
-template<typename Value_, typename Index_, typename Chunk_>
+template<typename Value_, typename Index_, typename ChunkValue_, class Manager_ = CustomDenseChunkedMatrixManager<ChunkValue_, Index_> >
 class CustomDenseChunkedMatrix : public tatami::Matrix<Value_, Index_> {
 public:
     /**
@@ -470,20 +472,20 @@ public:
      * @param mat_ncol Number of columns in the matrix.
      * @param chunk_nrow Number of rows in each chunk.
      * @param chunk_ncol Number of columns in each chunk.
-     * @param chunks Vector containing a two-dimensional array of chunks that cover the entire matrix.
-     * This should have length equal to the product of the number of chunks along the rows and columns of the matrix, i.e., `ceil(mat_nrow / chunk_nrow) * ceil(mat_ncol / chunk_ncol)`.
-     * @param row_major Whether `chunks` is in row-major format.
+     * @param manager Pointer to a `CustomDenseChunkedMatrixManager` instance that manages the chunks for this matrix.
+     * In all calls to `CustomDenseChunkedMatrixManager::extract()`, each `chunk_row` will be less than `ceil(mat_nrow / chunk_nrow)`,
+     * and each `chunk_column` will be less than `ceil(mat_ncol / chunk_ncol)`.
      * @param opt Further options for chunked extraction.
      */
-    CustomDenseChunkedMatrix(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector<Chunk_> chunks, bool row_major, const CustomDenseChunkedMatrixOptions& opt) : 
-        my_coordinator(ChunkDimensionStats<Index_>(mat_nrow, chunk_nrow), ChunkDimensionStats<Index_>(mat_ncol, chunk_ncol), std::move(chunks), row_major),
-        my_cache_size_in_elements(opt.maximum_cache_size / sizeof(typename Chunk_::value_type)),
+    CustomDenseChunkedMatrix(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::shared_ptr<Manager_> manager, const CustomDenseChunkedMatrixOptions& opt) : 
+        my_coordinator(ChunkDimensionStats<Index_>(mat_nrow, chunk_nrow), ChunkDimensionStats<Index_>(mat_ncol, chunk_ncol), std::move(manager), row_major),
+        my_cache_size_in_elements(opt.maximum_cache_size / sizeof(ChunkValue_)),
         my_require_minimum_cache(opt.require_minimum_cache)
     {}
 
 private:
-    CustomChunkedMatrix_internal::ChunkCoordinator<Index_, false, Chunk_> my_coordinator;
-    size_t my_cache_size_in_elements;
+    std::shared_ptr<Manager_> my_manager;
+    std::size_t my_cache_size_in_elements;
     bool my_require_minimum_cache;
 
 public:
@@ -496,7 +498,7 @@ public:
     }
 
     bool prefer_rows() const { 
-        return my_coordinator.prefer_rows_internal();
+        return my_coordinator.prefer_rows();
     }
 
     bool uses_oracle(bool) const { 
@@ -504,7 +506,7 @@ public:
     }
 
     double prefer_rows_proportion() const { 
-        return static_cast<double>(my_coordinator.prefer_rows_internal());
+        return static_cast<double>(my_coordinator.prefer_rows());
     }
 
     bool is_sparse() const {
