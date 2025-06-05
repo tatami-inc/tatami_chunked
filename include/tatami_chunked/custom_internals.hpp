@@ -30,7 +30,7 @@ public:
             my_value_pool.resize(total_size);
             my_values.reserve(target_chunkdim);
             auto vptr = my_value_pool.data();
-            for (Inedx_ p = 0; p < target_chunkdim; ++p, vptr += non_target_chunkdim) {
+            for (Index_ p = 0; p < target_chunkdim; ++p, vptr += non_target_chunkdim) {
                 my_values.push_back(vptr);
             }
         }
@@ -156,14 +156,14 @@ private:
         ExtractFunction_ extract)
     const {
         auto non_target_chunkdim = get_non_target_chunkdim(row);
-        Index_ start_chunk_index = non_target_block_start / non_target_chunkdim;
-        Index_ non_target_start_pos = start_chunk_index * non_target_chunkdim;
+        Index_ non_target_start_chunk_index = non_target_block_start / non_target_chunkdim;
+        Index_ non_target_start_pos = non_target_start_chunk_index * non_target_chunkdim;
         Index_ non_target_block_end = non_target_block_start + non_target_block_length;
-        Index_ end_chunk_index = non_target_block_end / non_target_chunkdim + (non_target_block_end % non_target_chunkdim > 0); // i.e., integer ceiling.
+        Index_ non_target_end_chunk_index = non_target_block_end / non_target_chunkdim + (non_target_block_end % non_target_chunkdim > 0); // i.e., integer ceiling.
 
-        for (Index_ c = start_chunk_index; c < end_chunk_index; ++c) {
-            Index_ from = (c == start_chunk_index ? non_target_block_start - non_target_start_pos : 0);
-            Index_ to = (c + 1 == end_chunk_index ? non_target_block_end - non_target_start_pos : non_target_chunkdim);
+        for (Index_ non_target_chunk_id = non_target_start_chunk_index; non_target_chunk_id < non_target_end_chunk_index; ++non_target_chunk_id) {
+            Index_ from = (non_target_chunk_id == non_target_start_chunk_index ? non_target_block_start - non_target_start_pos : 0);
+            Index_ to = (non_target_chunk_id + 1 == non_target_end_chunk_index ? non_target_block_end - non_target_start_pos : non_target_chunkdim);
             Index_ len = to - from;
 
             auto row_id = (row ? target_chunk_id : non_target_chunk_id);
@@ -172,9 +172,9 @@ private:
             // No need to protect against a zero length, as it should be impossible
             // here (otherwise, start_chunk_index == end_chunk_index and we'd never iterate).
             if constexpr(sparse_) {
-                extract(chunk_row, chunk_col, from, len, non_target_start_pos);
+                extract(row_id, col_id, from, len, non_target_start_pos);
             } else {
-                extract(chunk_row, chunk_col, from, len);
+                extract(row_id, col_id, from, len);
             }
 
             // yes, this is deliberate; '+ to' means that either we add 'non_target_chunkdim' or set it to 'non_target_block_end', the latter of which avoids overflow.
@@ -190,19 +190,16 @@ private:
         std::vector<Index_>& chunk_indices_buffer, 
         ExtractFunction_ extract)
     const {
-        if (non_target_indices.empty()) {
-            return;
-        }
-
         auto non_target_chunkdim = get_non_target_chunkdim(row);
-        Index_ start_chunk_index = non_target_indices.front() / non_target_chunkdim; // 'non_target_indices' is guaranteed to be non-empty at this point.
-        Index_ non_target_start_pos = start_chunk_index * non_target_chunkdim;
-
         auto non_target_dim = get_non_target_dim(row);
         auto iIt = non_target_indices.begin();
         auto iEnd = non_target_indices.end();
+
         while (iIt != iEnd) {
+            Index_ non_target_chunk_id = *iIt / non_target_chunkdim;
+            Index_ non_target_start_pos = non_target_chunk_id * non_target_chunkdim;
             Index_ non_target_end_pos = std::min(non_target_dim - non_target_start_pos, non_target_chunkdim) + non_target_start_pos; // this convoluted method avoids overflow.
+
             chunk_indices_buffer.clear();
             while (iIt != iEnd && *iIt < non_target_end_pos) {
                 chunk_indices_buffer.push_back(*iIt - non_target_start_pos);
@@ -218,8 +215,6 @@ private:
                     extract(row_id, col_id, chunk_indices_buffer);
                 }
             }
-
-            non_target_start_pos = non_target_end_pos;
         }
     }
 
@@ -229,7 +224,7 @@ private:
 public:
     // Extract a single element of the target dimension, using a contiguous
     // block on the non_target dimension. 
-    template<bool use_subset_, class ChunkWorkspace_>
+    template<class ChunkWorkspace_>
     std::pair<const Slab*, Index_> fetch_single(
         bool row,
         Index_ i,
@@ -264,7 +259,7 @@ public:
                         row_id,
                         column_id,
                         row,
-                        chunk_offset,
+                        target_chunk_offset,
                         static_cast<Index_>(1),
                         from,
                         len,
@@ -307,7 +302,7 @@ public:
                         len
                     );
 
-                    std::size_t tmp_offset = static_cast<std::size_t>(len) * static_cast<std::size_t>(chunk_offset); // cast to avoid overflow.
+                    std::size_t tmp_offset = static_cast<std::size_t>(len) * static_cast<std::size_t>(target_chunk_offset); // cast to avoid overflow.
                     std::copy_n(tmp_buffer_ptr + tmp_offset, len, final_slab_ptr);
                     final_slab_ptr += len;
                 }
@@ -319,7 +314,7 @@ public:
 
     // Extract a single element of the target dimension, using an indexed
     // subset on the non_target dimension.
-    template<bool use_subset_, class ChunkWorkspace_>
+    template<class ChunkWorkspace_>
     std::pair<const Slab*, Index_> fetch_single(
         bool row,
         Index_ i,
@@ -396,7 +391,7 @@ public:
                         nidx
                     );
 
-                    std::size_t tmp_offset = nidx * static_cast<size_t>(chunk_offset);
+                    std::size_t tmp_offset = nidx * static_cast<size_t>(target_chunk_offset);
                     std::copy_n(tmp_buffer_ptr + tmp_offset, nidx, final_slab_ptr);
                     final_slab_ptr += nidx;
                 }
@@ -446,6 +441,7 @@ private:
 
         } else {
             auto slab_ptr = slab.data;
+
             extract_non_target_block(
                 row,
                 target_chunk_id,
@@ -470,6 +466,7 @@ private:
     }
 
     // Extract a contiguous block of the target dimension, using an indexed subset on the non_target dimension.
+    template<class ChunkWorkspace_>
     void fetch_block(
         bool row,
         Index_ target_chunk_id, 
@@ -478,7 +475,7 @@ private:
         const std::vector<Index_>& non_target_indices, 
         std::vector<Index_>& chunk_indices_buffer,
         Slab& slab, 
-        ChunkWork& chunk_workspace)
+        ChunkWorkspace_& chunk_workspace)
     const {
         if constexpr(sparse_) {
             std::fill_n(slab.number, get_target_chunkdim(row), 0);
@@ -531,6 +528,7 @@ private:
 
 private:
     // Extract an indexed subset of the target dimension, using a contiguous block on the non_target dimension.
+    template<class ChunkWorkspace_>
     void fetch_index(
         bool row,
         Index_ target_chunk_id,
@@ -538,7 +536,7 @@ private:
         Index_ non_target_block_start, 
         Index_ non_target_block_length, 
         Slab& slab, 
-        ChunkWork& chunk_workspace)
+        ChunkWorkspace_& chunk_workspace)
     const {
         if constexpr(sparse_) {
             std::fill_n(slab.number, get_target_chunkdim(row), 0);
@@ -588,6 +586,7 @@ private:
     }
 
     // Extract an indexed subset of the target dimension, using an indexed subset on the non_target dimension.
+    template<class ChunkWorkspace_>
     void fetch_index(
         bool row,
         Index_ target_chunk_id,
@@ -595,7 +594,7 @@ private:
         const std::vector<Index_>& non_target_indices,
         std::vector<Index_>& chunk_indices_buffer,
         Slab& slab, 
-        ChunkWork& chunk_workspace)
+        ChunkWorkspace_& chunk_workspace)
     const {
         if constexpr(sparse_) {
             std::fill_n(slab.number, get_target_chunkdim(row), 0);
@@ -645,13 +644,13 @@ private:
 
 public:
     // Obtain the slab containing the 'i'-th element of the target dimension.
-    template<class Cache_, class Factory_>
+    template<class ChunkWorkspace_, class Cache_, class Factory_>
     std::pair<const Slab*, Index_> fetch_myopic(
         bool row,
         Index_ i, 
         Index_ block_start,
         Index_ block_length,
-        ChunkWork& chunk_workspace,
+        ChunkWorkspace_& chunk_workspace,
         Cache_& cache,
         Factory_& factory)
     const {
@@ -670,13 +669,13 @@ public:
         return std::make_pair(&out, target_chunk_offset);
     }
 
-    template<class Cache_, class Factory_>
+    template<class ChunkWorkspace_, class Cache_, class Factory_>
     std::pair<const Slab*, Index_> fetch_myopic(
         bool row,
         Index_ i, 
         const std::vector<Index_>& indices,
         std::vector<Index_>& tmp_indices,
-        ChunkWork& chunk_workspace,
+        ChunkWorkspace_& chunk_workspace,
         Cache_& cache,
         Factory_& factory)
     const {
@@ -684,7 +683,7 @@ public:
         Index_ target_chunk_id = i / target_chunkdim;
         Index_ target_chunk_offset = i % target_chunkdim;
         auto& out = cache.find(
-            chunk_id,
+            target_chunk_id,
             /* create = */ [&]() -> Slab {
                 return factory.create();
             },
@@ -696,12 +695,12 @@ public:
     }
 
 public:
-    template<class Cache_, class Factory_>
+    template<class ChunkWorkspace_, class Cache_, class Factory_>
     std::pair<const Slab*, Index_> fetch_oracular(
         bool row,
         Index_ block_start,
         Index_ block_length,
-        ChunkWork& chunk_workspace,
+        ChunkWorkspace_& chunk_workspace,
         Cache_& cache,
         Factory_& factory)
     const {
@@ -721,12 +720,12 @@ public:
         );
     }
 
-    template<class Cache_, class Factory_>
+    template<class ChunkWorkspace_, class Cache_, class Factory_>
     std::pair<const Slab*, Index_> fetch_oracular(
         bool row,
         const std::vector<Index_>& indices,
         std::vector<Index_>& chunk_indices_buffer,
-        ChunkWork& chunk_workspace,
+        ChunkWorkspace_& chunk_workspace,
         Cache_& cache,
         Factory_& factory)
     const {
@@ -747,12 +746,12 @@ public:
     }
 
 public:
-    template<class Cache_, class Factory_>
+    template<class ChunkWorkspace_, class Cache_, class Factory_>
     std::pair<const Slab*, Index_> fetch_oracular_subsetted(
         bool row,
         Index_ block_start,
         Index_ block_length,
-        ChunkWork& chunk_workspace,
+        ChunkWorkspace_& chunk_workspace,
         Cache_& cache,
         Factory_& factory)
     const {
@@ -771,7 +770,7 @@ public:
                     auto sub = std::get<2>(p);
                     switch (sub->selection) {
                         case OracularSubsettedSlabCacheSelectionType::FULL:
-                            fetch_block(row, 0, get_target_chunkdim(row, id), block_start, block_length, *ptr, chunk_workspace);
+                            fetch_block(row, id, 0, get_target_chunkdim(row, id), block_start, block_length, *ptr, chunk_workspace);
                             break;
                         case OracularSubsettedSlabCacheSelectionType::BLOCK:
                             fetch_block(row, id, sub->block_start, sub->block_length, block_start, block_length, *ptr, chunk_workspace);
@@ -785,12 +784,12 @@ public:
         );
     }
 
-    template<class Cache_, class Factory_>
+    template<class ChunkWorkspace_, class Cache_, class Factory_>
     std::pair<const Slab*, Index_> fetch_oracular_subsetted(
         bool row,
         const std::vector<Index_>& indices,
         std::vector<Index_>& chunk_indices_buffer,
-        ChunkWork& chunk_workspace,
+        ChunkWorkspace_& chunk_workspace,
         Cache_& cache,
         Factory_& factory)
     const {
@@ -809,7 +808,7 @@ public:
                     auto sub = std::get<2>(p);
                     switch (sub->selection) {
                         case OracularSubsettedSlabCacheSelectionType::FULL:
-                            fetch_block(row, 0, get_target_chunkdim(row, id), indices, chunk_indices_buffer, *ptr, chunk_workspace);
+                            fetch_block(row, id, 0, get_target_chunkdim(row, id), indices, chunk_indices_buffer, *ptr, chunk_workspace);
                             break;
                         case OracularSubsettedSlabCacheSelectionType::BLOCK:
                             fetch_block(row, id, sub->block_start, sub->block_length, indices, chunk_indices_buffer, *ptr, chunk_workspace);

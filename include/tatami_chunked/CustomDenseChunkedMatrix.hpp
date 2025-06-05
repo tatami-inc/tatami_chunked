@@ -66,9 +66,9 @@ public:
      */
 
     /**
-     * @param chunk_row Row of the chunk grid containing the chunk of interest.
+     * @param chunk_row_id Row of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
-     * @param chunk_row Column of the chunk grid containing the chunk of interest.
+     * @param chunk_row_id Column of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
      * @param row Whether to extract rows from the chunk, i.e., the rows are the target dimension.
      * @param non_target_start Index of the start of the continguous block of the non-target dimension to be extracted.
@@ -88,8 +88,8 @@ public:
      * The `stride` option allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomDenseChunkedMatrix`.
      */
     virtual void extract(
-        Index_ chunk_row,
-        Index_ chunk_column,
+        Index_ chunk_row_id,
+        Index_ chunk_column_id,
         bool row,
         Index_ target_start,
         Index_ target_length,
@@ -100,9 +100,9 @@ public:
     ) = 0;
 
     /**
-     * @param chunk_row Row of the chunk grid containing the chunk of interest.
+     * @param chunk_row_id Row of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
-     * @param chunk_row Column of the chunk grid containing the chunk of interest.
+     * @param chunk_row_id Column of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
      * @param row Whether to extract rows from the chunk, i.e., the rows are the target dimension.
      * @param non_target_indices Indexed subset of the non-target dimension to be extracted.
@@ -120,8 +120,8 @@ public:
      * The `stride` option allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomDenseChunkedMatrix`.
      */
     virtual void extract(
-        Index_ chunk_row,
-        Index_ chunk_column,
+        Index_ chunk_row_id,
+        Index_ chunk_column_id,
         bool row,
         Index_ target_start,
         Index_ target_length,
@@ -131,9 +131,9 @@ public:
     ) = 0;
 
     /**
-     * @param chunk_row Row of the chunk grid containing the chunk of interest.
+     * @param chunk_row_id Row of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
-     * @param chunk_row Column of the chunk grid containing the chunk of interest.
+     * @param chunk_row_id Column of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
      * @param row Whether to extract rows from the chunk, i.e., the rows are the target dimension.
      * @param target_indices Indices of the elements of the target dimension to be extracted.
@@ -149,13 +149,13 @@ public:
      *
      * Given a chunk of interest, this method extracts an indexed subset along the target dimension and a contiguous block along the non-target dimension.
      * If `row = true`, we consider a subset of rows `target_indices` and a block of columns `[non_target_start, non_target_start + non_target_length)`;
-     * conversely, if `row = false`, we would extract a block of columns as the target and the block of rows as the secondary.
+     * conversely, if `row = false`, we would extract a block of columns as the target and the block of rows as the non_target.
      * For a target dimension index `p` and non-target dimension index `non_target_start + q`, the value from the chunk should be stored in `output[p * stride + q]`.
      * This layout allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedDenseMatrix`.
      */
     virtual void extract(
-        Index_ chunk_row,
-        Index_ chunk_column,
+        Index_ chunk_row_id,
+        Index_ chunk_column_id,
         bool row,
         const std::vector<Index_>& target_indices,
         Index_ non_target_start,
@@ -165,9 +165,9 @@ public:
     ) = 0;
 
     /**
-     * @param chunk_row Row of the chunk grid containing the chunk of interest.
+     * @param chunk_row_id Row of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
-     * @param chunk_row Column of the chunk grid containing the chunk of interest.
+     * @param chunk_row_id Column of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
      * @param row Whether to extract rows from the chunk, i.e., the rows are the target dimension.
      * @param target_indices Indices of the elements on the target dimension to be extracted.
@@ -187,8 +187,8 @@ public:
      * This layout allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedDenseMatrix`.
      */
     virtual void extract(
-        Index_ chunk_row,
-        Index_ chunk_column,
+        Index_ chunk_row_id,
+        Index_ chunk_column_id,
         bool row,
         const std::vector<Index_>& target_indices,
         const std::vector<Index_>& non_target_indices,
@@ -202,7 +202,7 @@ public:
  * @tparam Value_ Numeric type for the data values in the `CustomDenseChunkedMatrix`.
  * @tparam Index_ Integer type for the row/column indices of the `CustomDenseChunkedMatrix`.
  */
-template<typename Value_, typename Index_>
+template<typename ChunkValue_, typename Index_>
 class CustomDenseChunkedMatrixManager {
 public:
     /**
@@ -221,9 +221,26 @@ public:
     /**
      * @return A `CustomDenseChunkedMatrixWorkspace` instance to unpack each chunk of interest.
      */
-    virtual std::unique_ptr<CustomDenseChunkedMatrixWorkspace> new_workspace() const = 0;
+    virtual std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > new_workspace() const = 0;
 
+    /**
+     * @return Whether extraction of rows is the preferred access pattern.
+     */
     virtual bool prefer_rows() const = 0;
+
+    /**
+     * @return Statistics for the rows, i.e., the number of rows in the matrix, the number of rows in each chunk, the number of chunks along all rows.
+     * 
+     * In all calls to `CustomDenseChunkedMatrixManager::extract()`, each `chunk_row_id` will be less than the `ChunkDimensionsStats::num_chunks` of the return value.
+     */
+    virtual const ChunkDimensionStats<Index_>& row_stats() const = 0;
+
+    /**
+     * @return Statistics for the columns, i.e., the number of columns in the matrix, the number of columns in each chunk, the number of chunks along all columns.
+     * 
+     * In all calls to `CustomDenseChunkedMatrixManager::extract()`, each `chunk_column_id` will be less than the `ChunkDimensionsStats::num_chunks` of the return value.
+     */
+    virtual const ChunkDimensionStats<Index_>& column_stats() const = 0;
 };
 
 /**
@@ -238,8 +255,8 @@ namespace CustomChunkedMatrix_internal {
 template<bool oracle_, typename Value_, typename Index_, typename ChunkValue_>
 class SoloDenseCore {
 private:
-    const ChunkCoordinator<false, ChunkValue_, Index_>& my_coordinator;
     std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > my_chunk_workspace;
+    const ChunkCoordinator<false, ChunkValue_, Index_>& my_coordinator;
 
     tatami::MaybeOracle<oracle_, Index_> my_oracle;
     typename std::conditional<oracle_, std::size_t, bool>::type my_counter = 0;
@@ -257,13 +274,16 @@ private:
 
 public:
     SoloDenseCore(
+        std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator, 
         [[maybe_unused]] const SlabCacheStats& slab_stats, // for consistency with the other base classes.
         tatami::MaybeOracle<oracle_, Index_> oracle,
-        Index_ secondary_length) :
+        Index_ non_target_length
+    ) :
+        my_chunk_workspace(std::move(chunk_workspace)),
         my_coordinator(coordinator),
         my_oracle(std::move(oracle)),
-        my_factory(secondary_length, 1),
+        my_factory(non_target_length, 1),
         my_tmp_solo(static_cast<std::size_t>(my_coordinator.get_chunk_nrow()) * static_cast<std::size_t>(my_coordinator.get_chunk_ncol())),
         my_final_solo(my_factory.create())
     {}
@@ -280,8 +300,8 @@ public:
 template<typename Value_, typename Index_, typename ChunkValue_>
 class MyopicDenseCore {
 private:
-    const ChunkCoordinator<false, ChunkValue_, Index_>& my_coordinator;
     std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > my_chunk_workspace;
+    const ChunkCoordinator<false, ChunkValue_, Index_>& my_coordinator;
 
     DenseSlabFactory<ChunkValue_> my_factory;
     typedef typename decltype(my_factory)::Slab Slab;
@@ -290,10 +310,13 @@ private:
 
 public:
     MyopicDenseCore(
+        std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator,
         const SlabCacheStats& slab_stats, 
         [[maybe_unused]] tatami::MaybeOracle<false, Index_> ora, // for consistency with the other base classes
-        [[maybe_unused]] Index_ secondary_length) :
+        [[maybe_unused]] Index_ non_target_length
+    ) :
+        my_chunk_workspace(std::move(chunk_workspace)),
         my_coordinator(coordinator),
         my_factory(slab_stats),
         my_cache(slab_stats.max_slabs_in_cache)
@@ -308,8 +331,8 @@ public:
 template<bool use_subset_, typename Value_, typename Index_, typename ChunkValue_>
 class OracularDenseCore {
 private:
-    const ChunkCoordinator<false, ChunkValue_, Index_>& my_coordinator;
     std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > my_chunk_workspace;
+    const ChunkCoordinator<false, ChunkValue_, Index_>& my_coordinator;
 
     DenseSlabFactory<ChunkValue_> my_factory;
     typedef typename decltype(my_factory)::Slab Slab;
@@ -318,10 +341,13 @@ private:
 
 public:
     OracularDenseCore(
+        std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator,
         const SlabCacheStats& slab_stats,
         tatami::MaybeOracle<true, Index_> oracle, 
-        [[maybe_unused]] Index_ secondary_length) :
+        [[maybe_unused]] Index_ non_target_length
+    ) :
+        my_chunk_workspace(std::move(chunk_workspace)),
         my_coordinator(coordinator), 
         my_factory(slab_stats),
         my_cache(std::move(oracle), slab_stats.max_slabs_in_cache)
@@ -351,9 +377,9 @@ using DenseCore = typename std::conditional<solo_,
  ***********************/
 
 template<class Slab_, typename Index_, typename Value_>
-const Value_* process_dense_slab(const std::pair<const Slab_*, Index_>& fetched, Value_* buffer, size_t secondary_length) {
-    auto ptr = fetched.first->data + static_cast<size_t>(fetched.second) * secondary_length; // cast to size_t to avoid overflow.
-    std::copy_n(ptr, secondary_length, buffer);
+const Value_* process_dense_slab(const std::pair<const Slab_*, Index_>& fetched, Value_* buffer, size_t non_target_length) {
+    auto ptr = fetched.first->data + static_cast<size_t>(fetched.second) * non_target_length; // cast to size_t to avoid overflow.
+    std::copy_n(ptr, non_target_length, buffer);
     return buffer;
 }
 
@@ -361,28 +387,31 @@ template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename I
 class DenseFull : public tatami::DenseExtractor<oracle_, Value_, Index_> {
 public:
     DenseFull(
+        std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator, 
         const SlabCacheStats& slab_stats,
         bool row,
-        tatami::MaybeOracle<oracle_, Index_> oracle) :
+        tatami::MaybeOracle<oracle_, Index_> oracle
+    ) :
         my_row(row),
-        my_secondary_dim(coordinator.get_secondary_dim(row)),
+        my_non_target_dim(coordinator.get_non_target_dim(row)),
         my_core(
+            std::move(chunk_workspace),
             coordinator,
             slab_stats,
             std::move(oracle),
-            my_secondary_dim
+            my_non_target_dim
         )
     {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto fetched = my_core.fetch_raw(my_row, i, 0, my_secondary_dim);
-        return process_dense_slab(fetched, buffer, my_secondary_dim);
+        auto fetched = my_core.fetch_raw(my_row, i, 0, my_non_target_dim);
+        return process_dense_slab(fetched, buffer, my_non_target_dim);
     }
 
 private:
     bool my_row;
-    Index_ my_secondary_dim;
+    Index_ my_non_target_dim;
     DenseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_> my_core;
 };
 
@@ -390,16 +419,19 @@ template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename I
 class DenseBlock : public tatami::DenseExtractor<oracle_, Value_, Index_> {
 public:
     DenseBlock(
-        const ChunkCoordinator<Index_, false, ChunkValue_>& coordinator, 
+        std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
+        const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator, 
         const SlabCacheStats& slab_stats,
         bool row,
         tatami::MaybeOracle<oracle_, Index_> ora, 
         Index_ block_start, 
-        Index_ block_length) :
+        Index_ block_length
+    ) :
         my_row(row),
         my_block_start(block_start),
         my_block_length(block_length),
         my_core(
+            std::move(chunk_workspace),
             coordinator, 
             slab_stats,
             std::move(ora),
@@ -422,6 +454,7 @@ template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename I
 class DenseIndex : public tatami::DenseExtractor<oracle_, Value_, Index_> {
 public:
     DenseIndex(
+        std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator, 
         const SlabCacheStats& slab_stats,
         bool row,
@@ -430,6 +463,7 @@ public:
         my_row(row),
         my_indices_ptr(std::move(indices_ptr)),
         my_core(
+            std::move(chunk_workspace),
             coordinator, 
             slab_stats,
             std::move(oracle),
@@ -472,26 +506,20 @@ template<typename Value_, typename Index_, typename ChunkValue_, class Manager_ 
 class CustomDenseChunkedMatrix : public tatami::Matrix<Value_, Index_> {
 public:
     /**
-     * @param mat_nrow Number of rows in the matrix.
-     * @param mat_ncol Number of columns in the matrix.
-     * @param chunk_nrow Number of rows in each chunk.
-     * @param chunk_ncol Number of columns in each chunk.
      * @param manager Pointer to a `CustomDenseChunkedMatrixManager` instance that manages the chunks for this matrix.
-     * In all calls to `CustomDenseChunkedMatrixManager::extract()`, each `chunk_row` will be less than `ceil(mat_nrow / chunk_nrow)`,
-     * and each `chunk_column` will be less than `ceil(mat_ncol / chunk_ncol)`.
      * @param opt Further options for chunked extraction.
      */
-    CustomDenseChunkedMatrix(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::shared_ptr<Manager_> manager, const CustomDenseChunkedMatrixOptions& opt) : 
-        my_coordinator(ChunkDimensionStats<Index_>(mat_nrow, chunk_nrow), ChunkDimensionStats<Index_>(mat_ncol, chunk_ncol)),
+    CustomDenseChunkedMatrix(std::shared_ptr<Manager_> manager, const CustomDenseChunkedMatrixOptions& opt) : 
         my_manager(std::move(manager)),
+        my_coordinator(my_manager->row_stats(), my_manager->column_stats()),
         my_cache_size_in_elements(opt.maximum_cache_size / sizeof(ChunkValue_)),
         my_require_minimum_cache(opt.require_minimum_cache),
         my_cache_subset(opt.cache_subset)
     {}
 
 private:
-    ChunkCoordinator<false, ChunkValue_, Index_> my_coordinator;
     std::shared_ptr<Manager_> my_manager;
+    CustomChunkedMatrix_internal::ChunkCoordinator<false, ChunkValue_, Index_> my_coordinator;
     std::size_t my_cache_size_in_elements;
     bool my_require_minimum_cache;
     bool my_cache_subset;
@@ -534,34 +562,34 @@ public:
      ********************/
 private:
     template<bool oracle_, template<bool, bool, bool, typename, typename, typename> class Extractor_, typename ... Args_>
-    std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > raw_dense_internal(bool row, Index_ secondary_length, Args_&& ... args) const {
+    std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > raw_dense_internal(bool row, Index_ non_target_length, Args_&& ... args) const {
         auto stats = [&]{
             if (row) {
                 // Remember, the num_chunks_per_column is the number of slabs needed to divide up all the *rows* of the matrix.
-                return SlabCacheStats(my_coordinator.get_chunk_nrow(), secondary_length, my_coordinator.get_num_chunks_per_column(), my_cache_size_in_elements, my_require_minimum_cache);
+                return SlabCacheStats(my_coordinator.get_chunk_nrow(), non_target_length, my_coordinator.get_num_chunks_per_column(), my_cache_size_in_elements, my_require_minimum_cache);
             } else {
                 // Remember, the num_chunks_per_row is the number of slabs needed to divide up all the *columns* of the matrix.
-                return SlabCacheStats(my_coordinator.get_chunk_ncol(), secondary_length, my_coordinator.get_num_chunks_per_row(), my_cache_size_in_elements, my_require_minimum_cache);
+                return SlabCacheStats(my_coordinator.get_chunk_ncol(), non_target_length, my_coordinator.get_num_chunks_per_row(), my_cache_size_in_elements, my_require_minimum_cache);
             }
         }(); 
 
-        if (stats.max_slabs_in_cache > 0) {
-            return std::make_unique<Extractor_<true, oracle_, false, Value_, Index_, Chunk_> >(my_coordinator, stats, row, std::forward<Args_>(args)...);
+        if (stats.max_slabs_in_cache == 0) {
+            return std::make_unique<Extractor_<true, oracle_, false, Value_, Index_, ChunkValue_> >(my_manager->new_workspace(), my_coordinator, stats, row, std::forward<Args_>(args)...);
         } else if constexpr(oracle_) {
             if (my_cache_subset) {
-                return std::make_unique<Extractor_<false, true, true, Value_, Index_, Chunk_> >(my_coordinator, stats, row, std::forward<Args_>(args)...);
+                return std::make_unique<Extractor_<false, true, true, Value_, Index_, ChunkValue_> >(my_manager->new_workspace(), my_coordinator, stats, row, std::forward<Args_>(args)...);
             } else {
-                return std::make_unique<Extractor_<false, true, false, Value_, Index_, Chunk_> >(my_coordinator, stats, row, std::forward<Args_>(args)...);
+                return std::make_unique<Extractor_<false, true, false, Value_, Index_, ChunkValue_> >(my_manager->new_workspace(), my_coordinator, stats, row, std::forward<Args_>(args)...);
             }
         } else {
-            return std::make_unique<Extractor_<false, false, false, Value_, Index_, Chunk_> >(my_coordinator, stats, row, std::forward<Args_>(args)...);
+            return std::make_unique<Extractor_<false, false, false, Value_, Index_, ChunkValue_> >(my_manager->new_workspace(), my_coordinator, stats, row, std::forward<Args_>(args)...);
         }
     }
 
     template<bool oracle_>
     std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > dense_internal(bool row, tatami::MaybeOracle<oracle_, Index_> oracle, const tatami::Options&) const {
-        auto secondary = (row ? my_coordinator.get_ncol() : my_coordinator.get_nrow());
-        return raw_dense_internal<oracle_, CustomChunkedMatrix_internal::DenseFull>(row, secondary, std::move(oracle));
+        auto non_target = (row ? my_coordinator.get_ncol() : my_coordinator.get_nrow());
+        return raw_dense_internal<oracle_, CustomChunkedMatrix_internal::DenseFull>(row, non_target, std::move(oracle));
     }
 
     template<bool oracle_>
@@ -635,7 +663,7 @@ public:
      *********************/
 public:
     std::unique_ptr<tatami::MyopicSparseExtractor<Value_, Index_> > sparse(bool row, const tatami::Options& opt) const {
-        return std::make_unique<tatami::FullSparsifiedWrapper<false, Value_, Index_> >(dense(row, opt), my_coordinator.get_secondary_dim(row), opt);
+        return std::make_unique<tatami::FullSparsifiedWrapper<false, Value_, Index_> >(dense(row, opt), my_coordinator.get_non_target_dim(row), opt);
     }
 
     std::unique_ptr<tatami::MyopicSparseExtractor<Value_, Index_> > sparse(bool row, Index_ block_start, Index_ block_length, const tatami::Options& opt) const {
@@ -656,7 +684,7 @@ public:
         std::shared_ptr<const tatami::Oracle<Index_> > oracle, 
         const tatami::Options& opt)
     const {
-        return std::make_unique<tatami::FullSparsifiedWrapper<true, Value_, Index_> >(dense(row, std::move(oracle), opt), my_coordinator.get_secondary_dim(row), opt);
+        return std::make_unique<tatami::FullSparsifiedWrapper<true, Value_, Index_> >(dense(row, std::move(oracle), opt), my_coordinator.get_non_target_dim(row), opt);
     }
 
     std::unique_ptr<tatami::OracularSparseExtractor<Value_, Index_> > sparse(

@@ -3,13 +3,18 @@
 #include "tatami_test/tatami_test.hpp"
 
 #include "tatami_chunked/CustomDenseChunkedMatrix.hpp"
-#include "tatami_chunked/mock_dense_chunk.hpp"
 
-class MockDenseChunkManager;
+typedef double ChunkValue_;
+typedef int Index_;
 
-class MockDenseChunkWorkspace final : public tatami_chunked::CustomDenseChunkedMatrixWorkspace<double, int> {
+struct MockDenseChunkData { 
+    tatami_chunked::ChunkDimensionStats<Index_> row_stats, col_stats;
+    std::vector<std::vector<ChunkValue_> > chunks;
+};
+
+class MockDenseChunkWorkspace final : public tatami_chunked::CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> {
 public:
-    MockDenseChunkWorkspace(const MockDenseChunkManager& parent) : my_parent(parent) {}
+    MockDenseChunkWorkspace(const MockDenseChunkData& data) : my_data(data) {}
 
     void extract(
         Index_ chunk_row,
@@ -19,21 +24,21 @@ public:
         Index_ target_length,
         Index_ non_target_start,
         Index_ non_target_length,
-        Value_* output,
+        ChunkValue_* output,
         Index_ stride
     ) {
-        const auto& curchunk = my_parent.my_chunks[chunk_row * my_parent.my_num_chunks_per_row + chunk_column];
+        const auto& curchunk = my_data.chunks[chunk_row * my_data.col_stats.num_chunks + chunk_column];
         if (row) {
             for (Index_ tidx = target_start, tend = target_start + target_length; tidx < tend; ++tidx) {
-                std::size_t in_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(my_parent.my_chunk_nrow) + static_cast<std::size_t>(non_target_start);
+                std::size_t in_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(non_target_start);
                 std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride);
                 std::copy_n(curchunk.data() + in_offset, non_target_length, output + out_offset);
             }
         } else {
             // Could be a bit more efficient by using tatami::transpose(), but whatever.
-            for (Index_ tidx = target_start, tend = target_start + target_length; tidx < tend, ++tidx) {
+            for (Index_ tidx = target_start, tend = target_start + target_length; tidx < tend; ++tidx) {
                 for (Index_ nidx = 0; nidx < non_target_length; ++nidx) {
-                    std::size_t in_offset = static_cast<std::size_t>(nidx + non_target_start) * static_cast<std::size_t>(my_parent.my_chunk_nrow) + static_cast<std::size_t>(tidx);
+                    std::size_t in_offset = static_cast<std::size_t>(nidx + non_target_start) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(tidx);
                     std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(nidx);
                     output[out_offset] = curchunk[in_offset];
                 }
@@ -48,23 +53,23 @@ public:
         Index_ target_start,
         Index_ target_length,
         const std::vector<Index_>& non_target_indices,
-        Value_* output,
+        ChunkValue_* output,
         Index_ stride
     ) {
-        const auto& curchunk = my_parent.my_chunks[chunk_row * my_parent.my_num_chunks_per_row + chunk_column];
+        const auto& curchunk = my_data.chunks[chunk_row * my_data.col_stats.num_chunks + chunk_column];
         auto ntsize = non_target_indices.size();
         if (row) {
-            for (Index_ tidx = target_start, end = target_start + target_length; tidx < tend; ++tidx) {
+            for (Index_ tidx = target_start, tend = target_start + target_length; tidx < tend; ++tidx) {
                 for (decltype(ntsize) nidx = 0; nidx < ntsize; ++nidx) {
-                    std::size_t in_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(my_parent.my_chunk_nrow) + static_cast<std::size_t>(non_target_indices[nidx]);
+                    std::size_t in_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(non_target_indices[nidx]);
                     std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(nidx);
                     output[out_offset] = curchunk[in_offset];
                 }
             }
         } else {
-            for (Index_ tidx = target_start, end = target_start + target_length; tidx < tend; ++tidx) {
+            for (Index_ tidx = target_start, tend = target_start + target_length; tidx < tend; ++tidx) {
                 for (decltype(ntsize) nidx = 0; nidx < ntsize; ++nidx) {
-                    std::size_t in_offset = static_cast<std::size_t>(non_target_indices[nidx]) * static_cast<std::size_t>(my_parent.my_chunk_nrow) + static_cast<std::size_t>(tidx);
+                    std::size_t in_offset = static_cast<std::size_t>(non_target_indices[nidx]) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(tidx);
                     std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(nidx);
                     output[out_offset] = curchunk[in_offset];
                 }
@@ -79,14 +84,14 @@ public:
         const std::vector<Index_>& target_indices,
         Index_ non_target_start,
         Index_ non_target_length,
-        Value_* output,
+        ChunkValue_* output,
         Index_ stride
     ) {
-        const auto& curchunk = my_parent.my_chunks[chunk_row * my_parent.my_num_chunks_per_row + chunk_column];
+        const auto& curchunk = my_data.chunks[chunk_row * my_data.col_stats.num_chunks + chunk_column];
         if (row) {
             for (auto tidx : target_indices) {
                 for (Index_ nidx = 0; nidx < non_target_length; ++nidx) {
-                    std::size_t in_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(my_parent.my_chunk_nrow) + static_cast<std::size_t>(nidx + non_target_start);
+                    std::size_t in_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(nidx + non_target_start);
                     std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(nidx);
                     output[out_offset] = curchunk[in_offset];
                 }
@@ -94,7 +99,7 @@ public:
         } else {
             for (auto tidx : target_indices) {
                 for (Index_ nidx = 0; nidx < non_target_length; ++nidx) {
-                    std::size_t in_offset = static_cast<std::size_t>(nidx + non_target_start) * static_cast<std::size_t>(my_parent.my_chunk_nrow) + static_cast<std::size_t>(tidx);
+                    std::size_t in_offset = static_cast<std::size_t>(nidx + non_target_start) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(tidx);
                     std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(nidx);
                     output[out_offset] = curchunk[in_offset];
                 }
@@ -108,24 +113,24 @@ public:
         bool row,
         const std::vector<Index_>& target_indices,
         const std::vector<Index_>& non_target_indices,
-        Value_* output,
+        ChunkValue_* output,
         Index_ stride
     ) {
-        const auto& curchunk = my_parent.my_my_chunks[chunk_row * my_parent.my_num_chunks_per_row + chunk_column]:
+        const auto& curchunk = my_data.chunks[chunk_row * my_data.col_stats.num_chunks + chunk_column];
         auto ntsize = non_target_indices.size();
         if (row) {
             for (auto tidx : target_indices) {
-                for (decltype(ntsize) ntidx = 0; ntidx < tsize; ++ntidx) {
-                    std::size_t in_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(my_parent.my_chunk_nrow) + static_cast<std::size_t>(non_target_indices[nidx]);
-                    std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(nidx);
+                for (decltype(ntsize) ntidx = 0; ntidx < ntsize; ++ntidx) {
+                    std::size_t in_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(non_target_indices[ntidx]);
+                    std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(ntidx);
                     output[out_offset] = curchunk[in_offset];
                 }
             }
         } else {
             for (auto tidx : target_indices) {
-                for (Index_ nidx = 0; nidx < non_target_length; ++nidx) {
-                    std::size_t in_offset = static_cast<std::size_t>(non_target_indices[nidx]) * static_cast<std::size_t>(my_parent.my_chunk_nrow) + static_cast<std::size_t>(tidx);
-                    std::size_t out_offset = static_cast<std::size_t>(tidx) + static_cast<std::size_t>(stride) + static_cast<std::size_t>(nidx);
+                for (decltype(ntsize) ntidx = 0; ntidx < ntsize; ++ntidx) {
+                    std::size_t in_offset = static_cast<std::size_t>(non_target_indices[ntidx]) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(tidx);
+                    std::size_t out_offset = static_cast<std::size_t>(tidx) + static_cast<std::size_t>(stride) + static_cast<std::size_t>(ntidx);
                     output[out_offset] = curchunk[in_offset];
                 }
             }
@@ -133,52 +138,42 @@ public:
     }
 
 private:
-    const MockDenseChunkManager& my_parent;
+    const MockDenseChunkData& my_data;
 };
 
-class MockDenseChunkManager final : public tatami_chunked::CustomDenseChunkedMatrixManager<double, int> {
+class MockDenseChunkManager final : public tatami_chunked::CustomDenseChunkedMatrixManager<ChunkValue_, Index_> {
 public:
-    MockDenseChunkManager(int chunk_nrow, int chunk_ncol, int num_chunks_per_row, int num_chunks_per_column, std::vector<std::vector<double> > chunks) :
-        my_chunk_nrow(chunk_nrow),
-        my_chunk_ncol(chunk_ncol),
-        my_num_chunks_per_row(num_chunks_per_row),
-        my_num_chunks_per_column(num_chunks_per_column),
-        my_chunks(std::move(chunks))
-    {}
+    MockDenseChunkManager(MockDenseChunkData data) : my_data(std::move(data)) {}
 
-    std::unique_ptr<CustomDenseChunkedMatrixWorkspace> new_workspace() const {
-        return std::make_unique<MockDenseChunkWorkspace>(*this);
+    std::unique_ptr<tatami_chunked::CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > new_workspace() const {
+        return std::make_unique<MockDenseChunkWorkspace>(my_data);
     }
 
     bool prefer_rows() const {
         return true;
     }
 
-private:
-    int my_chunk_nrow;
-    int my_chunk_ncol;
-    int my_num_chunks_per_row;
-    int my_num_chunks_per_column;
-    std::vector<std::vector<double> > my_chunks;
+    const tatami_chunked::ChunkDimensionStats<Index_>& row_stats() const {
+        return my_data.row_stats;
+    }
 
-    friend MockDenseChunkWorkspace;
+    const tatami_chunked::ChunkDimensionStats<Index_>& column_stats() const {
+        return my_data.col_stats;
+    }
+
+private:
+    MockDenseChunkData my_data; 
 };
 
 struct CustomDenseChunkedMatrixCore {
     typedef std::tuple<
         std::pair<int, int>, // matrix dimensions
         std::pair<int, int>, // chunk dimensions
-        bool, // row major chunks
         double // cache fraction
     > SimulationParameters;
 
 protected:
     inline static std::unique_ptr<tatami::Matrix<double, int> > ref, simple_mat, subset_mat;
-
-    typedef tatami_chunked::SimpleDenseChunkWrapper<MockDenseBlob<true> > DChunk;
-    typedef tatami_chunked::MockSimpleDenseChunk MockSimple;
-    typedef tatami_chunked::MockSubsettedDenseChunk MockSubsetted;
-
     inline static SimulationParameters last_params;
 
     static void assemble(const SimulationParameters& params) {
@@ -189,24 +184,24 @@ protected:
 
         auto matdim = std::get<0>(params);
         auto chunkdim = std::get<1>(params);
-        bool rowmajor = std::get<2>(params);
-        double cache_fraction = std::get<3>(params);
+        double cache_fraction = std::get<2>(params);
 
         auto full = tatami_test::simulate_vector<double>(matdim.first * matdim.second, [&]{
             tatami_test::SimulateVectorOptions opt;
             opt.lower = -10;
             opt.upper = 10;
-            opt.seed = matdim.first * matdim.second + chunkdim.first * chunkdim.second + rowmajor + 100 * cache_fraction;
+            opt.seed = matdim.first * matdim.second + chunkdim.first * chunkdim.second + 100 * cache_fraction;
             return opt;
         }());
         ref.reset(new tatami::DenseRowMatrix<double, int>(matdim.first, matdim.second, std::move(full)));
 
-        auto num_chunks_per_row = (matdim.second + chunkdim.second - 1) / chunkdim.second;
-        auto num_chunks_per_column = (matdim.first + chunkdim.first - 1) / chunkdim.first;
-        std::vector<std::vector<double> > mock_chunks(num_chunks_per_row * num_chunks_per_column);
+        MockDenseChunkData data;
+        data.row_stats = tatami_chunked::ChunkDimensionStats<Index_>(matdim.first, chunkdim.first);
+        data.col_stats = tatami_chunked::ChunkDimensionStats<Index_>(matdim.second, chunkdim.second);
+        data.chunks.resize(data.row_stats.num_chunks * data.col_stats.num_chunks);
 
-        for (int r = 0; r < num_chunks_per_column; ++r) {
-            for (int c = 0; c < num_chunks_per_row; ++c) {
+        for (int r = 0; r < data.row_stats.num_chunks; ++r) {
+            for (int c = 0; c < data.col_stats.num_chunks; ++c) {
                 auto cstart = c * chunkdim.second;
                 auto cend = std::min(cstart + chunkdim.second, matdim.second);
                 auto clen = cend - cstart;
@@ -215,7 +210,7 @@ protected:
                 auto rend = std::min(rstart + chunkdim.first, matdim.first);
                 auto rlen = rend - rstart;
 
-                auto& contents = mock_chunks[r * num_chunks_per_row + c];
+                auto& contents = data.chunks[r * data.col_stats.num_chunks + c];
                 contents.resize(chunkdim.first * chunkdim.second);
                 auto ccptr = contents.data();
                 auto ext = ref->dense_row(cstart, clen);
@@ -227,22 +222,16 @@ protected:
             }
         }
 
-        auto manager = std::make_shared<MockDenseChunkManager>(
-            chunkdim.first,
-            chunkdim.second,
-            num_chunks_per_row,
-            num_chunks_per_column,
-            std::move(mock_chunks)
-        );
-
         tatami_chunked::CustomDenseChunkedMatrixOptions opt;
         std::size_t cache_size = static_cast<double>(matdim.first) * static_cast<double>(matdim.second) * cache_fraction * static_cast<double>(sizeof(double));
         opt.maximum_cache_size = cache_size;
         opt.require_minimum_cache = (cache_size > 0);
-        simple_mat.reset(new tatami_chunked::CustomDenseChunkedMatrix<double, int>(matdim.first, matdim.second, chunkdim.first, chunkdim.second, manager, opt));
+
+        auto manager = std::make_shared<MockDenseChunkManager>(std::move(data));
+        simple_mat.reset(new tatami_chunked::CustomDenseChunkedMatrix<double, int, double>(manager, opt));
 
         opt.cache_subset = true;
-        subset_mat.reset(new tatami_chunked::CustomDenseChunkedMatrix<double, int>(matdim.first, matdim.second, chunkdim.first, chunkdim.second, manager, opt));
+        subset_mat.reset(new tatami_chunked::CustomDenseChunkedMatrix<double, int, double>(manager, opt));
     }
 };
 
@@ -279,7 +268,6 @@ INSTANTIATE_TEST_SUITE_P(
                 std::make_pair(11, 13) // odd numbers
             ),
 
-            ::testing::Values(true, false), // row major
             ::testing::Values(0, 0.01, 0.1) // cache fraction
         ),
 
@@ -322,7 +310,6 @@ INSTANTIATE_TEST_SUITE_P(
                 std::make_pair(10, 10)
             ),
 
-            ::testing::Values(true, false), // row major
             ::testing::Values(0, 0.01, 0.1) // cache fraction
         ),
 
@@ -371,7 +358,6 @@ INSTANTIATE_TEST_SUITE_P(
                 std::make_pair(7, 13)
             ),
 
-            ::testing::Values(true, false), // row major 
             ::testing::Values(0, 0.01, 0.1) // cache fraction
         ),
 
