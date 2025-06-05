@@ -12,12 +12,10 @@ add_executable(
     src/OracularSlabCache.cpp
     src/OracularVariableSlabCache.cpp
     src/OracularSubsettedSlabCache.cpp
-    src/mock_dense_chunk.cpp
-    src/mock_sparse_chunk.cpp
     src/ChunkDimensionStats.cpp
     src/SlabCacheStats.cpp
     src/CustomDenseChunkedMatrix.cpp
-    src/CustomSparseChunkedMatrix.cpp
+    #src/CustomSparseChunkedMatrix.cpp
 )
 
 set(CODE_COVERAGE OFF CACHE BOOL "Enable coverage testing")

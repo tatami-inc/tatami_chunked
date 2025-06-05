@@ -77,7 +77,7 @@ public:
  *** Coordinator ***
  *******************/
 
-template<typename Index_, bool sparse_, class ChunkValue_> 
+template<bool sparse_, class ChunkValue_, typename Index_> 
 class ChunkCoordinator {
 public:
     ChunkCoordinator(ChunkDimensionStats<Index_> row_stats, ChunkDimensionStats<Index_> col_stats) :
