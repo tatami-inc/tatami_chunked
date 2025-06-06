@@ -120,17 +120,17 @@ public:
         auto ntsize = non_target_indices.size();
         if (row) {
             for (auto tidx : target_indices) {
-                for (decltype(ntsize) ntidx = 0; ntidx < ntsize; ++ntidx) {
-                    std::size_t in_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(non_target_indices[ntidx]);
-                    std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(ntidx);
+                for (decltype(ntsize) nidx = 0; nidx < ntsize; ++nidx) {
+                    std::size_t in_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(non_target_indices[nidx]);
+                    std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(nidx);
                     output[out_offset] = curchunk[in_offset];
                 }
             }
         } else {
             for (auto tidx : target_indices) {
-                for (decltype(ntsize) ntidx = 0; ntidx < ntsize; ++ntidx) {
-                    std::size_t in_offset = static_cast<std::size_t>(non_target_indices[ntidx]) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(tidx);
-                    std::size_t out_offset = static_cast<std::size_t>(tidx) + static_cast<std::size_t>(stride) + static_cast<std::size_t>(ntidx);
+                for (decltype(ntsize) nidx = 0; nidx < ntsize; ++nidx) {
+                    std::size_t in_offset = static_cast<std::size_t>(non_target_indices[nidx]) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(tidx);
+                    std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(nidx);
                     output[out_offset] = curchunk[in_offset];
                 }
             }
