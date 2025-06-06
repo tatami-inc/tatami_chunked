@@ -11,6 +11,7 @@
 
 #include <type_traits>
 #include <vector>
+#include <cstddef>
 
 /**
  * @file CustomDenseChunkedMatrix.hpp
@@ -28,7 +29,7 @@ struct CustomDenseChunkedMatrixOptions {
      * Larger caches improve access speed at the cost of memory usage.
      * Small values may be ignored if `require_minimum_cache` is `true`.
      */
-    size_t maximum_cache_size = 100000000;
+    std::size_t maximum_cache_size = 100000000;
 
     /**
      * Whether to automatically enforce a minimum size for the cache, regardless of `maximum_cache_size`.
@@ -85,7 +86,11 @@ public:
      * If `row = true`, we consider a block of rows `[target_start, target_start + target_length) * and a block of columns `[non_target_start, non_target_start + non_target_length)`;
      * conversely, if `row = false`, we would consider a block of target columns and a block of non-target rows.
      * For a target dimension index `p` and non-target dimension index `non_target_start + q`, the value from the chunk should be stored in `output[p * stride + q]`.
-     * The `stride` option allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomDenseChunkedMatrix`.
+     *
+     * - The `stride` allows interleaving of multiple chunks into a single array where values from the same target dimension element are contiguous.
+     *   This enables easier fetching in the `CustomDenseChunkedMatrix`.
+     * - `p` should lie in `[target_start, target_start + target_length)`, whereas `q` should lie in `[0, non_target_length)`.
+     *   This difference is deliberate and enables easy extraction of the target dimension element of interest.
      */
     virtual void extract(
         Index_ chunk_row_id,
@@ -117,7 +122,11 @@ public:
      * If `row = true`, we consider a block of rows `[target_start, target_start + target_length)` and a subset of columns `non_target_indices`;
      * conversely, if `row = false`, we would extract data for all columns and a subset of rows.
      * For a target dimension index `p` and non-target dimension index `non_target_indices[q]`, the value from the chunk should be stored in `output[p * stride + q]`.
-     * The `stride` option allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomDenseChunkedMatrix`.
+     *
+     * - The `stride` allows interleaving of multiple chunks into a single array where values from the same target dimension element are contiguous.
+     *   This enables easier fetching in the `CustomDenseChunkedMatrix`.
+     * - `p` should lie in `[target_start, target_start + target_length)`, whereas `q` should lie in `[0, non_target_indices.size())`.
+     *   This difference is deliberate and enables easy extraction of the target dimension element of interest.
      */
     virtual void extract(
         Index_ chunk_row_id,
@@ -151,7 +160,11 @@ public:
      * If `row = true`, we consider a subset of rows `target_indices` and a block of columns `[non_target_start, non_target_start + non_target_length)`;
      * conversely, if `row = false`, we would extract a block of columns as the target and the block of rows as the non_target.
      * For a target dimension index `p` and non-target dimension index `non_target_start + q`, the value from the chunk should be stored in `output[p * stride + q]`.
-     * This layout allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedDenseMatrix`.
+     *
+     * - The `stride` allows interleaving of multiple chunks into a single array where values from the same target dimension element are contiguous.
+     *   This enables easier fetching in the `CustomDenseChunkedMatrix`.
+     * - `p` should be a value in `target_indices`, whereas `q` should lie in `[0, non_target_length)`.
+     *   This difference is deliberate and enables easy extraction of the target dimension element of interest.
      */
     virtual void extract(
         Index_ chunk_row_id,
@@ -184,7 +197,11 @@ public:
      * If `row = true`, we would extract a subset of rows in `target_indices` and a subset columns in `non_target_indices`.
      * conversely, if `row = false`, we would consider a subset of target columns and a subset of non-target rows.
      * For a target dimension index `p` and non-target dimension index `non_target_indices[q]`, the value from the chunk should be stored in `output[p * stride + q]`.
-     * This layout allows concatenation of multiple chunks into a single contiguous array for easier fetching in the `CustomChunkedDenseMatrix`.
+     *
+     * - The `stride` allows interleaving of multiple chunks into a single array where values from the same target dimension element are contiguous.
+     *   This enables easier fetching in the `CustomDenseChunkedMatrix`.
+     * - `p` should be a value in `target_indices` whereas `q` should lie in `[0, non_target_indices.size())`.
+     *   This difference is deliberate and enables easy extraction of the target dimension element of interest.
      */
     virtual void extract(
         Index_ chunk_row_id,
