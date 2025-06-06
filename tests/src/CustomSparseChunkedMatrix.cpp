@@ -7,19 +7,346 @@
 
 #include "mock_blob.h"
 
+typedef double ChunkValue_;
+typedef int Index_;
+
+struct MockSparseChunk {
+    // Standard compressed sparse members:
+    std::vector<ChunkValue_> values;
+    std::vector<Index_> indices;
+    std::vector<std::size_t> indptrs;
+};
+
+struct MockSparseChunkData { 
+    tatami_chunked::ChunkDimensionStats<Index_> row_stats, col_stats;
+    std::vector<MockSparseChunk> chunks;
+};
+
+class MockSparseChunkWorkspace final : public tatami_chunked::CustomSparseChunkedMatrixWorkspace<ChunkValue_, Index_> {
+public:
+    MockSparseChunkWorkspace(const MockSparseChunkData& data) : my_data(data) {}
+
+private:
+    const MockSparseChunkData& my_data;
+
+    // Allocation to allow for O(1) mapping of requested indices to sparse indices.
+    // This mimics what is done in the indexed sparse extractors in tatami proper.
+    std::vector<unsigned char> remap;
+
+private:
+    auto get_target_chunkdim(bool row) const {
+        if (row) {
+            return my_chunk.nrow();
+        } else {
+            return my_chunk.ncol();
+        }
+    }
+
+    auto get_non_target_chunkdim(bool row) const {
+        if (row) {
+            return my_chunk.ncol();
+        } else {
+            return my_chunk.nrow();
+        }
+    }
+
+    static void refine_start_and_end(std::size_t& start, std::size_t& end, Index_ desired_start, Index_ desired_end, Index_ max_end, const std::vector<index_type>& indices) {
+        if (desired_start) {
+            auto it = indices.begin();
+            // Using custom comparator to ensure that we cast to Index_ for signedness-safe comparisons.
+            start = std::lower_bound(it + start, it + end, desired_start, [](Index_ a, Index_ b) -> bool { return a < b; }) - it;
+        }
+
+        if (desired_end != max_end) {
+            if (desired_end == desired_start + 1) {
+                if (start != end && static_cast<Index_>(indices[start]) == desired_start) {
+                    end = start + 1;
+                } else {
+                    end = start;
+                }
+            } else {
+                auto it = indices.begin();
+                end = std::lower_bound(it + start, it + end, desired_end, [](Index_ a, Index_ b) -> bool { return a < b; }) - it;
+            }
+        }
+    }
+
+    // Building a present/absent mapping for the requested indices to allow O(1) look-up from the sparse matrix indices.
+    void configure_remap(const std::vector<Index_>& indices, std::size_t full) {
+        remap.resize(full);
+        for (auto i : indices) {
+            work.remap[i] = 1;
+        }
+    }
+
+    // Resetting just the affected indices so we can avoid a fill operation over the entire array.
+    void reset_remap(const std::vector<Index_>& indices) {
+        for (auto i : indices) {
+            work.remap[i] = 0;
+        }
+    }
+
+    template<bool is_block_>
+    static void fill_target(
+        Index_ p, 
+        MockSparseChunk& chunk, 
+        Index_ non_target_start, 
+        Index_ non_target_end, 
+        Index_ non_target_chunkdim,
+        const std::vector<value_type*>& output_values, 
+        const std::vector<Index_*>& output_indices,
+        Index_* output_number,
+        Index_ shift)
+    {
+        size_t start = chunk.indptrs[p], end = chunk.indptrs[p + 1];
+        if (start >= end) {
+            return;
+        }
+
+        refine_start_and_end(start, end, non_target_start, non_target_end, non_target_chunkdim, chunk.indices);
+
+        auto& current_number = output_number[p];
+        const bool needs_value = !output_values.empty();
+        auto vptr = needs_value ? output_values[p] + current_number : NULL;
+        const bool needs_index = !output_indices.empty();
+        auto iptr = needs_index ? output_indices[p] + current_number : NULL;
+
+        if constexpr(is_block_) {
+            if (needs_value) {
+                std::copy(chunk.values.begin() + start, chunk.values.begin() + end, vptr);
+            }
+            if (needs_index) {
+                for (size_t i = start; i < end; ++i, ++iptr) {
+                    *iptr = chunk.indices[i] + shift;
+                }
+            }
+            current_number += end - start;
+
+        } else {
+            // Assumes that chunk.remap has been properly configured, see configure_remap().
+            for (size_t i = start; i < end; ++i) {
+                Index_ target = chunk.indices[i];
+                if (chunk.remap[target]) {
+                    if (needs_value) {
+                        *vptr = chunk.values[i];
+                        ++vptr;
+                    }
+                    if (needs_index) {
+                        *iptr = target + shift;
+                        ++iptr;
+                    }
+                    ++current_number;
+                }
+            }
+        }
+    }
+
+    template<bool is_block_>
+    static void fill_secondary(
+        Index_ s,
+        MockSparseChunk& chunk, 
+        Index_ target_start, 
+        Index_ target_end, 
+        Index_ target_chunkdim,
+        const std::vector<value_type*>& output_values, 
+        const std::vector<Index_*>& output_indices,
+        Index_* output_number,
+        Index_ shift)
+    {
+        auto start = chunk.indptrs[s], end = chunk.indptrs[s + 1];
+        if (start >= end) {
+            return;
+        }
+
+        refine_start_and_end(start, end, target_start, target_end, target_chunkdim, chunk.indices);
+
+        bool needs_value = !output_values.empty();
+        bool needs_index = !output_indices.empty();
+
+        if constexpr(is_block_) {
+            for (size_t i = start; i < end; ++i) {
+                auto p = chunk.indices[i];
+                auto& num = output_number[p];
+                if (needs_value) {
+                    output_values[p][num] = chunk.values[i];
+                }
+                if (needs_index) {
+                    output_indices[p][num] = s + shift;
+                }
+                ++num;
+            }
+
+        } else {
+            // Assumes that chunk.remap has been properly configured, see configure_remap().
+            for (size_t i = start; i < end; ++i) {
+                Index_ target = chunk.indices[i];
+                if (chunk.remap[target]) {
+                    auto& num = output_number[target];
+                    if (needs_value) {
+                        output_values[target][num] = chunk.values[i];
+                    }
+                    if (needs_index) {
+                        output_indices[target][num] = s + shift;
+                    }
+                    ++num;
+                }
+            }
+        }
+    }
+
+public:
+    void extract(
+        Index_ chunk_row_id,
+        Index_ chunk_column_id,
+        bool row,
+        Index_ target_start, 
+        Index_ target_length, 
+        Index_ non_target_start, 
+        Index_ non_target_length, 
+        const std::vector<value_type*>& output_values,
+        const std::vector<Index_*>& output_indices,
+        Index_* output_number,
+        Index_ shift)
+    {
+        const auto& current_chunk = my_data.chunks[chunk_row_id * my_data.col_stats.num_chunks + chunk_column_id];
+        Index_ target_end = target_start + target_length;
+        Index_ non_target_end = non_target_start + non_target_length;
+
+        if (row) {
+            Index_ non_target_chunkdim = get_non_target_chunkdim(row);
+            for (Index_ p = target_start; p < target_end; ++p) {
+                fill_target<true>(p, current_chunk, non_target_start, non_target_end, non_target_chunkdim, output_values, output_indices, output_number, shift);
+            }
+
+        } else {
+            Index_ target_chunkdim = get_target_chunkdim(row);
+            for (Index_ s = non_target_start; s < non_target_end; ++s) {
+                fill_secondary<true>(s, current_chunk, target_start, target_end, target_chunkdim, output_values, output_indices, output_number, shift);
+            }
+        }
+    }
+
+    void extract(
+        Index_ chunk_row_id,
+        Index_ chunk_column_id,
+        bool row,
+        Index_ target_start, 
+        Index_ target_length, 
+        const std::vector<Index_>& non_target_indices, 
+        const std::vector<value_type*>& output_values,
+        const std::vector<Index_*>& output_indices,
+        Index_* output_number,
+        Index_ shift)
+    {
+        const auto& current_chunk = my_data.chunks[chunk_row_id * my_data.col_stats.num_chunks + chunk_column_id];
+        Index_ target_end = target_start + target_length;
+
+        if (row) {
+            // non_target_indices is guaranteed to be non-empty, see contracts below.
+            auto non_target_start = non_target_indices.front();
+            auto non_target_end = non_target_indices.back() + 1; // need 1 past end.
+            auto non_target_chunkdim = get_non_target_chunkdim(row);
+
+            configure_remap(non_target_indices, non_target_chunkdim);
+            for (Index_ p = target_start; p < target_end; ++p) {
+                fill_target<false>(p, current_chunk, non_target_start, non_target_end, non_target_chunkdim, output_values, output_indices, output_number, shift);
+            }
+            reset_remap(non_target_indices);
+
+        } else {
+            Index_ target_chunkdim = get_target_chunkdim(row);
+            for (auto s : non_target_indices) {
+                fill_secondary<true>(s, current_chunk, target_start, target_end, target_chunkdim, output_values, output_indices, output_number, shift);
+            }
+        }
+    }
+
+    void extract(
+        Index_ chunk_row_id,
+        Index_ chunk_column_id,
+        bool row,
+        const std::vector<Index_>& target_indices, 
+        Index_ non_target_start, 
+        Index_ non_target_length, 
+        const std::vector<value_type*>& output_values,
+        const std::vector<Index_*>& output_indices,
+        Index_* output_number,
+        Index_ shift)
+    {
+        const auto& current_chunk = my_data.chunks[chunk_row_id * my_data.col_stats.num_chunks + chunk_column_id];
+        Index_ non_target_end = non_target_start + non_target_length;
+
+        if (row) {
+            Index_ non_target_chunkdim = get_non_target_chunkdim(row);
+            for (auto p : target_indices) {
+                fill_target<true>(p, current_chunk, non_target_start, non_target_end, non_target_chunkdim, output_values, output_indices, output_number, shift);
+            }
+
+        } else {
+            // target_indices is guaranteed to be non-empty, see contracts below.
+            auto target_start = target_indices.front();
+            auto target_end = target_indices.back() + 1; // need 1 past end.
+            auto target_chunkdim = get_target_chunkdim(row);
+
+            configure_remap(target_indices, target_chunkdim);
+            for (Index_ s = non_target_start; s < non_target_end; ++s) {
+                fill_secondary<false>(s, current_chunk, target_start, target_end, target_chunkdim, output_values, output_indices, output_number, shift);
+            }
+            reset_remap(target_indices);
+        }
+    }
+
+    void extract(
+        Index_ chunk_row_id,
+        Index_ chunk_column_id,
+        bool row,
+        const std::vector<Index_>& target_indices, 
+        const std::vector<Index_>& non_target_indices, 
+        const std::vector<value_type*>& output_values,
+        const std::vector<Index_*>& output_indices,
+        Index_* output_number,
+        Index_ shift)
+    {
+        const auto& current_chunk = my_data.chunks[chunk_row_id * my_data.col_stats.num_chunks + chunk_column_id];
+
+        if (my_chunk.is_csr() == row) {
+            // non_target_indices is guaranteed to be non-empty, see contracts below.
+            auto non_target_start = non_target_indices.front();
+            auto non_target_end = non_target_indices.back() + 1; // need 1 past end.
+            auto non_target_chunkdim = get_non_target_chunkdim(row);
+
+            configure_remap(non_target_indices, non_target_chunkdim);
+            for (auto p : target_indices) {
+                fill_target<false>(p, current_chunk, non_target_start, non_target_end, non_target_chunkdim, output_values, output_indices, output_number, shift);
+            }
+            reset_remap(non_target_indices);
+
+        } else {
+            // target_indices is guaranteed to be non-empty, see contracts below.
+            auto target_start = target_indices.front();
+            auto target_end = target_indices.back() + 1; // need 1 past end.
+            auto target_chunkdim = get_target_chunkdim(row);
+
+            configure_remap(target_indices, target_chunkdim);
+            for (auto s : non_target_indices) {
+                fill_secondary<false>(s, current_chunk, target_start, target_end, target_chunkdim, output_values, output_indices, output_number, shift);
+            }
+            reset_remap(target_indices);
+        }
+    }
+};
+
 class CustomSparseChunkedMatrixCore {
 public:
     typedef std::tuple<
         std::pair<int, int>, // matrix dimensions
         std::pair<int, int>, // chunk dimensions
-        bool, // row major chunks
         double // cache fraction
     > SimulationParameters;
 
 protected:
     inline static std::unique_ptr<tatami::Matrix<double, int> > ref, mock_mat, simple_mat, subset_mat;
 
-    typedef tatami_chunked::SimpleSparseChunkWrapper<MockSparseBlob<false> > SChunk;
     typedef tatami_chunked::MockSimpleSparseChunk MockSimple;
     typedef tatami_chunked::MockSubsettedSparseChunk MockSubsetted;
 
@@ -33,15 +360,14 @@ protected:
 
         auto matdim = std::get<0>(params);
         auto chunkdim = std::get<1>(params);
-        bool rowmajor = std::get<2>(params);
-        double cache_fraction = std::get<3>(params);
+        double cache_fraction = std::get<2>(params);
 
         auto full = tatami_test::simulate_compressed_sparse<double, int>(matdim.second, matdim.first, [&]{
             tatami_test::SimulateCompressedSparseOptions opt;
             opt.density = 0.1;
             opt.lower = -10;
             opt.upper = 10;
-            opt.seed = matdim.first * matdim.second + chunkdim.first * chunkdim.second + rowmajor + 100 * cache_fraction;
+            opt.seed = matdim.first * matdim.second + chunkdim.first * chunkdim.second + 100 * cache_fraction;
             return opt;
         }());
 
@@ -69,50 +395,26 @@ protected:
                 auto rend = std::min(rstart + chunkdim.first, matdim.first);
                 auto rlen = rend - rstart;
 
-                auto offset = rowmajor ? (r * num_chunks_per_row + c) : (c * num_chunks_per_column + r);
+                auto offset = r * num_chunks_per_row + c;
 
-                {
-                    std::vector<double> vcontents;
-                    std::vector<int> icontents;
-                    std::vector<size_t> pcontents(1);
+                std::vector<double> vcontents;
+                std::vector<int> icontents;
+                std::vector<size_t> pcontents(1);
 
-                    auto ext = ref->sparse_column(rstart, rlen);
-                    std::vector<double> vbuffer(rlen);
-                    std::vector<int> ibuffer(rlen);
+                auto ext = ref->sparse_row(cstart, clen);
+                std::vector<double> vbuffer(clen);
+                std::vector<int> ibuffer(clen);
 
-                    for (int c2 = 0; c2 < clen; ++c2) {
-                        auto range = ext->fetch(c2 + cstart, vbuffer.data(), ibuffer.data());
-                        vcontents.insert(vcontents.end(), range.value, range.value + range.number);
-                        for (int i = 0; i < range.number; ++i) {
-                            icontents.push_back(range.index[i] - rstart);
-                        }
-                        pcontents.push_back(pcontents.back() + range.number);
+                for (int r2 = 0; r2 < rlen; ++r2) {
+                    auto range = ext->fetch(r2 + rstart, vbuffer.data(), ibuffer.data());
+                    vcontents.insert(vcontents.end(), range.value, range.value + range.number);
+                    for (int i = 0; i < range.number; ++i) {
+                        icontents.push_back(range.index[i] - cstart);
                     }
-
-                    mock_chunks[offset] = SChunk(MockSparseBlob<false>(rlen, clen, std::move(vcontents), std::move(icontents), std::move(pcontents)));
+                    pcontents.push_back(pcontents.back() + range.number);
                 }
 
-                {
-                    std::vector<double> vcontents;
-                    std::vector<int> icontents;
-                    std::vector<size_t> pcontents(1);
-
-                    auto ext = ref->sparse_row(cstart, clen);
-                    std::vector<double> vbuffer(clen);
-                    std::vector<int> ibuffer(clen);
-
-                    for (int r2 = 0; r2 < rlen; ++r2) {
-                        auto range = ext->fetch(r2 + rstart, vbuffer.data(), ibuffer.data());
-                        vcontents.insert(vcontents.end(), range.value, range.value + range.number);
-                        for (int i = 0; i < range.number; ++i) {
-                            icontents.push_back(range.index[i] - cstart);
-                        }
-                        pcontents.push_back(pcontents.back() + range.number);
-                    }
-
-                    simple_chunks[offset] = MockSimple(rlen, clen, vcontents, icontents, pcontents);
-                    subset_chunks[offset] = MockSubsetted(rlen, clen, std::move(vcontents), std::move(icontents), std::move(pcontents));
-                }
+                simple_chunks[offset] = MockSimple(rlen, clen, vcontents, icontents, pcontents);
             }
         }
 
