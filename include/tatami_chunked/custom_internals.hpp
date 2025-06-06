@@ -201,19 +201,17 @@ private:
             Index_ non_target_end_pos = std::min(non_target_dim - non_target_start_pos, non_target_chunkdim) + non_target_start_pos; // this convoluted method avoids overflow.
 
             chunk_indices_buffer.clear();
-            while (iIt != iEnd && *iIt < non_target_end_pos) {
+            do {
                 chunk_indices_buffer.push_back(*iIt - non_target_start_pos);
                 ++iIt;
-            }
+            } while (iIt != iEnd && *iIt < non_target_end_pos);
 
-            if (!chunk_indices_buffer.empty()) {
-                auto row_id = (row ? target_chunk_id : non_target_chunk_id);
-                auto col_id = (row ? non_target_chunk_id : target_chunk_id);
-                if constexpr(sparse_) {
-                    extract(row_id, col_id, chunk_indices_buffer, non_target_start_pos);
-                } else {
-                    extract(row_id, col_id, chunk_indices_buffer);
-                }
+            auto row_id = (row ? target_chunk_id : non_target_chunk_id);
+            auto col_id = (row ? non_target_chunk_id : target_chunk_id);
+            if constexpr(sparse_) {
+                extract(row_id, col_id, chunk_indices_buffer, non_target_start_pos);
+            } else {
+                extract(row_id, col_id, chunk_indices_buffer);
             }
         }
     }
