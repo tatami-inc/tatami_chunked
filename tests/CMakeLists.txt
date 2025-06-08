@@ -15,7 +15,7 @@ add_executable(
     src/ChunkDimensionStats.cpp
     src/SlabCacheStats.cpp
     src/CustomDenseChunkedMatrix.cpp
-    #src/CustomSparseChunkedMatrix.cpp
+    src/CustomSparseChunkedMatrix.cpp
 )
 
 set(CODE_COVERAGE OFF CACHE BOOL "Enable coverage testing")

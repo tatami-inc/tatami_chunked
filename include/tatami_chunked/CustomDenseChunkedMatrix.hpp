@@ -47,8 +47,8 @@ struct CustomDenseChunkedMatrixOptions {
 
 /**
  * @brief Workspace for extracting data from a `CustomDenseChunkedMatrixManager`.
- * @tparam Value_ Numeric type for the data values in the `CustomDenseChunkedMatrix`.
- * @tparam Index_ Integer type for the row/column indices of the `CustomDenseChunkedMatrix`.
+ * @tparam ChunkValue_ Numeric type of the data values in each chunk.
+ * @tparam Index_ Integer type of the row/column indices of the `CustomDenseChunkedMatrix`.
  */
 template<typename ChunkValue_, typename Index_>
 class CustomDenseChunkedMatrixWorkspace {
@@ -510,7 +510,8 @@ private:
  *
  * @tparam Value_ Numeric type for the matrix value.
  * @tparam Index_ Integer type for the row/column indices.
- * @tparam Manager_ Class that implements the `CustomDenseChunkedManager` interface.
+ * @tparam ChunkValue_ Numeric type of the chunked values.
+ * @tparam Manager_ Class that implements the `CustomDenseChunkedMatrixManager` interface.
  *
  * Implements a `Matrix` subclass where data is contained in dense rectangular chunks.
  * These chunks are typically compressed in some manner to reduce memory usage compared to, e.g., a `tatami::DenseMatrix`.

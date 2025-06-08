@@ -3,7 +3,6 @@
 #include "tatami_test/tatami_test.hpp"
 
 #include "tatami_chunked/CustomSparseChunkedMatrix.hpp"
-#include "tatami_chunked/mock_sparse_chunk.hpp"
 
 #include "mock_blob.h"
 
@@ -36,21 +35,21 @@ private:
 private:
     auto get_target_chunkdim(bool row) const {
         if (row) {
-            return my_chunk.nrow();
+            return my_data.row_stats.chunk_length;
         } else {
-            return my_chunk.ncol();
+            return my_data.col_stats.chunk_length;
         }
     }
 
     auto get_non_target_chunkdim(bool row) const {
         if (row) {
-            return my_chunk.ncol();
+            return my_data.col_stats.chunk_length;
         } else {
-            return my_chunk.nrow();
+            return my_data.row_stats.chunk_length;
         }
     }
 
-    static void refine_start_and_end(std::size_t& start, std::size_t& end, Index_ desired_start, Index_ desired_end, Index_ max_end, const std::vector<index_type>& indices) {
+    static void refine_start_and_end(std::size_t& start, std::size_t& end, Index_ desired_start, Index_ desired_end, Index_ max_end, const std::vector<Index_>& indices) {
         if (desired_start) {
             auto it = indices.begin();
             // Using custom comparator to ensure that we cast to Index_ for signedness-safe comparisons.
@@ -75,25 +74,25 @@ private:
     void configure_remap(const std::vector<Index_>& indices, std::size_t full) {
         remap.resize(full);
         for (auto i : indices) {
-            work.remap[i] = 1;
+            remap[i] = 1;
         }
     }
 
     // Resetting just the affected indices so we can avoid a fill operation over the entire array.
     void reset_remap(const std::vector<Index_>& indices) {
         for (auto i : indices) {
-            work.remap[i] = 0;
+            remap[i] = 0;
         }
     }
 
     template<bool is_block_>
-    static void fill_target(
+    void fill_target(
         Index_ p, 
-        MockSparseChunk& chunk, 
+        const MockSparseChunk& chunk, 
         Index_ non_target_start, 
         Index_ non_target_end, 
         Index_ non_target_chunkdim,
-        const std::vector<value_type*>& output_values, 
+        const std::vector<ChunkValue_*>& output_values, 
         const std::vector<Index_*>& output_indices,
         Index_* output_number,
         Index_ shift)
@@ -126,7 +125,7 @@ private:
             // Assumes that chunk.remap has been properly configured, see configure_remap().
             for (size_t i = start; i < end; ++i) {
                 Index_ target = chunk.indices[i];
-                if (chunk.remap[target]) {
+                if (remap[target]) {
                     if (needs_value) {
                         *vptr = chunk.values[i];
                         ++vptr;
@@ -142,13 +141,13 @@ private:
     }
 
     template<bool is_block_>
-    static void fill_secondary(
+    void fill_secondary(
         Index_ s,
-        MockSparseChunk& chunk, 
+        const MockSparseChunk& chunk, 
         Index_ target_start, 
         Index_ target_end, 
         Index_ target_chunkdim,
-        const std::vector<value_type*>& output_values, 
+        const std::vector<ChunkValue_*>& output_values, 
         const std::vector<Index_*>& output_indices,
         Index_* output_number,
         Index_ shift)
@@ -177,10 +176,10 @@ private:
             }
 
         } else {
-            // Assumes that chunk.remap has been properly configured, see configure_remap().
+            // Assumes that remap has been properly configured, see configure_remap().
             for (size_t i = start; i < end; ++i) {
                 Index_ target = chunk.indices[i];
-                if (chunk.remap[target]) {
+                if (remap[target]) {
                     auto& num = output_number[target];
                     if (needs_value) {
                         output_values[target][num] = chunk.values[i];
@@ -203,7 +202,7 @@ public:
         Index_ target_length, 
         Index_ non_target_start, 
         Index_ non_target_length, 
-        const std::vector<value_type*>& output_values,
+        const std::vector<ChunkValue_*>& output_values,
         const std::vector<Index_*>& output_indices,
         Index_* output_number,
         Index_ shift)
@@ -233,7 +232,7 @@ public:
         Index_ target_start, 
         Index_ target_length, 
         const std::vector<Index_>& non_target_indices, 
-        const std::vector<value_type*>& output_values,
+        const std::vector<ChunkValue_*>& output_values,
         const std::vector<Index_*>& output_indices,
         Index_* output_number,
         Index_ shift)
@@ -268,7 +267,7 @@ public:
         const std::vector<Index_>& target_indices, 
         Index_ non_target_start, 
         Index_ non_target_length, 
-        const std::vector<value_type*>& output_values,
+        const std::vector<ChunkValue_*>& output_values,
         const std::vector<Index_*>& output_indices,
         Index_* output_number,
         Index_ shift)
@@ -302,14 +301,14 @@ public:
         bool row,
         const std::vector<Index_>& target_indices, 
         const std::vector<Index_>& non_target_indices, 
-        const std::vector<value_type*>& output_values,
+        const std::vector<ChunkValue_*>& output_values,
         const std::vector<Index_*>& output_indices,
         Index_* output_number,
         Index_ shift)
     {
         const auto& current_chunk = my_data.chunks[chunk_row_id * my_data.col_stats.num_chunks + chunk_column_id];
 
-        if (my_chunk.is_csr() == row) {
+        if (row) {
             // non_target_indices is guaranteed to be non-empty, see contracts below.
             auto non_target_start = non_target_indices.front();
             auto non_target_end = non_target_indices.back() + 1; // need 1 past end.
@@ -336,6 +335,30 @@ public:
     }
 };
 
+class MockSparseChunkManager final : public tatami_chunked::CustomSparseChunkedMatrixManager<ChunkValue_, Index_> {
+public:
+    MockSparseChunkManager(MockSparseChunkData data) : my_data(std::move(data)) {}
+
+    std::unique_ptr<tatami_chunked::CustomSparseChunkedMatrixWorkspace<ChunkValue_, Index_> > new_workspace() const {
+        return std::make_unique<MockSparseChunkWorkspace>(my_data);
+    }
+
+    bool prefer_rows() const {
+        return true;
+    }
+
+    const tatami_chunked::ChunkDimensionStats<Index_>& row_stats() const {
+        return my_data.row_stats;
+    }
+
+    const tatami_chunked::ChunkDimensionStats<Index_>& column_stats() const {
+        return my_data.col_stats;
+    }
+
+private:
+    MockSparseChunkData my_data; 
+};
+
 class CustomSparseChunkedMatrixCore {
 public:
     typedef std::tuple<
@@ -345,11 +368,7 @@ public:
     > SimulationParameters;
 
 protected:
-    inline static std::unique_ptr<tatami::Matrix<double, int> > ref, mock_mat, simple_mat, subset_mat;
-
-    typedef tatami_chunked::MockSimpleSparseChunk MockSimple;
-    typedef tatami_chunked::MockSubsettedSparseChunk MockSubsetted;
-
+    inline static std::unique_ptr<tatami::Matrix<double, int> > ref, simple_mat, subset_mat;
     inline static SimulationParameters last_params;
 
     static void assemble(const SimulationParameters& params) {
@@ -379,14 +398,13 @@ protected:
             std::move(full.indptr)
         ));
 
-        auto num_chunks_per_row = (matdim.second + chunkdim.second - 1) / chunkdim.second;
-        auto num_chunks_per_column = (matdim.first + chunkdim.first - 1) / chunkdim.first;
-        std::vector<SChunk> mock_chunks(num_chunks_per_row * num_chunks_per_column);
-        std::vector<MockSimple> simple_chunks(mock_chunks.size());
-        std::vector<MockSubsetted> subset_chunks(mock_chunks.size());
+        MockSparseChunkData data;
+        data.row_stats = tatami_chunked::ChunkDimensionStats<Index_>(matdim.first, chunkdim.first);
+        data.col_stats = tatami_chunked::ChunkDimensionStats<Index_>(matdim.second, chunkdim.second);
+        data.chunks.resize(data.row_stats.num_chunks * data.col_stats.num_chunks);
 
-        for (int r = 0; r < num_chunks_per_column; ++r) {
-            for (int c = 0; c < num_chunks_per_row; ++c) {
+        for (int r = 0; r < data.row_stats.num_chunks; ++r) {
+            for (int c = 0; c < data.col_stats.num_chunks; ++c) {
                 auto cstart = c * chunkdim.second;
                 auto cend = std::min(cstart + chunkdim.second, matdim.second);
                 auto clen = cend - cstart;
@@ -395,45 +413,36 @@ protected:
                 auto rend = std::min(rstart + chunkdim.first, matdim.first);
                 auto rlen = rend - rstart;
 
-                auto offset = r * num_chunks_per_row + c;
-
-                std::vector<double> vcontents;
-                std::vector<int> icontents;
-                std::vector<size_t> pcontents(1);
-
+                MockSparseChunk chunk;
+                chunk.indptrs.resize(1);
                 auto ext = ref->sparse_row(cstart, clen);
                 std::vector<double> vbuffer(clen);
                 std::vector<int> ibuffer(clen);
 
                 for (int r2 = 0; r2 < rlen; ++r2) {
                     auto range = ext->fetch(r2 + rstart, vbuffer.data(), ibuffer.data());
-                    vcontents.insert(vcontents.end(), range.value, range.value + range.number);
+                    chunk.values.insert(chunk.values.end(), range.value, range.value + range.number);
                     for (int i = 0; i < range.number; ++i) {
-                        icontents.push_back(range.index[i] - cstart);
+                        chunk.indices.push_back(range.index[i] - cstart);
                     }
-                    pcontents.push_back(pcontents.back() + range.number);
+                    chunk.indptrs.push_back(chunk.indptrs.back() + range.number);
                 }
 
-                simple_chunks[offset] = MockSimple(rlen, clen, vcontents, icontents, pcontents);
+                auto offset = r * data.col_stats.num_chunks + c;
+                data.chunks[offset] = std::move(chunk);
             }
         }
 
         tatami_chunked::CustomSparseChunkedMatrixOptions opt;
-        size_t cache_size = static_cast<double>(matdim.first) * static_cast<double>(matdim.second) * cache_fraction * static_cast<double>(sizeof(double) + sizeof(int));
+        std::size_t cache_size = static_cast<double>(matdim.first) * static_cast<double>(matdim.second) * cache_fraction * static_cast<double>(sizeof(double) + sizeof(int));
         opt.maximum_cache_size = cache_size;
         opt.require_minimum_cache = (cache_size > 0);
 
-        mock_mat.reset(new tatami_chunked::CustomSparseChunkedMatrix<double, int, SChunk>(
-            matdim.first, matdim.second, chunkdim.first, chunkdim.second, std::move(mock_chunks), rowmajor, opt
-        ));
+        auto manager = std::make_shared<MockSparseChunkManager>(std::move(data));
+        simple_mat.reset(new tatami_chunked::CustomSparseChunkedMatrix<double, int, double>(manager, opt));
 
-        simple_mat.reset(new tatami_chunked::CustomSparseChunkedMatrix<double, int, MockSimple>(
-            matdim.first, matdim.second, chunkdim.first, chunkdim.second, std::move(simple_chunks), rowmajor, opt
-        ));
-
-        subset_mat.reset(new tatami_chunked::CustomSparseChunkedMatrix<double, int, MockSubsetted>(
-            matdim.first, matdim.second, chunkdim.first, chunkdim.second, std::move(subset_chunks), rowmajor, opt
-        ));
+        opt.cache_subset = true;
+        subset_mat.reset(new tatami_chunked::CustomSparseChunkedMatrix<double, int, double>(manager, opt));
     }
 };
 
@@ -450,7 +459,6 @@ protected:
 
 TEST_P(CustomSparseChunkedMatrixFullTest, Basic) {
     auto opt = tatami_test::convert_test_access_options(std::get<1>(GetParam()));
-    tatami_test::test_full_access(*mock_mat, *ref, opt);
     tatami_test::test_full_access(*simple_mat, *ref, opt);
     tatami_test::test_full_access(*subset_mat, *ref, opt);
 }
@@ -471,7 +479,6 @@ INSTANTIATE_TEST_SUITE_P(
                 std::make_pair(11, 13) // odd numbers
             ),
 
-            ::testing::Values(true, false), // row major
             ::testing::Values(0, 0.01, 0.1) // cache fraction
         ),
 
@@ -494,7 +501,6 @@ TEST_P(CustomSparseChunkedMatrixBlockTest, Basic) {
     auto tparam = GetParam();
     auto opt = tatami_test::convert_test_access_options(std::get<1>(tparam));
     auto block = std::get<2>(tparam);
-    tatami_test::test_block_access(*mock_mat, *ref, block.first, block.second, opt);
     tatami_test::test_block_access(*simple_mat, *ref, block.first, block.second, opt);
     tatami_test::test_block_access(*subset_mat, *ref, block.first, block.second, opt);
 }
@@ -515,7 +521,6 @@ INSTANTIATE_TEST_SUITE_P(
                 std::make_pair(10, 10)
             ),
 
-            ::testing::Values(true, false), // row major
             ::testing::Values(0, 0.01, 0.1) // cache fraction
         ),
 
@@ -544,7 +549,6 @@ TEST_P(CustomSparseChunkedMatrixIndexTest, Basic) {
     auto tparam = GetParam();
     auto opt = tatami_test::convert_test_access_options(std::get<1>(tparam));
     auto index = std::get<2>(tparam);
-    tatami_test::test_indexed_access(*mock_mat, *ref, index.first, index.second, opt);
     tatami_test::test_indexed_access(*simple_mat, *ref, index.first, index.second, opt);
     tatami_test::test_indexed_access(*subset_mat, *ref, index.first, index.second, opt);
 }
@@ -565,7 +569,6 @@ INSTANTIATE_TEST_SUITE_P(
                 std::make_pair(7, 13)
             ),
 
-            ::testing::Values(true, false), // row major 
             ::testing::Values(0, 0.01, 0.1) // cache fraction
         ),
 
