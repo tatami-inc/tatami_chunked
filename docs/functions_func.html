@@ -90,9 +90,10 @@ $(function(){ initResizable(false); });
 
 <h3><a id="index_c" name="index_c"></a>- c -</h3><ul>
 <li>ChunkDimensionStats()&#160;:&#160;<a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html#a409cdc30672f71a8346636bc14c8c859">tatami_chunked::ChunkDimensionStats&lt; Index_ &gt;</a></li>
+<li>column_stats()&#160;:&#160;<a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrixManager.html#a6754b9940e77c0c6912e9f7bbb1f40a3">tatami_chunked::CustomDenseChunkedMatrixManager&lt; ChunkValue_, Index_ &gt;</a>, <a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrixManager.html#a837fb490184473bd7706b4c677350386">tatami_chunked::CustomSparseChunkedMatrixManager&lt; ChunkValue_, Index_ &gt;</a></li>
 <li>create()&#160;:&#160;<a class="el" href="structtatami__chunked_1_1DenseSlabFactory.html#aa0490ff4d9fce6f4c25d335b666a69da">tatami_chunked::DenseSlabFactory&lt; Value_ &gt;</a>, <a class="el" href="structtatami__chunked_1_1SparseSlabFactory.html#a1db3ee0bbbab01c3835e3063a024bbf2">tatami_chunked::SparseSlabFactory&lt; Value_, Index_, Count_ &gt;</a></li>
-<li>CustomDenseChunkedMatrix()&#160;:&#160;<a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html#a30ee69d99a4a49b8be7cc234af72dce1">tatami_chunked::CustomDenseChunkedMatrix&lt; Value_, Index_, Chunk_ &gt;</a></li>
-<li>CustomSparseChunkedMatrix()&#160;:&#160;<a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrix.html#a37234dc9888f04cb1683ad1295209438">tatami_chunked::CustomSparseChunkedMatrix&lt; Value_, Index_, Chunk_ &gt;</a></li>
+<li>CustomDenseChunkedMatrix()&#160;:&#160;<a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html#a21a22767b5d31d55781a6f2bd2506239">tatami_chunked::CustomDenseChunkedMatrix&lt; Value_, Index_, ChunkValue_, Manager_ &gt;</a></li>
+<li>CustomSparseChunkedMatrix()&#160;:&#160;<a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrix.html#a39a8047d1f6e715ea403c576c183dd76">tatami_chunked::CustomSparseChunkedMatrix&lt; Value_, Index_, ChunkValue_, Manager_ &gt;</a></li>
 </ul>
 
 
@@ -102,7 +103,7 @@ $(function(){ initResizable(false); });
 
 
 <h3><a id="index_e" name="index_e"></a>- e -</h3><ul>
-<li>extract()&#160;:&#160;<a class="el" href="classtatami__chunked_1_1MockSimpleDenseChunk.html#ab5bdb0241882bf66cdaec4fc5264a353">tatami_chunked::MockSimpleDenseChunk</a>, <a class="el" href="classtatami__chunked_1_1MockSimpleSparseChunk.html#ae9fd80fc0efa359b4150697e7ce6dfa6">tatami_chunked::MockSimpleSparseChunk</a>, <a class="el" href="classtatami__chunked_1_1MockSubsettedDenseChunk.html#a09842a54eae0c477e0a13286b8b94d22">tatami_chunked::MockSubsettedDenseChunk</a>, <a class="el" href="classtatami__chunked_1_1MockSubsettedSparseChunk.html#a2f753d18f844e925cc259404f5aa0eab">tatami_chunked::MockSubsettedSparseChunk</a></li>
+<li>extract()&#160;:&#160;<a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrixWorkspace.html#aeb82713717fe31676b75b6e6765a8c7b">tatami_chunked::CustomDenseChunkedMatrixWorkspace&lt; ChunkValue_, Index_ &gt;</a>, <a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrixWorkspace.html#ae77be707bb332f71004fee1fbca1c7d8">tatami_chunked::CustomSparseChunkedMatrixWorkspace&lt; ChunkValue_, Index_ &gt;</a></li>
 </ul>
 
 
@@ -125,6 +126,7 @@ $(function(){ initResizable(false); });
 
 
 <h3><a id="index_n" name="index_n"></a>- n -</h3><ul>
+<li>new_workspace()&#160;:&#160;<a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrixManager.html#a8f4e0c9b504963c0cbeebbaed8995e5a">tatami_chunked::CustomDenseChunkedMatrixManager&lt; ChunkValue_, Index_ &gt;</a>, <a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrixManager.html#ab9acedb94ee304280cd4f72a1526f284">tatami_chunked::CustomSparseChunkedMatrixManager&lt; ChunkValue_, Index_ &gt;</a></li>
 <li>next()&#160;:&#160;<a class="el" href="classtatami__chunked_1_1OracularSlabCache.html#a153e738473945fedc492568a7837c0c8">tatami_chunked::OracularSlabCache&lt; Id_, Index_, Slab_, track_reuse_ &gt;</a>, <a class="el" href="classtatami__chunked_1_1OracularSubsettedSlabCache.html#aa0c44875589c18c578195ef33dcdf9b8">tatami_chunked::OracularSubsettedSlabCache&lt; Id_, Index_, Slab_ &gt;</a>, <a class="el" href="classtatami__chunked_1_1OracularVariableSlabCache.html#ab403b1e2b0a2ecad69bc21968041fa1a">tatami_chunked::OracularVariableSlabCache&lt; Id_, Index_, Slab_, Size_ &gt;</a></li>
 </ul>
 
@@ -134,6 +136,16 @@ $(function(){ initResizable(false); });
 <li>OracularSlabCache()&#160;:&#160;<a class="el" href="classtatami__chunked_1_1OracularSlabCache.html#aae1905bc74caccd708962cdba3299b2e">tatami_chunked::OracularSlabCache&lt; Id_, Index_, Slab_, track_reuse_ &gt;</a></li>
 <li>OracularSubsettedSlabCache()&#160;:&#160;<a class="el" href="classtatami__chunked_1_1OracularSubsettedSlabCache.html#a4285aafa5fe71534496c8d09bb6c9330">tatami_chunked::OracularSubsettedSlabCache&lt; Id_, Index_, Slab_ &gt;</a></li>
 <li>OracularVariableSlabCache()&#160;:&#160;<a class="el" href="classtatami__chunked_1_1OracularVariableSlabCache.html#a1de8ebef112e0eba3281899eb56733d6">tatami_chunked::OracularVariableSlabCache&lt; Id_, Index_, Slab_, Size_ &gt;</a></li>
+</ul>
+
+
+<h3><a id="index_p" name="index_p"></a>- p -</h3><ul>
+<li>prefer_rows()&#160;:&#160;<a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrixManager.html#af2eac77c60d6278d4180afc1d0312f35">tatami_chunked::CustomDenseChunkedMatrixManager&lt; ChunkValue_, Index_ &gt;</a>, <a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrixManager.html#ac994de4522a9e88bc620ddb4f013ed25">tatami_chunked::CustomSparseChunkedMatrixManager&lt; ChunkValue_, Index_ &gt;</a></li>
+</ul>
+
+
+<h3><a id="index_r" name="index_r"></a>- r -</h3><ul>
+<li>row_stats()&#160;:&#160;<a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrixManager.html#a3107a371e645253455a9a11745db3767">tatami_chunked::CustomDenseChunkedMatrixManager&lt; ChunkValue_, Index_ &gt;</a>, <a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrixManager.html#a86a6d14331d4bda311b99a0ad99bc19a">tatami_chunked::CustomSparseChunkedMatrixManager&lt; ChunkValue_, Index_ &gt;</a></li>
 </ul>
 
 

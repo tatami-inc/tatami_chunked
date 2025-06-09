@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['use_5fsubset_0',['use_subset',['../classtatami__chunked_1_1MockSimpleDenseChunk.html#ab8b6933c5a77ea1d9e29ee4d91413b3d',1,'tatami_chunked::MockSimpleDenseChunk::use_subset'],['../classtatami__chunked_1_1MockSubsettedDenseChunk.html#a4c649f1fc69e5e9df0290ff5c3079275',1,'tatami_chunked::MockSubsettedDenseChunk::use_subset'],['../classtatami__chunked_1_1MockSimpleSparseChunk.html#aacc656011869b48792e99e90b393110a',1,'tatami_chunked::MockSimpleSparseChunk::use_subset'],['../classtatami__chunked_1_1MockSubsettedSparseChunk.html#aeebcdcc7698b434223d503e96a8dd55d',1,'tatami_chunked::MockSubsettedSparseChunk::use_subset']]]
+  ['two_5fpass_0',['two_pass',['https://tatami-inc.github.io/tatami/structtatami_1_1ConvertToCompressedSparseOptions.html#a216570deaa038bcf3edfd6acd3daa9f1',1,'tatami::ConvertToCompressedSparseOptions::two_pass'],['https://tatami-inc.github.io/tatami/structtatami_1_1RetrieveCompressedSparseContentsOptions.html#a6e8d3d669e760e0b640f085b519a49f3',1,'tatami::RetrieveCompressedSparseContentsOptions::two_pass']]]
 ];

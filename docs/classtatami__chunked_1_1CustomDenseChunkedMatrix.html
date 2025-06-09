@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami_chunked: tatami_chunked::CustomDenseChunkedMatrix&lt; Value_, Index_, Chunk_ &gt; Class Template Reference</title>
+<title>tatami_chunked: tatami_chunked::CustomDenseChunkedMatrix&lt; Value_, Index_, ChunkValue_, Manager_ &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -93,7 +93,7 @@ $(function(){ initResizable(false); });
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classtatami__chunked_1_1CustomDenseChunkedMatrix-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">tatami_chunked::CustomDenseChunkedMatrix&lt; Value_, Index_, Chunk_ &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">tatami_chunked::CustomDenseChunkedMatrix&lt; Value_, Index_, ChunkValue_, Manager_ &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -102,20 +102,20 @@ $(function(){ initResizable(false); });
 
 <p><code>#include &lt;<a class="el" href="CustomDenseChunkedMatrix_8hpp_source.html">CustomDenseChunkedMatrix.hpp</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for tatami_chunked::CustomDenseChunkedMatrix&lt; Value_, Index_, Chunk_ &gt;:</div>
+Inheritance diagram for tatami_chunked::CustomDenseChunkedMatrix&lt; Value_, Index_, ChunkValue_, Manager_ &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classtatami__chunked_1_1CustomDenseChunkedMatrix__inherit__graph.png" border="0" usemap="#atatami__chunked_1_1CustomDenseChunkedMatrix_3_01Value___00_01Index___00_01Chunk___01_4_inherit__map" alt="Inheritance graph"/></div>
-<map name="atatami__chunked_1_1CustomDenseChunkedMatrix_3_01Value___00_01Index___00_01Chunk___01_4_inherit__map" id="atatami__chunked_1_1CustomDenseChunkedMatrix_3_01Value___00_01Index___00_01Chunk___01_4_inherit__map">
+<div class="center"><img src="classtatami__chunked_1_1CustomDenseChunkedMatrix__inherit__graph.png" border="0" usemap="#atatami__chunked_1_1CustomDenseChunkedMatrix_3_01Value___00_01Index___00_01ChunkValue___00_01Manager___01_4_inherit__map" alt="Inheritance graph"/></div>
+<map name="atatami__chunked_1_1CustomDenseChunkedMatrix_3_01Value___00_01Index___00_01ChunkValue___00_01Manager___01_4_inherit__map" id="atatami__chunked_1_1CustomDenseChunkedMatrix_3_01Value___00_01Index___00_01ChunkValue___00_01Manager___01_4_inherit__map">
 <area shape="rect" title="Matrix of custom dense chunks." alt="" coords="5,94,207,150"/>
 <area shape="rect" target="_parent" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html" title=" " alt="" coords="35,5,177,46"/>
 <area shape="poly" title=" " alt="" coords="109,61,109,93,103,93,103,61"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
-Collaboration diagram for tatami_chunked::CustomDenseChunkedMatrix&lt; Value_, Index_, Chunk_ &gt;:</div>
+Collaboration diagram for tatami_chunked::CustomDenseChunkedMatrix&lt; Value_, Index_, ChunkValue_, Manager_ &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classtatami__chunked_1_1CustomDenseChunkedMatrix__coll__graph.png" border="0" usemap="#atatami__chunked_1_1CustomDenseChunkedMatrix_3_01Value___00_01Index___00_01Chunk___01_4_coll__map" alt="Collaboration graph"/></div>
-<map name="atatami__chunked_1_1CustomDenseChunkedMatrix_3_01Value___00_01Index___00_01Chunk___01_4_coll__map" id="atatami__chunked_1_1CustomDenseChunkedMatrix_3_01Value___00_01Index___00_01Chunk___01_4_coll__map">
+<div class="center"><img src="classtatami__chunked_1_1CustomDenseChunkedMatrix__coll__graph.png" border="0" usemap="#atatami__chunked_1_1CustomDenseChunkedMatrix_3_01Value___00_01Index___00_01ChunkValue___00_01Manager___01_4_coll__map" alt="Collaboration graph"/></div>
+<map name="atatami__chunked_1_1CustomDenseChunkedMatrix_3_01Value___00_01Index___00_01ChunkValue___00_01Manager___01_4_coll__map" id="atatami__chunked_1_1CustomDenseChunkedMatrix_3_01Value___00_01Index___00_01ChunkValue___00_01Manager___01_4_coll__map">
 <area shape="rect" title="Matrix of custom dense chunks." alt="" coords="5,94,207,150"/>
 <area shape="rect" target="_parent" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html" title=" " alt="" coords="35,5,177,46"/>
 <area shape="poly" title=" " alt="" coords="109,61,109,93,103,93,103,61"/>
@@ -124,46 +124,46 @@ Collaboration diagram for tatami_chunked::CustomDenseChunkedMatrix&lt; Value_, I
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a30ee69d99a4a49b8be7cc234af72dce1" id="r_a30ee69d99a4a49b8be7cc234af72dce1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a30ee69d99a4a49b8be7cc234af72dce1">CustomDenseChunkedMatrix</a> (Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, std::vector&lt; Chunk_ &gt; chunks, bool row_major, const <a class="el" href="structtatami__chunked_1_1CustomDenseChunkedMatrixOptions.html">CustomDenseChunkedMatrixOptions</a> &amp;opt)</td></tr>
-<tr class="separator:a30ee69d99a4a49b8be7cc234af72dce1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac813916d4c67421ae0352310338a9a1" id="r_aac813916d4c67421ae0352310338a9a1"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aac813916d4c67421ae0352310338a9a1">nrow</a> () const</td></tr>
-<tr class="separator:aac813916d4c67421ae0352310338a9a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43a29d44286756d11e2d6139c42e953e" id="r_a43a29d44286756d11e2d6139c42e953e"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a43a29d44286756d11e2d6139c42e953e">ncol</a> () const</td></tr>
-<tr class="separator:a43a29d44286756d11e2d6139c42e953e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a267159abdcdb67dfc747e9aad3878f5c" id="r_a267159abdcdb67dfc747e9aad3878f5c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a267159abdcdb67dfc747e9aad3878f5c">prefer_rows</a> () const</td></tr>
-<tr class="separator:a267159abdcdb67dfc747e9aad3878f5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ef981bc5d66742b0b67d966a67bb1cd" id="r_a4ef981bc5d66742b0b67d966a67bb1cd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4ef981bc5d66742b0b67d966a67bb1cd">uses_oracle</a> (bool) const</td></tr>
-<tr class="separator:a4ef981bc5d66742b0b67d966a67bb1cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a535ca99447f8bf5f62ba9acbbee87368" id="r_a535ca99447f8bf5f62ba9acbbee87368"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a535ca99447f8bf5f62ba9acbbee87368">prefer_rows_proportion</a> () const</td></tr>
-<tr class="separator:a535ca99447f8bf5f62ba9acbbee87368"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2cfa0ebab56d2a5cea69bfb216f3d72d" id="r_a2cfa0ebab56d2a5cea69bfb216f3d72d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2cfa0ebab56d2a5cea69bfb216f3d72d">is_sparse</a> () const</td></tr>
-<tr class="separator:a2cfa0ebab56d2a5cea69bfb216f3d72d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a717fab5f2e709e5560deb48229fc5d8c" id="r_a717fab5f2e709e5560deb48229fc5d8c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a717fab5f2e709e5560deb48229fc5d8c">is_sparse_proportion</a> () const</td></tr>
-<tr class="separator:a717fab5f2e709e5560deb48229fc5d8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a78db492923f2ccb4ef8e28e7409245d4" id="r_a78db492923f2ccb4ef8e28e7409245d4"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicDenseExtractor.html">tatami::MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a78db492923f2ccb4ef8e28e7409245d4">dense</a> (bool row, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a78db492923f2ccb4ef8e28e7409245d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91f5de100c7c0d2a01a4926c315a5312" id="r_a91f5de100c7c0d2a01a4926c315a5312"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicDenseExtractor.html">tatami::MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a91f5de100c7c0d2a01a4926c315a5312">dense</a> (bool row, Index_ block_start, Index_ block_length, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a91f5de100c7c0d2a01a4926c315a5312"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb481924f02ea9220de3eb7a7b5a27ff" id="r_acb481924f02ea9220de3eb7a7b5a27ff"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicDenseExtractor.html">tatami::MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acb481924f02ea9220de3eb7a7b5a27ff">dense</a> (bool row, <a class="elRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">tatami::VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
-<tr class="separator:acb481924f02ea9220de3eb7a7b5a27ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4a5bfbfdf7520f16d50ab5765c00a5ce" id="r_a4a5bfbfdf7520f16d50ab5765c00a5ce"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularDenseExtractor.html">tatami::OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4a5bfbfdf7520f16d50ab5765c00a5ce">dense</a> (bool row, std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; oracle, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a4a5bfbfdf7520f16d50ab5765c00a5ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac474f07b90040a770830ce9149046a6f" id="r_ac474f07b90040a770830ce9149046a6f"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularDenseExtractor.html">tatami::OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac474f07b90040a770830ce9149046a6f">dense</a> (bool row, std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; oracle, Index_ block_start, Index_ block_length, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
-<tr class="separator:ac474f07b90040a770830ce9149046a6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66e572e5c1d4d9b78fa3c9bee17e4d5b" id="r_a66e572e5c1d4d9b78fa3c9bee17e4d5b"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularDenseExtractor.html">tatami::OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a66e572e5c1d4d9b78fa3c9bee17e4d5b">dense</a> (bool row, std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; oracle, <a class="elRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">tatami::VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a66e572e5c1d4d9b78fa3c9bee17e4d5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8933cc6b4112f33e447afc97be836a99" id="r_a8933cc6b4112f33e447afc97be836a99"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicSparseExtractor.html">tatami::MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8933cc6b4112f33e447afc97be836a99">sparse</a> (bool row, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a8933cc6b4112f33e447afc97be836a99"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9732254c1e6bfa3aa7db63360469b4d6" id="r_a9732254c1e6bfa3aa7db63360469b4d6"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicSparseExtractor.html">tatami::MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9732254c1e6bfa3aa7db63360469b4d6">sparse</a> (bool row, Index_ block_start, Index_ block_length, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a9732254c1e6bfa3aa7db63360469b4d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7982f715734a1211d986d49e8e6031b2" id="r_a7982f715734a1211d986d49e8e6031b2"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicSparseExtractor.html">tatami::MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a7982f715734a1211d986d49e8e6031b2">sparse</a> (bool row, <a class="elRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">tatami::VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a7982f715734a1211d986d49e8e6031b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab5e14c1503332b342cc95c5cbf1afff" id="r_aab5e14c1503332b342cc95c5cbf1afff"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularSparseExtractor.html">tatami::OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aab5e14c1503332b342cc95c5cbf1afff">sparse</a> (bool row, std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; oracle, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
-<tr class="separator:aab5e14c1503332b342cc95c5cbf1afff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c959815c4af6b66143a1a145fb5253d" id="r_a3c959815c4af6b66143a1a145fb5253d"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularSparseExtractor.html">tatami::OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3c959815c4af6b66143a1a145fb5253d">sparse</a> (bool row, std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; oracle, Index_ block_start, Index_ block_length, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a3c959815c4af6b66143a1a145fb5253d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07619f2d4008aa9012ac1e34791a1e26" id="r_a07619f2d4008aa9012ac1e34791a1e26"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularSparseExtractor.html">tatami::OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a07619f2d4008aa9012ac1e34791a1e26">sparse</a> (bool row, std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; oracle, <a class="elRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">tatami::VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
-<tr class="separator:a07619f2d4008aa9012ac1e34791a1e26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21a22767b5d31d55781a6f2bd2506239" id="r_a21a22767b5d31d55781a6f2bd2506239"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a21a22767b5d31d55781a6f2bd2506239">CustomDenseChunkedMatrix</a> (std::shared_ptr&lt; Manager_ &gt; manager, const <a class="el" href="structtatami__chunked_1_1CustomDenseChunkedMatrixOptions.html">CustomDenseChunkedMatrixOptions</a> &amp;opt)</td></tr>
+<tr class="separator:a21a22767b5d31d55781a6f2bd2506239"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc74cc690dcbbf28bb9d91ce57db8c00" id="r_acc74cc690dcbbf28bb9d91ce57db8c00"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#acc74cc690dcbbf28bb9d91ce57db8c00">nrow</a> () const</td></tr>
+<tr class="separator:acc74cc690dcbbf28bb9d91ce57db8c00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af33b80ceaf2a8be074592baf0db9914a" id="r_af33b80ceaf2a8be074592baf0db9914a"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af33b80ceaf2a8be074592baf0db9914a">ncol</a> () const</td></tr>
+<tr class="separator:af33b80ceaf2a8be074592baf0db9914a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8b6202fede542c11666d029fd96b369" id="r_af8b6202fede542c11666d029fd96b369"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af8b6202fede542c11666d029fd96b369">prefer_rows</a> () const</td></tr>
+<tr class="separator:af8b6202fede542c11666d029fd96b369"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a695d824def9c7937c7b31e18dcf20244" id="r_a695d824def9c7937c7b31e18dcf20244"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a695d824def9c7937c7b31e18dcf20244">uses_oracle</a> (bool) const</td></tr>
+<tr class="separator:a695d824def9c7937c7b31e18dcf20244"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc09e30aa5733c8398a230a334956cf6" id="r_afc09e30aa5733c8398a230a334956cf6"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#afc09e30aa5733c8398a230a334956cf6">prefer_rows_proportion</a> () const</td></tr>
+<tr class="separator:afc09e30aa5733c8398a230a334956cf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af08762417f719f21f7b91256e189e28e" id="r_af08762417f719f21f7b91256e189e28e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#af08762417f719f21f7b91256e189e28e">is_sparse</a> () const</td></tr>
+<tr class="separator:af08762417f719f21f7b91256e189e28e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1340dc9f91e654438b27b951fcde21e" id="r_ad1340dc9f91e654438b27b951fcde21e"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ad1340dc9f91e654438b27b951fcde21e">is_sparse_proportion</a> () const</td></tr>
+<tr class="separator:ad1340dc9f91e654438b27b951fcde21e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d30ac54f4841353427a85b0361bc076" id="r_a4d30ac54f4841353427a85b0361bc076"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicDenseExtractor.html">tatami::MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4d30ac54f4841353427a85b0361bc076">dense</a> (bool row, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a4d30ac54f4841353427a85b0361bc076"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7f14a08f2777e0217497272537418b6" id="r_ae7f14a08f2777e0217497272537418b6"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicDenseExtractor.html">tatami::MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae7f14a08f2777e0217497272537418b6">dense</a> (bool row, Index_ block_start, Index_ block_length, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
+<tr class="separator:ae7f14a08f2777e0217497272537418b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1eca73e4527fc0f1ac31fecee4dd972d" id="r_a1eca73e4527fc0f1ac31fecee4dd972d"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicDenseExtractor.html">tatami::MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1eca73e4527fc0f1ac31fecee4dd972d">dense</a> (bool row, <a class="elRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">tatami::VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a1eca73e4527fc0f1ac31fecee4dd972d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab362cd84f2b01806383c16b47281d009" id="r_ab362cd84f2b01806383c16b47281d009"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularDenseExtractor.html">tatami::OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab362cd84f2b01806383c16b47281d009">dense</a> (bool row, std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; oracle, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
+<tr class="separator:ab362cd84f2b01806383c16b47281d009"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11720ca9bd0fbb276a991c2b36743cec" id="r_a11720ca9bd0fbb276a991c2b36743cec"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularDenseExtractor.html">tatami::OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a11720ca9bd0fbb276a991c2b36743cec">dense</a> (bool row, std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; oracle, Index_ block_start, Index_ block_length, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a11720ca9bd0fbb276a991c2b36743cec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac32d9c3dd1b1c299786483094a38d431" id="r_ac32d9c3dd1b1c299786483094a38d431"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularDenseExtractor.html">tatami::OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac32d9c3dd1b1c299786483094a38d431">dense</a> (bool row, std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; oracle, <a class="elRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">tatami::VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
+<tr class="separator:ac32d9c3dd1b1c299786483094a38d431"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f22b5455a59d821cecb4744852d5c27" id="r_a9f22b5455a59d821cecb4744852d5c27"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicSparseExtractor.html">tatami::MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9f22b5455a59d821cecb4744852d5c27">sparse</a> (bool row, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a9f22b5455a59d821cecb4744852d5c27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a107548cd6bf9f5fd4ec4b86bca9f5905" id="r_a107548cd6bf9f5fd4ec4b86bca9f5905"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicSparseExtractor.html">tatami::MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a107548cd6bf9f5fd4ec4b86bca9f5905">sparse</a> (bool row, Index_ block_start, Index_ block_length, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a107548cd6bf9f5fd4ec4b86bca9f5905"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea8251cf24cbc100271620722b55e183" id="r_aea8251cf24cbc100271620722b55e183"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicSparseExtractor.html">tatami::MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aea8251cf24cbc100271620722b55e183">sparse</a> (bool row, <a class="elRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">tatami::VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
+<tr class="separator:aea8251cf24cbc100271620722b55e183"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a2132c7bf387e6f4844d38a7c1a86b1" id="r_a4a2132c7bf387e6f4844d38a7c1a86b1"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularSparseExtractor.html">tatami::OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a4a2132c7bf387e6f4844d38a7c1a86b1">sparse</a> (bool row, std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; oracle, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a4a2132c7bf387e6f4844d38a7c1a86b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c0d8daa1c3f20811a43ce5112d92c58" id="r_a1c0d8daa1c3f20811a43ce5112d92c58"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularSparseExtractor.html">tatami::OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1c0d8daa1c3f20811a43ce5112d92c58">sparse</a> (bool row, std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; oracle, Index_ block_start, Index_ block_length, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a1c0d8daa1c3f20811a43ce5112d92c58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a053e6700aac4d081feaccdd251a1c59d" id="r_a053e6700aac4d081feaccdd251a1c59d"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularSparseExtractor.html">tatami::OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a053e6700aac4d081feaccdd251a1c59d">sparse</a> (bool row, std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; oracle, <a class="elRef" href="https://tatami-inc.github.io/tatami/namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">tatami::VectorPtr</a>&lt; Index_ &gt; indices_ptr, const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">tatami::Options</a> &amp;opt) const</td></tr>
+<tr class="separator:a053e6700aac4d081feaccdd251a1c59d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classtatami_1_1Matrix"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_classtatami_1_1Matrix')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el"  href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix&lt; Value_, Index_ &gt;</a></td></tr>
 <tr class="memitem:a168f0e932b5503c9bfc5dbd42754a7a5 inherit pub_methods_classtatami_1_1Matrix" id="r_a168f0e932b5503c9bfc5dbd42754a7a5"><td class="memItemLeft" align="right" valign="top">
 std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html#a168f0e932b5503c9bfc5dbd42754a7a5">dense_row</a> (const <a class="elRef" href="https://tatami-inc.github.io/tatami/structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
@@ -369,58 +369,34 @@ typedef Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="elRe
 <tr class="separator:a7575110444f4b58efcf0fb1a1060541c inherit pub_types_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;typename Value_, typename Index_, typename Chunk_&gt;<br />
-class tatami_chunked::CustomDenseChunkedMatrix&lt; Value_, Index_, Chunk_ &gt;</div><p>Matrix of custom dense chunks. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename Value_, typename Index_, typename ChunkValue_, class Manager_ = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt;<br />
+class tatami_chunked::CustomDenseChunkedMatrix&lt; Value_, Index_, ChunkValue_, Manager_ &gt;</div><p>Matrix of custom dense chunks. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Numeric type for the matrix value. </td></tr>
     <tr><td class="paramname">Index_</td><td>Integer type for the row/column indices. </td></tr>
-    <tr><td class="paramname">Chunk_</td><td>Class of the chunk, implementing either the <code><a class="el" href="classtatami__chunked_1_1MockSimpleDenseChunk.html" title="Mock a simple dense chunk for a CustomDenseChunkedMatrix.">MockSimpleDenseChunk</a></code> or <code>MockSubsetDenseChunk</code> interfaces.</td></tr>
+    <tr><td class="paramname">ChunkValue_</td><td>Numeric type of the values in each chunk. </td></tr>
+    <tr><td class="paramname">Manager_</td><td>Class that implements the <code><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrixManager.html" title="Manager of chunks for a CustomDenseChunkedMatrix.">CustomDenseChunkedMatrixManager</a></code> interface.</td></tr>
   </table>
   </dd>
 </dl>
-<p>Implements a <code>Matrix</code> subclass where data is contained in dense rectangular chunks. These chunks are typically compressed in some manner to reduce memory usage compared to, e.g., a <code><a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1DenseMatrix.html">tatami::DenseMatrix</a></code>. On access, the relevant chunks are decompressed and the desired values are extracted. Each dimension should be divided into chunk boundaries at regular intervals starting from zero; this partitions the matrix according to a regular grid where each grid entry is a single chunk of the same size. The exception is for chunks at the non-zero boundaries of the matrix dimensions, which may be truncated. </p>
+<p>Implements a <code><a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a></code> subclass where data is contained in dense rectangular chunks. These chunks are typically compressed in some manner to reduce memory usage compared to, e.g., a <code><a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1DenseMatrix.html">tatami::DenseMatrix</a></code>. On access, the relevant chunks are decompressed and the desired values are extracted. Each dimension should be divided into chunk boundaries at regular intervals starting from zero; this partitions the matrix according to a regular grid where each grid entry is a single chunk of the same size. The exception is for chunks at the non-zero boundaries of the matrix dimensions, which may be truncated. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a30ee69d99a4a49b8be7cc234af72dce1" name="a30ee69d99a4a49b8be7cc234af72dce1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a30ee69d99a4a49b8be7cc234af72dce1">&#9670;&#160;</a></span>CustomDenseChunkedMatrix()</h2>
+<a id="a21a22767b5d31d55781a6f2bd2506239" name="a21a22767b5d31d55781a6f2bd2506239"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a21a22767b5d31d55781a6f2bd2506239">&#9670;&#160;</a></span>CustomDenseChunkedMatrix()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::CustomDenseChunkedMatrix </td>
+          <td class="memname"><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::CustomDenseChunkedMatrix </td>
           <td>(</td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>mat_nrow</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>mat_ncol</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>chunk_nrow</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>chunk_ncol</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::vector&lt; Chunk_ &gt;</td>          <td class="paramname"><span class="paramname"><em>chunks</em></span>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row_major</em></span>, </td>
+          <td class="paramtype">std::shared_ptr&lt; Manager_ &gt;</td>          <td class="paramname"><span class="paramname"><em>manager</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -436,12 +412,7 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">mat_nrow</td><td>Number of rows in the matrix. </td></tr>
-    <tr><td class="paramname">mat_ncol</td><td>Number of columns in the matrix. </td></tr>
-    <tr><td class="paramname">chunk_nrow</td><td>Number of rows in each chunk. </td></tr>
-    <tr><td class="paramname">chunk_ncol</td><td>Number of columns in each chunk. </td></tr>
-    <tr><td class="paramname">chunks</td><td>Vector containing a two-dimensional array of chunks that cover the entire matrix. This should have length equal to the product of the number of chunks along the rows and columns of the matrix, i.e., <code>ceil(mat_nrow / chunk_nrow) * ceil(mat_ncol / chunk_ncol)</code>. </td></tr>
-    <tr><td class="paramname">row_major</td><td>Whether <code>chunks</code> is in row-major format. </td></tr>
+    <tr><td class="paramname">manager</td><td>Pointer to a <code><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrixManager.html" title="Manager of chunks for a CustomDenseChunkedMatrix.">CustomDenseChunkedMatrixManager</a></code> instance that manages the chunks for this matrix. </td></tr>
     <tr><td class="paramname">opt</td><td>Further options for chunked extraction. </td></tr>
   </table>
   </dd>
@@ -450,19 +421,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aac813916d4c67421ae0352310338a9a1" name="aac813916d4c67421ae0352310338a9a1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aac813916d4c67421ae0352310338a9a1">&#9670;&#160;</a></span>nrow()</h2>
+<a id="acc74cc690dcbbf28bb9d91ce57db8c00" name="acc74cc690dcbbf28bb9d91ce57db8c00"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc74cc690dcbbf28bb9d91ce57db8c00">&#9670;&#160;</a></span>nrow()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Index_ <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::nrow </td>
+          <td class="memname">Index_ <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::nrow </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -479,19 +450,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="a43a29d44286756d11e2d6139c42e953e" name="a43a29d44286756d11e2d6139c42e953e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a43a29d44286756d11e2d6139c42e953e">&#9670;&#160;</a></span>ncol()</h2>
+<a id="af33b80ceaf2a8be074592baf0db9914a" name="af33b80ceaf2a8be074592baf0db9914a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af33b80ceaf2a8be074592baf0db9914a">&#9670;&#160;</a></span>ncol()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Index_ <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::ncol </td>
+          <td class="memname">Index_ <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::ncol </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -508,19 +479,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="a267159abdcdb67dfc747e9aad3878f5c" name="a267159abdcdb67dfc747e9aad3878f5c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a267159abdcdb67dfc747e9aad3878f5c">&#9670;&#160;</a></span>prefer_rows()</h2>
+<a id="af8b6202fede542c11666d029fd96b369" name="af8b6202fede542c11666d029fd96b369"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8b6202fede542c11666d029fd96b369">&#9670;&#160;</a></span>prefer_rows()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::prefer_rows </td>
+          <td class="memname">bool <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::prefer_rows </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -537,19 +508,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="a4ef981bc5d66742b0b67d966a67bb1cd" name="a4ef981bc5d66742b0b67d966a67bb1cd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4ef981bc5d66742b0b67d966a67bb1cd">&#9670;&#160;</a></span>uses_oracle()</h2>
+<a id="a695d824def9c7937c7b31e18dcf20244" name="a695d824def9c7937c7b31e18dcf20244"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a695d824def9c7937c7b31e18dcf20244">&#9670;&#160;</a></span>uses_oracle()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::uses_oracle </td>
+          <td class="memname">bool <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::uses_oracle </td>
           <td>(</td>
           <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -566,19 +537,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="a535ca99447f8bf5f62ba9acbbee87368" name="a535ca99447f8bf5f62ba9acbbee87368"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a535ca99447f8bf5f62ba9acbbee87368">&#9670;&#160;</a></span>prefer_rows_proportion()</h2>
+<a id="afc09e30aa5733c8398a230a334956cf6" name="afc09e30aa5733c8398a230a334956cf6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc09e30aa5733c8398a230a334956cf6">&#9670;&#160;</a></span>prefer_rows_proportion()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::prefer_rows_proportion </td>
+          <td class="memname">double <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::prefer_rows_proportion </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -595,19 +566,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="a2cfa0ebab56d2a5cea69bfb216f3d72d" name="a2cfa0ebab56d2a5cea69bfb216f3d72d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2cfa0ebab56d2a5cea69bfb216f3d72d">&#9670;&#160;</a></span>is_sparse()</h2>
+<a id="af08762417f719f21f7b91256e189e28e" name="af08762417f719f21f7b91256e189e28e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af08762417f719f21f7b91256e189e28e">&#9670;&#160;</a></span>is_sparse()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::is_sparse </td>
+          <td class="memname">bool <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::is_sparse </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -624,19 +595,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="a717fab5f2e709e5560deb48229fc5d8c" name="a717fab5f2e709e5560deb48229fc5d8c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a717fab5f2e709e5560deb48229fc5d8c">&#9670;&#160;</a></span>is_sparse_proportion()</h2>
+<a id="ad1340dc9f91e654438b27b951fcde21e" name="ad1340dc9f91e654438b27b951fcde21e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad1340dc9f91e654438b27b951fcde21e">&#9670;&#160;</a></span>is_sparse_proportion()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">double <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::is_sparse_proportion </td>
+          <td class="memname">double <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::is_sparse_proportion </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td> const</td>
@@ -653,19 +624,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="a78db492923f2ccb4ef8e28e7409245d4" name="a78db492923f2ccb4ef8e28e7409245d4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a78db492923f2ccb4ef8e28e7409245d4">&#9670;&#160;</a></span>dense() <span class="overload">[1/6]</span></h2>
+<a id="a4d30ac54f4841353427a85b0361bc076" name="a4d30ac54f4841353427a85b0361bc076"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4d30ac54f4841353427a85b0361bc076">&#9670;&#160;</a></span>dense() <span class="overload">[1/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicDenseExtractor.html">tatami::MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::dense </td>
+          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicDenseExtractor.html">tatami::MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::dense </td>
           <td>(</td>
           <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -686,19 +657,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="a91f5de100c7c0d2a01a4926c315a5312" name="a91f5de100c7c0d2a01a4926c315a5312"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a91f5de100c7c0d2a01a4926c315a5312">&#9670;&#160;</a></span>dense() <span class="overload">[2/6]</span></h2>
+<a id="ae7f14a08f2777e0217497272537418b6" name="ae7f14a08f2777e0217497272537418b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7f14a08f2777e0217497272537418b6">&#9670;&#160;</a></span>dense() <span class="overload">[2/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicDenseExtractor.html">tatami::MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::dense </td>
+          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicDenseExtractor.html">tatami::MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::dense </td>
           <td>(</td>
           <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -729,19 +700,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="acb481924f02ea9220de3eb7a7b5a27ff" name="acb481924f02ea9220de3eb7a7b5a27ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acb481924f02ea9220de3eb7a7b5a27ff">&#9670;&#160;</a></span>dense() <span class="overload">[3/6]</span></h2>
+<a id="a1eca73e4527fc0f1ac31fecee4dd972d" name="a1eca73e4527fc0f1ac31fecee4dd972d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1eca73e4527fc0f1ac31fecee4dd972d">&#9670;&#160;</a></span>dense() <span class="overload">[3/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicDenseExtractor.html">tatami::MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::dense </td>
+          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicDenseExtractor.html">tatami::MyopicDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::dense </td>
           <td>(</td>
           <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -767,19 +738,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="a4a5bfbfdf7520f16d50ab5765c00a5ce" name="a4a5bfbfdf7520f16d50ab5765c00a5ce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4a5bfbfdf7520f16d50ab5765c00a5ce">&#9670;&#160;</a></span>dense() <span class="overload">[4/6]</span></h2>
+<a id="ab362cd84f2b01806383c16b47281d009" name="ab362cd84f2b01806383c16b47281d009"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab362cd84f2b01806383c16b47281d009">&#9670;&#160;</a></span>dense() <span class="overload">[4/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularDenseExtractor.html">tatami::OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::dense </td>
+          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularDenseExtractor.html">tatami::OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::dense </td>
           <td>(</td>
           <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -805,19 +776,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="ac474f07b90040a770830ce9149046a6f" name="ac474f07b90040a770830ce9149046a6f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac474f07b90040a770830ce9149046a6f">&#9670;&#160;</a></span>dense() <span class="overload">[5/6]</span></h2>
+<a id="a11720ca9bd0fbb276a991c2b36743cec" name="a11720ca9bd0fbb276a991c2b36743cec"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11720ca9bd0fbb276a991c2b36743cec">&#9670;&#160;</a></span>dense() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularDenseExtractor.html">tatami::OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::dense </td>
+          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularDenseExtractor.html">tatami::OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::dense </td>
           <td>(</td>
           <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -853,19 +824,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="a66e572e5c1d4d9b78fa3c9bee17e4d5b" name="a66e572e5c1d4d9b78fa3c9bee17e4d5b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a66e572e5c1d4d9b78fa3c9bee17e4d5b">&#9670;&#160;</a></span>dense() <span class="overload">[6/6]</span></h2>
+<a id="ac32d9c3dd1b1c299786483094a38d431" name="ac32d9c3dd1b1c299786483094a38d431"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac32d9c3dd1b1c299786483094a38d431">&#9670;&#160;</a></span>dense() <span class="overload">[6/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularDenseExtractor.html">tatami::OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::dense </td>
+          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularDenseExtractor.html">tatami::OracularDenseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::dense </td>
           <td>(</td>
           <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -896,19 +867,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="a8933cc6b4112f33e447afc97be836a99" name="a8933cc6b4112f33e447afc97be836a99"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8933cc6b4112f33e447afc97be836a99">&#9670;&#160;</a></span>sparse() <span class="overload">[1/6]</span></h2>
+<a id="a9f22b5455a59d821cecb4744852d5c27" name="a9f22b5455a59d821cecb4744852d5c27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f22b5455a59d821cecb4744852d5c27">&#9670;&#160;</a></span>sparse() <span class="overload">[1/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicSparseExtractor.html">tatami::MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::sparse </td>
+          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicSparseExtractor.html">tatami::MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::sparse </td>
           <td>(</td>
           <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -929,19 +900,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="a9732254c1e6bfa3aa7db63360469b4d6" name="a9732254c1e6bfa3aa7db63360469b4d6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9732254c1e6bfa3aa7db63360469b4d6">&#9670;&#160;</a></span>sparse() <span class="overload">[2/6]</span></h2>
+<a id="a107548cd6bf9f5fd4ec4b86bca9f5905" name="a107548cd6bf9f5fd4ec4b86bca9f5905"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a107548cd6bf9f5fd4ec4b86bca9f5905">&#9670;&#160;</a></span>sparse() <span class="overload">[2/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicSparseExtractor.html">tatami::MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::sparse </td>
+          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicSparseExtractor.html">tatami::MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::sparse </td>
           <td>(</td>
           <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -972,19 +943,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="a7982f715734a1211d986d49e8e6031b2" name="a7982f715734a1211d986d49e8e6031b2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7982f715734a1211d986d49e8e6031b2">&#9670;&#160;</a></span>sparse() <span class="overload">[3/6]</span></h2>
+<a id="aea8251cf24cbc100271620722b55e183" name="aea8251cf24cbc100271620722b55e183"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aea8251cf24cbc100271620722b55e183">&#9670;&#160;</a></span>sparse() <span class="overload">[3/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicSparseExtractor.html">tatami::MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::sparse </td>
+          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1MyopicSparseExtractor.html">tatami::MyopicSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::sparse </td>
           <td>(</td>
           <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -1010,19 +981,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="aab5e14c1503332b342cc95c5cbf1afff" name="aab5e14c1503332b342cc95c5cbf1afff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aab5e14c1503332b342cc95c5cbf1afff">&#9670;&#160;</a></span>sparse() <span class="overload">[4/6]</span></h2>
+<a id="a4a2132c7bf387e6f4844d38a7c1a86b1" name="a4a2132c7bf387e6f4844d38a7c1a86b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a2132c7bf387e6f4844d38a7c1a86b1">&#9670;&#160;</a></span>sparse() <span class="overload">[4/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularSparseExtractor.html">tatami::OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::sparse </td>
+          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularSparseExtractor.html">tatami::OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::sparse </td>
           <td>(</td>
           <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -1048,19 +1019,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="a3c959815c4af6b66143a1a145fb5253d" name="a3c959815c4af6b66143a1a145fb5253d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c959815c4af6b66143a1a145fb5253d">&#9670;&#160;</a></span>sparse() <span class="overload">[5/6]</span></h2>
+<a id="a1c0d8daa1c3f20811a43ce5112d92c58" name="a1c0d8daa1c3f20811a43ce5112d92c58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c0d8daa1c3f20811a43ce5112d92c58">&#9670;&#160;</a></span>sparse() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularSparseExtractor.html">tatami::OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::sparse </td>
+          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularSparseExtractor.html">tatami::OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::sparse </td>
           <td>(</td>
           <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>
@@ -1096,19 +1067,19 @@ template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
 
 </div>
 </div>
-<a id="a07619f2d4008aa9012ac1e34791a1e26" name="a07619f2d4008aa9012ac1e34791a1e26"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a07619f2d4008aa9012ac1e34791a1e26">&#9670;&#160;</a></span>sparse() <span class="overload">[6/6]</span></h2>
+<a id="a053e6700aac4d081feaccdd251a1c59d" name="a053e6700aac4d081feaccdd251a1c59d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a053e6700aac4d081feaccdd251a1c59d">&#9670;&#160;</a></span>sparse() <span class="overload">[6/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Value_ , typename Index_ , typename Chunk_ &gt; </div>
+template&lt;typename Value_ , typename Index_ , typename ChunkValue_ , class Manager_  = CustomDenseChunkedMatrixManager&lt;ChunkValue_, Index_&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularSparseExtractor.html">tatami::OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, Chunk_ &gt;::sparse </td>
+          <td class="memname">std::unique_ptr&lt; <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1OracularSparseExtractor.html">tatami::OracularSparseExtractor</a>&lt; Value_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html">tatami_chunked::CustomDenseChunkedMatrix</a>&lt; Value_, Index_, ChunkValue_, Manager_ &gt;::sparse </td>
           <td>(</td>
           <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>row</em></span>, </td>
         </tr>

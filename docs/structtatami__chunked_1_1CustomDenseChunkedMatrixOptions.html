@@ -104,22 +104,24 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a3630f24fba130e82dba85f0fd3fc4f3f" id="r_a3630f24fba130e82dba85f0fd3fc4f3f"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3630f24fba130e82dba85f0fd3fc4f3f">maximum_cache_size</a> = 100000000</td></tr>
-<tr class="separator:a3630f24fba130e82dba85f0fd3fc4f3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0eba887160158b8fa8f8097562dbe58e" id="r_a0eba887160158b8fa8f8097562dbe58e"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a0eba887160158b8fa8f8097562dbe58e">maximum_cache_size</a> = 100000000</td></tr>
+<tr class="separator:a0eba887160158b8fa8f8097562dbe58e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05aaeacefdb90ea4c7d793c2588b81a9" id="r_a05aaeacefdb90ea4c7d793c2588b81a9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a05aaeacefdb90ea4c7d793c2588b81a9">require_minimum_cache</a> = true</td></tr>
 <tr class="separator:a05aaeacefdb90ea4c7d793c2588b81a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6bdce23ab9fa0d250c730aaacb64bba3" id="r_a6bdce23ab9fa0d250c730aaacb64bba3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6bdce23ab9fa0d250c730aaacb64bba3">cache_subset</a> = false</td></tr>
+<tr class="separator:a6bdce23ab9fa0d250c730aaacb64bba3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Options for data extraction from a <code><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html" title="Matrix of custom dense chunks.">CustomDenseChunkedMatrix</a></code>. </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
-<a id="a3630f24fba130e82dba85f0fd3fc4f3f" name="a3630f24fba130e82dba85f0fd3fc4f3f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3630f24fba130e82dba85f0fd3fc4f3f">&#9670;&#160;</a></span>maximum_cache_size</h2>
+<a id="a0eba887160158b8fa8f8097562dbe58e" name="a0eba887160158b8fa8f8097562dbe58e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0eba887160158b8fa8f8097562dbe58e">&#9670;&#160;</a></span>maximum_cache_size</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">size_t tatami_chunked::CustomDenseChunkedMatrixOptions::maximum_cache_size = 100000000</td>
+          <td class="memname">std::size_t tatami_chunked::CustomDenseChunkedMatrixOptions::maximum_cache_size = 100000000</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -139,6 +141,21 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Whether to automatically enforce a minimum size for the cache, regardless of <code>maximum_cache_size</code>. This minimum is chosen to ensure that a single slab can be retained in memory, so that the same chunks are not repeatedly re-read when iterating over consecutive rows/columns of the matrix. </p>
+
+</div>
+</div>
+<a id="a6bdce23ab9fa0d250c730aaacb64bba3" name="a6bdce23ab9fa0d250c730aaacb64bba3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bdce23ab9fa0d250c730aaacb64bba3">&#9670;&#160;</a></span>cache_subset</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool tatami_chunked::CustomDenseChunkedMatrixOptions::cache_subset = false</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Whether to only extract and cache a subset of elements along the target dimension when an oracle is available. This involves more overhead to determine which elements are needed but may improve access speed for chunking strategies that support partial extraction. </p>
 
 </div>
 </div>
