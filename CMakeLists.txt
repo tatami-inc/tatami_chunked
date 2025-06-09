@@ -14,7 +14,7 @@ option(TATAMI_CHUNKED_FETCH_EXTERN "Automatically fetch tatami_chunked's externa
 if(TATAMI_CHUNKED_FETCH_EXTERN)
     add_subdirectory(extern)
 else()
-    find_package(tatami_tatami 3.0.0 CONFIG REQUIRED)
+    find_package(tatami_tatami 4.0.0 CONFIG REQUIRED)
 endif()
 
 target_link_libraries(tatami_chunked INTERFACE tatami::tatami)
