@@ -4,8 +4,6 @@
 
 #include "tatami_chunked/CustomSparseChunkedMatrix.hpp"
 
-#include "mock_blob.h"
-
 typedef double ChunkValue_;
 typedef int Index_;
 
