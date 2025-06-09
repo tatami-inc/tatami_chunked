@@ -67,9 +67,14 @@ public:
     /**
      * @param chunk_row_id Row of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
-     * @param chunk_row_id Column of the chunk grid containing the chunk of interest.
+     * @param chunk_column_id Column of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
      * @param row Whether to extract rows from the chunk, i.e., the rows are the target dimension.
+     * @param target_start Index of the first element on the target dimension to be extracted.
+     * If `row = true`, this is the first row, otherwise it is the first column.
+     * @param target_length Number of elements on the target dimension to be extracted.
+     * If `row = true`, this is the number of rows, otherwise it is the number of columns.
+     * This is guaranteed to be positive.
      * @param non_target_start Index of the start of the continguous block of the non-target dimension to be extracted.
      * If `row = true`, this is the first column, otherwise it is the first row.
      * @param non_target_length Length of the contiguous block of the non-target dimension to be extracted.
@@ -116,9 +121,14 @@ public:
     /**
      * @param chunk_row_id Row of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
-     * @param chunk_row_id Column of the chunk grid containing the chunk of interest.
+     * @param chunk_column_id Column of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
      * @param row Whether to extract rows from the chunk, i.e., the rows are the target dimension.
+     * @param target_start Index of the first element on the target dimension to be extracted.
+     * If `row = true`, this is the first row, otherwise it is the first column.
+     * @param target_length Number of elements on the target dimension to be extracted.
+     * If `row = true`, this is the number of rows, otherwise it is the number of columns.
+     * This is guaranteed to be positive.
      * @param non_target_indices Indexed subset of the non-target dimension to be extracted.
      * If `row = true`, these are column indices, otherwise these are row indices.
      * This is guaranteed to be non-empty with unique and sorted indices.
@@ -162,7 +172,7 @@ public:
     /**
      * @param chunk_row_id Row of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
-     * @param chunk_row_id Column of the chunk grid containing the chunk of interest.
+     * @param chunk_column_id Column of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
      * @param row Whether to extract rows from the chunk, i.e., the rows are the target dimension.
      * @param target_indices Indices of the elements of the target dimension to be extracted.
@@ -212,7 +222,7 @@ public:
     /**
      * @param chunk_row_id Row of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
-     * @param chunk_row_id Column of the chunk grid containing the chunk of interest.
+     * @param chunk_column_id Column of the chunk grid containing the chunk of interest.
      * This considers the grid of chunks that is obtained by partitioning each dimension of the matrix. 
      * @param row Whether to extract rows from the chunk, i.e., the rows are the target dimension.
      * @param target_indices Indices of the elements on the target dimension to be extracted.
@@ -761,11 +771,11 @@ private:
  *
  * @tparam Value_ Numeric type for the matrix value.
  * @tparam Index_ Integer type for the row/column indices.
- * @tparam ChunkValue_ Numeric type of the chunked values.
+ * @tparam ChunkValue_ Numeric type of the values in each chunk.
  * @tparam Manager_ Class that implements the `CustomSparseChunkedMatrixManager` interface.
  *
- * Implements a `Matrix` subclass where data is contained in sparse rectangular chunks.
- * These chunks are typically compressed in some manner to reduce memory usage compared to, e.g., a `tatami:CompressedSparseMatrix`.
+ * Implements a `tatami::Matrix` subclass where data is contained in sparse rectangular chunks.
+ * These chunks are typically compressed in some manner to reduce memory usage compared to, e.g., a `tatami::CompressedSparseMatrix`.
  * On access, the relevant chunks are decompressed and the desired values are extracted.
  * Each dimension should be divided into chunk boundaries at regular intervals starting from zero;
  * this partitions the matrix according to a regular grid where each grid entry is a single chunk of the same size.
