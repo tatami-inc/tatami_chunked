@@ -27,13 +27,7 @@ Developers can use this to quickly create matrix representations with arbitrary 
 Obviously, this comes at the cost of speed whereby the chunks must be unpacked to extract the relevant data -
 developers are expected to define an appropriate extraction method for dense/sparse chunks.
 
-In simple cases, chunk extraction is "atomic", i.e., the entire chunk must be unpacked to extract a subset of data.
-Developers can then use the `SimpleDenseChunkWrapper` and `SimpleSparseChunkWrapper` to wrap these simple chunks for use in the `Custom*ChunkedMatrix` classes.
-These wrappers only need a method to inflate the entire chunk; they will automatically handle the extraction of the desired block/subset from each chunk.
-(More advanced developers may prefer to write their own extraction methods that avoid inflating the entire chunk, in which case these wrappers are not necessary.)
-
-Still confused?
-Read the [documentation](https://tatami-inc.github.io/tatami_chunked).
+Check out the [documentation](https://tatami-inc.github.io/tatami_chunked) for more details.
 
 ## Building with CMake
 
