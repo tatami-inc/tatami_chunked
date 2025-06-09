@@ -12,8 +12,6 @@ add_executable(
     src/OracularSlabCache.cpp
     src/OracularVariableSlabCache.cpp
     src/OracularSubsettedSlabCache.cpp
-    src/mock_dense_chunk.cpp
-    src/mock_sparse_chunk.cpp
     src/ChunkDimensionStats.cpp
     src/SlabCacheStats.cpp
     src/CustomDenseChunkedMatrix.cpp

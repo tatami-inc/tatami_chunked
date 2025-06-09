@@ -3,25 +3,177 @@
 #include "tatami_test/tatami_test.hpp"
 
 #include "tatami_chunked/CustomDenseChunkedMatrix.hpp"
-#include "tatami_chunked/mock_dense_chunk.hpp"
 
-#include "mock_blob.h"
+typedef double ChunkValue_;
+typedef int Index_;
+
+struct MockDenseChunkData { 
+    tatami_chunked::ChunkDimensionStats<Index_> row_stats, col_stats;
+    std::vector<std::vector<ChunkValue_> > chunks;
+};
+
+class MockDenseChunkWorkspace final : public tatami_chunked::CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> {
+public:
+    MockDenseChunkWorkspace(const MockDenseChunkData& data) : my_data(data) {}
+
+    void extract(
+        Index_ chunk_row,
+        Index_ chunk_column,
+        bool row,
+        Index_ target_start,
+        Index_ target_length,
+        Index_ non_target_start,
+        Index_ non_target_length,
+        ChunkValue_* output,
+        Index_ stride
+    ) {
+        const auto& curchunk = my_data.chunks[chunk_row * my_data.col_stats.num_chunks + chunk_column];
+        if (row) {
+            for (Index_ tidx = target_start, tend = target_start + target_length; tidx < tend; ++tidx) {
+                std::size_t in_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(non_target_start);
+                std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride);
+                std::copy_n(curchunk.data() + in_offset, non_target_length, output + out_offset);
+            }
+        } else {
+            // Could be a bit more efficient by using tatami::transpose(), but whatever.
+            for (Index_ tidx = target_start, tend = target_start + target_length; tidx < tend; ++tidx) {
+                for (Index_ nidx = 0; nidx < non_target_length; ++nidx) {
+                    std::size_t in_offset = static_cast<std::size_t>(nidx + non_target_start) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(tidx);
+                    std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(nidx);
+                    output[out_offset] = curchunk[in_offset];
+                }
+            }
+        }
+    }
+
+    void extract(
+        Index_ chunk_row,
+        Index_ chunk_column,
+        bool row,
+        Index_ target_start,
+        Index_ target_length,
+        const std::vector<Index_>& non_target_indices,
+        ChunkValue_* output,
+        Index_ stride
+    ) {
+        const auto& curchunk = my_data.chunks[chunk_row * my_data.col_stats.num_chunks + chunk_column];
+        auto ntsize = non_target_indices.size();
+        if (row) {
+            for (Index_ tidx = target_start, tend = target_start + target_length; tidx < tend; ++tidx) {
+                for (decltype(ntsize) nidx = 0; nidx < ntsize; ++nidx) {
+                    std::size_t in_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(non_target_indices[nidx]);
+                    std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(nidx);
+                    output[out_offset] = curchunk[in_offset];
+                }
+            }
+        } else {
+            for (Index_ tidx = target_start, tend = target_start + target_length; tidx < tend; ++tidx) {
+                for (decltype(ntsize) nidx = 0; nidx < ntsize; ++nidx) {
+                    std::size_t in_offset = static_cast<std::size_t>(non_target_indices[nidx]) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(tidx);
+                    std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(nidx);
+                    output[out_offset] = curchunk[in_offset];
+                }
+            }
+        }
+    }
+
+    void extract(
+        Index_ chunk_row,
+        Index_ chunk_column,
+        bool row,
+        const std::vector<Index_>& target_indices,
+        Index_ non_target_start,
+        Index_ non_target_length,
+        ChunkValue_* output,
+        Index_ stride
+    ) {
+        const auto& curchunk = my_data.chunks[chunk_row * my_data.col_stats.num_chunks + chunk_column];
+        if (row) {
+            for (auto tidx : target_indices) {
+                for (Index_ nidx = 0; nidx < non_target_length; ++nidx) {
+                    std::size_t in_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(nidx + non_target_start);
+                    std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(nidx);
+                    output[out_offset] = curchunk[in_offset];
+                }
+            }
+        } else {
+            for (auto tidx : target_indices) {
+                for (Index_ nidx = 0; nidx < non_target_length; ++nidx) {
+                    std::size_t in_offset = static_cast<std::size_t>(nidx + non_target_start) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(tidx);
+                    std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(nidx);
+                    output[out_offset] = curchunk[in_offset];
+                }
+            }
+        }
+    }
+
+    void extract(
+        Index_ chunk_row,
+        Index_ chunk_column,
+        bool row,
+        const std::vector<Index_>& target_indices,
+        const std::vector<Index_>& non_target_indices,
+        ChunkValue_* output,
+        Index_ stride
+    ) {
+        const auto& curchunk = my_data.chunks[chunk_row * my_data.col_stats.num_chunks + chunk_column];
+        auto ntsize = non_target_indices.size();
+        if (row) {
+            for (auto tidx : target_indices) {
+                for (decltype(ntsize) nidx = 0; nidx < ntsize; ++nidx) {
+                    std::size_t in_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(non_target_indices[nidx]);
+                    std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(nidx);
+                    output[out_offset] = curchunk[in_offset];
+                }
+            }
+        } else {
+            for (auto tidx : target_indices) {
+                for (decltype(ntsize) nidx = 0; nidx < ntsize; ++nidx) {
+                    std::size_t in_offset = static_cast<std::size_t>(non_target_indices[nidx]) * static_cast<std::size_t>(my_data.col_stats.chunk_length) + static_cast<std::size_t>(tidx);
+                    std::size_t out_offset = static_cast<std::size_t>(tidx) * static_cast<std::size_t>(stride) + static_cast<std::size_t>(nidx);
+                    output[out_offset] = curchunk[in_offset];
+                }
+            }
+        }
+    }
+
+private:
+    const MockDenseChunkData& my_data;
+};
+
+class MockDenseChunkManager final : public tatami_chunked::CustomDenseChunkedMatrixManager<ChunkValue_, Index_> {
+public:
+    MockDenseChunkManager(MockDenseChunkData data) : my_data(std::move(data)) {}
+
+    std::unique_ptr<tatami_chunked::CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > new_workspace() const {
+        return std::make_unique<MockDenseChunkWorkspace>(my_data);
+    }
+
+    bool prefer_rows() const {
+        return true;
+    }
+
+    const tatami_chunked::ChunkDimensionStats<Index_>& row_stats() const {
+        return my_data.row_stats;
+    }
+
+    const tatami_chunked::ChunkDimensionStats<Index_>& column_stats() const {
+        return my_data.col_stats;
+    }
+
+private:
+    MockDenseChunkData my_data; 
+};
 
 struct CustomDenseChunkedMatrixCore {
     typedef std::tuple<
         std::pair<int, int>, // matrix dimensions
         std::pair<int, int>, // chunk dimensions
-        bool, // row major chunks
         double // cache fraction
     > SimulationParameters;
 
 protected:
-    inline static std::unique_ptr<tatami::Matrix<double, int> > ref, mock_mat, simple_mat, subset_mat;
-
-    typedef tatami_chunked::SimpleDenseChunkWrapper<MockDenseBlob<true> > DChunk;
-    typedef tatami_chunked::MockSimpleDenseChunk MockSimple;
-    typedef tatami_chunked::MockSubsettedDenseChunk MockSubsetted;
-
+    inline static std::unique_ptr<tatami::Matrix<double, int> > ref, simple_mat, subset_mat;
     inline static SimulationParameters last_params;
 
     static void assemble(const SimulationParameters& params) {
@@ -32,26 +184,24 @@ protected:
 
         auto matdim = std::get<0>(params);
         auto chunkdim = std::get<1>(params);
-        bool rowmajor = std::get<2>(params);
-        double cache_fraction = std::get<3>(params);
+        double cache_fraction = std::get<2>(params);
 
         auto full = tatami_test::simulate_vector<double>(matdim.first * matdim.second, [&]{
             tatami_test::SimulateVectorOptions opt;
             opt.lower = -10;
             opt.upper = 10;
-            opt.seed = matdim.first * matdim.second + chunkdim.first * chunkdim.second + rowmajor + 100 * cache_fraction;
+            opt.seed = matdim.first * matdim.second + chunkdim.first * chunkdim.second + 100 * cache_fraction;
             return opt;
         }());
         ref.reset(new tatami::DenseRowMatrix<double, int>(matdim.first, matdim.second, std::move(full)));
 
-        auto num_chunks_per_row = (matdim.second + chunkdim.second - 1) / chunkdim.second;
-        auto num_chunks_per_column = (matdim.first + chunkdim.first - 1) / chunkdim.first;
-        std::vector<DChunk> mock_chunks(num_chunks_per_row * num_chunks_per_column);
-        std::vector<MockSimple> simple_chunks(mock_chunks.size());
-        std::vector<MockSubsetted> subset_chunks(mock_chunks.size());
+        MockDenseChunkData data;
+        data.row_stats = tatami_chunked::ChunkDimensionStats<Index_>(matdim.first, chunkdim.first);
+        data.col_stats = tatami_chunked::ChunkDimensionStats<Index_>(matdim.second, chunkdim.second);
+        data.chunks.resize(data.row_stats.num_chunks * data.col_stats.num_chunks);
 
-        for (int r = 0; r < num_chunks_per_column; ++r) {
-            for (int c = 0; c < num_chunks_per_row; ++c) {
+        for (int r = 0; r < data.row_stats.num_chunks; ++r) {
+            for (int c = 0; c < data.col_stats.num_chunks; ++c) {
                 auto cstart = c * chunkdim.second;
                 auto cend = std::min(cstart + chunkdim.second, matdim.second);
                 auto clen = cend - cstart;
@@ -60,7 +210,8 @@ protected:
                 auto rend = std::min(rstart + chunkdim.first, matdim.first);
                 auto rlen = rend - rstart;
 
-                std::vector<double> contents(chunkdim.second * chunkdim.first);
+                auto& contents = data.chunks[r * data.col_stats.num_chunks + c];
+                contents.resize(chunkdim.first * chunkdim.second);
                 auto ccptr = contents.data();
                 auto ext = ref->dense_row(cstart, clen);
                 for (int r2 = 0; r2 < rlen; ++r2) {
@@ -68,30 +219,19 @@ protected:
                     tatami::copy_n(ptr, clen, ccptr);
                     ccptr += chunkdim.second;
                 }
-
-                auto offset = rowmajor ? (r * num_chunks_per_row + c) : (c * num_chunks_per_column + r);
-                mock_chunks[offset] = DChunk(MockDenseBlob<true>(chunkdim.first, chunkdim.second, contents));
-                simple_chunks[offset] = MockSimple(contents, chunkdim.first, chunkdim.second);
-                subset_chunks[offset] = MockSubsetted(std::move(contents), chunkdim.first, chunkdim.second);
             }
         }
 
         tatami_chunked::CustomDenseChunkedMatrixOptions opt;
-        size_t cache_size = static_cast<double>(matdim.first) * static_cast<double>(matdim.second) * cache_fraction * static_cast<double>(sizeof(double));
+        std::size_t cache_size = static_cast<double>(matdim.first) * static_cast<double>(matdim.second) * cache_fraction * static_cast<double>(sizeof(double));
         opt.maximum_cache_size = cache_size;
         opt.require_minimum_cache = (cache_size > 0);
 
-        mock_mat.reset(new tatami_chunked::CustomDenseChunkedMatrix<double, int, DChunk>(
-            matdim.first, matdim.second, chunkdim.first, chunkdim.second, std::move(mock_chunks), rowmajor, opt
-        ));
+        auto manager = std::make_shared<MockDenseChunkManager>(std::move(data));
+        simple_mat.reset(new tatami_chunked::CustomDenseChunkedMatrix<double, int, double>(manager, opt));
 
-        simple_mat.reset(new tatami_chunked::CustomDenseChunkedMatrix<double, int, MockSimple>(
-            matdim.first, matdim.second, chunkdim.first, chunkdim.second, std::move(simple_chunks), rowmajor, opt
-        ));
-
-        subset_mat.reset(new tatami_chunked::CustomDenseChunkedMatrix<double, int, MockSubsetted>(
-            matdim.first, matdim.second, chunkdim.first, chunkdim.second, std::move(subset_chunks), rowmajor, opt
-        ));
+        opt.cache_subset = true;
+        subset_mat.reset(new tatami_chunked::CustomDenseChunkedMatrix<double, int, double>(manager, opt));
     }
 };
 
@@ -108,7 +248,8 @@ protected:
 
 TEST_P(CustomDenseChunkedMatrixFullTest, Basic) {
     auto opts = tatami_test::convert_test_access_options(std::get<1>(GetParam()));
-    tatami_test::test_full_access(*mock_mat, *ref, opts);
+    EXPECT_TRUE(simple_mat->prefer_rows());
+    EXPECT_FALSE(simple_mat->is_sparse());
     tatami_test::test_full_access(*simple_mat, *ref, opts);
     tatami_test::test_full_access(*subset_mat, *ref, opts);
 }
@@ -129,7 +270,6 @@ INSTANTIATE_TEST_SUITE_P(
                 std::make_pair(11, 13) // odd numbers
             ),
 
-            ::testing::Values(true, false), // row major
             ::testing::Values(0, 0.01, 0.1) // cache fraction
         ),
 
@@ -152,7 +292,6 @@ TEST_P(CustomDenseChunkedMatrixBlockTest, Basic) {
     auto tparam = GetParam();
     auto opt = tatami_test::convert_test_access_options(std::get<1>(tparam));
     auto block = std::get<2>(tparam);
-    tatami_test::test_block_access(*mock_mat, *ref, block.first, block.second, opt);
     tatami_test::test_block_access(*simple_mat, *ref, block.first, block.second, opt);
     tatami_test::test_block_access(*subset_mat, *ref, block.first, block.second, opt);
 }
@@ -173,7 +312,6 @@ INSTANTIATE_TEST_SUITE_P(
                 std::make_pair(10, 10)
             ),
 
-            ::testing::Values(true, false), // row major
             ::testing::Values(0, 0.01, 0.1) // cache fraction
         ),
 
@@ -202,7 +340,6 @@ TEST_P(CustomDenseChunkedMatrixIndexTest, Basic) {
     auto tparam = GetParam();
     auto opt = tatami_test::convert_test_access_options(std::get<1>(tparam));
     auto index = std::get<2>(tparam);
-    tatami_test::test_indexed_access(*mock_mat, *ref, index.first, index.second, opt);
     tatami_test::test_indexed_access(*simple_mat, *ref, index.first, index.second, opt);
     tatami_test::test_indexed_access(*subset_mat, *ref, index.first, index.second, opt);
 }
@@ -223,7 +360,6 @@ INSTANTIATE_TEST_SUITE_P(
                 std::make_pair(7, 13)
             ),
 
-            ::testing::Values(true, false), // row major 
             ::testing::Values(0, 0.01, 0.1) // cache fraction
         ),
 
