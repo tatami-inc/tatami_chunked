@@ -31,22 +31,6 @@ private:
     std::vector<unsigned char> remap;
 
 private:
-    auto get_target_chunkdim(bool row) const {
-        if (row) {
-            return my_data.row_stats.chunk_length;
-        } else {
-            return my_data.col_stats.chunk_length;
-        }
-    }
-
-    auto get_non_target_chunkdim(bool row) const {
-        if (row) {
-            return my_data.col_stats.chunk_length;
-        } else {
-            return my_data.row_stats.chunk_length;
-        }
-    }
-
     static void refine_start_and_end(std::size_t& start, std::size_t& end, Index_ desired_start, Index_ desired_end, Index_ max_end, const std::vector<Index_>& indices) {
         if (desired_start) {
             auto it = indices.begin();
@@ -210,13 +194,13 @@ public:
         Index_ non_target_end = non_target_start + non_target_length;
 
         if (row) {
-            Index_ non_target_chunkdim = get_non_target_chunkdim(row);
+            Index_ non_target_chunkdim = my_data.col_stats.chunk_length;
             for (Index_ p = target_start; p < target_end; ++p) {
                 fill_target<true>(p, current_chunk, non_target_start, non_target_end, non_target_chunkdim, output_values, output_indices, output_number, shift);
             }
 
         } else {
-            Index_ target_chunkdim = get_target_chunkdim(row);
+            Index_ target_chunkdim = my_data.col_stats.chunk_length;
             for (Index_ s = non_target_start; s < non_target_end; ++s) {
                 fill_secondary<true>(s, current_chunk, target_start, target_end, target_chunkdim, output_values, output_indices, output_number, shift);
             }
@@ -242,7 +226,7 @@ public:
             // non_target_indices is guaranteed to be non-empty, see contracts below.
             auto non_target_start = non_target_indices.front();
             auto non_target_end = non_target_indices.back() + 1; // need 1 past end.
-            auto non_target_chunkdim = get_non_target_chunkdim(row);
+            auto non_target_chunkdim = my_data.col_stats.chunk_length;
 
             configure_remap(non_target_indices, non_target_chunkdim);
             for (Index_ p = target_start; p < target_end; ++p) {
@@ -251,7 +235,7 @@ public:
             reset_remap(non_target_indices);
 
         } else {
-            Index_ target_chunkdim = get_target_chunkdim(row);
+            Index_ target_chunkdim = my_data.col_stats.chunk_length;
             for (auto s : non_target_indices) {
                 fill_secondary<true>(s, current_chunk, target_start, target_end, target_chunkdim, output_values, output_indices, output_number, shift);
             }
@@ -274,7 +258,7 @@ public:
         Index_ non_target_end = non_target_start + non_target_length;
 
         if (row) {
-            Index_ non_target_chunkdim = get_non_target_chunkdim(row);
+            Index_ non_target_chunkdim = my_data.col_stats.chunk_length;
             for (auto p : target_indices) {
                 fill_target<true>(p, current_chunk, non_target_start, non_target_end, non_target_chunkdim, output_values, output_indices, output_number, shift);
             }
@@ -283,7 +267,7 @@ public:
             // target_indices is guaranteed to be non-empty, see contracts below.
             auto target_start = target_indices.front();
             auto target_end = target_indices.back() + 1; // need 1 past end.
-            auto target_chunkdim = get_target_chunkdim(row);
+            Index_ target_chunkdim = my_data.col_stats.chunk_length;
 
             configure_remap(target_indices, target_chunkdim);
             for (Index_ s = non_target_start; s < non_target_end; ++s) {
@@ -310,7 +294,7 @@ public:
             // non_target_indices is guaranteed to be non-empty, see contracts below.
             auto non_target_start = non_target_indices.front();
             auto non_target_end = non_target_indices.back() + 1; // need 1 past end.
-            auto non_target_chunkdim = get_non_target_chunkdim(row);
+            Index_ non_target_chunkdim = my_data.col_stats.chunk_length;
 
             configure_remap(non_target_indices, non_target_chunkdim);
             for (auto p : target_indices) {
@@ -322,7 +306,7 @@ public:
             // target_indices is guaranteed to be non-empty, see contracts below.
             auto target_start = target_indices.front();
             auto target_end = target_indices.back() + 1; // need 1 past end.
-            auto target_chunkdim = get_target_chunkdim(row);
+            Index_ target_chunkdim = my_data.col_stats.chunk_length;
 
             configure_remap(target_indices, target_chunkdim);
             for (auto s : non_target_indices) {
@@ -457,6 +441,8 @@ protected:
 
 TEST_P(CustomSparseChunkedMatrixFullTest, Basic) {
     auto opt = tatami_test::convert_test_access_options(std::get<1>(GetParam()));
+    EXPECT_TRUE(simple_mat->prefer_rows());
+    EXPECT_TRUE(simple_mat->is_sparse());
     tatami_test::test_full_access(*simple_mat, *ref, opt);
     tatami_test::test_full_access(*subset_mat, *ref, opt);
 }

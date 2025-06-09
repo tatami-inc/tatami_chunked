@@ -248,6 +248,8 @@ protected:
 
 TEST_P(CustomDenseChunkedMatrixFullTest, Basic) {
     auto opts = tatami_test::convert_test_access_options(std::get<1>(GetParam()));
+    EXPECT_TRUE(simple_mat->prefer_rows());
+    EXPECT_FALSE(simple_mat->is_sparse());
     tatami_test::test_full_access(*simple_mat, *ref, opts);
     tatami_test::test_full_access(*subset_mat, *ref, opts);
 }
