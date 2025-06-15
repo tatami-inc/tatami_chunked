@@ -295,6 +295,17 @@ public:
     virtual std::unique_ptr<CustomSparseChunkedMatrixWorkspace<ChunkValue_, Index_> > new_workspace() const = 0;
 
     /**
+     * @return A `CustomSparseChunkedMatrixWorkspace` instance (or any of its subclasses) to unpack each chunk of interest.
+     *
+     * This is a non-virtual counterpart to `new_workspace()` that may optionally be shadowed by a method with the same signature in each subclass.
+     * If implemented in a subclass, this should return a pointer to its specific `CustomSparseChunkedMatrixWorkspace` subclass, rather than to the base class. 
+     * This provides some devirtualization opportunities within `CustomSparseChunkMatrix` when `Manager_` is hard-coded to a `CustomSparseChunkedMatrixManager` subclass.
+     */
+    std::unique_ptr<CustomSparseChunkedMatrixWorkspace<ChunkValue_, Index_> > new_workspace_exact() const {
+        return new_workspace();
+    }
+
+    /**
      * @return Whether extraction of rows is the preferred access pattern.
      */
     virtual bool prefer_rows() const = 0;
@@ -323,9 +334,9 @@ namespace CustomChunkedMatrix_internal {
  **** Base classes ***
  *********************/
 
-template<bool oracle_, typename Value_, typename Index_, typename ChunkValue_>
+template<bool oracle_, typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 class SoloSparseCore {
-    std::unique_ptr<CustomSparseChunkedMatrixWorkspace<ChunkValue_, Index_> > my_chunk_workspace;
+    WorkspacePtr_ my_chunk_workspace;
     const ChunkCoordinator<true, ChunkValue_, Index_>& my_coordinator;
 
     tatami::MaybeOracle<oracle_, Index_> my_oracle;
@@ -344,7 +355,7 @@ class SoloSparseCore {
 
 public:
     SoloSparseCore(
-        std::unique_ptr<CustomSparseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
+        WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator, 
         [[maybe_unused]] const SlabCacheStats& slab_stats, // for consistency with the other base classes.
         bool row,
@@ -375,9 +386,9 @@ public:
     }
 };
 
-template<typename Value_, typename Index_, typename ChunkValue_>
+template<typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 class MyopicSparseCore {
-    std::unique_ptr<CustomSparseChunkedMatrixWorkspace<ChunkValue_, Index_> > my_chunk_workspace;
+    WorkspacePtr_ my_chunk_workspace;
     const ChunkCoordinator<true, ChunkValue_, Index_>& my_coordinator;
 
     SparseSlabFactory<ChunkValue_, Index_, Index_> my_factory;
@@ -387,7 +398,7 @@ class MyopicSparseCore {
 
 public:
     MyopicSparseCore(
-        std::unique_ptr<CustomSparseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
+        WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator,
         const SlabCacheStats& slab_stats, 
         bool row,
@@ -408,10 +419,10 @@ public:
     }
 };
 
-template<bool use_subset_, typename Value_, typename Index_, typename ChunkValue_>
+template<bool use_subset_, typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 class OracularSparseCore {
 protected:
-    std::unique_ptr<CustomSparseChunkedMatrixWorkspace<ChunkValue_, Index_> > my_chunk_workspace;
+    WorkspacePtr_ my_chunk_workspace;
     const ChunkCoordinator<true, ChunkValue_, Index_>& my_coordinator;
 
     SparseSlabFactory<ChunkValue_, Index_, Index_> my_factory;
@@ -421,7 +432,7 @@ protected:
 
 public:
     OracularSparseCore(
-        std::unique_ptr<CustomSparseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
+        WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator,
         const SlabCacheStats& slab_stats,
         bool row,
@@ -446,12 +457,12 @@ public:
     }
 };
 
-template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_>
+template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 using SparseCore = typename std::conditional<solo_, 
-      SoloSparseCore<oracle_, Value_, Index_, ChunkValue_>,
+      SoloSparseCore<oracle_, Value_, Index_, ChunkValue_, WorkspacePtr_>,
       typename std::conditional<oracle_,
-          OracularSparseCore<use_subset_, Value_, Index_, ChunkValue_>,
-          MyopicSparseCore<Value_, Index_, ChunkValue_>
+          OracularSparseCore<use_subset_, Value_, Index_, ChunkValue_, WorkspacePtr_>,
+          MyopicSparseCore<Value_, Index_, ChunkValue_, WorkspacePtr_>
       >::type
 >::type;
 
@@ -480,11 +491,11 @@ tatami::SparseRange<Value_, Index_> process_sparse_slab(const std::pair<const Sl
     return tatami::SparseRange<Value_, Index_>(num, value_buffer, index_buffer);
 }
 
-template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_>
+template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 class SparseFull : public tatami::SparseExtractor<oracle_, Value_, Index_> {
 public:
     SparseFull(
-        std::unique_ptr<CustomSparseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
+        WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator, 
         const SlabCacheStats& slab_stats,
         bool row,
@@ -516,14 +527,14 @@ private:
     bool my_row;
     Index_ my_non_target_dim;
     bool my_needs_value, my_needs_index;
-    SparseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_> my_core;
+    SparseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_, WorkspacePtr_> my_core;
 };
 
-template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_>
+template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 class SparseBlock : public tatami::SparseExtractor<oracle_, Value_, Index_> {
 public:
     SparseBlock(
-        std::unique_ptr<CustomSparseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
+        WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator, 
         const SlabCacheStats& slab_stats,
         bool row,
@@ -558,14 +569,14 @@ private:
     bool my_row;
     Index_ my_block_start, my_block_length;
     bool my_needs_value, my_needs_index;
-    SparseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_> my_core;
+    SparseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_, WorkspacePtr_> my_core;
 };
 
-template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_>
+template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 class SparseIndex : public tatami::SparseExtractor<oracle_, Value_, Index_> {
 public:
     SparseIndex(
-        std::unique_ptr<CustomSparseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
+        WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator, 
         const SlabCacheStats& slab_stats,
         bool row,
@@ -599,18 +610,18 @@ private:
     tatami::VectorPtr<Index_> my_indices_ptr;
     std::vector<Index_> my_tmp_indices;
     bool my_needs_value, my_needs_index;
-    SparseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_> my_core;
+    SparseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_, WorkspacePtr_> my_core;
 };
 
 /**************************
  **** Densified classes ***
  **************************/
 
-template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_>
+template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 class DensifiedFull : public tatami::DenseExtractor<oracle_, Value_, Index_> {
 public:
     DensifiedFull(
-        std::unique_ptr<CustomSparseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
+        WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator, 
         const SlabCacheStats& slab_stats,
         bool row,
@@ -648,14 +659,14 @@ public:
 private:
     bool my_row;
     Index_ my_non_target_dim;
-    SparseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_> my_core;
+    SparseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_, WorkspacePtr_> my_core;
 };
 
-template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_>
+template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 class DensifiedBlock : public tatami::DenseExtractor<oracle_, Value_, Index_> {
 public:
     DensifiedBlock(
-        std::unique_ptr<CustomSparseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
+        WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator, 
         const SlabCacheStats& slab_stats,
         bool row,
@@ -696,14 +707,14 @@ public:
 private:
     bool my_row;
     Index_ my_block_start, my_block_length;
-    SparseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_> my_core;
+    SparseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_, WorkspacePtr_> my_core;
 };
 
-template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_>
+template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 class DensifiedIndex : public tatami::DenseExtractor<oracle_, Value_, Index_> {
 public:
     DensifiedIndex(
-        std::unique_ptr<CustomSparseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
+        WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator, 
         const SlabCacheStats& slab_stats,
         bool row,
@@ -758,7 +769,7 @@ private:
     Index_ my_remap_offset = 0;
     std::vector<Index_> my_remap;
     std::vector<Index_> my_tmp_indices;
-    SparseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_> my_core;
+    SparseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_, WorkspacePtr_> my_core;
 };
 
 }
@@ -843,7 +854,7 @@ private:
     template<
         template<bool, typename, typename> class Interface_, 
         bool oracle_, 
-        template<bool, bool, bool, typename, typename, class> class Extractor_, 
+        template<bool, bool, bool, typename, typename, typename, class> class Extractor_,
         typename ... Args_
     >
     std::unique_ptr<Interface_<oracle_, Value_, Index_> > raw_internal(bool row, Index_ non_target_length, const tatami::Options& opt, Args_&& ... args) const {
@@ -872,16 +883,17 @@ private:
             }
         }();
 
+        auto wrk = my_manager->new_workspace_exact();
         if (stats.max_slabs_in_cache == 0) {
-            return std::make_unique<Extractor_<true, oracle_, false, Value_, Index_, ChunkValue_> >(my_manager->new_workspace(), my_coordinator, stats, row, std::forward<Args_>(args)...);
+            return std::make_unique<Extractor_<true, oracle_, false, Value_, Index_, ChunkValue_, decltype(wrk)> >(std::move(wrk), my_coordinator, stats, row, std::forward<Args_>(args)...);
         } else if constexpr(oracle_) {
             if (my_cache_subset) {
-                return std::make_unique<Extractor_<false, true, true, Value_, Index_, ChunkValue_> >(my_manager->new_workspace(), my_coordinator, stats, row, std::forward<Args_>(args)...);
+                return std::make_unique<Extractor_<false, true, true, Value_, Index_, ChunkValue_, decltype(wrk)> >(std::move(wrk), my_coordinator, stats, row, std::forward<Args_>(args)...);
             } else {
-                return std::make_unique<Extractor_<false, true, false, Value_, Index_, ChunkValue_> >(my_manager->new_workspace(), my_coordinator, stats, row, std::forward<Args_>(args)...);
+                return std::make_unique<Extractor_<false, true, false, Value_, Index_, ChunkValue_, decltype(wrk)> >(std::move(wrk), my_coordinator, stats, row, std::forward<Args_>(args)...);
             }
         } else {
-            return std::make_unique<Extractor_<false, false, false, Value_, Index_, ChunkValue_> >(my_manager->new_workspace(), my_coordinator, stats, row, std::forward<Args_>(args)...);
+            return std::make_unique<Extractor_<false, false, false, Value_, Index_, ChunkValue_, decltype(wrk)> >(std::move(wrk), my_coordinator, stats, row, std::forward<Args_>(args)...);
         }
     }
 

@@ -251,6 +251,17 @@ public:
     virtual std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > new_workspace() const = 0;
 
     /**
+     * @return A `CustomDenseChunkedMatrixWorkspace` instance (or any of its subclasses) to unpack each chunk of interest.
+     *
+     * This is a non-virtual counterpart to `new_workspace()` that may optionally be shadowed by a method with the same signature in each subclass.
+     * If implemented in a subclass, this should return a pointer to its specific `CustomDenseChunkedMatrixWorkspace` subclass, rather than to the base class. 
+     * This provides some devirtualization opportunities within `CustomDenseChunkMatrix` when `Manager_` is hard-coded to a specific `CustomDenseChunkedMatrixManager` subclass.
+     */
+    std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > new_workspace_exact() const {
+        return new_workspace();
+    }
+
+    /**
      * @return Whether extraction of rows is the preferred access pattern.
      */
     virtual bool prefer_rows() const = 0;
@@ -279,10 +290,10 @@ namespace CustomChunkedMatrix_internal {
  **** Base classes ***
  *********************/
 
-template<bool oracle_, typename Value_, typename Index_, typename ChunkValue_>
+template<bool oracle_, typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 class SoloDenseCore {
 private:
-    std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > my_chunk_workspace;
+    WorkspacePtr_ my_chunk_workspace;
     const ChunkCoordinator<false, ChunkValue_, Index_>& my_coordinator;
 
     tatami::MaybeOracle<oracle_, Index_> my_oracle;
@@ -301,7 +312,7 @@ private:
 
 public:
     SoloDenseCore(
-        std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
+        WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator, 
         [[maybe_unused]] const SlabCacheStats& slab_stats, // for consistency with the other base classes.
         tatami::MaybeOracle<oracle_, Index_> oracle,
@@ -324,10 +335,10 @@ public:
     }
 };
 
-template<typename Value_, typename Index_, typename ChunkValue_>
+template<typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 class MyopicDenseCore {
 private:
-    std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > my_chunk_workspace;
+    WorkspacePtr_ my_chunk_workspace;
     const ChunkCoordinator<false, ChunkValue_, Index_>& my_coordinator;
 
     DenseSlabFactory<ChunkValue_> my_factory;
@@ -337,7 +348,7 @@ private:
 
 public:
     MyopicDenseCore(
-        std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
+        WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator,
         const SlabCacheStats& slab_stats, 
         [[maybe_unused]] tatami::MaybeOracle<false, Index_> ora, // for consistency with the other base classes
@@ -355,10 +366,10 @@ public:
     }
 };
 
-template<bool use_subset_, typename Value_, typename Index_, typename ChunkValue_>
+template<bool use_subset_, typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 class OracularDenseCore {
 private:
-    std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > my_chunk_workspace;
+    WorkspacePtr_ my_chunk_workspace;
     const ChunkCoordinator<false, ChunkValue_, Index_>& my_coordinator;
 
     DenseSlabFactory<ChunkValue_> my_factory;
@@ -368,7 +379,7 @@ private:
 
 public:
     OracularDenseCore(
-        std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
+        WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator,
         const SlabCacheStats& slab_stats,
         tatami::MaybeOracle<true, Index_> oracle, 
@@ -390,12 +401,12 @@ public:
     }
 };
 
-template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_>
+template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 using DenseCore = typename std::conditional<solo_, 
-      SoloDenseCore<oracle_, Value_, Index_, ChunkValue_>,
+      SoloDenseCore<oracle_, Value_, Index_, ChunkValue_, WorkspacePtr_>,
       typename std::conditional<oracle_,
-          OracularDenseCore<use_subset_, Value_, Index_, ChunkValue_>,
-          MyopicDenseCore<Value_, Index_, ChunkValue_>
+          OracularDenseCore<use_subset_, Value_, Index_, ChunkValue_, WorkspacePtr_>,
+          MyopicDenseCore<Value_, Index_, ChunkValue_, WorkspacePtr_>
       >::type
 >::type;
 
@@ -410,11 +421,11 @@ const Value_* process_dense_slab(const std::pair<const Slab_*, Index_>& fetched,
     return buffer;
 }
 
-template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_>
+template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 class DenseFull : public tatami::DenseExtractor<oracle_, Value_, Index_> {
 public:
     DenseFull(
-        std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
+        WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator, 
         const SlabCacheStats& slab_stats,
         bool row,
@@ -439,14 +450,14 @@ public:
 private:
     bool my_row;
     Index_ my_non_target_dim;
-    DenseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_> my_core;
+    DenseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_, WorkspacePtr_> my_core;
 };
 
-template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_>
+template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 class DenseBlock : public tatami::DenseExtractor<oracle_, Value_, Index_> {
 public:
     DenseBlock(
-        std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
+        WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator, 
         const SlabCacheStats& slab_stats,
         bool row,
@@ -474,14 +485,14 @@ public:
 private:
     bool my_row;
     Index_ my_block_start, my_block_length;
-    DenseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_> my_core;
+    DenseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_, WorkspacePtr_> my_core;
 };
 
-template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_>
+template<bool solo_, bool oracle_, bool use_subset_, typename Value_, typename Index_, typename ChunkValue_, class WorkspacePtr_>
 class DenseIndex : public tatami::DenseExtractor<oracle_, Value_, Index_> {
 public:
     DenseIndex(
-        std::unique_ptr<CustomDenseChunkedMatrixWorkspace<ChunkValue_, Index_> > chunk_workspace,
+        WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator, 
         const SlabCacheStats& slab_stats,
         bool row,
@@ -507,7 +518,7 @@ private:
     bool my_row;
     tatami::VectorPtr<Index_> my_indices_ptr;
     std::vector<Index_> my_tmp_indices;
-    DenseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_> my_core;
+    DenseCore<solo_, oracle_, use_subset_, Value_, Index_, ChunkValue_, WorkspacePtr_> my_core;
 };
 
 }
@@ -589,7 +600,7 @@ public:
      *** Myopic dense ***
      ********************/
 private:
-    template<bool oracle_, template<bool, bool, bool, typename, typename, typename> class Extractor_, typename ... Args_>
+    template<bool oracle_, template<bool, bool, bool, typename, typename, typename, class> class Extractor_, typename ... Args_>
     std::unique_ptr<tatami::DenseExtractor<oracle_, Value_, Index_> > raw_dense_internal(bool row, Index_ non_target_length, Args_&& ... args) const {
         auto stats = [&]{
             if (row) {
@@ -601,16 +612,17 @@ private:
             }
         }(); 
 
+        auto wrk = my_manager->new_workspace_exact();
         if (stats.max_slabs_in_cache == 0) {
-            return std::make_unique<Extractor_<true, oracle_, false, Value_, Index_, ChunkValue_> >(my_manager->new_workspace(), my_coordinator, stats, row, std::forward<Args_>(args)...);
+            return std::make_unique<Extractor_<true, oracle_, false, Value_, Index_, ChunkValue_, decltype(wrk)> >(std::move(wrk), my_coordinator, stats, row, std::forward<Args_>(args)...);
         } else if constexpr(oracle_) {
             if (my_cache_subset) {
-                return std::make_unique<Extractor_<false, true, true, Value_, Index_, ChunkValue_> >(my_manager->new_workspace(), my_coordinator, stats, row, std::forward<Args_>(args)...);
+                return std::make_unique<Extractor_<false, true, true, Value_, Index_, ChunkValue_, decltype(wrk)> >(std::move(wrk), my_coordinator, stats, row, std::forward<Args_>(args)...);
             } else {
-                return std::make_unique<Extractor_<false, true, false, Value_, Index_, ChunkValue_> >(my_manager->new_workspace(), my_coordinator, stats, row, std::forward<Args_>(args)...);
+                return std::make_unique<Extractor_<false, true, false, Value_, Index_, ChunkValue_, decltype(wrk)> >(std::move(wrk), my_coordinator, stats, row, std::forward<Args_>(args)...);
             }
         } else {
-            return std::make_unique<Extractor_<false, false, false, Value_, Index_, ChunkValue_> >(my_manager->new_workspace(), my_coordinator, stats, row, std::forward<Args_>(args)...);
+            return std::make_unique<Extractor_<false, false, false, Value_, Index_, ChunkValue_, decltype(wrk)> >(std::move(wrk), my_coordinator, stats, row, std::forward<Args_>(args)...);
         }
     }
 
