@@ -106,6 +106,8 @@ $(function(){ initResizable(false); });
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ab9acedb94ee304280cd4f72a1526f284" id="r_ab9acedb94ee304280cd4f72a1526f284"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; <a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrixWorkspace.html">CustomSparseChunkedMatrixWorkspace</a>&lt; ChunkValue_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ab9acedb94ee304280cd4f72a1526f284">new_workspace</a> () const =0</td></tr>
 <tr class="separator:ab9acedb94ee304280cd4f72a1526f284"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2dc716e6337a6f49952480c92f62f487" id="r_a2dc716e6337a6f49952480c92f62f487"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrixWorkspace.html">CustomSparseChunkedMatrixWorkspace</a>&lt; ChunkValue_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2dc716e6337a6f49952480c92f62f487">new_workspace_exact</a> () const</td></tr>
+<tr class="separator:a2dc716e6337a6f49952480c92f62f487"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac994de4522a9e88bc620ddb4f013ed25" id="r_ac994de4522a9e88bc620ddb4f013ed25"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ac994de4522a9e88bc620ddb4f013ed25">prefer_rows</a> () const =0</td></tr>
 <tr class="separator:ac994de4522a9e88bc620ddb4f013ed25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86a6d14331d4bda311b99a0ad99bc19a" id="r_a86a6d14331d4bda311b99a0ad99bc19a"><td class="memItemLeft" align="right" valign="top">virtual const <a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">ChunkDimensionStats</a>&lt; Index_ &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a86a6d14331d4bda311b99a0ad99bc19a">row_stats</a> () const =0</td></tr>
@@ -149,6 +151,35 @@ template&lt;typename ChunkValue_ , typename Index_ &gt; </div>
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrixWorkspace.html" title="Workspace for extracting data from a CustomSparseChunkedMatrixManager.">CustomSparseChunkedMatrixWorkspace</a></code> instance to unpack each chunk of interest. </dd></dl>
+
+</div>
+</div>
+<a id="a2dc716e6337a6f49952480c92f62f487" name="a2dc716e6337a6f49952480c92f62f487"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2dc716e6337a6f49952480c92f62f487">&#9670;&#160;</a></span>new_workspace_exact()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename ChunkValue_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::unique_ptr&lt; <a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrixWorkspace.html">CustomSparseChunkedMatrixWorkspace</a>&lt; ChunkValue_, Index_ &gt; &gt; <a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrixManager.html">tatami_chunked::CustomSparseChunkedMatrixManager</a>&lt; ChunkValue_, Index_ &gt;::new_workspace_exact </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrixWorkspace.html" title="Workspace for extracting data from a CustomSparseChunkedMatrixManager.">CustomSparseChunkedMatrixWorkspace</a></code> instance (or any of its subclasses) to unpack each chunk of interest.</dd></dl>
+<p>This is a non-virtual counterpart to <code><a class="el" href="#ab9acedb94ee304280cd4f72a1526f284">new_workspace()</a></code> that may optionally be shadowed by a method with the same signature in each subclass. If implemented in a subclass, this should return a pointer to its specific <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrixWorkspace.html" title="Workspace for extracting data from a CustomSparseChunkedMatrixManager.">CustomSparseChunkedMatrixWorkspace</a></code> subclass, rather than to the base class. This provides some devirtualization opportunities within <code>CustomSparseChunkMatrix</code> when <code>Manager_</code> is hard-coded to a <code><a class="el" href="classtatami__chunked_1_1CustomSparseChunkedMatrixManager.html" title="Manager of chunks for a CustomSparseChunkedMatrix.">CustomSparseChunkedMatrixManager</a></code> subclass. </p>
 
 </div>
 </div>

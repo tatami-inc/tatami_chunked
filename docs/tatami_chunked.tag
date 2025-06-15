@@ -153,6 +153,13 @@
       <anchor>a8f4e0c9b504963c0cbeebbaed8995e5a</anchor>
       <arglist>() const =0</arglist>
     </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; CustomDenseChunkedMatrixWorkspace&lt; ChunkValue_, Index_ &gt; &gt;</type>
+      <name>new_workspace_exact</name>
+      <anchorfile>classtatami__chunked_1_1CustomDenseChunkedMatrixManager.html</anchorfile>
+      <anchor>a4063eea8cf1f3a216122763dd29953ed</anchor>
+      <arglist>() const</arglist>
+    </member>
     <member kind="function" virtualness="pure">
       <type>virtual bool</type>
       <name>prefer_rows</name>
@@ -261,6 +268,13 @@
       <anchorfile>classtatami__chunked_1_1CustomSparseChunkedMatrixManager.html</anchorfile>
       <anchor>ab9acedb94ee304280cd4f72a1526f284</anchor>
       <arglist>() const =0</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; CustomSparseChunkedMatrixWorkspace&lt; ChunkValue_, Index_ &gt; &gt;</type>
+      <name>new_workspace_exact</name>
+      <anchorfile>classtatami__chunked_1_1CustomSparseChunkedMatrixManager.html</anchorfile>
+      <anchor>a2dc716e6337a6f49952480c92f62f487</anchor>
+      <arglist>() const</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual bool</type>
