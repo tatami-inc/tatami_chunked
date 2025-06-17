@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <vector>
 #include <list>
+#include <cstddef>
+
 #include "tatami/tatami.hpp"
 
 /**
@@ -85,7 +87,8 @@ namespace OracularSubsettedSlabCache_internals {
 
 template<typename Index_>
 void fill_mapping_in_details(OracularSubsettedSlabCacheSelectionDetails<Index_>& details) {
-    for (size_t i = 0, end = details.indices.size(); i < end; ++i) {
+    auto num = details.indices.size();
+    for (decltype(num) i = 0; i < num; ++i) {
         details.mapping[details.indices[i]] = i;
     }
 }
@@ -164,21 +167,23 @@ template<typename Id_, typename Index_, class Slab_>
 class OracularSubsettedSlabCache {
 private:
     std::shared_ptr<const tatami::Oracle<Index_> > my_oracle;
-    size_t my_total;
-    size_t my_counter = 0;
+    std::size_t my_total;
+    std::size_t my_counter = 0;
 
     Index_ my_last_slab_id = 0;
     Slab_* my_last_slab = NULL;
 
-    size_t my_max_slabs;
-    std::vector<Slab_> my_all_slabs;
+    typedef std::vector<Slab_> SlabPool;
+    typename SlabPool::size_type my_max_slabs;
+    SlabPool my_all_slabs;
     std::unordered_map<Id_, Slab_*> my_current_cache, my_future_cache;
 
     std::vector<OracularSubsettedSlabCacheSelectionDetails<Index_> > my_all_subset_details;
     std::vector<OracularSubsettedSlabCacheSelectionDetails<Index_>*> my_free_subset_details;
     std::unordered_map<Id_, OracularSubsettedSlabCacheSelectionDetails<Index_>*> my_close_future_subset_cache, my_far_future_subset_cache;
-    size_t my_close_refresh_point = 0;
-    size_t my_far_refresh_point = 0;
+
+    std::size_t my_close_refresh_point = 0;
+    std::size_t my_far_refresh_point = 0;
     Id_ my_far_slab_id;
     Index_ my_far_slab_offset;
 
@@ -190,7 +195,7 @@ public:
      * @param oracle Pointer to an `tatami::Oracle` to be used for predictions.
      * @param max_slabs Maximum number of slabs to store.
      */
-    OracularSubsettedSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > oracle, size_t max_slabs) :
+    OracularSubsettedSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > oracle, std::size_t max_slabs) :
         my_oracle(std::move(oracle)), 
         my_total(my_oracle->total()),
         my_max_slabs(max_slabs)
@@ -283,7 +288,7 @@ public:
             if (my_all_slabs.empty()) {
                 // This section only runs once, at the start, to populate the my_close_future_subset_cache.
                 requisition_subset_close(slab_info.first, slab_info.second);
-                size_t used_slabs = 1;
+                decltype(my_max_slabs) used_slabs = 1;
 
                 while (++my_close_refresh_point < my_total) {
                     auto future_index = my_oracle->get(my_close_refresh_point);
@@ -309,7 +314,7 @@ public:
             // Populating the far future cache. 
             if (my_far_refresh_point < my_total) {
                 requisition_subset_far(my_far_slab_id, my_far_slab_offset);
-                size_t used_slabs = 1;
+                decltype(my_max_slabs) used_slabs = 1;
 
                 while (++my_far_refresh_point < my_total) {
                     auto future_index = my_oracle->get(my_far_refresh_point);
@@ -412,15 +417,17 @@ private:
 public:
     /**
      * @return Maximum number of slabs in the cache.
+     * The type is an unsigned integer defined in `std::vector::size_type`.
      */
-    size_t get_max_slabs() const {
+    auto get_max_slabs() const {
         return my_max_slabs;
     }
 
     /**
      * @return Number of slabs currently in the cache.
+     * The type is an unsigned integer defined in `std::vector::size_type`.
      */
-    size_t get_num_slabs() const {
+    auto get_num_slabs() const {
         return my_current_cache.size();
     }
 };

@@ -340,7 +340,7 @@ class SoloSparseCore {
     const ChunkCoordinator<true, ChunkValue_, Index_>& my_coordinator;
 
     tatami::MaybeOracle<oracle_, Index_> my_oracle;
-    typename std::conditional<oracle_, size_t, bool>::type my_counter = 0;
+    typename std::conditional<oracle_, std::size_t, bool>::type my_counter = 0;
 
     SparseSlabFactory<ChunkValue_, Index_, Index_> my_factory;
     typedef typename decltype(my_factory)::Slab Slab;
@@ -738,7 +738,7 @@ public:
         const auto& indices = *my_indices_ptr;
         if (!indices.empty()) {
             my_remap_offset = indices.front();
-            size_t alloc = indices.back() - my_remap_offset + 1;
+            Index_ alloc = indices.back() - my_remap_offset + 1; // alloc must be <= dim extent, which should fit in an Index_.
             my_remap.resize(alloc);
             Index_ counter = 0;
             for (auto i : indices) {
@@ -858,7 +858,7 @@ private:
         typename ... Args_
     >
     std::unique_ptr<Interface_<oracle_, Value_, Index_> > raw_internal(bool row, Index_ non_target_length, const tatami::Options& opt, Args_&& ... args) const {
-        size_t element_size = (opt.sparse_extract_value ? sizeof(ChunkValue_) : 0) + (opt.sparse_extract_index ? sizeof(Index_) : 0);
+        std::size_t element_size = (opt.sparse_extract_value ? sizeof(ChunkValue_) : 0) + (opt.sparse_extract_index ? sizeof(Index_) : 0);
         auto stats = [&]{
             if (row) {
                 // Remember, the num_chunks_per_column is the number of slabs needed to divide up all the *rows* of the matrix.

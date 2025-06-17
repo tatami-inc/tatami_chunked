@@ -2,6 +2,7 @@
 #define TATAMI_CHUNKED_SLAB_CACHE_STATS_HPP
 
 #include <algorithm>
+#include <cstddef>
 
 /**
  * @file SlabCacheStats.hpp
@@ -21,13 +22,13 @@ struct SlabCacheStats {
     /**
      * Size of each slab, in terms of the number of data elements.
      */
-    size_t slab_size_in_elements;
+    std::size_t slab_size_in_elements;
 
     /**
      * Number of slabs that can fit in the cache.
      * This is used as `max_slabs` in `LruSlabCache`, `OracularSlabCache` and friends.
      */
-    size_t max_slabs_in_cache;
+    std::size_t max_slabs_in_cache;
 
     /**
      * @param target_length Length of the target dimension of each slab.
@@ -40,7 +41,7 @@ struct SlabCacheStats {
      * @param cache_size_in_elements Total size of the cache, in terms of the number of data elements.
      * @param require_minimum_cache Whether to enforce a minimum size of the cache for efficient extraction of consecutive dimension elements, even if it exceeds `cache_size_in_elements`.
      */
-    SlabCacheStats(size_t target_length, size_t non_target_length, size_t target_num_slabs, size_t cache_size_in_elements, bool require_minimum_cache) :
+    SlabCacheStats(std::size_t target_length, std::size_t non_target_length, std::size_t target_num_slabs, std::size_t cache_size_in_elements, bool require_minimum_cache) :
         slab_size_in_elements(target_length * non_target_length),
         max_slabs_in_cache(compute_max_slabs_in_cache(slab_size_in_elements, target_num_slabs, cache_size_in_elements, require_minimum_cache))
     {}
@@ -58,7 +59,7 @@ struct SlabCacheStats {
      * This may be zero, e.g., when neither the value nor the index are required during sparse extraction.
      * @param require_minimum_cache Whether to enforce a minimum size of the cache for efficient extraction of consecutive dimension elements, even if it exceeds `cache_size_in_bytes`.
      */
-    SlabCacheStats(size_t target_length, size_t non_target_length, size_t target_num_slabs, size_t cache_size_in_bytes, size_t element_size, bool require_minimum_cache) :
+    SlabCacheStats(std::size_t target_length, std::size_t non_target_length, std::size_t target_num_slabs, std::size_t cache_size_in_bytes, std::size_t element_size, bool require_minimum_cache) :
         slab_size_in_elements(target_length * non_target_length),
         max_slabs_in_cache([&]{
             if (element_size == 0) {
@@ -70,7 +71,7 @@ struct SlabCacheStats {
     {}
 
 private:
-    static size_t compute_max_slabs_in_cache(size_t slab_size_in_elements, size_t num_slabs, size_t cache_size_in_elements, bool require_minimum_cache) {
+    static std::size_t compute_max_slabs_in_cache(std::size_t slab_size_in_elements, std::size_t num_slabs, std::size_t cache_size_in_elements, bool require_minimum_cache) {
         if (slab_size_in_elements == 0) {
             return num_slabs;
         }

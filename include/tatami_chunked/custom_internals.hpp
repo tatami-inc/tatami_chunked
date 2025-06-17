@@ -25,7 +25,8 @@ template<typename ChunkValue_, typename Index_>
 class SparseSingleWorkspace {
 public:
     SparseSingleWorkspace(Index_ target_chunkdim, Index_ non_target_chunkdim, bool needs_value, bool needs_index) : my_number(target_chunkdim) {
-        std::size_t total_size = static_cast<std::size_t>(target_chunkdim) * static_cast<std::size_t>(non_target_chunkdim);
+        typedef decltype(my_value_pool.size()) Size;
+        Size total_size = static_cast<Size>(target_chunkdim) * static_cast<Size>(non_target_chunkdim);
         if (needs_value) {
             my_value_pool.resize(total_size);
             my_values.reserve(target_chunkdim);
@@ -281,6 +282,7 @@ public:
         } else {
             auto final_slab_ptr = final_slab.data;
             auto tmp_buffer_ptr = tmp_work.data();
+            typedef decltype(tmp_work.size()) Size;
 
             extract_non_target_block(
                 row,
@@ -288,6 +290,7 @@ public:
                 non_target_block_start,
                 non_target_block_length, 
                 [&](Index_ row_id, Index_ column_id, Index_ from, Index_ len) -> void {
+
                     chunk_workspace.extract(
                         row_id,
                         column_id,
@@ -300,7 +303,7 @@ public:
                         len
                     );
 
-                    std::size_t tmp_offset = static_cast<std::size_t>(len) * static_cast<std::size_t>(target_chunk_offset); // cast to avoid overflow.
+                    Size tmp_offset = static_cast<Size>(len) * static_cast<Size>(target_chunk_offset); // cast to avoid overflow.
                     std::copy_n(tmp_buffer_ptr + tmp_offset, len, final_slab_ptr);
                     final_slab_ptr += len;
                 }
@@ -370,6 +373,7 @@ public:
         } else {
             auto final_slab_ptr = final_slab.data;
             auto tmp_buffer_ptr = tmp_work.data();
+            typedef decltype(tmp_work.size()) Size;
 
             extract_non_target_index(
                 row,
@@ -377,7 +381,7 @@ public:
                 non_target_indices,
                 chunk_indices_buffer,
                 [&](Index_ row_id, Index_ column_id, const std::vector<Index_>& chunk_indices) -> void {
-                    std::size_t nidx = chunk_indices.size();
+                    auto nidx = chunk_indices.size();
                     chunk_workspace.extract(
                         row_id,
                         column_id,
@@ -389,7 +393,7 @@ public:
                         nidx
                     );
 
-                    std::size_t tmp_offset = nidx * static_cast<size_t>(target_chunk_offset);
+                    Size tmp_offset = static_cast<Size>(nidx) * static_cast<Size>(target_chunk_offset);
                     std::copy_n(tmp_buffer_ptr + tmp_offset, nidx, final_slab_ptr);
                     final_slab_ptr += nidx;
                 }

@@ -2,6 +2,8 @@
 #define TATAMI_CHUNKED_DENSE_SLAB_FACTORY_HPP
 
 #include <vector>
+#include <cstddef>
+
 #include "SlabCacheStats.hpp"
 
 /**
@@ -27,7 +29,7 @@ struct DenseSlabFactory {
      * @param slab_size Size of the slab, in terms of data elements.
      * @param max_slabs Maximum number of slabs.
      */
-    DenseSlabFactory(size_t slab_size, size_t max_slabs) : my_slab_size(slab_size), my_pool(max_slabs * slab_size) {}
+    DenseSlabFactory(std::size_t slab_size, std::size_t max_slabs) : my_slab_size(slab_size), my_pool(max_slabs * slab_size) {}
 
     /**
      * @param stats Slab cache statistics.
@@ -49,8 +51,9 @@ struct DenseSlabFactory {
      */
 
 private:
-    size_t my_offset = 0, my_slab_size;
-    std::vector<Value_> my_pool;
+    typedef std::vector<Value_> Pool;
+    typename Pool::size_type my_offset = 0, my_slab_size;
+    Pool my_pool;
 
 public:
     /**

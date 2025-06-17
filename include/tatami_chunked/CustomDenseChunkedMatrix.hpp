@@ -310,6 +310,8 @@ private:
     DenseSingleWorkspace<ChunkValue_> my_tmp_solo;
     Slab my_final_solo;
 
+    typedef decltype(my_tmp_solo.size()) TmpSize;
+
 public:
     SoloDenseCore(
         WorkspacePtr_ chunk_workspace,
@@ -322,7 +324,7 @@ public:
         my_coordinator(coordinator),
         my_oracle(std::move(oracle)),
         my_factory(non_target_length, 1),
-        my_tmp_solo(static_cast<std::size_t>(my_coordinator.get_chunk_nrow()) * static_cast<std::size_t>(my_coordinator.get_chunk_ncol())),
+        my_tmp_solo(static_cast<TmpSize>(my_coordinator.get_chunk_nrow()) * static_cast<TmpSize>(my_coordinator.get_chunk_ncol())),
         my_final_solo(my_factory.create())
     {}
 
@@ -415,8 +417,8 @@ using DenseCore = typename std::conditional<solo_,
  ***********************/
 
 template<class Slab_, typename Index_, typename Value_>
-const Value_* process_dense_slab(const std::pair<const Slab_*, Index_>& fetched, Value_* buffer, size_t non_target_length) {
-    auto ptr = fetched.first->data + static_cast<size_t>(fetched.second) * non_target_length; // cast to size_t to avoid overflow.
+const Value_* process_dense_slab(const std::pair<const Slab_*, Index_>& fetched, Value_* buffer, Index_ non_target_length) {
+    auto ptr = fetched.first->data + static_cast<std::size_t>(fetched.second) * static_cast<std::size_t>(non_target_length); // cast to size_t to avoid overflow.
     std::copy_n(ptr, non_target_length, buffer);
     return buffer;
 }
@@ -511,7 +513,7 @@ public:
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         auto fetched = my_core.fetch_raw(my_row, i, *my_indices_ptr, my_tmp_indices);
-        return process_dense_slab(fetched, buffer, my_indices_ptr->size());
+        return process_dense_slab(fetched, buffer, static_cast<Index_>(my_indices_ptr->size()));
     }
 
 private:
