@@ -68,7 +68,7 @@
     <name>SparseSlabFactory.hpp</name>
     <path>tatami_chunked/</path>
     <filename>SparseSlabFactory_8hpp.html</filename>
-    <class kind="struct">tatami_chunked::SparseSlabFactory</class>
+    <class kind="class">tatami_chunked::SparseSlabFactory</class>
     <class kind="struct">tatami_chunked::SparseSlabFactory::Slab</class>
     <namespace>tatami_chunked</namespace>
   </compound>
@@ -366,8 +366,8 @@
       <type></type>
       <name>DenseSlabFactory</name>
       <anchorfile>structtatami__chunked_1_1DenseSlabFactory.html</anchorfile>
-      <anchor>a5089d5951923fc130e34d8139c72f873</anchor>
-      <arglist>(size_t slab_size, size_t max_slabs)</arglist>
+      <anchor>a16c80f0056dc6bf23acbabeb578367f4</anchor>
+      <arglist>(std::size_t slab_size, std::size_t max_slabs)</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -393,8 +393,8 @@
       <type></type>
       <name>LruSlabCache</name>
       <anchorfile>classtatami__chunked_1_1LruSlabCache.html</anchorfile>
-      <anchor>a87ca1cc9cf8a138f3b1ce45b70f2d054</anchor>
-      <arglist>(size_t max_slabs)</arglist>
+      <anchor>a68964e8879584ae690af1f8390f52c67</anchor>
+      <arglist>(std::size_t max_slabs)</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -418,17 +418,17 @@
       <arglist>(Id_ id, Cfunction_ create, Pfunction_ populate)</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>auto</type>
       <name>get_max_slabs</name>
       <anchorfile>classtatami__chunked_1_1LruSlabCache.html</anchorfile>
-      <anchor>a9a1d2dff3598e0e2bdb750e104e45b1b</anchor>
+      <anchor>ac8d5ce098dc015bee4d18209c08dc106</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>auto</type>
       <name>get_num_slabs</name>
       <anchorfile>classtatami__chunked_1_1LruSlabCache.html</anchorfile>
-      <anchor>a756afc7221a667f40989328a578dba9c</anchor>
+      <anchor>a1bdcdc9b90adc6db03cc7c82e5045b98</anchor>
       <arglist>() const</arglist>
     </member>
   </compound>
@@ -443,8 +443,8 @@
       <type></type>
       <name>OracularSlabCache</name>
       <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
-      <anchor>aae1905bc74caccd708962cdba3299b2e</anchor>
-      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; oracle, size_t max_slabs)</arglist>
+      <anchor>a241deb3ca0446b8a4aaed26fa4f2fafc</anchor>
+      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; oracle, std::size_t max_slabs)</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -475,17 +475,17 @@
       <arglist>(Ifunction_ identify, Cfunction_ create, Pfunction_ populate)</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>auto</type>
       <name>get_max_slabs</name>
       <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
-      <anchor>a76ec5b5617309cf452fef9a609d62dff</anchor>
+      <anchor>ac5a813f378d13abd46ac21c57fe05309</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>auto</type>
       <name>get_num_slabs</name>
       <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
-      <anchor>af7f2ab37ec2ca12392346a1f8b3b3b83</anchor>
+      <anchor>a20f4a1d67f29d66b711947e77921e660</anchor>
       <arglist>() const</arglist>
     </member>
   </compound>
@@ -499,8 +499,8 @@
       <type></type>
       <name>OracularSubsettedSlabCache</name>
       <anchorfile>classtatami__chunked_1_1OracularSubsettedSlabCache.html</anchorfile>
-      <anchor>a4285aafa5fe71534496c8d09bb6c9330</anchor>
-      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; oracle, size_t max_slabs)</arglist>
+      <anchor>a7eb6c9479213f13d354d04da7dafb0a9</anchor>
+      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; oracle, std::size_t max_slabs)</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -531,17 +531,17 @@
       <arglist>(Ifunction_ identify, Cfunction_ create, Pfunction_ populate)</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>auto</type>
       <name>get_max_slabs</name>
       <anchorfile>classtatami__chunked_1_1OracularSubsettedSlabCache.html</anchorfile>
-      <anchor>a8894b72890bb20f5809dee64ec5ece0e</anchor>
+      <anchor>a54bf7ae1aaff17c65d8d1940c2666dd5</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>auto</type>
       <name>get_num_slabs</name>
       <anchorfile>classtatami__chunked_1_1OracularSubsettedSlabCache.html</anchorfile>
-      <anchor>a8a784316e939057aa052b632f9ee0853</anchor>
+      <anchor>a56671a23e9e6c2b8385550e8e2d3367c</anchor>
       <arglist>() const</arglist>
     </member>
   </compound>
@@ -603,8 +603,8 @@
       <type></type>
       <name>OracularVariableSlabCache</name>
       <anchorfile>classtatami__chunked_1_1OracularVariableSlabCache.html</anchorfile>
-      <anchor>a1de8ebef112e0eba3281899eb56733d6</anchor>
-      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; oracle, size_t max_size)</arglist>
+      <anchor>ab0e7d5bdfeeb4664f9f56ad54ed05c5d</anchor>
+      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; oracle, std::size_t max_size)</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -635,24 +635,24 @@
       <arglist>(Ifunction_ identify, Ufunction_ upper_size, Afunction_ actual_size, Cfunction_ create, Pfunction_ populate)</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>auto</type>
       <name>get_max_size</name>
       <anchorfile>classtatami__chunked_1_1OracularVariableSlabCache.html</anchorfile>
-      <anchor>ab39bb21b36c1bcfc95c41dd331ac6263</anchor>
+      <anchor>a79e95e22103c32b1fdae89d4b9d2785a</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>auto</type>
       <name>get_used_size</name>
       <anchorfile>classtatami__chunked_1_1OracularVariableSlabCache.html</anchorfile>
-      <anchor>a42819d2ea602dde692ae5b3415d010da</anchor>
+      <anchor>a49ccbc05354893026eb3863a36a0c4cd</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
-      <type>size_t</type>
+      <type>auto</type>
       <name>get_num_slabs</name>
       <anchorfile>classtatami__chunked_1_1OracularVariableSlabCache.html</anchorfile>
-      <anchor>a401d66fc2083d7317433dfea2a725696</anchor>
+      <anchor>a6817761f796b3c43e6572efaed034ff2</anchor>
       <arglist>() const</arglist>
     </member>
   </compound>
@@ -699,34 +699,34 @@
       <type></type>
       <name>SlabCacheStats</name>
       <anchorfile>structtatami__chunked_1_1SlabCacheStats.html</anchorfile>
-      <anchor>a3c3738245cdd773aaf14c93d51e841a2</anchor>
-      <arglist>(size_t target_length, size_t non_target_length, size_t target_num_slabs, size_t cache_size_in_elements, bool require_minimum_cache)</arglist>
+      <anchor>a771808f17cab5285682add13306daea8</anchor>
+      <arglist>(std::size_t target_length, std::size_t non_target_length, std::size_t target_num_slabs, std::size_t cache_size_in_elements, bool require_minimum_cache)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SlabCacheStats</name>
       <anchorfile>structtatami__chunked_1_1SlabCacheStats.html</anchorfile>
-      <anchor>a9dcda672552d3410362cfef7cd7dd2c4</anchor>
-      <arglist>(size_t target_length, size_t non_target_length, size_t target_num_slabs, size_t cache_size_in_bytes, size_t element_size, bool require_minimum_cache)</arglist>
+      <anchor>a96e503e8783b9a3723600fdc5b44245a</anchor>
+      <arglist>(std::size_t target_length, std::size_t non_target_length, std::size_t target_num_slabs, std::size_t cache_size_in_bytes, std::size_t element_size, bool require_minimum_cache)</arglist>
     </member>
     <member kind="variable">
-      <type>size_t</type>
+      <type>std::size_t</type>
       <name>slab_size_in_elements</name>
       <anchorfile>structtatami__chunked_1_1SlabCacheStats.html</anchorfile>
-      <anchor>aedb2b8a5f6d2aebe4e3eb951f5f65e7e</anchor>
+      <anchor>a197d46e51a72d285d50a34a25e6ed110</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>size_t</type>
+      <type>std::size_t</type>
       <name>max_slabs_in_cache</name>
       <anchorfile>structtatami__chunked_1_1SlabCacheStats.html</anchorfile>
-      <anchor>ad18fd1c4f1a2c88b7355412f7c2a69fa</anchor>
+      <anchor>ae861ee9b4ee27ac9f22bfcd5f6875133</anchor>
       <arglist></arglist>
     </member>
   </compound>
-  <compound kind="struct">
+  <compound kind="class">
     <name>tatami_chunked::SparseSlabFactory</name>
-    <filename>structtatami__chunked_1_1SparseSlabFactory.html</filename>
+    <filename>classtatami__chunked_1_1SparseSlabFactory.html</filename>
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>typename Count_</templarg>
@@ -734,28 +734,28 @@
     <member kind="function">
       <type></type>
       <name>SparseSlabFactory</name>
-      <anchorfile>structtatami__chunked_1_1SparseSlabFactory.html</anchorfile>
-      <anchor>a848c3f69614ebe1729fb3d34279ca7cf</anchor>
-      <arglist>(size_t target_dim, size_t non_target_dim, size_t slab_size, size_t max_slabs, bool needs_value, bool needs_index)</arglist>
+      <anchorfile>classtatami__chunked_1_1SparseSlabFactory.html</anchorfile>
+      <anchor>ac83f15d6d3c9db21f64a31f63daed944</anchor>
+      <arglist>(Index_ target_dim, Index_ non_target_dim, std::size_t slab_size, std::size_t max_slabs, bool needs_value, bool needs_index)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SparseSlabFactory</name>
-      <anchorfile>structtatami__chunked_1_1SparseSlabFactory.html</anchorfile>
-      <anchor>a5433f4aea1aac8fb2cec69e98c8bae53</anchor>
-      <arglist>(size_t target_dim, size_t non_target_dim, size_t max_slabs, bool needs_value, bool needs_index)</arglist>
+      <anchorfile>classtatami__chunked_1_1SparseSlabFactory.html</anchorfile>
+      <anchor>a621734f71ca489abd827f1f56d5ae94c</anchor>
+      <arglist>(Index_ target_dim, Index_ non_target_dim, std::size_t max_slabs, bool needs_value, bool needs_index)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SparseSlabFactory</name>
-      <anchorfile>structtatami__chunked_1_1SparseSlabFactory.html</anchorfile>
-      <anchor>a9e357d8ab8d2c939c1cd4da510b2be23</anchor>
-      <arglist>(size_t target_dim, size_t non_target_dim, const SlabCacheStats &amp;stats, bool needs_value, bool needs_index)</arglist>
+      <anchorfile>classtatami__chunked_1_1SparseSlabFactory.html</anchorfile>
+      <anchor>a8371b0ffd1bdef7fb384ab0d88e3e651</anchor>
+      <arglist>(Index_ target_dim, Index_ non_target_dim, const SlabCacheStats &amp;stats, bool needs_value, bool needs_index)</arglist>
     </member>
     <member kind="function">
       <type>Slab</type>
       <name>create</name>
-      <anchorfile>structtatami__chunked_1_1SparseSlabFactory.html</anchorfile>
+      <anchorfile>classtatami__chunked_1_1SparseSlabFactory.html</anchorfile>
       <anchor>a1db3ee0bbbab01c3835e3063a024bbf2</anchor>
       <arglist>()</arglist>
     </member>
@@ -779,7 +779,7 @@
     <class kind="struct">tatami_chunked::OracularSubsettedSlabCacheSelectionDetails</class>
     <class kind="class">tatami_chunked::OracularVariableSlabCache</class>
     <class kind="struct">tatami_chunked::SlabCacheStats</class>
-    <class kind="struct">tatami_chunked::SparseSlabFactory</class>
+    <class kind="class">tatami_chunked::SparseSlabFactory</class>
     <member kind="enumeration">
       <type></type>
       <name>OracularSubsettedSlabCacheSelectionType</name>

@@ -12,7 +12,7 @@ var searchData=
   ['matrix_3c_20outputvalue_5f_2c_20index_5f_20_3e_9',['Matrix&lt; OutputValue_, Index_ &gt;',['https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html',1,'tatami']]],
   ['matrix_3c_20value_5f_2c_20index_5f_20_3e_10',['Matrix&lt; Value_, Index_ &gt;',['https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html',1,'tatami']]],
   ['matrix_3c_20valueout_5f_2c_20indexout_5f_20_3e_11',['Matrix&lt; ValueOut_, IndexOut_ &gt;',['https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html',1,'tatami']]],
-  ['max_5fslabs_5fin_5fcache_12',['max_slabs_in_cache',['../structtatami__chunked_1_1SlabCacheStats.html#ad18fd1c4f1a2c88b7355412f7c2a69fa',1,'tatami_chunked::SlabCacheStats']]],
+  ['max_5fslabs_5fin_5fcache_12',['max_slabs_in_cache',['../structtatami__chunked_1_1SlabCacheStats.html#ae861ee9b4ee27ac9f22bfcd5f6875133',1,'tatami_chunked::SlabCacheStats']]],
   ['maximum_5fcache_5fsize_13',['maximum_cache_size',['../structtatami__chunked_1_1CustomDenseChunkedMatrixOptions.html#a0eba887160158b8fa8f8097562dbe58e',1,'tatami_chunked::CustomDenseChunkedMatrixOptions::maximum_cache_size'],['../structtatami__chunked_1_1CustomSparseChunkedMatrixOptions.html#a09f620a41a1e990b1377a7a88cf251cc',1,'tatami_chunked::CustomSparseChunkedMatrixOptions::maximum_cache_size']]],
   ['maybeoracle_14',['MaybeOracle',['https://tatami-inc.github.io/tatami/namespacetatami.html#a812af1bfb04773bf28da8549c3e6e5ee',1,'tatami']]],
   ['myopicdenseextractor_15',['MyopicDenseExtractor',['https://tatami-inc.github.io/tatami/classtatami_1_1MyopicDenseExtractor.html',1,'tatami']]],
