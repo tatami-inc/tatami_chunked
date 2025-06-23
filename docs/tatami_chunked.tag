@@ -366,15 +366,15 @@
       <type></type>
       <name>DenseSlabFactory</name>
       <anchorfile>structtatami__chunked_1_1DenseSlabFactory.html</anchorfile>
-      <anchor>a16c80f0056dc6bf23acbabeb578367f4</anchor>
-      <arglist>(std::size_t slab_size, std::size_t max_slabs)</arglist>
+      <anchor>a4b50ac35298206e45ad64aebdebfb8bf</anchor>
+      <arglist>(std::size_t slab_size, MaxSlabs_ max_slabs)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>DenseSlabFactory</name>
       <anchorfile>structtatami__chunked_1_1DenseSlabFactory.html</anchorfile>
-      <anchor>a8fd3b111df53b86a7a3cc4b5f092b1e4</anchor>
-      <arglist>(const SlabCacheStats &amp;stats)</arglist>
+      <anchor>a8105469c26039254b13b721877c26075</anchor>
+      <arglist>(const SlabCacheStats&lt; MaxSlabs_ &gt; &amp;stats)</arglist>
     </member>
     <member kind="function">
       <type>Slab</type>
@@ -393,8 +393,8 @@
       <type></type>
       <name>LruSlabCache</name>
       <anchorfile>classtatami__chunked_1_1LruSlabCache.html</anchorfile>
-      <anchor>a68964e8879584ae690af1f8390f52c67</anchor>
-      <arglist>(std::size_t max_slabs)</arglist>
+      <anchor>af977c86d2777dc7e4596d21a58fee697</anchor>
+      <arglist>(MaxSlabs_ max_slabs)</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -443,8 +443,8 @@
       <type></type>
       <name>OracularSlabCache</name>
       <anchorfile>classtatami__chunked_1_1OracularSlabCache.html</anchorfile>
-      <anchor>a241deb3ca0446b8a4aaed26fa4f2fafc</anchor>
-      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; oracle, std::size_t max_slabs)</arglist>
+      <anchor>a02d3a0997ab3b34a444513df0878b751</anchor>
+      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; oracle, MaxSlabs_ max_slabs)</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -499,8 +499,8 @@
       <type></type>
       <name>OracularSubsettedSlabCache</name>
       <anchorfile>classtatami__chunked_1_1OracularSubsettedSlabCache.html</anchorfile>
-      <anchor>a7eb6c9479213f13d354d04da7dafb0a9</anchor>
-      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; oracle, std::size_t max_slabs)</arglist>
+      <anchor>af6e8a5ff68abca719b049d25fc9a51fd</anchor>
+      <arglist>(std::shared_ptr&lt; const tatami::Oracle&lt; Index_ &gt; &gt; oracle, MaxSlabs_ max_slabs)</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -695,32 +695,33 @@
   <compound kind="struct">
     <name>tatami_chunked::SlabCacheStats</name>
     <filename>structtatami__chunked_1_1SlabCacheStats.html</filename>
+    <templarg>typename MaxSlabs_</templarg>
     <member kind="function">
       <type></type>
       <name>SlabCacheStats</name>
       <anchorfile>structtatami__chunked_1_1SlabCacheStats.html</anchorfile>
-      <anchor>a771808f17cab5285682add13306daea8</anchor>
-      <arglist>(std::size_t target_length, std::size_t non_target_length, std::size_t target_num_slabs, std::size_t cache_size_in_elements, bool require_minimum_cache)</arglist>
+      <anchor>a5fdb90be1768cf819bd5ce994ad841d8</anchor>
+      <arglist>(Index_ target_length, Index_ non_target_length, TargetNumSlabs_ target_num_slabs, std::size_t cache_size_in_elements, bool require_minimum_cache)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SlabCacheStats</name>
       <anchorfile>structtatami__chunked_1_1SlabCacheStats.html</anchorfile>
-      <anchor>a96e503e8783b9a3723600fdc5b44245a</anchor>
-      <arglist>(std::size_t target_length, std::size_t non_target_length, std::size_t target_num_slabs, std::size_t cache_size_in_bytes, std::size_t element_size, bool require_minimum_cache)</arglist>
+      <anchor>af8b35c10d544f212939a5e1e15fd1cbe</anchor>
+      <arglist>(Index_ target_length, Index_ non_target_length, TargetNumSlabs_ target_num_slabs, std::size_t cache_size_in_bytes, std::size_t element_size, bool require_minimum_cache)</arglist>
     </member>
     <member kind="variable">
       <type>std::size_t</type>
       <name>slab_size_in_elements</name>
       <anchorfile>structtatami__chunked_1_1SlabCacheStats.html</anchorfile>
-      <anchor>a197d46e51a72d285d50a34a25e6ed110</anchor>
+      <anchor>a340d5d18c67df6b8487c3e65ba59bcbd</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>std::size_t</type>
+      <type>MaxSlabs_</type>
       <name>max_slabs_in_cache</name>
       <anchorfile>structtatami__chunked_1_1SlabCacheStats.html</anchorfile>
-      <anchor>ae861ee9b4ee27ac9f22bfcd5f6875133</anchor>
+      <anchor>a1cc63df8c4fb68bcbdf8136485e6a113</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -735,22 +736,22 @@
       <type></type>
       <name>SparseSlabFactory</name>
       <anchorfile>classtatami__chunked_1_1SparseSlabFactory.html</anchorfile>
-      <anchor>ac83f15d6d3c9db21f64a31f63daed944</anchor>
-      <arglist>(Index_ target_dim, Index_ non_target_dim, std::size_t slab_size, std::size_t max_slabs, bool needs_value, bool needs_index)</arglist>
+      <anchor>acf9ea02cba191efcd129378ae1fd766d</anchor>
+      <arglist>(Index_ target_dim, Index_ non_target_dim, std::size_t slab_size, MaxSlabs_ max_slabs, bool needs_value, bool needs_index)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SparseSlabFactory</name>
       <anchorfile>classtatami__chunked_1_1SparseSlabFactory.html</anchorfile>
-      <anchor>a621734f71ca489abd827f1f56d5ae94c</anchor>
-      <arglist>(Index_ target_dim, Index_ non_target_dim, std::size_t max_slabs, bool needs_value, bool needs_index)</arglist>
+      <anchor>ab005c587b245b3f8fe828a5d970bd27c</anchor>
+      <arglist>(Index_ target_dim, Index_ non_target_dim, MaxSlabs_ max_slabs, bool needs_value, bool needs_index)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SparseSlabFactory</name>
       <anchorfile>classtatami__chunked_1_1SparseSlabFactory.html</anchorfile>
-      <anchor>a8371b0ffd1bdef7fb384ab0d88e3e651</anchor>
-      <arglist>(Index_ target_dim, Index_ non_target_dim, const SlabCacheStats &amp;stats, bool needs_value, bool needs_index)</arglist>
+      <anchor>a8b7246ad4091f39906d187b8d1d2a99d</anchor>
+      <arglist>(Index_ target_dim, Index_ non_target_dim, const SlabCacheStats&lt; MaxSlabs_ &gt; &amp;stats, bool needs_value, bool needs_index)</arglist>
     </member>
     <member kind="function">
       <type>Slab</type>

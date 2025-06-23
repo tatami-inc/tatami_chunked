@@ -99,59 +99,69 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;algorithm&gt;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;cstddef&gt;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami__chunked.html">tatami_chunked</a> {</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="foldopen" id="foldopen00021" data-start="{" data-end="};">
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="structtatami__chunked_1_1SlabCacheStats.html">   21</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structtatami__chunked_1_1SlabCacheStats.html">SlabCacheStats</a> {</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="structtatami__chunked_1_1SlabCacheStats.html#a197d46e51a72d285d50a34a25e6ed110">   25</a></span>    std::size_t <a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a197d46e51a72d285d50a34a25e6ed110">slab_size_in_elements</a>;</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="structtatami__chunked_1_1SlabCacheStats.html#ae861ee9b4ee27ac9f22bfcd5f6875133">   31</a></span>    std::size_t <a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#ae861ee9b4ee27ac9f22bfcd5f6875133">max_slabs_in_cache</a>;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
-<div class="foldopen" id="foldopen00044" data-start="{" data-end="}">
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="structtatami__chunked_1_1SlabCacheStats.html#a771808f17cab5285682add13306daea8">   44</a></span>    <a class="code hl_function" href="structtatami__chunked_1_1SlabCacheStats.html#a771808f17cab5285682add13306daea8">SlabCacheStats</a>(std::size_t target_length, std::size_t non_target_length, std::size_t target_num_slabs, std::size_t cache_size_in_elements, <span class="keywordtype">bool</span> require_minimum_cache) :</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        <a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a197d46e51a72d285d50a34a25e6ed110">slab_size_in_elements</a>(target_length * non_target_length),</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#ae861ee9b4ee27ac9f22bfcd5f6875133">max_slabs_in_cache</a>(compute_max_slabs_in_cache(<a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a197d46e51a72d285d50a34a25e6ed110">slab_size_in_elements</a>, target_num_slabs, cache_size_in_elements, require_minimum_cache))</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    {}</div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;sanisizer/sanisizer.hpp&quot;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami__chunked.html">tatami_chunked</a> {</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> MaxSlabs_&gt;</div>
+<div class="foldopen" id="foldopen00026" data-start="{" data-end="};">
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="structtatami__chunked_1_1SlabCacheStats.html">   26</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structtatami__chunked_1_1SlabCacheStats.html">SlabCacheStats</a> {</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="structtatami__chunked_1_1SlabCacheStats.html#a340d5d18c67df6b8487c3e65ba59bcbd">   30</a></span>    std::size_t <a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a340d5d18c67df6b8487c3e65ba59bcbd">slab_size_in_elements</a>;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="structtatami__chunked_1_1SlabCacheStats.html#a1cc63df8c4fb68bcbdf8136485e6a113">   36</a></span>    MaxSlabs_ <a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a1cc63df8c4fb68bcbdf8136485e6a113">max_slabs_in_cache</a>;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Index_, <span class="keyword">typename</span> TargetNumSlabs_&gt;</div>
+<div class="foldopen" id="foldopen00053" data-start="{" data-end="}">
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="structtatami__chunked_1_1SlabCacheStats.html#a5fdb90be1768cf819bd5ce994ad841d8">   53</a></span>    <a class="code hl_function" href="structtatami__chunked_1_1SlabCacheStats.html#a5fdb90be1768cf819bd5ce994ad841d8">SlabCacheStats</a>(Index_ target_length, Index_ non_target_length, TargetNumSlabs_ target_num_slabs, std::size_t cache_size_in_elements, <span class="keywordtype">bool</span> require_minimum_cache) :</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        <a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a340d5d18c67df6b8487c3e65ba59bcbd">slab_size_in_elements</a>(sanisizer::product&lt;std::size_t&gt;(target_length, non_target_length)),</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        <a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a1cc63df8c4fb68bcbdf8136485e6a113">max_slabs_in_cache</a>(compute_max_slabs_in_cache(<a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a340d5d18c67df6b8487c3e65ba59bcbd">slab_size_in_elements</a>, target_num_slabs, cache_size_in_elements, require_minimum_cache))</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    {}</div>
 </div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="foldopen" id="foldopen00062" data-start="{" data-end="}">
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="structtatami__chunked_1_1SlabCacheStats.html#a96e503e8783b9a3723600fdc5b44245a">   62</a></span>    <a class="code hl_function" href="structtatami__chunked_1_1SlabCacheStats.html#a96e503e8783b9a3723600fdc5b44245a">SlabCacheStats</a>(std::size_t target_length, std::size_t non_target_length, std::size_t target_num_slabs, std::size_t cache_size_in_bytes, std::size_t element_size, <span class="keywordtype">bool</span> require_minimum_cache) :</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        <a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a197d46e51a72d285d50a34a25e6ed110">slab_size_in_elements</a>(target_length * non_target_length),</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        <a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#ae861ee9b4ee27ac9f22bfcd5f6875133">max_slabs_in_cache</a>([&amp;]{</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>            <span class="keywordflow">if</span> (element_size == 0) {</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>                <span class="keywordflow">return</span> target_num_slabs;</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                <span class="keywordflow">return</span> compute_max_slabs_in_cache(<a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a197d46e51a72d285d50a34a25e6ed110">slab_size_in_elements</a>, target_num_slabs, cache_size_in_bytes / element_size, require_minimum_cache); </div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>            }</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        }())</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    {}</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> Index_, <span class="keyword">typename</span> TargetNumSlabs_&gt;</div>
+<div class="foldopen" id="foldopen00075" data-start="{" data-end="}">
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="structtatami__chunked_1_1SlabCacheStats.html#af8b35c10d544f212939a5e1e15fd1cbe">   75</a></span>    <a class="code hl_function" href="structtatami__chunked_1_1SlabCacheStats.html#af8b35c10d544f212939a5e1e15fd1cbe">SlabCacheStats</a>(Index_ target_length, Index_ non_target_length, TargetNumSlabs_ target_num_slabs, std::size_t cache_size_in_bytes, std::size_t element_size, <span class="keywordtype">bool</span> require_minimum_cache) :</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a340d5d18c67df6b8487c3e65ba59bcbd">slab_size_in_elements</a>(sanisizer::product&lt;std::size_t&gt;(target_length, non_target_length)),</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        <a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a1cc63df8c4fb68bcbdf8136485e6a113">max_slabs_in_cache</a>([&amp;]{</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>            <span class="keywordflow">if</span> (element_size == 0) {</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>                <span class="keywordflow">return</span> sanisizer::cap&lt;MaxSlabs_&gt;(target_num_slabs);</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>                <span class="keywordflow">return</span> compute_max_slabs_in_cache(<a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a340d5d18c67df6b8487c3e65ba59bcbd">slab_size_in_elements</a>, target_num_slabs, cache_size_in_bytes / element_size, require_minimum_cache); </div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>            }</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>        }())</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    {}</div>
 </div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keyword">static</span> std::size_t compute_max_slabs_in_cache(std::size_t <a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a197d46e51a72d285d50a34a25e6ed110">slab_size_in_elements</a>, std::size_t num_slabs, std::size_t cache_size_in_elements, <span class="keywordtype">bool</span> require_minimum_cache) {</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a197d46e51a72d285d50a34a25e6ed110">slab_size_in_elements</a> == 0) {</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>            <span class="keywordflow">return</span> num_slabs;</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        }</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        <span class="keyword">auto</span> tmp = cache_size_in_elements / <a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a197d46e51a72d285d50a34a25e6ed110">slab_size_in_elements</a>;</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>        <span class="keywordflow">if</span> (tmp == 0 &amp;&amp; require_minimum_cache) {</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>            <span class="keywordflow">return</span> 1;</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>        } </div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        <span class="keywordflow">return</span> std::min(tmp, num_slabs);</div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    }</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>};</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> NumSlabs_&gt;</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <span class="keyword">static</span> MaxSlabs_ compute_max_slabs_in_cache(std::size_t <a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a340d5d18c67df6b8487c3e65ba59bcbd">slab_size_in_elements</a>, NumSlabs_ num_slabs, std::size_t cache_size_in_elements, <span class="keywordtype">bool</span> require_minimum_cache) {</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        <span class="keywordflow">if</span> (<a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a340d5d18c67df6b8487c3e65ba59bcbd">slab_size_in_elements</a> == 0) {</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>            <span class="keywordflow">return</span> sanisizer::cap&lt;MaxSlabs_&gt;(num_slabs);</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        }</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>        <span class="keyword">auto</span> tmp = cache_size_in_elements / <a class="code hl_variable" href="structtatami__chunked_1_1SlabCacheStats.html#a340d5d18c67df6b8487c3e65ba59bcbd">slab_size_in_elements</a>;</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        <span class="keywordflow">if</span> (tmp == 0 &amp;&amp; require_minimum_cache) {</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>            <span class="keywordflow">return</span> 1;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        } </div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        <span class="keywordflow">if</span> (sanisizer::is_less_than_or_equal(tmp, num_slabs)) {</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>            <span class="keywordflow">return</span> tmp;</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>            <span class="keywordflow">return</span> num_slabs;</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>        }</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    }</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>};</div>
 </div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>}</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>}</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacetatami__chunked_html"><div class="ttname"><a href="namespacetatami__chunked.html">tatami_chunked</a></div><div class="ttdoc">Methods to handle chunked tatami matrices.</div><div class="ttdef"><b>Definition</b> ChunkDimensionStats.hpp:4</div></div>
-<div class="ttc" id="astructtatami__chunked_1_1SlabCacheStats_html"><div class="ttname"><a href="structtatami__chunked_1_1SlabCacheStats.html">tatami_chunked::SlabCacheStats</a></div><div class="ttdoc">Statistics for slab caching.</div><div class="ttdef"><b>Definition</b> SlabCacheStats.hpp:21</div></div>
-<div class="ttc" id="astructtatami__chunked_1_1SlabCacheStats_html_a197d46e51a72d285d50a34a25e6ed110"><div class="ttname"><a href="structtatami__chunked_1_1SlabCacheStats.html#a197d46e51a72d285d50a34a25e6ed110">tatami_chunked::SlabCacheStats::slab_size_in_elements</a></div><div class="ttdeci">std::size_t slab_size_in_elements</div><div class="ttdef"><b>Definition</b> SlabCacheStats.hpp:25</div></div>
-<div class="ttc" id="astructtatami__chunked_1_1SlabCacheStats_html_a771808f17cab5285682add13306daea8"><div class="ttname"><a href="structtatami__chunked_1_1SlabCacheStats.html#a771808f17cab5285682add13306daea8">tatami_chunked::SlabCacheStats::SlabCacheStats</a></div><div class="ttdeci">SlabCacheStats(std::size_t target_length, std::size_t non_target_length, std::size_t target_num_slabs, std::size_t cache_size_in_elements, bool require_minimum_cache)</div><div class="ttdef"><b>Definition</b> SlabCacheStats.hpp:44</div></div>
-<div class="ttc" id="astructtatami__chunked_1_1SlabCacheStats_html_a96e503e8783b9a3723600fdc5b44245a"><div class="ttname"><a href="structtatami__chunked_1_1SlabCacheStats.html#a96e503e8783b9a3723600fdc5b44245a">tatami_chunked::SlabCacheStats::SlabCacheStats</a></div><div class="ttdeci">SlabCacheStats(std::size_t target_length, std::size_t non_target_length, std::size_t target_num_slabs, std::size_t cache_size_in_bytes, std::size_t element_size, bool require_minimum_cache)</div><div class="ttdef"><b>Definition</b> SlabCacheStats.hpp:62</div></div>
-<div class="ttc" id="astructtatami__chunked_1_1SlabCacheStats_html_ae861ee9b4ee27ac9f22bfcd5f6875133"><div class="ttname"><a href="structtatami__chunked_1_1SlabCacheStats.html#ae861ee9b4ee27ac9f22bfcd5f6875133">tatami_chunked::SlabCacheStats::max_slabs_in_cache</a></div><div class="ttdeci">std::size_t max_slabs_in_cache</div><div class="ttdef"><b>Definition</b> SlabCacheStats.hpp:31</div></div>
+<div class="ttc" id="astructtatami__chunked_1_1SlabCacheStats_html"><div class="ttname"><a href="structtatami__chunked_1_1SlabCacheStats.html">tatami_chunked::SlabCacheStats</a></div><div class="ttdoc">Statistics for slab caching.</div><div class="ttdef"><b>Definition</b> SlabCacheStats.hpp:26</div></div>
+<div class="ttc" id="astructtatami__chunked_1_1SlabCacheStats_html_a1cc63df8c4fb68bcbdf8136485e6a113"><div class="ttname"><a href="structtatami__chunked_1_1SlabCacheStats.html#a1cc63df8c4fb68bcbdf8136485e6a113">tatami_chunked::SlabCacheStats::max_slabs_in_cache</a></div><div class="ttdeci">MaxSlabs_ max_slabs_in_cache</div><div class="ttdef"><b>Definition</b> SlabCacheStats.hpp:36</div></div>
+<div class="ttc" id="astructtatami__chunked_1_1SlabCacheStats_html_a340d5d18c67df6b8487c3e65ba59bcbd"><div class="ttname"><a href="structtatami__chunked_1_1SlabCacheStats.html#a340d5d18c67df6b8487c3e65ba59bcbd">tatami_chunked::SlabCacheStats::slab_size_in_elements</a></div><div class="ttdeci">std::size_t slab_size_in_elements</div><div class="ttdef"><b>Definition</b> SlabCacheStats.hpp:30</div></div>
+<div class="ttc" id="astructtatami__chunked_1_1SlabCacheStats_html_a5fdb90be1768cf819bd5ce994ad841d8"><div class="ttname"><a href="structtatami__chunked_1_1SlabCacheStats.html#a5fdb90be1768cf819bd5ce994ad841d8">tatami_chunked::SlabCacheStats::SlabCacheStats</a></div><div class="ttdeci">SlabCacheStats(Index_ target_length, Index_ non_target_length, TargetNumSlabs_ target_num_slabs, std::size_t cache_size_in_elements, bool require_minimum_cache)</div><div class="ttdef"><b>Definition</b> SlabCacheStats.hpp:53</div></div>
+<div class="ttc" id="astructtatami__chunked_1_1SlabCacheStats_html_af8b35c10d544f212939a5e1e15fd1cbe"><div class="ttname"><a href="structtatami__chunked_1_1SlabCacheStats.html#af8b35c10d544f212939a5e1e15fd1cbe">tatami_chunked::SlabCacheStats::SlabCacheStats</a></div><div class="ttdeci">SlabCacheStats(Index_ target_length, Index_ non_target_length, TargetNumSlabs_ target_num_slabs, std::size_t cache_size_in_bytes, std::size_t element_size, bool require_minimum_cache)</div><div class="ttdef"><b>Definition</b> SlabCacheStats.hpp:75</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

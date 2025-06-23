@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami_chunked: tatami_chunked::SlabCacheStats Struct Reference</title>
+<title>tatami_chunked: tatami_chunked::SlabCacheStats&lt; MaxSlabs_ &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -94,7 +94,7 @@ $(function(){ initResizable(false); });
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structtatami__chunked_1_1SlabCacheStats-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">tatami_chunked::SlabCacheStats Struct Reference</div></div>
+  <div class="headertitle"><div class="title">tatami_chunked::SlabCacheStats&lt; MaxSlabs_ &gt; Struct Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -105,45 +105,58 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a771808f17cab5285682add13306daea8" id="r_a771808f17cab5285682add13306daea8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a771808f17cab5285682add13306daea8">SlabCacheStats</a> (std::size_t target_length, std::size_t non_target_length, std::size_t target_num_slabs, std::size_t cache_size_in_elements, bool require_minimum_cache)</td></tr>
-<tr class="separator:a771808f17cab5285682add13306daea8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96e503e8783b9a3723600fdc5b44245a" id="r_a96e503e8783b9a3723600fdc5b44245a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a96e503e8783b9a3723600fdc5b44245a">SlabCacheStats</a> (std::size_t target_length, std::size_t non_target_length, std::size_t target_num_slabs, std::size_t cache_size_in_bytes, std::size_t element_size, bool require_minimum_cache)</td></tr>
-<tr class="separator:a96e503e8783b9a3723600fdc5b44245a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5fdb90be1768cf819bd5ce994ad841d8" id="r_a5fdb90be1768cf819bd5ce994ad841d8"><td class="memTemplParams" colspan="2">template&lt;typename Index_ , typename TargetNumSlabs_ &gt; </td></tr>
+<tr class="memitem:a5fdb90be1768cf819bd5ce994ad841d8"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a5fdb90be1768cf819bd5ce994ad841d8">SlabCacheStats</a> (Index_ target_length, Index_ non_target_length, TargetNumSlabs_ target_num_slabs, std::size_t cache_size_in_elements, bool require_minimum_cache)</td></tr>
+<tr class="separator:a5fdb90be1768cf819bd5ce994ad841d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8b35c10d544f212939a5e1e15fd1cbe" id="r_af8b35c10d544f212939a5e1e15fd1cbe"><td class="memTemplParams" colspan="2">template&lt;typename Index_ , typename TargetNumSlabs_ &gt; </td></tr>
+<tr class="memitem:af8b35c10d544f212939a5e1e15fd1cbe"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#af8b35c10d544f212939a5e1e15fd1cbe">SlabCacheStats</a> (Index_ target_length, Index_ non_target_length, TargetNumSlabs_ target_num_slabs, std::size_t cache_size_in_bytes, std::size_t element_size, bool require_minimum_cache)</td></tr>
+<tr class="separator:af8b35c10d544f212939a5e1e15fd1cbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a197d46e51a72d285d50a34a25e6ed110" id="r_a197d46e51a72d285d50a34a25e6ed110"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a197d46e51a72d285d50a34a25e6ed110">slab_size_in_elements</a></td></tr>
-<tr class="separator:a197d46e51a72d285d50a34a25e6ed110"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae861ee9b4ee27ac9f22bfcd5f6875133" id="r_ae861ee9b4ee27ac9f22bfcd5f6875133"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae861ee9b4ee27ac9f22bfcd5f6875133">max_slabs_in_cache</a></td></tr>
-<tr class="separator:ae861ee9b4ee27ac9f22bfcd5f6875133"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a340d5d18c67df6b8487c3e65ba59bcbd" id="r_a340d5d18c67df6b8487c3e65ba59bcbd"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a340d5d18c67df6b8487c3e65ba59bcbd">slab_size_in_elements</a></td></tr>
+<tr class="separator:a340d5d18c67df6b8487c3e65ba59bcbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1cc63df8c4fb68bcbdf8136485e6a113" id="r_a1cc63df8c4fb68bcbdf8136485e6a113"><td class="memItemLeft" align="right" valign="top">MaxSlabs_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1cc63df8c4fb68bcbdf8136485e6a113">max_slabs_in_cache</a></td></tr>
+<tr class="separator:a1cc63df8c4fb68bcbdf8136485e6a113"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Statistics for slab caching. </p>
-<p>This computes the slab size and the number of slabs to be cached, given the dimensions of the slab and the cache size in bytes. The assumption is that all slabs are of the same shape, partitioning the matrix into regular intervals along the target dimension. Developers should check out <code><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html" title="Matrix of custom dense chunks.">CustomDenseChunkedMatrix</a></code> for some usage examples. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename MaxSlabs_&gt;<br />
+struct tatami_chunked::SlabCacheStats&lt; MaxSlabs_ &gt;</div><p>Statistics for slab caching. </p>
+<p>This computes the slab size and the number of slabs to be cached, given the dimensions of the slab and the cache size in bytes. The assumption is that all slabs are of the same shape, partitioning the matrix into regular intervals along the target dimension. Developers should check out <code><a class="el" href="classtatami__chunked_1_1CustomDenseChunkedMatrix.html" title="Matrix of custom dense chunks.">CustomDenseChunkedMatrix</a></code> for some usage examples.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">MaxSlabs_</td><td>Integer type of the maximum number of slabs. </td></tr>
+  </table>
+  </dd>
+</dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a771808f17cab5285682add13306daea8" name="a771808f17cab5285682add13306daea8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a771808f17cab5285682add13306daea8">&#9670;&#160;</a></span>SlabCacheStats() <span class="overload">[1/2]</span></h2>
+<a id="a5fdb90be1768cf819bd5ce994ad841d8" name="a5fdb90be1768cf819bd5ce994ad841d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5fdb90be1768cf819bd5ce994ad841d8">&#9670;&#160;</a></span>SlabCacheStats() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename MaxSlabs_ &gt; </div>
+<div class="memtemplate">
+template&lt;typename Index_ , typename TargetNumSlabs_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">tatami_chunked::SlabCacheStats::SlabCacheStats </td>
+          <td class="memname"><a class="el" href="structtatami__chunked_1_1SlabCacheStats.html">tatami_chunked::SlabCacheStats</a>&lt; MaxSlabs_ &gt;::SlabCacheStats </td>
           <td>(</td>
-          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>target_length</em></span>, </td>
+          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>target_length</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>non_target_length</em></span>, </td>
+          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>non_target_length</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>target_num_slabs</em></span>, </td>
+          <td class="paramtype">TargetNumSlabs_</td>          <td class="paramname"><span class="paramname"><em>target_num_slabs</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -162,6 +175,13 @@ Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Index_</td><td>Integer type of the dimension extents. </td></tr>
+    <tr><td class="paramname">TargetNumSlabs_</td><td>Integer type of the number of slabs along the target dimension.</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">target_length</td><td>Length of the target dimension of each slab. For example, if we were iterating through rows of a matrix, <code>target_length</code> would be the number of rows spanned by each slab. </td></tr>
@@ -175,29 +195,33 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a96e503e8783b9a3723600fdc5b44245a" name="a96e503e8783b9a3723600fdc5b44245a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a96e503e8783b9a3723600fdc5b44245a">&#9670;&#160;</a></span>SlabCacheStats() <span class="overload">[2/2]</span></h2>
+<a id="af8b35c10d544f212939a5e1e15fd1cbe" name="af8b35c10d544f212939a5e1e15fd1cbe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af8b35c10d544f212939a5e1e15fd1cbe">&#9670;&#160;</a></span>SlabCacheStats() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename MaxSlabs_ &gt; </div>
+<div class="memtemplate">
+template&lt;typename Index_ , typename TargetNumSlabs_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">tatami_chunked::SlabCacheStats::SlabCacheStats </td>
+          <td class="memname"><a class="el" href="structtatami__chunked_1_1SlabCacheStats.html">tatami_chunked::SlabCacheStats</a>&lt; MaxSlabs_ &gt;::SlabCacheStats </td>
           <td>(</td>
-          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>target_length</em></span>, </td>
+          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>target_length</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>non_target_length</em></span>, </td>
+          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>non_target_length</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>target_num_slabs</em></span>, </td>
+          <td class="paramtype">TargetNumSlabs_</td>          <td class="paramname"><span class="paramname"><em>target_num_slabs</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -221,6 +245,13 @@ Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Index_</td><td>Integer type of the dimension extents. </td></tr>
+    <tr><td class="paramname">TargetNumSlabs_</td><td>Integer type of the number of slabs along the target dimension.</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">target_length</td><td>Length of the target dimension of each slab. For example, if we were iterating through rows of a matrix, <code>target_length</code> would be the number of rows spanned by each slab. </td></tr>
@@ -236,14 +267,16 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a197d46e51a72d285d50a34a25e6ed110" name="a197d46e51a72d285d50a34a25e6ed110"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a197d46e51a72d285d50a34a25e6ed110">&#9670;&#160;</a></span>slab_size_in_elements</h2>
+<a id="a340d5d18c67df6b8487c3e65ba59bcbd" name="a340d5d18c67df6b8487c3e65ba59bcbd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a340d5d18c67df6b8487c3e65ba59bcbd">&#9670;&#160;</a></span>slab_size_in_elements</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename MaxSlabs_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::size_t tatami_chunked::SlabCacheStats::slab_size_in_elements</td>
+          <td class="memname">std::size_t <a class="el" href="structtatami__chunked_1_1SlabCacheStats.html">tatami_chunked::SlabCacheStats</a>&lt; MaxSlabs_ &gt;::slab_size_in_elements</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -251,14 +284,16 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ae861ee9b4ee27ac9f22bfcd5f6875133" name="ae861ee9b4ee27ac9f22bfcd5f6875133"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae861ee9b4ee27ac9f22bfcd5f6875133">&#9670;&#160;</a></span>max_slabs_in_cache</h2>
+<a id="a1cc63df8c4fb68bcbdf8136485e6a113" name="a1cc63df8c4fb68bcbdf8136485e6a113"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1cc63df8c4fb68bcbdf8136485e6a113">&#9670;&#160;</a></span>max_slabs_in_cache</h2>
 
 <div class="memitem">
 <div class="memproto">
+<div class="memtemplate">
+template&lt;typename MaxSlabs_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::size_t tatami_chunked::SlabCacheStats::max_slabs_in_cache</td>
+          <td class="memname">MaxSlabs_ <a class="el" href="structtatami__chunked_1_1SlabCacheStats.html">tatami_chunked::SlabCacheStats</a>&lt; MaxSlabs_ &gt;::max_slabs_in_cache</td>
         </tr>
       </table>
 </div><div class="memdoc">

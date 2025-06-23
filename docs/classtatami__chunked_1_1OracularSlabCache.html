@@ -104,8 +104,9 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a241deb3ca0446b8a4aaed26fa4f2fafc" id="r_a241deb3ca0446b8a4aaed26fa4f2fafc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a241deb3ca0446b8a4aaed26fa4f2fafc">OracularSlabCache</a> (std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; oracle, std::size_t max_slabs)</td></tr>
-<tr class="separator:a241deb3ca0446b8a4aaed26fa4f2fafc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a02d3a0997ab3b34a444513df0878b751" id="r_a02d3a0997ab3b34a444513df0878b751"><td class="memTemplParams" colspan="2">template&lt;typename MaxSlabs_ &gt; </td></tr>
+<tr class="memitem:a02d3a0997ab3b34a444513df0878b751"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a02d3a0997ab3b34a444513df0878b751">OracularSlabCache</a> (std::shared_ptr&lt; const <a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a>&lt; Index_ &gt; &gt; oracle, MaxSlabs_ max_slabs)</td></tr>
+<tr class="separator:a02d3a0997ab3b34a444513df0878b751"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa14e9361cc33e214559b04d95407c069" id="r_aa14e9361cc33e214559b04d95407c069"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aa14e9361cc33e214559b04d95407c069">OracularSlabCache</a> (const <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">OracularSlabCache</a> &amp;)=delete</td></tr>
 <tr class="separator:aa14e9361cc33e214559b04d95407c069"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a3291bb537bdf6a8d2b15119ac453fd" id="r_a5a3291bb537bdf6a8d2b15119ac453fd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">OracularSlabCache</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5a3291bb537bdf6a8d2b15119ac453fd">operator=</a> (const <a class="el" href="classtatami__chunked_1_1OracularSlabCache.html">OracularSlabCache</a> &amp;)=delete</td></tr>
@@ -135,13 +136,15 @@ class tatami_chunked::OracularSlabCache&lt; Id_, Index_, Slab_, track_reuse_ &gt
 <p>Implement an oracle-aware cache for slabs. Each slab is defined as the set of chunks required to read an element of the target dimension (or a contiguous block/indexed subset thereof) from a <code><a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Matrix.html">tatami::Matrix</a></code>. This cache can be used for <code>Matrix</code> representations where the data is costly to load (e.g., from file) and a <code><a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a></code> is provided to predict future accesses on the target dimension. In such cases, chunks of data can be loaded and cached such that any possible future request for an already-loaded slab will just fetch it from cache.</p>
 <p>It is assumed that each slab has the same size such that <code>Slab_</code> instances can be effectively reused between slabs without requiring any reallocation of memory. For variable-sized slabs, consider using <code><a class="el" href="classtatami__chunked_1_1OracularVariableSlabCache.html" title="Oracle-aware cache for variable-size slabs.">OracularVariableSlabCache</a></code> instead. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a241deb3ca0446b8a4aaed26fa4f2fafc" name="a241deb3ca0446b8a4aaed26fa4f2fafc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a241deb3ca0446b8a4aaed26fa4f2fafc">&#9670;&#160;</a></span>OracularSlabCache() <span class="overload">[1/2]</span></h2>
+<a id="a02d3a0997ab3b34a444513df0878b751" name="a02d3a0997ab3b34a444513df0878b751"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a02d3a0997ab3b34a444513df0878b751">&#9670;&#160;</a></span>OracularSlabCache() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Id_ , typename Index_ , class Slab_ , bool track_reuse_ = false&gt; </div>
+<div class="memtemplate">
+template&lt;typename MaxSlabs_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -154,7 +157,7 @@ template&lt;typename Id_ , typename Index_ , class Slab_ , bool track_reuse_ = f
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>max_slabs</em></span>&#160;)</td>
+          <td class="paramtype">MaxSlabs_</td>          <td class="paramname"><span class="paramname"><em>max_slabs</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -163,6 +166,12 @@ template&lt;typename Id_ , typename Index_ , class Slab_ , bool track_reuse_ = f
   </tr>
 </table>
 </div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">MaxSlabs_</td><td>Integer type of the maximum number of slabs. </td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">oracle</td><td>Pointer to an <code><a class="elRef" href="https://tatami-inc.github.io/tatami/classtatami_1_1Oracle.html">tatami::Oracle</a></code> to be used for predictions. </td></tr>
