@@ -10,6 +10,9 @@
 #include "OracularSubsettedSlabCache.hpp"
 
 #include <vector>
+#include <cstddef>
+
+#include "sanisizer/sanisizer.hpp"
 
 /**
  * @file CustomSparseChunkedMatrix.hpp
@@ -27,7 +30,7 @@ struct CustomSparseChunkedMatrixOptions {
      * Larger caches improve access speed at the cost of memory usage.
      * Small values may be ignored if `require_minimum_cache` is `true`.
      */
-    std::size_t maximum_cache_size = 100000000;
+    std::size_t maximum_cache_size = sanisizer::cap<std::size_t>(100000000);
 
     /**
      * Whether to automatically enforce a minimum size for the cache, regardless of `maximum_cache_size`.
@@ -340,7 +343,7 @@ class SoloSparseCore {
     const ChunkCoordinator<true, ChunkValue_, Index_>& my_coordinator;
 
     tatami::MaybeOracle<oracle_, Index_> my_oracle;
-    typename std::conditional<oracle_, std::size_t, bool>::type my_counter = 0;
+    typename std::conditional<oracle_, tatami::PredictionIndex, bool>::type my_counter = 0;
 
     SparseSlabFactory<ChunkValue_, Index_, Index_> my_factory;
     typedef typename decltype(my_factory)::Slab Slab;
@@ -357,7 +360,7 @@ public:
     SoloSparseCore(
         WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator, 
-        [[maybe_unused]] const SlabCacheStats& slab_stats, // for consistency with the other base classes.
+        [[maybe_unused]] const SlabCacheStats<Index_>& slab_stats, // for consistency with the other base classes.
         bool row,
         tatami::MaybeOracle<oracle_, Index_> oracle,
         Index_ non_target_length,
@@ -400,7 +403,7 @@ public:
     MyopicSparseCore(
         WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator,
-        const SlabCacheStats& slab_stats, 
+        const SlabCacheStats<Index_>& slab_stats, 
         bool row,
         [[maybe_unused]] tatami::MaybeOracle<false, Index_> oracle, // for consistency with the other base classes
         Index_ non_target_length,
@@ -434,7 +437,7 @@ public:
     OracularSparseCore(
         WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator,
-        const SlabCacheStats& slab_stats,
+        const SlabCacheStats<Index_>& slab_stats,
         bool row,
         tatami::MaybeOracle<true, Index_> oracle,
         Index_ non_target_length,
@@ -497,7 +500,7 @@ public:
     SparseFull(
         WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator, 
-        const SlabCacheStats& slab_stats,
+        const SlabCacheStats<Index_>& slab_stats,
         bool row,
         tatami::MaybeOracle<oracle_, Index_> oracle, 
         const tatami::Options& opt
@@ -536,7 +539,7 @@ public:
     SparseBlock(
         WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator, 
-        const SlabCacheStats& slab_stats,
+        const SlabCacheStats<Index_>& slab_stats,
         bool row,
         tatami::MaybeOracle<oracle_, Index_> oracle, 
         Index_ block_start, 
@@ -578,7 +581,7 @@ public:
     SparseIndex(
         WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator, 
-        const SlabCacheStats& slab_stats,
+        const SlabCacheStats<Index_>& slab_stats,
         bool row,
         tatami::MaybeOracle<oracle_, Index_> oracle, 
         tatami::VectorPtr<Index_> indices_ptr, 
@@ -623,7 +626,7 @@ public:
     DensifiedFull(
         WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator, 
-        const SlabCacheStats& slab_stats,
+        const SlabCacheStats<Index_>& slab_stats,
         bool row,
         tatami::MaybeOracle<oracle_, Index_> oracle, 
         const tatami::Options&
@@ -668,7 +671,7 @@ public:
     DensifiedBlock(
         WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator, 
-        const SlabCacheStats& slab_stats,
+        const SlabCacheStats<Index_>& slab_stats,
         bool row,
         tatami::MaybeOracle<oracle_, Index_> oracle,
         Index_ block_start, 
@@ -716,7 +719,7 @@ public:
     DensifiedIndex(
         WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<true, ChunkValue_, Index_>& coordinator, 
-        const SlabCacheStats& slab_stats,
+        const SlabCacheStats<Index_>& slab_stats,
         bool row,
         tatami::MaybeOracle<oracle_, Index_> oracle, 
         tatami::VectorPtr<Index_> indices_ptr,
@@ -739,7 +742,7 @@ public:
         if (!indices.empty()) {
             my_remap_offset = indices.front();
             Index_ alloc = indices.back() - my_remap_offset + 1; // alloc must be <= dim extent, which should fit in an Index_.
-            my_remap.resize(alloc);
+            tatami::resize_container_to_Index_size(my_remap, alloc);
             Index_ counter = 0;
             for (auto i : indices) {
                 my_remap[i - my_remap_offset] = counter;
@@ -862,7 +865,7 @@ private:
         auto stats = [&]{
             if (row) {
                 // Remember, the num_chunks_per_column is the number of slabs needed to divide up all the *rows* of the matrix.
-                return SlabCacheStats(
+                return SlabCacheStats<Index_>(
                     my_coordinator.get_chunk_nrow(),
                     non_target_length,
                     my_coordinator.get_num_chunks_per_column(),
@@ -872,7 +875,7 @@ private:
                 );
             } else {
                 // Remember, the num_chunks_per_row is the number of slabs needed to divide up all the *columns* of the matrix.
-                return SlabCacheStats(
+                return SlabCacheStats<Index_>(
                     my_coordinator.get_chunk_ncol(),
                     non_target_length,
                     my_coordinator.get_num_chunks_per_row(),

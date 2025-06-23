@@ -46,8 +46,8 @@ template<typename Id_, typename Index_, class Slab_, typename Size_>
 class OracularVariableSlabCache {
 private:
     std::shared_ptr<const tatami::Oracle<Index_> > my_oracle;
-    std::size_t my_total;
-    std::size_t my_counter = 0;
+    tatami::PredictionIndex my_total;
+    tatami::PredictionIndex my_counter = 0;
 
     typedef std::vector<Slab_> SlabPool;
     typedef typename SlabPool::size_type SlabIndex;
@@ -65,7 +65,7 @@ private:
     std::vector<std::pair<Id_, SlabIndex> > my_to_populate, my_to_reuse;
     std::vector<Id_> my_in_need;
     std::vector<SlabIndex> my_free_pool;
-    std::size_t my_refresh_point = 0;
+    tatami::PredictionIndex my_refresh_point = 0;
 
 public:
     /**

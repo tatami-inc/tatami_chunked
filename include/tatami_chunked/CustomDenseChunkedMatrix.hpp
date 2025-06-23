@@ -13,6 +13,8 @@
 #include <vector>
 #include <cstddef>
 
+#include "sanisizer/sanisizer.hpp"
+
 /**
  * @file CustomDenseChunkedMatrix.hpp
  * @brief Custom dense chunked matrix.
@@ -29,7 +31,7 @@ struct CustomDenseChunkedMatrixOptions {
      * Larger caches improve access speed at the cost of memory usage.
      * Small values may be ignored if `require_minimum_cache` is `true`.
      */
-    std::size_t maximum_cache_size = 100000000;
+    std::size_t maximum_cache_size = sanisizer::cap<std::size_t>(100000000);
 
     /**
      * Whether to automatically enforce a minimum size for the cache, regardless of `maximum_cache_size`.
@@ -297,7 +299,7 @@ private:
     const ChunkCoordinator<false, ChunkValue_, Index_>& my_coordinator;
 
     tatami::MaybeOracle<oracle_, Index_> my_oracle;
-    typename std::conditional<oracle_, std::size_t, bool>::type my_counter = 0;
+    typename std::conditional<oracle_, tatami::PredictionIndex, bool>::type my_counter = 0;
 
     DenseSlabFactory<ChunkValue_> my_factory;
     typedef typename decltype(my_factory)::Slab Slab;
@@ -316,7 +318,7 @@ public:
     SoloDenseCore(
         WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator, 
-        [[maybe_unused]] const SlabCacheStats& slab_stats, // for consistency with the other base classes.
+        [[maybe_unused]] const SlabCacheStats<Index_>& slab_stats, // for consistency with the other base classes.
         tatami::MaybeOracle<oracle_, Index_> oracle,
         Index_ non_target_length
     ) :
@@ -352,7 +354,7 @@ public:
     MyopicDenseCore(
         WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator,
-        const SlabCacheStats& slab_stats, 
+        const SlabCacheStats<Index_>& slab_stats, 
         [[maybe_unused]] tatami::MaybeOracle<false, Index_> ora, // for consistency with the other base classes
         [[maybe_unused]] Index_ non_target_length
     ) :
@@ -383,7 +385,7 @@ public:
     OracularDenseCore(
         WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator,
-        const SlabCacheStats& slab_stats,
+        const SlabCacheStats<Index_>& slab_stats,
         tatami::MaybeOracle<true, Index_> oracle, 
         [[maybe_unused]] Index_ non_target_length
     ) :
@@ -429,7 +431,7 @@ public:
     DenseFull(
         WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator, 
-        const SlabCacheStats& slab_stats,
+        const SlabCacheStats<Index_>& slab_stats,
         bool row,
         tatami::MaybeOracle<oracle_, Index_> oracle
     ) :
@@ -461,7 +463,7 @@ public:
     DenseBlock(
         WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator, 
-        const SlabCacheStats& slab_stats,
+        const SlabCacheStats<Index_>& slab_stats,
         bool row,
         tatami::MaybeOracle<oracle_, Index_> ora, 
         Index_ block_start, 
@@ -496,7 +498,7 @@ public:
     DenseIndex(
         WorkspacePtr_ chunk_workspace,
         const ChunkCoordinator<false, ChunkValue_, Index_>& coordinator, 
-        const SlabCacheStats& slab_stats,
+        const SlabCacheStats<Index_>& slab_stats,
         bool row,
         tatami::MaybeOracle<oracle_, Index_> oracle,
         tatami::VectorPtr<Index_> indices_ptr) :
@@ -607,10 +609,10 @@ private:
         auto stats = [&]{
             if (row) {
                 // Remember, the num_chunks_per_column is the number of slabs needed to divide up all the *rows* of the matrix.
-                return SlabCacheStats(my_coordinator.get_chunk_nrow(), non_target_length, my_coordinator.get_num_chunks_per_column(), my_cache_size_in_elements, my_require_minimum_cache);
+                return SlabCacheStats<Index_>(my_coordinator.get_chunk_nrow(), non_target_length, my_coordinator.get_num_chunks_per_column(), my_cache_size_in_elements, my_require_minimum_cache);
             } else {
                 // Remember, the num_chunks_per_row is the number of slabs needed to divide up all the *columns* of the matrix.
-                return SlabCacheStats(my_coordinator.get_chunk_ncol(), non_target_length, my_coordinator.get_num_chunks_per_row(), my_cache_size_in_elements, my_require_minimum_cache);
+                return SlabCacheStats<Index_>(my_coordinator.get_chunk_ncol(), non_target_length, my_coordinator.get_num_chunks_per_row(), my_cache_size_in_elements, my_require_minimum_cache);
             }
         }(); 
 

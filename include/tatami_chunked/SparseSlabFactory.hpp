@@ -46,6 +46,8 @@ private:
 
 public:
     /**
+     * @tparam MaxSlabs_ Integer type of the maximum number of slabs.
+     *
      * @param target_dim Extent of the target dimension of the slab,
      * i.e., the dimension that is indexed into.
      * @param non_target_dim Extent of the non-target dimension of the slab.
@@ -55,43 +57,51 @@ public:
      * @param needs_value Whether the values of the structural non-zeros should be cached.
      * @param needs_index Whether the indices of the structural non-zeros should be cached.
      */
-    SparseSlabFactory(Index_ target_dim, Index_ non_target_dim, std::size_t slab_size, std::size_t max_slabs, bool needs_value, bool needs_index) : 
+    template<typename MaxSlabs_>
+    SparseSlabFactory(Index_ target_dim, Index_ non_target_dim, std::size_t slab_size, MaxSlabs_ max_slabs, bool needs_value, bool needs_index) : 
         my_target_dim(target_dim),
         my_non_target_dim(non_target_dim),
         my_slab_size(slab_size),
         my_needs_value(needs_value),
         my_needs_index(needs_index),
-        my_number_pool(max_slabs * static_cast<std::size_t>(target_dim)) // cast to avoid overflow.
+        my_number_pool(sanisizer::product<decltype(my_number_pool.size())>(max_slabs, target_dim))
     {
-        std::size_t total_size = max_slabs * slab_size;
         if (needs_value) {
-            my_value_pool.resize(total_size);
+            my_value_pool.resize(sanisizer::product<decltype(my_value_pool.size())>(max_slabs, slab_size));
         }
         if (needs_index) {
-            my_index_pool.resize(total_size);
+            my_index_pool.resize(sanisizer::product<decltype(my_index_pool.size())>(max_slabs, slab_size));
         }
     }
 
     /**
      * Overload that computes `slab_size` automatically.
+     *
+     * @tparam MaxSlabs_ Integer type of the maximum number of slabs.
+     *
      * @param target_dim Extent of the target dimension of the slab.
      * @param non_target_dim Extent of the non-target dimension of the slab.
      * @param max_slabs Maximum number of slabs.
      * @param needs_value Whether the values of the structural non-zeros should be cached.
      * @param needs_index Whether the indices of the structural non-zeros should be cached.
      */
-    SparseSlabFactory(Index_ target_dim, Index_ non_target_dim, std::size_t max_slabs, bool needs_value, bool needs_index) : 
-        SparseSlabFactory(target_dim, non_target_dim, static_cast<std::size_t>(target_dim) * static_cast<std::size_t>(non_target_dim), max_slabs, needs_value, needs_index) {}
+    template<typename MaxSlabs_>
+    SparseSlabFactory(Index_ target_dim, Index_ non_target_dim, MaxSlabs_ max_slabs, bool needs_value, bool needs_index) : 
+        SparseSlabFactory(target_dim, non_target_dim, sanisizer::product<std::size_t>(target_dim, non_target_dim), max_slabs, needs_value, needs_index) {}
 
     /**
      * Overload that takes the relevant statistics from a `SlabCacheStats` object.
+     *
+     * @tparam MaxSlabs_ Integer type of the maximum number of slabs.
+     *
      * @param target_dim Extent of the target dimension of the slab.
      * @param non_target_dim Extent of the non-target dimension of the slab.
      * @param stats Slab statistics, computed from `target_dim` and `non_target_dim`.
      * @param needs_value Whether the values of the structural non-zeros should be cached.
      * @param needs_index Whether the indices of the structural non-zeros should be cached.
      */
-    SparseSlabFactory(Index_ target_dim, Index_ non_target_dim, const SlabCacheStats& stats, bool needs_value, bool needs_index) : 
+    template<typename MaxSlabs_>
+    SparseSlabFactory(Index_ target_dim, Index_ non_target_dim, const SlabCacheStats<MaxSlabs_>& stats, bool needs_value, bool needs_index) : 
         SparseSlabFactory(target_dim, non_target_dim, stats.slab_size_in_elements, stats.max_slabs_in_cache, needs_value, needs_index) {}
 
     /**

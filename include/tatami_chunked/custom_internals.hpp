@@ -9,6 +9,11 @@
 #include "ChunkDimensionStats.hpp"
 
 #include <vector>
+#include <type_traits>
+#include <algorithm>
+#include <tuple>
+
+#include "sanisizer/sanisizer.hpp"
 
 namespace tatami_chunked {
 
@@ -25,10 +30,8 @@ template<typename ChunkValue_, typename Index_>
 class SparseSingleWorkspace {
 public:
     SparseSingleWorkspace(Index_ target_chunkdim, Index_ non_target_chunkdim, bool needs_value, bool needs_index) : my_number(target_chunkdim) {
-        typedef decltype(my_value_pool.size()) Size;
-        Size total_size = static_cast<Size>(target_chunkdim) * static_cast<Size>(non_target_chunkdim);
         if (needs_value) {
-            my_value_pool.resize(total_size);
+            my_value_pool.resize(sanisizer::product<decltype(my_value_pool.size())>(target_chunkdim, non_target_chunkdim));
             my_values.reserve(target_chunkdim);
             auto vptr = my_value_pool.data();
             for (Index_ p = 0; p < target_chunkdim; ++p, vptr += non_target_chunkdim) {
@@ -36,7 +39,7 @@ public:
             }
         }
         if (needs_index) {
-            my_index_pool.resize(total_size);
+            my_index_pool.resize(sanisizer::product<decltype(my_index_pool.size())>(target_chunkdim, non_target_chunkdim));
             my_indices.reserve(target_chunkdim);
             auto iptr = my_index_pool.data();
             for (Index_ p = 0; p < target_chunkdim; ++p, iptr += non_target_chunkdim) {
@@ -303,7 +306,7 @@ public:
                         len
                     );
 
-                    Size tmp_offset = static_cast<Size>(len) * static_cast<Size>(target_chunk_offset); // cast to avoid overflow.
+                    Size tmp_offset = sanisizer::product_unsafe<Size>(len, target_chunk_offset);
                     std::copy_n(tmp_buffer_ptr + tmp_offset, len, final_slab_ptr);
                     final_slab_ptr += len;
                 }
