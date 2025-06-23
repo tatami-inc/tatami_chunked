@@ -9,6 +9,7 @@
 #include <cstddef>
 
 #include "tatami/tatami.hpp"
+#include "sanisizer/sanisizer.hpp"
 
 /**
  * @file OracularSlabCache.hpp
@@ -37,8 +38,8 @@ template<typename Id_, typename Index_, class Slab_, bool track_reuse_ = false>
 class OracularSlabCache {
 private:
     std::shared_ptr<const tatami::Oracle<Index_> > my_oracle;
-    std::size_t my_total;
-    std::size_t my_counter = 0;
+    tatami::PredictionIndex my_total;
+    tatami::PredictionIndex my_counter = 0;
 
     Index_ my_last_slab_id = 0;
     Slab_* my_last_slab = NULL;
@@ -50,19 +51,21 @@ private:
     std::unordered_map<Id_, Slab_*> my_current_cache, my_future_cache;
     std::vector<std::pair<Id_, Slab_*> > my_to_populate;
     std::vector<Id_> my_in_need;
-    std::size_t my_refresh_point = 0;
+    tatami::PredictionIndex my_refresh_point = 0;
 
     typename std::conditional<track_reuse_, std::vector<std::pair<Id_, Slab_*> >, bool>::type my_to_reuse;
 
 public:
     /**
+     * @tparam MaxSlabs_ Integer type of the maximum number of slabs.
      * @param oracle Pointer to an `tatami::Oracle` to be used for predictions.
      * @param max_slabs Maximum number of slabs to store in the cache.
      */
-    OracularSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > oracle, std::size_t max_slabs) : 
+    template<typename MaxSlabs_>
+    OracularSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > oracle, MaxSlabs_ max_slabs) : 
         my_oracle(std::move(oracle)), 
         my_total(my_oracle->total()),
-        my_max_slabs(max_slabs) 
+        my_max_slabs(sanisizer::cast<decltype(my_max_slabs)>(max_slabs)) 
     {
         my_all_slabs.reserve(max_slabs);
         my_current_cache.reserve(max_slabs);

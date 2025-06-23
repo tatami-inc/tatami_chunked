@@ -5,6 +5,8 @@
 #include <list>
 #include <cstddef>
 
+#include "sanisizer/sanisizer.hpp"
+
 /**
  * @file LruSlabCache.hpp
  * @brief Create a LRU cache of slabs.
@@ -38,9 +40,11 @@ private:
 
 public:
     /**
+     * @tparam MaxSlabs_ Integer type of the maximum number of slabs.
      * @param max_slabs Maximum number of slabs to store in the cache.
      */
-    LruSlabCache(std::size_t max_slabs) : my_max_slabs(max_slabs) {}
+    template<typename MaxSlabs_>
+    LruSlabCache(MaxSlabs_ max_slabs) : my_max_slabs(sanisizer::cast<decltype(my_max_slabs)>(max_slabs)) {}
 
     /**
      * Deleted as the cache holds persistent iterators.
