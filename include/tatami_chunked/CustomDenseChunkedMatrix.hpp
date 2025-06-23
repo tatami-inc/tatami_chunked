@@ -13,6 +13,8 @@
 #include <vector>
 #include <cstddef>
 
+#include "sanisizer/sanisizer.hpp"
+
 /**
  * @file CustomDenseChunkedMatrix.hpp
  * @brief Custom dense chunked matrix.
@@ -29,7 +31,7 @@ struct CustomDenseChunkedMatrixOptions {
      * Larger caches improve access speed at the cost of memory usage.
      * Small values may be ignored if `require_minimum_cache` is `true`.
      */
-    std::size_t maximum_cache_size = 100000000;
+    std::size_t maximum_cache_size = sanisizer::cap<std::size_t>(100000000);
 
     /**
      * Whether to automatically enforce a minimum size for the cache, regardless of `maximum_cache_size`.
@@ -297,7 +299,7 @@ private:
     const ChunkCoordinator<false, ChunkValue_, Index_>& my_coordinator;
 
     tatami::MaybeOracle<oracle_, Index_> my_oracle;
-    typename std::conditional<oracle_, std::size_t, bool>::type my_counter = 0;
+    typename std::conditional<oracle_, tatami::PredictionIndex, bool>::type my_counter = 0;
 
     DenseSlabFactory<ChunkValue_> my_factory;
     typedef typename decltype(my_factory)::Slab Slab;
