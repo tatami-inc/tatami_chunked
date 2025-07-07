@@ -96,9 +96,9 @@ private:
         } 
 
         if (sanisizer::is_less_than_or_equal(tmp, num_slabs)) {
-            return tmp;
+            return sanisizer::cast<MaxSlabs_>(tmp);
         } else {
-            return num_slabs;
+            return sanisizer::cast<MaxSlabs_>(num_slabs);
         }
     }
 };
