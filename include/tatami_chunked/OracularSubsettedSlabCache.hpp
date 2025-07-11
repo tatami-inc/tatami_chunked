@@ -123,7 +123,9 @@ void add_to_details(OracularSubsettedSlabCacheSelectionDetails<Index_>& details,
         }
 
         details.selection = OracularSubsettedSlabCacheSelectionType::INDEX;
-        tatami::resize_container_to_Index_size(details.indices, details.block_end - details.block_start);
+
+        // Don't replace this with tatami::resize_container_to_Index_size as this class might be used outside of the tatami::Matrix contract (i.e., Index_ might store values beyond std::size_t).
+        details.indices.resize(sanisizer::cast<decltype(details.indices.size())>(details.block_end - details.block_start));
         std::iota(details.indices.begin(), details.indices.end(), details.block_start);
         fill_mapping_in_details(details);
     }
@@ -150,7 +152,6 @@ void finalize_details(OracularSubsettedSlabCacheSelectionDetails<Index_>& detail
 /**
  * @endcond
  */
-
 
 /**
  * @brief Oracle-aware cache for slabs, plus subsets.

@@ -51,6 +51,8 @@ struct SlabCacheStats {
      */
     template<typename Index_, typename TargetNumSlabs_>
     SlabCacheStats(Index_ target_length, Index_ non_target_length, TargetNumSlabs_ target_num_slabs, std::size_t cache_size_in_elements, bool require_minimum_cache) :
+        // Don't be tempted to do unsafe casts of target_length to size_t,
+        // as this class might be used outside of the tatami::Matrix contract (i.e., Index_ might store values beyond std::size_t).
         slab_size_in_elements(sanisizer::product<std::size_t>(target_length, non_target_length)),
         max_slabs_in_cache(compute_max_slabs_in_cache(slab_size_in_elements, target_num_slabs, cache_size_in_elements, require_minimum_cache))
     {}
