@@ -1,6 +1,13 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <tagfile doxygen_version="1.12.0">
   <compound kind="file">
+    <name>ChunkDimensionStats.hpp</name>
+    <path>tatami_chunked/</path>
+    <filename>ChunkDimensionStats_8hpp.html</filename>
+    <class kind="struct">tatami_chunked::ChunkDimensionStats</class>
+    <namespace>tatami_chunked</namespace>
+  </compound>
+  <compound kind="file">
     <name>CustomDenseChunkedMatrix.hpp</name>
     <path>tatami_chunked/</path>
     <filename>CustomDenseChunkedMatrix_8hpp.html</filename>
