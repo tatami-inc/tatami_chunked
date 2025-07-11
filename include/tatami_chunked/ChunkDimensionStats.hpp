@@ -3,6 +3,11 @@
 
 #include "sanisizer/sanisizer.hpp"
 
+/**
+ * @file ChunkDimensionStats.hpp
+ * @brief Chunk dimension statistics.
+ */
+
 namespace tatami_chunked {
 
 /**

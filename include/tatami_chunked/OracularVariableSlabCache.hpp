@@ -22,8 +22,8 @@ namespace tatami_chunked {
  *
  * @tparam Id_ Type of slab identifier, typically integer.
  * @tparam Index_ Type of row/column index produced by the oracle.
- * @tparam Size_ Numeric type for the slab size.
  * @tparam Slab_ Class for a single slab.
+ * @tparam Size_ Numeric type for the slab size.
  *
  * Implement an oracle-aware cache for variable-size slabs.
  * Each slab is defined as the set of chunks required to read an element of the target dimension (or a contiguous block/indexed subset thereof) from a `tatami::Matrix`.
