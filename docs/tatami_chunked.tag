@@ -86,8 +86,8 @@
       <type></type>
       <name>ChunkDimensionStats</name>
       <anchorfile>structtatami__chunked_1_1ChunkDimensionStats.html</anchorfile>
-      <anchor>a409cdc30672f71a8346636bc14c8c859</anchor>
-      <arglist>(Index_ dimension_extent, Index_ chunk_length)</arglist>
+      <anchor>a3949ce134294817b5367e181d9d88c3c</anchor>
+      <arglist>(DimExtent_ dimension_extent, ChunkLength_ chunk_length)</arglist>
     </member>
     <member kind="function">
       <type></type>

@@ -105,8 +105,9 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a409cdc30672f71a8346636bc14c8c859" id="r_a409cdc30672f71a8346636bc14c8c859"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a409cdc30672f71a8346636bc14c8c859">ChunkDimensionStats</a> (Index_ <a class="el" href="#ab51e3f87f98cd77d7aa2aa47b7a4be92">dimension_extent</a>, Index_ <a class="el" href="#a2def077216eed06795aec42f851d7bdf">chunk_length</a>)</td></tr>
-<tr class="separator:a409cdc30672f71a8346636bc14c8c859"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3949ce134294817b5367e181d9d88c3c" id="r_a3949ce134294817b5367e181d9d88c3c"><td class="memTemplParams" colspan="2">template&lt;typename DimExtent_ , typename ChunkLength_ &gt; </td></tr>
+<tr class="memitem:a3949ce134294817b5367e181d9d88c3c"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a3949ce134294817b5367e181d9d88c3c">ChunkDimensionStats</a> (DimExtent_ <a class="el" href="#ab51e3f87f98cd77d7aa2aa47b7a4be92">dimension_extent</a>, ChunkLength_ <a class="el" href="#a2def077216eed06795aec42f851d7bdf">chunk_length</a>)</td></tr>
+<tr class="separator:a3949ce134294817b5367e181d9d88c3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43f0bc21d26d193aaf186f14e9a49640" id="r_a43f0bc21d26d193aaf186f14e9a49640"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a43f0bc21d26d193aaf186f14e9a49640">ChunkDimensionStats</a> ()</td></tr>
 <tr class="separator:a43f0bc21d26d193aaf186f14e9a49640"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -132,13 +133,15 @@ struct tatami_chunked::ChunkDimensionStats&lt; Index_ &gt;</div><p>Statistics fo
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a409cdc30672f71a8346636bc14c8c859" name="a409cdc30672f71a8346636bc14c8c859"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a409cdc30672f71a8346636bc14c8c859">&#9670;&#160;</a></span>ChunkDimensionStats() <span class="overload">[1/2]</span></h2>
+<a id="a3949ce134294817b5367e181d9d88c3c" name="a3949ce134294817b5367e181d9d88c3c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3949ce134294817b5367e181d9d88c3c">&#9670;&#160;</a></span>ChunkDimensionStats() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Index_ &gt; </div>
+<div class="memtemplate">
+template&lt;typename DimExtent_ , typename ChunkLength_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -146,12 +149,12 @@ template&lt;typename Index_ &gt; </div>
         <tr>
           <td class="memname"><a class="el" href="structtatami__chunked_1_1ChunkDimensionStats.html">tatami_chunked::ChunkDimensionStats</a>&lt; Index_ &gt;::ChunkDimensionStats </td>
           <td>(</td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>dimension_extent</em></span>, </td>
+          <td class="paramtype">DimExtent_</td>          <td class="paramname"><span class="paramname"><em>dimension_extent</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>chunk_length</em></span>&#160;)</td>
+          <td class="paramtype">ChunkLength_</td>          <td class="paramname"><span class="paramname"><em>chunk_length</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -160,6 +163,13 @@ template&lt;typename Index_ &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">DimExtent_</td><td>Integer type of the dimension extent. </td></tr>
+    <tr><td class="paramname">ChunkLength_</td><td>Integer type of the chunk length. </td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dimension_extent</td><td>Full extent of the dimension. </td></tr>
