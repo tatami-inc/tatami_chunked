@@ -127,9 +127,9 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="classtatami__chunked_1_1SparseSlabFactory.html#acf9ea02cba191efcd129378ae1fd766d">   61</a></span>    <a class="code hl_function" href="classtatami__chunked_1_1SparseSlabFactory.html#acf9ea02cba191efcd129378ae1fd766d">SparseSlabFactory</a>(Index_ target_dim, Index_ non_target_dim, std::size_t slab_size, MaxSlabs_ max_slabs, <span class="keywordtype">bool</span> needs_value, <span class="keywordtype">bool</span> needs_index) : </div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        my_target_dim(target_dim),</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        my_non_target_dim(non_target_dim),</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        my_slab_size(slab_size),</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        my_needs_value(needs_value),</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        my_needs_index(needs_index),</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        my_needs_value(needs_value),</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        my_needs_index(needs_index),</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        my_slab_size(slab_size),</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        my_number_pool(sanisizer::product&lt;decltype(my_number_pool.size())&gt;(max_slabs, target_dim))</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    {</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        <span class="keywordflow">if</span> (needs_value) {</div>
