@@ -41,7 +41,7 @@ private:
     tatami::PredictionIndex my_total;
     tatami::PredictionIndex my_counter = 0;
 
-    Index_ my_last_slab_id = 0;
+    Id_ my_last_slab_id = 0;
     Slab_* my_last_slab = NULL;
 
     typedef std::vector<Slab_> SlabPool;
