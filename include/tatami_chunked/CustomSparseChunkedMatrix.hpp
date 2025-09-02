@@ -868,13 +868,13 @@ private:
                 return SlabCacheStats<Index_>(
                     my_coordinator.get_chunk_nrow(),
                     non_target_length,
-                    my_coordinator.get_num_chunks_per_column(),
+                    my_coordinator.get_num_chunks_per_column(), // already Index_, no need to do a protected cast.
                     my_cache_size_in_bytes,
                     element_size,
                     my_require_minimum_cache
                 );
             } else {
-                // Remember, the num_chunks_per_row is the number of slabs needed to divide up all the *columns* of the matrix.
+                // Same as above, but this time, the num_chunks_per_row is the number of slabs needed to divide up all the *columns* of the matrix.
                 return SlabCacheStats<Index_>(
                     my_coordinator.get_chunk_ncol(),
                     non_target_length,

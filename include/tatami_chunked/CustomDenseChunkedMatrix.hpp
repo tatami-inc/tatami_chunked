@@ -325,8 +325,8 @@ public:
         my_chunk_workspace(std::move(chunk_workspace)),
         my_coordinator(coordinator),
         my_oracle(std::move(oracle)),
-        my_factory(non_target_length, 1),
-        my_tmp_solo(static_cast<TmpSize>(my_coordinator.get_chunk_nrow()) * static_cast<TmpSize>(my_coordinator.get_chunk_ncol())),
+        my_factory(non_target_length, 1), // non_target_length must fit in a size_t, as per the tatami contract; no need for a protected cast here.
+        my_tmp_solo(sanisizer::product<TmpSize>(my_coordinator.get_chunk_nrow(), my_coordinator.get_chunk_ncol())),
         my_final_solo(my_factory.create())
     {}
 
@@ -609,10 +609,22 @@ private:
         auto stats = [&]{
             if (row) {
                 // Remember, the num_chunks_per_column is the number of slabs needed to divide up all the *rows* of the matrix.
-                return SlabCacheStats<Index_>(my_coordinator.get_chunk_nrow(), non_target_length, my_coordinator.get_num_chunks_per_column(), my_cache_size_in_elements, my_require_minimum_cache);
+                return SlabCacheStats<Index_>(
+                    my_coordinator.get_chunk_nrow(), 
+                    non_target_length,
+                    my_coordinator.get_num_chunks_per_column(), // already Index_, no need to do a protected cast.
+                    my_cache_size_in_elements,
+                    my_require_minimum_cache
+                );
             } else {
-                // Remember, the num_chunks_per_row is the number of slabs needed to divide up all the *columns* of the matrix.
-                return SlabCacheStats<Index_>(my_coordinator.get_chunk_ncol(), non_target_length, my_coordinator.get_num_chunks_per_row(), my_cache_size_in_elements, my_require_minimum_cache);
+                // Same as above, but this time, the num_chunks_per_row is the number of slabs needed to divide up all the *columns* of the matrix.
+                return SlabCacheStats<Index_>(
+                    my_coordinator.get_chunk_ncol(),
+                    non_target_length,
+                    my_coordinator.get_num_chunks_per_row(),
+                    my_cache_size_in_elements,
+                    my_require_minimum_cache
+                );
             }
         }(); 
 
