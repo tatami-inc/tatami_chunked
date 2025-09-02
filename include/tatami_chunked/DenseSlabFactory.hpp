@@ -26,7 +26,8 @@ namespace tatami_chunked {
  * @tparam Value_ Type of the data in each slab.
  */
 template<typename Value_>
-struct DenseSlabFactory {
+class DenseSlabFactory {
+public:
     /**
      * @tparam MaxSlabs_ Integer type of the maximum number of slabs.
      * @param slab_size Size of the slab, in terms of data elements.
@@ -60,9 +61,9 @@ struct DenseSlabFactory {
      */
 
 private:
-    typedef std::vector<Value_> Pool;
-    typename Pool::size_type my_offset = 0, my_slab_size;
-    Pool my_pool;
+    // Might as well use size_t here, as we'll be doing pointer arithmetic in create().
+    std::size_t my_offset = 0, my_slab_size;
+    std::vector<Value_> my_pool;
 
 public:
     /**

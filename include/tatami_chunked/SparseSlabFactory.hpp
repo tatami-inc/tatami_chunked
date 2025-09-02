@@ -4,6 +4,8 @@
 #include <vector>
 #include <cstddef>
 
+#include "sanisizer/sanisizer.hpp"
+
 #include "SlabCacheStats.hpp"
 
 /**
@@ -30,19 +32,17 @@ namespace tatami_chunked {
 template<typename Value_, typename Index_, typename Count_ = Index_>
 class SparseSlabFactory {
 private:
-    typedef std::vector<Value_> ValuePool;
-    typedef std::vector<Index_> IndexPool;
-    typedef std::vector<Count_> NumberPool;
-
     Index_ my_target_dim, my_non_target_dim;
-    typename ValuePool::size_type my_slab_size;
     bool my_needs_value, my_needs_index;
 
-    typename NumberPool::size_type my_offset_number = 0;
-    typename ValuePool::size_type my_offset_slab = 0;
-    ValuePool my_value_pool;
-    IndexPool my_index_pool;
-    NumberPool my_number_pool;
+    // Might as well use size_t here, as we'll be doing pointer arithmetic in create().
+    std::size_t my_slab_size;
+    std::size_t my_offset_number = 0;
+    std::size_t my_offset_slab = 0;
+
+    std::vector<Value_> my_value_pool;
+    std::vector<Index_> my_index_pool;
+    std::vector<Count_> my_number_pool;
 
 public:
     /**
@@ -61,9 +61,9 @@ public:
     SparseSlabFactory(Index_ target_dim, Index_ non_target_dim, std::size_t slab_size, MaxSlabs_ max_slabs, bool needs_value, bool needs_index) : 
         my_target_dim(target_dim),
         my_non_target_dim(non_target_dim),
-        my_slab_size(slab_size),
         my_needs_value(needs_value),
         my_needs_index(needs_index),
+        my_slab_size(slab_size),
         my_number_pool(sanisizer::product<decltype(my_number_pool.size())>(max_slabs, target_dim))
     {
         if (needs_value) {
