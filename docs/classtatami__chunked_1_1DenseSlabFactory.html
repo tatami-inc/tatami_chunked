@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.12.0"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami_chunked: tatami_chunked::DenseSlabFactory&lt; Value_ &gt; Struct Template Reference</title>
+<title>tatami_chunked: tatami_chunked::DenseSlabFactory&lt; Value_ &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -85,7 +85,7 @@ $(function(){ initResizable(false); });
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespacetatami__chunked.html">tatami_chunked</a></li><li class="navelem"><a class="el" href="structtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacetatami__chunked.html">tatami_chunked</a></li><li class="navelem"><a class="el" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div id="doc-content">
@@ -93,8 +93,8 @@ $(function(){ initResizable(false); });
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="structtatami__chunked_1_1DenseSlabFactory-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">tatami_chunked::DenseSlabFactory&lt; Value_ &gt; Struct Template Reference</div></div>
+<a href="classtatami__chunked_1_1DenseSlabFactory-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">tatami_chunked::DenseSlabFactory&lt; Value_ &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -122,7 +122,7 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Value_&gt;<br />
-struct tatami_chunked::DenseSlabFactory&lt; Value_ &gt;</div><p>Factory for dense slabs. </p>
+class tatami_chunked::DenseSlabFactory&lt; Value_ &gt;</div><p>Factory for dense slabs. </p>
 <p>An instance of this class allocates a single memory pool during its construction. Each slab is simply a pointer into this pool at regular offsets. The idea is to allocate one large block for caching in, e.g., <code><a class="el" href="classtatami__chunked_1_1LruSlabCache.html" title="Least-recently-used cache for slabs.">LruSlabCache</a></code>, improving performance by avoiding repeated requests to the allocator. This also reduces fragmentation that could increase memory usage beyond the expected cache size.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
@@ -145,7 +145,7 @@ template&lt;typename MaxSlabs_ &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami__chunked_1_1DenseSlabFactory.html">tatami_chunked::DenseSlabFactory</a>&lt; Value_ &gt;::DenseSlabFactory </td>
+          <td class="memname"><a class="el" href="classtatami__chunked_1_1DenseSlabFactory.html">tatami_chunked::DenseSlabFactory</a>&lt; Value_ &gt;::DenseSlabFactory </td>
           <td>(</td>
           <td class="paramtype">std::size_t</td>          <td class="paramname"><span class="paramname"><em>slab_size</em></span>, </td>
         </tr>
@@ -191,7 +191,7 @@ template&lt;typename MaxSlabs_ &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami__chunked_1_1DenseSlabFactory.html">tatami_chunked::DenseSlabFactory</a>&lt; Value_ &gt;::DenseSlabFactory </td>
+          <td class="memname"><a class="el" href="classtatami__chunked_1_1DenseSlabFactory.html">tatami_chunked::DenseSlabFactory</a>&lt; Value_ &gt;::DenseSlabFactory </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="structtatami__chunked_1_1SlabCacheStats.html">SlabCacheStats</a>&lt; MaxSlabs_ &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>stats</em></span></td><td>)</td>
           <td></td>
@@ -231,7 +231,7 @@ template&lt;typename Value_ &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html">Slab</a> <a class="el" href="structtatami__chunked_1_1DenseSlabFactory.html">tatami_chunked::DenseSlabFactory</a>&lt; Value_ &gt;::create </td>
+          <td class="memname"><a class="el" href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html">Slab</a> <a class="el" href="classtatami__chunked_1_1DenseSlabFactory.html">tatami_chunked::DenseSlabFactory</a>&lt; Value_ &gt;::create </td>
           <td>(</td>
           <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
           <td></td>
@@ -248,7 +248,7 @@ template&lt;typename Value_ &gt; </div>
 
 </div>
 </div>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>tatami_chunked/<a class="el" href="DenseSlabFactory_8hpp_source.html">DenseSlabFactory.hpp</a></li>
 </ul>
 </div><!-- contents -->

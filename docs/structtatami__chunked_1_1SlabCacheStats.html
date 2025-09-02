@@ -105,12 +105,12 @@ $(function(){ initResizable(false); });
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a5fdb90be1768cf819bd5ce994ad841d8" id="r_a5fdb90be1768cf819bd5ce994ad841d8"><td class="memTemplParams" colspan="2">template&lt;typename Index_ , typename TargetNumSlabs_ &gt; </td></tr>
-<tr class="memitem:a5fdb90be1768cf819bd5ce994ad841d8"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a5fdb90be1768cf819bd5ce994ad841d8">SlabCacheStats</a> (Index_ target_length, Index_ non_target_length, TargetNumSlabs_ target_num_slabs, std::size_t cache_size_in_elements, bool require_minimum_cache)</td></tr>
-<tr class="separator:a5fdb90be1768cf819bd5ce994ad841d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8b35c10d544f212939a5e1e15fd1cbe" id="r_af8b35c10d544f212939a5e1e15fd1cbe"><td class="memTemplParams" colspan="2">template&lt;typename Index_ , typename TargetNumSlabs_ &gt; </td></tr>
-<tr class="memitem:af8b35c10d544f212939a5e1e15fd1cbe"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#af8b35c10d544f212939a5e1e15fd1cbe">SlabCacheStats</a> (Index_ target_length, Index_ non_target_length, TargetNumSlabs_ target_num_slabs, std::size_t cache_size_in_bytes, std::size_t element_size, bool require_minimum_cache)</td></tr>
-<tr class="separator:af8b35c10d544f212939a5e1e15fd1cbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ad775511bfda40768e64795d68944bb" id="r_a6ad775511bfda40768e64795d68944bb"><td class="memTemplParams" colspan="2">template&lt;typename Index_ &gt; </td></tr>
+<tr class="memitem:a6ad775511bfda40768e64795d68944bb"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a6ad775511bfda40768e64795d68944bb">SlabCacheStats</a> (Index_ target_length, Index_ non_target_length, MaxSlabs_ target_num_slabs, std::size_t cache_size_in_elements, bool require_minimum_cache)</td></tr>
+<tr class="separator:a6ad775511bfda40768e64795d68944bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac193cf058b808195637e834eac6074fd" id="r_ac193cf058b808195637e834eac6074fd"><td class="memTemplParams" colspan="2">template&lt;typename Index_ &gt; </td></tr>
+<tr class="memitem:ac193cf058b808195637e834eac6074fd"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ac193cf058b808195637e834eac6074fd">SlabCacheStats</a> (Index_ target_length, Index_ non_target_length, MaxSlabs_ target_num_slabs, std::size_t cache_size_in_bytes, std::size_t element_size, bool require_minimum_cache)</td></tr>
+<tr class="separator:ac193cf058b808195637e834eac6074fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -130,15 +130,15 @@ struct tatami_chunked::SlabCacheStats&lt; MaxSlabs_ &gt;</div><p>Statistics for 
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a5fdb90be1768cf819bd5ce994ad841d8" name="a5fdb90be1768cf819bd5ce994ad841d8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5fdb90be1768cf819bd5ce994ad841d8">&#9670;&#160;</a></span>SlabCacheStats() <span class="overload">[1/2]</span></h2>
+<a id="a6ad775511bfda40768e64795d68944bb" name="a6ad775511bfda40768e64795d68944bb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ad775511bfda40768e64795d68944bb">&#9670;&#160;</a></span>SlabCacheStats() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename MaxSlabs_ &gt; </div>
 <div class="memtemplate">
-template&lt;typename Index_ , typename TargetNumSlabs_ &gt; </div>
+template&lt;typename Index_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -156,7 +156,7 @@ template&lt;typename Index_ , typename TargetNumSlabs_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">TargetNumSlabs_</td>          <td class="paramname"><span class="paramname"><em>target_num_slabs</em></span>, </td>
+          <td class="paramtype">MaxSlabs_</td>          <td class="paramname"><span class="paramname"><em>target_num_slabs</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -177,8 +177,7 @@ template&lt;typename Index_ , typename TargetNumSlabs_ &gt; </div>
 </div><div class="memdoc">
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Index_</td><td>Integer type of the dimension extents. </td></tr>
-    <tr><td class="paramname">TargetNumSlabs_</td><td>Integer type of the number of slabs along the target dimension.</td></tr>
+    <tr><td class="paramname">Index_</td><td>Integer type of the dimension extents.</td></tr>
   </table>
   </dd>
 </dl>
@@ -195,15 +194,15 @@ template&lt;typename Index_ , typename TargetNumSlabs_ &gt; </div>
 
 </div>
 </div>
-<a id="af8b35c10d544f212939a5e1e15fd1cbe" name="af8b35c10d544f212939a5e1e15fd1cbe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af8b35c10d544f212939a5e1e15fd1cbe">&#9670;&#160;</a></span>SlabCacheStats() <span class="overload">[2/2]</span></h2>
+<a id="ac193cf058b808195637e834eac6074fd" name="ac193cf058b808195637e834eac6074fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac193cf058b808195637e834eac6074fd">&#9670;&#160;</a></span>SlabCacheStats() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename MaxSlabs_ &gt; </div>
 <div class="memtemplate">
-template&lt;typename Index_ , typename TargetNumSlabs_ &gt; </div>
+template&lt;typename Index_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -221,7 +220,7 @@ template&lt;typename Index_ , typename TargetNumSlabs_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">TargetNumSlabs_</td>          <td class="paramname"><span class="paramname"><em>target_num_slabs</em></span>, </td>
+          <td class="paramtype">MaxSlabs_</td>          <td class="paramname"><span class="paramname"><em>target_num_slabs</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -247,8 +246,7 @@ template&lt;typename Index_ , typename TargetNumSlabs_ &gt; </div>
 </div><div class="memdoc">
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Index_</td><td>Integer type of the dimension extents. </td></tr>
-    <tr><td class="paramname">TargetNumSlabs_</td><td>Integer type of the number of slabs along the target dimension.</td></tr>
+    <tr><td class="paramname">Index_</td><td>Integer type of the dimension extents.</td></tr>
   </table>
   </dd>
 </dl>

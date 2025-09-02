@@ -99,27 +99,27 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;cstddef&gt;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="SlabCacheStats_8hpp.html">SlabCacheStats.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;sanisizer/sanisizer.hpp&quot;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami__chunked.html">tatami_chunked</a> {</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Count_ = Index_&gt;</div>
-<div class="foldopen" id="foldopen00031" data-start="{" data-end="};">
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="classtatami__chunked_1_1SparseSlabFactory.html">   31</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami__chunked_1_1SparseSlabFactory.html">SparseSlabFactory</a> {</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keyword">typedef</span> std::vector&lt;Value_&gt; ValuePool;</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keyword">typedef</span> std::vector&lt;Index_&gt; IndexPool;</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keyword">typedef</span> std::vector&lt;Count_&gt; NumberPool;</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    Index_ my_target_dim, my_non_target_dim;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="keyword">typename</span> ValuePool::size_type my_slab_size;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordtype">bool</span> my_needs_value, my_needs_index;</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keyword">typename</span> NumberPool::size_type my_offset_number = 0;</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keyword">typename</span> ValuePool::size_type my_offset_slab = 0;</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    ValuePool my_value_pool;</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    IndexPool my_index_pool;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    NumberPool my_number_pool;</div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;<a class="code" href="SlabCacheStats_8hpp.html">SlabCacheStats.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami__chunked.html">tatami_chunked</a> {</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> Count_ = Index_&gt;</div>
+<div class="foldopen" id="foldopen00033" data-start="{" data-end="};">
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno"><a class="line" href="classtatami__chunked_1_1SparseSlabFactory.html">   33</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami__chunked_1_1SparseSlabFactory.html">SparseSlabFactory</a> {</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    Index_ my_target_dim, my_non_target_dim;</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keywordtype">bool</span> my_needs_value, my_needs_index;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="comment">// Might as well use size_t here, as we&#39;ll be doing pointer arithmetic in create().</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    std::size_t my_slab_size;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    std::size_t my_offset_number = 0;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    std::size_t my_offset_slab = 0;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    std::vector&lt;Value_&gt; my_value_pool;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    std::vector&lt;Index_&gt; my_index_pool;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    std::vector&lt;Count_&gt; my_number_pool;</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> MaxSlabs_&gt;</div>
@@ -204,7 +204,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span> </div>
 <div class="line"><a id="l00189" name="l00189"></a><span class="lineno">  189</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aSlabCacheStats_8hpp_html"><div class="ttname"><a href="SlabCacheStats_8hpp.html">SlabCacheStats.hpp</a></div><div class="ttdoc">Slab cache statistics.</div></div>
-<div class="ttc" id="aclasstatami__chunked_1_1SparseSlabFactory_html"><div class="ttname"><a href="classtatami__chunked_1_1SparseSlabFactory.html">tatami_chunked::SparseSlabFactory</a></div><div class="ttdoc">Factory for sparse slabs.</div><div class="ttdef"><b>Definition</b> SparseSlabFactory.hpp:31</div></div>
+<div class="ttc" id="aclasstatami__chunked_1_1SparseSlabFactory_html"><div class="ttname"><a href="classtatami__chunked_1_1SparseSlabFactory.html">tatami_chunked::SparseSlabFactory</a></div><div class="ttdoc">Factory for sparse slabs.</div><div class="ttdef"><b>Definition</b> SparseSlabFactory.hpp:33</div></div>
 <div class="ttc" id="aclasstatami__chunked_1_1SparseSlabFactory_html_a1db3ee0bbbab01c3835e3063a024bbf2"><div class="ttname"><a href="classtatami__chunked_1_1SparseSlabFactory.html#a1db3ee0bbbab01c3835e3063a024bbf2">tatami_chunked::SparseSlabFactory::create</a></div><div class="ttdeci">Slab create()</div><div class="ttdef"><b>Definition</b> SparseSlabFactory.hpp:161</div></div>
 <div class="ttc" id="aclasstatami__chunked_1_1SparseSlabFactory_html_a8b7246ad4091f39906d187b8d1d2a99d"><div class="ttname"><a href="classtatami__chunked_1_1SparseSlabFactory.html#a8b7246ad4091f39906d187b8d1d2a99d">tatami_chunked::SparseSlabFactory::SparseSlabFactory</a></div><div class="ttdeci">SparseSlabFactory(Index_ target_dim, Index_ non_target_dim, const SlabCacheStats&lt; MaxSlabs_ &gt; &amp;stats, bool needs_value, bool needs_index)</div><div class="ttdef"><b>Definition</b> SparseSlabFactory.hpp:104</div></div>
 <div class="ttc" id="aclasstatami__chunked_1_1SparseSlabFactory_html_ab005c587b245b3f8fe828a5d970bd27c"><div class="ttname"><a href="classtatami__chunked_1_1SparseSlabFactory.html#ab005c587b245b3f8fe828a5d970bd27c">tatami_chunked::SparseSlabFactory::SparseSlabFactory</a></div><div class="ttdeci">SparseSlabFactory(Index_ target_dim, Index_ non_target_dim, MaxSlabs_ max_slabs, bool needs_value, bool needs_index)</div><div class="ttdef"><b>Definition</b> SparseSlabFactory.hpp:89</div></div>
