@@ -97,70 +97,71 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#define TATAMI_CHUNKED_DENSE_SLAB_FACTORY_HPP</span></div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="SlabCacheStats_8hpp.html">SlabCacheStats.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;cstddef&gt;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;sanisizer/sanisizer.hpp&quot;</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami__chunked.html">tatami_chunked</a> {</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_&gt;</div>
-<div class="foldopen" id="foldopen00029" data-start="{" data-end="};">
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="classtatami__chunked_1_1DenseSlabFactory.html">   29</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a> {</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> MaxSlabs_&gt;</div>
-<div class="foldopen" id="foldopen00037" data-start="{" data-end="}">
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="classtatami__chunked_1_1DenseSlabFactory.html#a4b50ac35298206e45ad64aebdebfb8bf">   37</a></span>    <a class="code hl_function" href="classtatami__chunked_1_1DenseSlabFactory.html#a4b50ac35298206e45ad64aebdebfb8bf">DenseSlabFactory</a>(std::size_t slab_size, MaxSlabs_ max_slabs) :</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        my_slab_size(slab_size),</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        my_pool(sanisizer::product&lt;decltype(my_pool.size())&gt;(max_slabs, slab_size))</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    {}</div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;utils.hpp&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;cstddef&gt;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;sanisizer/sanisizer.hpp&quot;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami__chunked.html">tatami_chunked</a> {</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_&gt;</div>
+<div class="foldopen" id="foldopen00030" data-start="{" data-end="};">
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="classtatami__chunked_1_1DenseSlabFactory.html">   30</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a> {</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> MaxSlabs_&gt;</div>
+<div class="foldopen" id="foldopen00038" data-start="{" data-end="}">
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="classtatami__chunked_1_1DenseSlabFactory.html#a4b50ac35298206e45ad64aebdebfb8bf">   38</a></span>    <a class="code hl_function" href="classtatami__chunked_1_1DenseSlabFactory.html#a4b50ac35298206e45ad64aebdebfb8bf">DenseSlabFactory</a>(std::size_t slab_size, MaxSlabs_ max_slabs) :</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        my_slab_size(slab_size),</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        my_pool(sanisizer::product&lt;I&lt;decltype(my_pool.size())&gt; &gt;(max_slabs, slab_size))</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    {}</div>
 </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> MaxSlabs_&gt;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="classtatami__chunked_1_1DenseSlabFactory.html#a8105469c26039254b13b721877c26075">   47</a></span>    <a class="code hl_function" href="classtatami__chunked_1_1DenseSlabFactory.html#a8105469c26039254b13b721877c26075">DenseSlabFactory</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structtatami__chunked_1_1SlabCacheStats.html">SlabCacheStats&lt;MaxSlabs_&gt;</a>&amp; stats) : <a class="code hl_class" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a>(stats.slab_size_in_elements, stats.max_slabs_in_cache) {}</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    <span class="comment">// Delete the copy constructors as we&#39;re passing out pointers.</span></div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <a class="code hl_function" href="classtatami__chunked_1_1DenseSlabFactory.html#a4b50ac35298206e45ad64aebdebfb8bf">DenseSlabFactory</a>(<span class="keyword">const</span> <a class="code hl_class" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a>&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <a class="code hl_class" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a>&amp; operator=(<span class="keyword">const</span> <a class="code hl_class" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a>&amp;) = <span class="keyword">delete</span>;</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>    <span class="comment">// Move constructors are okay though.</span></div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <a class="code hl_function" href="classtatami__chunked_1_1DenseSlabFactory.html#a4b50ac35298206e45ad64aebdebfb8bf">DenseSlabFactory</a>(<a class="code hl_class" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a>&amp;&amp;) = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <a class="code hl_class" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a>&amp; operator=(<a class="code hl_class" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a>&amp;&amp;) = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="comment">// Might as well use size_t here, as we&#39;ll be doing pointer arithmetic in create().</span></div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    std::size_t my_offset = 0, my_slab_size;</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    std::vector&lt;Value_&gt; my_pool;</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span><span class="keyword">public</span>:</div>
-<div class="foldopen" id="foldopen00072" data-start="{" data-end="};">
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno"><a class="line" href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html">   72</a></span>    <span class="keyword">struct </span><a class="code hl_struct" href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html">Slab</a> {</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno"><a class="line" href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html#a608b22baa0ebd6398867d70b48cef6d9">   76</a></span>        Value_* <a class="code hl_variable" href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html#a608b22baa0ebd6398867d70b48cef6d9">data</a> = NULL;</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    };</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> MaxSlabs_&gt;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno"><a class="line" href="classtatami__chunked_1_1DenseSlabFactory.html#a8105469c26039254b13b721877c26075">   48</a></span>    <a class="code hl_function" href="classtatami__chunked_1_1DenseSlabFactory.html#a8105469c26039254b13b721877c26075">DenseSlabFactory</a>(<span class="keyword">const</span> <a class="code hl_struct" href="structtatami__chunked_1_1SlabCacheStats.html">SlabCacheStats&lt;MaxSlabs_&gt;</a>&amp; stats) : <a class="code hl_class" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a>(stats.slab_size_in_elements, stats.max_slabs_in_cache) {}</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="comment">// Delete the copy constructors as we&#39;re passing out pointers.</span></div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    <a class="code hl_function" href="classtatami__chunked_1_1DenseSlabFactory.html#a4b50ac35298206e45ad64aebdebfb8bf">DenseSlabFactory</a>(<span class="keyword">const</span> <a class="code hl_class" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a>&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <a class="code hl_class" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a>&amp; operator=(<span class="keyword">const</span> <a class="code hl_class" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a>&amp;) = <span class="keyword">delete</span>;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="comment">// Move constructors are okay though.</span></div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <a class="code hl_function" href="classtatami__chunked_1_1DenseSlabFactory.html#a4b50ac35298206e45ad64aebdebfb8bf">DenseSlabFactory</a>(<a class="code hl_class" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a>&amp;&amp;) = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <a class="code hl_class" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a>&amp; operator=(<a class="code hl_class" href="classtatami__chunked_1_1DenseSlabFactory.html">DenseSlabFactory</a>&amp;&amp;) = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="comment">// Might as well use size_t here, as we&#39;ll be doing pointer arithmetic in create().</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    std::size_t my_offset = 0, my_slab_size;</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    std::vector&lt;Value_&gt; my_pool;</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span><span class="keyword">public</span>:</div>
+<div class="foldopen" id="foldopen00073" data-start="{" data-end="};">
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html">   73</a></span>    <span class="keyword">struct </span><a class="code hl_struct" href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html">Slab</a> {</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html#a608b22baa0ebd6398867d70b48cef6d9">   77</a></span>        Value_* <a class="code hl_variable" href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html#a608b22baa0ebd6398867d70b48cef6d9">data</a> = NULL;</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    };</div>
 </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
-<div class="foldopen" id="foldopen00085" data-start="{" data-end="}">
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="classtatami__chunked_1_1DenseSlabFactory.html#aa0490ff4d9fce6f4c25d335b666a69da">   85</a></span>    <a class="code hl_struct" href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html">Slab</a> <a class="code hl_function" href="classtatami__chunked_1_1DenseSlabFactory.html#aa0490ff4d9fce6f4c25d335b666a69da">create</a>() {</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        <a class="code hl_struct" href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html">Slab</a> output;</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        output.<a class="code hl_variable" href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html#a608b22baa0ebd6398867d70b48cef6d9">data</a> = my_pool.data() + my_offset;</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        my_offset += my_slab_size;</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        <span class="keywordflow">return</span> output;</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    }</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span> </div>
+<div class="foldopen" id="foldopen00086" data-start="{" data-end="}">
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="classtatami__chunked_1_1DenseSlabFactory.html#aa0490ff4d9fce6f4c25d335b666a69da">   86</a></span>    <a class="code hl_struct" href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html">Slab</a> <a class="code hl_function" href="classtatami__chunked_1_1DenseSlabFactory.html#aa0490ff4d9fce6f4c25d335b666a69da">create</a>() {</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        <a class="code hl_struct" href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html">Slab</a> output;</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        output.<a class="code hl_variable" href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html#a608b22baa0ebd6398867d70b48cef6d9">data</a> = my_pool.data() + my_offset;</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        my_offset += my_slab_size;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        <span class="keywordflow">return</span> output;</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    }</div>
 </div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>};</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>};</div>
 </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>}</div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>}</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aSlabCacheStats_8hpp_html"><div class="ttname"><a href="SlabCacheStats_8hpp.html">SlabCacheStats.hpp</a></div><div class="ttdoc">Slab cache statistics.</div></div>
-<div class="ttc" id="aclasstatami__chunked_1_1DenseSlabFactory_html"><div class="ttname"><a href="classtatami__chunked_1_1DenseSlabFactory.html">tatami_chunked::DenseSlabFactory</a></div><div class="ttdoc">Factory for dense slabs.</div><div class="ttdef"><b>Definition</b> DenseSlabFactory.hpp:29</div></div>
-<div class="ttc" id="aclasstatami__chunked_1_1DenseSlabFactory_html_a4b50ac35298206e45ad64aebdebfb8bf"><div class="ttname"><a href="classtatami__chunked_1_1DenseSlabFactory.html#a4b50ac35298206e45ad64aebdebfb8bf">tatami_chunked::DenseSlabFactory::DenseSlabFactory</a></div><div class="ttdeci">DenseSlabFactory(std::size_t slab_size, MaxSlabs_ max_slabs)</div><div class="ttdef"><b>Definition</b> DenseSlabFactory.hpp:37</div></div>
-<div class="ttc" id="aclasstatami__chunked_1_1DenseSlabFactory_html_a8105469c26039254b13b721877c26075"><div class="ttname"><a href="classtatami__chunked_1_1DenseSlabFactory.html#a8105469c26039254b13b721877c26075">tatami_chunked::DenseSlabFactory::DenseSlabFactory</a></div><div class="ttdeci">DenseSlabFactory(const SlabCacheStats&lt; MaxSlabs_ &gt; &amp;stats)</div><div class="ttdef"><b>Definition</b> DenseSlabFactory.hpp:47</div></div>
-<div class="ttc" id="aclasstatami__chunked_1_1DenseSlabFactory_html_aa0490ff4d9fce6f4c25d335b666a69da"><div class="ttname"><a href="classtatami__chunked_1_1DenseSlabFactory.html#aa0490ff4d9fce6f4c25d335b666a69da">tatami_chunked::DenseSlabFactory::create</a></div><div class="ttdeci">Slab create()</div><div class="ttdef"><b>Definition</b> DenseSlabFactory.hpp:85</div></div>
+<div class="ttc" id="aclasstatami__chunked_1_1DenseSlabFactory_html"><div class="ttname"><a href="classtatami__chunked_1_1DenseSlabFactory.html">tatami_chunked::DenseSlabFactory</a></div><div class="ttdoc">Factory for dense slabs.</div><div class="ttdef"><b>Definition</b> DenseSlabFactory.hpp:30</div></div>
+<div class="ttc" id="aclasstatami__chunked_1_1DenseSlabFactory_html_a4b50ac35298206e45ad64aebdebfb8bf"><div class="ttname"><a href="classtatami__chunked_1_1DenseSlabFactory.html#a4b50ac35298206e45ad64aebdebfb8bf">tatami_chunked::DenseSlabFactory::DenseSlabFactory</a></div><div class="ttdeci">DenseSlabFactory(std::size_t slab_size, MaxSlabs_ max_slabs)</div><div class="ttdef"><b>Definition</b> DenseSlabFactory.hpp:38</div></div>
+<div class="ttc" id="aclasstatami__chunked_1_1DenseSlabFactory_html_a8105469c26039254b13b721877c26075"><div class="ttname"><a href="classtatami__chunked_1_1DenseSlabFactory.html#a8105469c26039254b13b721877c26075">tatami_chunked::DenseSlabFactory::DenseSlabFactory</a></div><div class="ttdeci">DenseSlabFactory(const SlabCacheStats&lt; MaxSlabs_ &gt; &amp;stats)</div><div class="ttdef"><b>Definition</b> DenseSlabFactory.hpp:48</div></div>
+<div class="ttc" id="aclasstatami__chunked_1_1DenseSlabFactory_html_aa0490ff4d9fce6f4c25d335b666a69da"><div class="ttname"><a href="classtatami__chunked_1_1DenseSlabFactory.html#aa0490ff4d9fce6f4c25d335b666a69da">tatami_chunked::DenseSlabFactory::create</a></div><div class="ttdeci">Slab create()</div><div class="ttdef"><b>Definition</b> DenseSlabFactory.hpp:86</div></div>
 <div class="ttc" id="anamespacetatami__chunked_html"><div class="ttname"><a href="namespacetatami__chunked.html">tatami_chunked</a></div><div class="ttdoc">Methods to handle chunked tatami matrices.</div><div class="ttdef"><b>Definition</b> ChunkDimensionStats.hpp:11</div></div>
-<div class="ttc" id="astructtatami__chunked_1_1DenseSlabFactory_1_1Slab_html"><div class="ttname"><a href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html">tatami_chunked::DenseSlabFactory::Slab</a></div><div class="ttdoc">Dense slab.</div><div class="ttdef"><b>Definition</b> DenseSlabFactory.hpp:72</div></div>
-<div class="ttc" id="astructtatami__chunked_1_1DenseSlabFactory_1_1Slab_html_a608b22baa0ebd6398867d70b48cef6d9"><div class="ttname"><a href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html#a608b22baa0ebd6398867d70b48cef6d9">tatami_chunked::DenseSlabFactory::Slab::data</a></div><div class="ttdeci">Value_ * data</div><div class="ttdef"><b>Definition</b> DenseSlabFactory.hpp:76</div></div>
+<div class="ttc" id="astructtatami__chunked_1_1DenseSlabFactory_1_1Slab_html"><div class="ttname"><a href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html">tatami_chunked::DenseSlabFactory::Slab</a></div><div class="ttdoc">Dense slab.</div><div class="ttdef"><b>Definition</b> DenseSlabFactory.hpp:73</div></div>
+<div class="ttc" id="astructtatami__chunked_1_1DenseSlabFactory_1_1Slab_html_a608b22baa0ebd6398867d70b48cef6d9"><div class="ttname"><a href="structtatami__chunked_1_1DenseSlabFactory_1_1Slab.html#a608b22baa0ebd6398867d70b48cef6d9">tatami_chunked::DenseSlabFactory::Slab::data</a></div><div class="ttdeci">Value_ * data</div><div class="ttdef"><b>Definition</b> DenseSlabFactory.hpp:77</div></div>
 <div class="ttc" id="astructtatami__chunked_1_1SlabCacheStats_html"><div class="ttname"><a href="structtatami__chunked_1_1SlabCacheStats.html">tatami_chunked::SlabCacheStats</a></div><div class="ttdoc">Statistics for slab caching.</div><div class="ttdef"><b>Definition</b> SlabCacheStats.hpp:26</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
