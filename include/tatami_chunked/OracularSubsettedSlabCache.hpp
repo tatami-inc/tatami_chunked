@@ -1,6 +1,8 @@
 #ifndef TATAMI_CHUNKED_SUBSETTED_ORACLE_SLAB_CACHE_HPP
 #define TATAMI_CHUNKED_SUBSETTED_ORACLE_SLAB_CACHE_HPP
 
+#include "utils.hpp"
+
 #include <unordered_map>
 #include <vector>
 #include <list>
@@ -89,7 +91,7 @@ namespace OracularSubsettedSlabCache_internals {
 template<typename Index_>
 void fill_mapping_in_details(OracularSubsettedSlabCacheSelectionDetails<Index_>& details) {
     auto num = details.indices.size();
-    for (decltype(num) i = 0; i < num; ++i) {
+    for (I<decltype(num)> i = 0; i < num; ++i) {
         details.mapping[details.indices[i]] = i;
     }
 }
@@ -125,7 +127,7 @@ void add_to_details(OracularSubsettedSlabCacheSelectionDetails<Index_>& details,
         details.selection = OracularSubsettedSlabCacheSelectionType::INDEX;
 
         // Don't replace this with tatami::resize_container_to_Index_size as this class might be used outside of the tatami::Matrix contract (i.e., Index_ might store values beyond std::size_t).
-        details.indices.resize(sanisizer::cast<decltype(details.indices.size())>(details.block_end - details.block_start));
+        details.indices.resize(sanisizer::cast<I<decltype(details.indices.size())> >(details.block_end - details.block_start));
         std::iota(details.indices.begin(), details.indices.end(), details.block_start);
         fill_mapping_in_details(details);
     }
@@ -202,7 +204,7 @@ public:
     OracularSubsettedSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > oracle, MaxSlabs_ max_slabs) :
         my_oracle(std::move(oracle)), 
         my_total(my_oracle->total()),
-        my_max_slabs(sanisizer::cast<decltype(my_max_slabs)>(max_slabs))
+        my_max_slabs(sanisizer::cast<I<decltype(my_max_slabs)> >(max_slabs))
     {
         my_all_slabs.reserve(max_slabs);
         my_current_cache.reserve(max_slabs);
@@ -210,7 +212,7 @@ public:
         my_close_future_subset_cache.reserve(max_slabs);
         my_far_future_subset_cache.reserve(max_slabs);
 
-        my_all_subset_details.resize(sanisizer::product<decltype(my_all_subset_details.size())>(2, max_slabs));
+        my_all_subset_details.resize(sanisizer::product<I<decltype(my_all_subset_details.size())> >(2, max_slabs));
         for (auto& as : my_all_subset_details) {
             my_free_subset_details.push_back(&as);
         }
@@ -292,7 +294,7 @@ public:
             if (my_all_slabs.empty()) {
                 // This section only runs once, at the start, to populate the my_close_future_subset_cache.
                 requisition_subset_close(slab_info.first, slab_info.second);
-                decltype(my_max_slabs) used_slabs = 1;
+                I<decltype(my_max_slabs)> used_slabs = 1;
 
                 while (++my_close_refresh_point < my_total) {
                     auto future_index = my_oracle->get(my_close_refresh_point);
@@ -318,7 +320,7 @@ public:
             // Populating the far future cache. 
             if (my_far_refresh_point < my_total) {
                 requisition_subset_far(my_far_slab_id, my_far_slab_offset);
-                decltype(my_max_slabs) used_slabs = 1;
+                I<decltype(my_max_slabs)> used_slabs = 1;
 
                 while (++my_far_refresh_point < my_total) {
                     auto future_index = my_oracle->get(my_far_refresh_point);

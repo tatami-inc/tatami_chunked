@@ -1,6 +1,8 @@
 #ifndef TATAMI_CHUNKED_ORACULAR_SLAB_CACHE_HPP
 #define TATAMI_CHUNKED_ORACULAR_SLAB_CACHE_HPP
 
+#include "utils.hpp"
+
 #include <unordered_map>
 #include <vector>
 #include <list>
@@ -65,7 +67,7 @@ public:
     OracularSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > oracle, MaxSlabs_ max_slabs) : 
         my_oracle(std::move(oracle)), 
         my_total(my_oracle->total()),
-        my_max_slabs(sanisizer::cast<decltype(my_max_slabs)>(max_slabs)) 
+        my_max_slabs(sanisizer::cast<I<decltype(my_max_slabs)> >(max_slabs)) 
     {
         my_all_slabs.reserve(max_slabs);
         my_current_cache.reserve(max_slabs);
@@ -158,7 +160,7 @@ public:
             // incorporated into the previous cycle. So we can skip some code.
             my_future_cache[slab_info.first] = NULL;
             my_in_need.push_back(slab_info.first);
-            decltype(my_max_slabs) used_slabs = 1;
+            I<decltype(my_max_slabs)> used_slabs = 1;
             auto last_future_slab_id = slab_info.first;
 
             while (++my_refresh_point < my_total) {

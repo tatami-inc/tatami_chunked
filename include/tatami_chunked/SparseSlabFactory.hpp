@@ -1,12 +1,13 @@
 #ifndef TATAMI_CHUNKED_SPARSE_SLAB_FACTORY_HPP
 #define TATAMI_CHUNKED_SPARSE_SLAB_FACTORY_HPP
 
+#include "SlabCacheStats.hpp"
+#include "utils.hpp"
+
 #include <vector>
 #include <cstddef>
 
 #include "sanisizer/sanisizer.hpp"
-
-#include "SlabCacheStats.hpp"
 
 /**
  * @file SparseSlabFactory.hpp 
@@ -64,13 +65,13 @@ public:
         my_needs_value(needs_value),
         my_needs_index(needs_index),
         my_slab_size(slab_size),
-        my_number_pool(sanisizer::product<decltype(my_number_pool.size())>(max_slabs, target_dim))
+        my_number_pool(sanisizer::product<I<decltype(my_number_pool.size())> >(max_slabs, target_dim))
     {
         if (needs_value) {
-            my_value_pool.resize(sanisizer::product<decltype(my_value_pool.size())>(max_slabs, slab_size));
+            my_value_pool.resize(sanisizer::product<I<decltype(my_value_pool.size())> >(max_slabs, slab_size));
         }
         if (needs_index) {
-            my_index_pool.resize(sanisizer::product<decltype(my_index_pool.size())>(max_slabs, slab_size));
+            my_index_pool.resize(sanisizer::product<I<decltype(my_index_pool.size())> >(max_slabs, slab_size));
         }
     }
 
@@ -166,7 +167,7 @@ public:
         if (my_needs_value) {
             output.values.reserve(my_target_dim);
             auto vptr = my_value_pool.data() + my_offset_slab;
-            for (decltype(my_target_dim) p = 0; p < my_target_dim; ++p, vptr += my_non_target_dim) {
+            for (I<decltype(my_target_dim)> p = 0; p < my_target_dim; ++p, vptr += my_non_target_dim) {
                 output.values.push_back(vptr);
             }
         }
@@ -174,7 +175,7 @@ public:
         if (my_needs_index) {
             output.indices.reserve(my_target_dim);
             auto iptr = my_index_pool.data() + my_offset_slab;
-            for (decltype(my_target_dim) p = 0; p < my_target_dim; ++p, iptr += my_non_target_dim) {
+            for (I<decltype(my_target_dim)> p = 0; p < my_target_dim; ++p, iptr += my_non_target_dim) {
                 output.indices.push_back(iptr);
             }
         }

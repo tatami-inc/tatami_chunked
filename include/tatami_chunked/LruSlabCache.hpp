@@ -1,6 +1,8 @@
 #ifndef TATAMI_CHUNKED_LRU_SLAB_CACHE_HPP
 #define TATAMI_CHUNKED_LRU_SLAB_CACHE_HPP
 
+#include "utils.hpp"
+
 #include <unordered_map>
 #include <list>
 #include <cstddef>
@@ -44,7 +46,7 @@ public:
      * @param max_slabs Maximum number of slabs to store in the cache.
      */
     template<typename MaxSlabs_>
-    LruSlabCache(MaxSlabs_ max_slabs) : my_max_slabs(sanisizer::cast<decltype(my_max_slabs)>(max_slabs)) {}
+    LruSlabCache(MaxSlabs_ max_slabs) : my_max_slabs(sanisizer::cast<I<decltype(my_max_slabs)> >(max_slabs)) {}
 
     /**
      * Deleted as the cache holds persistent iterators.

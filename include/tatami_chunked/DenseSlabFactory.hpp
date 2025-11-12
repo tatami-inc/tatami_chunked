@@ -2,6 +2,7 @@
 #define TATAMI_CHUNKED_DENSE_SLAB_FACTORY_HPP
 
 #include "SlabCacheStats.hpp"
+#include "utils.hpp"
 
 #include <vector>
 #include <cstddef>
@@ -36,7 +37,7 @@ public:
     template<typename MaxSlabs_>
     DenseSlabFactory(std::size_t slab_size, MaxSlabs_ max_slabs) :
         my_slab_size(slab_size),
-        my_pool(sanisizer::product<decltype(my_pool.size())>(max_slabs, slab_size))
+        my_pool(sanisizer::product<I<decltype(my_pool.size())> >(max_slabs, slab_size))
     {}
 
     /**

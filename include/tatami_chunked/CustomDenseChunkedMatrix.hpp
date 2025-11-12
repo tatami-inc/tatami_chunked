@@ -1,7 +1,6 @@
 #ifndef TATAMI_CHUNKED_CUSTOM_DENSE_CHUNKED_MATRIX_HPP
 #define TATAMI_CHUNKED_CUSTOM_DENSE_CHUNKED_MATRIX_HPP
 
-#include "tatami/tatami.hpp"
 #include "custom_internals.hpp"
 #include "SlabCacheStats.hpp"
 #include "DenseSlabFactory.hpp"
@@ -13,6 +12,7 @@
 #include <vector>
 #include <cstddef>
 
+#include "tatami/tatami.hpp"
 #include "sanisizer/sanisizer.hpp"
 
 /**
@@ -302,7 +302,7 @@ private:
     typename std::conditional<oracle_, tatami::PredictionIndex, bool>::type my_counter = 0;
 
     DenseSlabFactory<ChunkValue_> my_factory;
-    typedef typename decltype(my_factory)::Slab Slab;
+    typedef typename I<decltype(my_factory)>::Slab Slab;
 
     // These two instances are not fully allocated Slabs; rather, tmp_solo just
     // holds the content for a single chunk, while final_solo holds the content
@@ -312,7 +312,7 @@ private:
     DenseSingleWorkspace<ChunkValue_> my_tmp_solo;
     Slab my_final_solo;
 
-    typedef decltype(my_tmp_solo.size()) TmpSize;
+    typedef I<decltype(my_tmp_solo.size())> TmpSize;
 
 public:
     SoloDenseCore(
@@ -346,7 +346,7 @@ private:
     const ChunkCoordinator<false, ChunkValue_, Index_>& my_coordinator;
 
     DenseSlabFactory<ChunkValue_> my_factory;
-    typedef typename decltype(my_factory)::Slab Slab;
+    typedef typename I<decltype(my_factory)>::Slab Slab;
 
     LruSlabCache<Index_, Slab> my_cache;
 
@@ -377,7 +377,7 @@ private:
     const ChunkCoordinator<false, ChunkValue_, Index_>& my_coordinator;
 
     DenseSlabFactory<ChunkValue_> my_factory;
-    typedef typename decltype(my_factory)::Slab Slab;
+    typedef typename I<decltype(my_factory)>::Slab Slab;
 
     typename std::conditional<use_subset_, OracularSubsettedSlabCache<Index_, Index_, Slab>, OracularSlabCache<Index_, Index_, Slab> >::type my_cache;
 
@@ -630,15 +630,15 @@ private:
 
         auto wrk = my_manager->new_workspace_exact();
         if (stats.max_slabs_in_cache == 0) {
-            return std::make_unique<Extractor_<true, oracle_, false, Value_, Index_, ChunkValue_, decltype(wrk)> >(std::move(wrk), my_coordinator, stats, row, std::forward<Args_>(args)...);
+            return std::make_unique<Extractor_<true, oracle_, false, Value_, Index_, ChunkValue_, I<decltype(wrk)> > >(std::move(wrk), my_coordinator, stats, row, std::forward<Args_>(args)...);
         } else if constexpr(oracle_) {
             if (my_cache_subset) {
-                return std::make_unique<Extractor_<false, true, true, Value_, Index_, ChunkValue_, decltype(wrk)> >(std::move(wrk), my_coordinator, stats, row, std::forward<Args_>(args)...);
+                return std::make_unique<Extractor_<false, true, true, Value_, Index_, ChunkValue_, I<decltype(wrk)> > >(std::move(wrk), my_coordinator, stats, row, std::forward<Args_>(args)...);
             } else {
-                return std::make_unique<Extractor_<false, true, false, Value_, Index_, ChunkValue_, decltype(wrk)> >(std::move(wrk), my_coordinator, stats, row, std::forward<Args_>(args)...);
+                return std::make_unique<Extractor_<false, true, false, Value_, Index_, ChunkValue_, I<decltype(wrk)> > >(std::move(wrk), my_coordinator, stats, row, std::forward<Args_>(args)...);
             }
         } else {
-            return std::make_unique<Extractor_<false, false, false, Value_, Index_, ChunkValue_, decltype(wrk)> >(std::move(wrk), my_coordinator, stats, row, std::forward<Args_>(args)...);
+            return std::make_unique<Extractor_<false, false, false, Value_, Index_, ChunkValue_, I<decltype(wrk)> > >(std::move(wrk), my_coordinator, stats, row, std::forward<Args_>(args)...);
         }
     }
 
