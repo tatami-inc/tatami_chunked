@@ -111,15 +111,12 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:acf9ea02cba191efcd129378ae1fd766d" id="r_acf9ea02cba191efcd129378ae1fd766d"><td class="memTemplParams" colspan="2">template&lt;typename MaxSlabs_ &gt; </td></tr>
-<tr class="memitem:acf9ea02cba191efcd129378ae1fd766d"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#acf9ea02cba191efcd129378ae1fd766d">SparseSlabFactory</a> (Index_ target_dim, Index_ non_target_dim, std::size_t slab_size, MaxSlabs_ max_slabs, bool needs_value, bool needs_index)</td></tr>
-<tr class="separator:acf9ea02cba191efcd129378ae1fd766d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab005c587b245b3f8fe828a5d970bd27c" id="r_ab005c587b245b3f8fe828a5d970bd27c"><td class="memTemplParams" colspan="2">template&lt;typename MaxSlabs_ &gt; </td></tr>
-<tr class="memitem:ab005c587b245b3f8fe828a5d970bd27c"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#ab005c587b245b3f8fe828a5d970bd27c">SparseSlabFactory</a> (Index_ target_dim, Index_ non_target_dim, MaxSlabs_ max_slabs, bool needs_value, bool needs_index)</td></tr>
-<tr class="separator:ab005c587b245b3f8fe828a5d970bd27c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8b7246ad4091f39906d187b8d1d2a99d" id="r_a8b7246ad4091f39906d187b8d1d2a99d"><td class="memTemplParams" colspan="2">template&lt;typename MaxSlabs_ &gt; </td></tr>
-<tr class="memitem:a8b7246ad4091f39906d187b8d1d2a99d"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="#a8b7246ad4091f39906d187b8d1d2a99d">SparseSlabFactory</a> (Index_ target_dim, Index_ non_target_dim, const <a class="el" href="structtatami__chunked_1_1SlabCacheStats.html">SlabCacheStats</a>&lt; MaxSlabs_ &gt; &amp;stats, bool needs_value, bool needs_index)</td></tr>
-<tr class="separator:a8b7246ad4091f39906d187b8d1d2a99d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a336fce587fef37ce768bc8f060cc58d4" id="r_a336fce587fef37ce768bc8f060cc58d4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a336fce587fef37ce768bc8f060cc58d4">SparseSlabFactory</a> (Index_ target_dim, Index_ non_target_dim, std::size_t slab_size, Index_ max_slabs, bool needs_value, bool needs_index)</td></tr>
+<tr class="separator:a336fce587fef37ce768bc8f060cc58d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a731fe8d4cd113b55aeadc4b46e6d8a24" id="r_a731fe8d4cd113b55aeadc4b46e6d8a24"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a731fe8d4cd113b55aeadc4b46e6d8a24">SparseSlabFactory</a> (Index_ target_dim, Index_ non_target_dim, Index_ max_slabs, bool needs_value, bool needs_index)</td></tr>
+<tr class="separator:a731fe8d4cd113b55aeadc4b46e6d8a24"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6752cacb11c26ab718fe40316aba548c" id="r_a6752cacb11c26ab718fe40316aba548c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a6752cacb11c26ab718fe40316aba548c">SparseSlabFactory</a> (Index_ target_dim, Index_ non_target_dim, const <a class="el" href="structtatami__chunked_1_1SlabCacheStats.html">SlabCacheStats</a>&lt; Index_ &gt; &amp;stats, bool needs_value, bool needs_index)</td></tr>
+<tr class="separator:a6752cacb11c26ab718fe40316aba548c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1db3ee0bbbab01c3835e3063a024bbf2" id="r_a1db3ee0bbbab01c3835e3063a024bbf2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami__chunked_1_1SparseSlabFactory_1_1Slab.html">Slab</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a1db3ee0bbbab01c3835e3063a024bbf2">create</a> ()</td></tr>
 <tr class="separator:a1db3ee0bbbab01c3835e3063a024bbf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -130,21 +127,19 @@ class tatami_chunked::SparseSlabFactory&lt; Value_, Index_, Count_ &gt;</div><p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Type of the data in each slab. </td></tr>
-    <tr><td class="paramname">Index_</td><td>Integer type of the indices in each slab. This should be large enough to store the extent of the non-target dimension of the slab. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Integer type of the dimension extent and the type of the indices in each slab. This should also be the type of the maximum number of slabs required to span the relevant dimension, see the template parameter of the same name in <code><a class="el" href="structtatami__chunked_1_1SlabCacheStats.html" title="Statistics for slab caching.">SlabCacheStats</a></code>. </td></tr>
     <tr><td class="paramname">Count_</td><td>Integer type for counting structural non-zeros. This should be large enough to store the extent of the non-target dimension of the slab. </td></tr>
   </table>
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="acf9ea02cba191efcd129378ae1fd766d" name="acf9ea02cba191efcd129378ae1fd766d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf9ea02cba191efcd129378ae1fd766d">&#9670;&#160;</a></span>SparseSlabFactory() <span class="overload">[1/3]</span></h2>
+<a id="a336fce587fef37ce768bc8f060cc58d4" name="a336fce587fef37ce768bc8f060cc58d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a336fce587fef37ce768bc8f060cc58d4">&#9670;&#160;</a></span>SparseSlabFactory() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Value_ , typename Index_ , typename Count_  = Index_&gt; </div>
-<div class="memtemplate">
-template&lt;typename MaxSlabs_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -167,7 +162,7 @@ template&lt;typename MaxSlabs_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">MaxSlabs_</td>          <td class="paramname"><span class="paramname"><em>max_slabs</em></span>, </td>
+          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>max_slabs</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -186,12 +181,6 @@ template&lt;typename MaxSlabs_ &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">MaxSlabs_</td><td>Integer type of the maximum number of slabs.</td></tr>
-  </table>
-  </dd>
-</dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">target_dim</td><td>Extent of the target dimension of the slab, i.e., the dimension that is indexed into. </td></tr>
@@ -206,15 +195,13 @@ template&lt;typename MaxSlabs_ &gt; </div>
 
 </div>
 </div>
-<a id="ab005c587b245b3f8fe828a5d970bd27c" name="ab005c587b245b3f8fe828a5d970bd27c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab005c587b245b3f8fe828a5d970bd27c">&#9670;&#160;</a></span>SparseSlabFactory() <span class="overload">[2/3]</span></h2>
+<a id="a731fe8d4cd113b55aeadc4b46e6d8a24" name="a731fe8d4cd113b55aeadc4b46e6d8a24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a731fe8d4cd113b55aeadc4b46e6d8a24">&#9670;&#160;</a></span>SparseSlabFactory() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Value_ , typename Index_ , typename Count_  = Index_&gt; </div>
-<div class="memtemplate">
-template&lt;typename MaxSlabs_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -232,7 +219,7 @@ template&lt;typename MaxSlabs_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">MaxSlabs_</td>          <td class="paramname"><span class="paramname"><em>max_slabs</em></span>, </td>
+          <td class="paramtype">Index_</td>          <td class="paramname"><span class="paramname"><em>max_slabs</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -252,12 +239,6 @@ template&lt;typename MaxSlabs_ &gt; </div>
 </table>
 </div><div class="memdoc">
 <p>Overload that computes <code>slab_size</code> automatically.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">MaxSlabs_</td><td>Integer type of the maximum number of slabs.</td></tr>
-  </table>
-  </dd>
-</dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">target_dim</td><td>Extent of the target dimension of the slab. </td></tr>
@@ -271,15 +252,13 @@ template&lt;typename MaxSlabs_ &gt; </div>
 
 </div>
 </div>
-<a id="a8b7246ad4091f39906d187b8d1d2a99d" name="a8b7246ad4091f39906d187b8d1d2a99d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8b7246ad4091f39906d187b8d1d2a99d">&#9670;&#160;</a></span>SparseSlabFactory() <span class="overload">[3/3]</span></h2>
+<a id="a6752cacb11c26ab718fe40316aba548c" name="a6752cacb11c26ab718fe40316aba548c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6752cacb11c26ab718fe40316aba548c">&#9670;&#160;</a></span>SparseSlabFactory() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;typename Value_ , typename Index_ , typename Count_  = Index_&gt; </div>
-<div class="memtemplate">
-template&lt;typename MaxSlabs_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -297,7 +276,7 @@ template&lt;typename MaxSlabs_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="structtatami__chunked_1_1SlabCacheStats.html">SlabCacheStats</a>&lt; MaxSlabs_ &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>stats</em></span>, </td>
+          <td class="paramtype">const <a class="el" href="structtatami__chunked_1_1SlabCacheStats.html">SlabCacheStats</a>&lt; Index_ &gt; &amp;</td>          <td class="paramname"><span class="paramname"><em>stats</em></span>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -317,12 +296,6 @@ template&lt;typename MaxSlabs_ &gt; </div>
 </table>
 </div><div class="memdoc">
 <p>Overload that takes the relevant statistics from a <code><a class="el" href="structtatami__chunked_1_1SlabCacheStats.html" title="Statistics for slab caching.">SlabCacheStats</a></code> object.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">MaxSlabs_</td><td>Integer type of the maximum number of slabs.</td></tr>
-  </table>
-  </dd>
-</dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">target_dim</td><td>Extent of the target dimension of the slab. </td></tr>
