@@ -24,7 +24,8 @@ namespace tatami_chunked {
  * @brief Oracular-aware cache for slabs.
  *
  * @tparam Id_ Type of slab identifier, typically integer.
- * @tparam Index_ Type of row/column index produced by the oracle.
+ * @tparam Index_ Integer type of the dimension extent and the type of row/column index produced by the oracle.
+ * This should also be the type of the maximum number of slabs required to span the relevant dimension, see the template parameter of the same name in `SlabCacheStats`.
  * @tparam Slab_ Class for a single slab.
  * @tparam track_reuse_ Whether to track slabs in the cache that are re-used.
  *
@@ -59,12 +60,10 @@ private:
 
 public:
     /**
-     * @tparam MaxSlabs_ Integer type of the maximum number of slabs.
      * @param oracle Pointer to an `tatami::Oracle` to be used for predictions.
      * @param max_slabs Maximum number of slabs to store in the cache.
      */
-    template<typename MaxSlabs_>
-    OracularSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > oracle, MaxSlabs_ max_slabs) : 
+    OracularSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > oracle, Index_ max_slabs) : 
         my_oracle(std::move(oracle)), 
         my_total(my_oracle->total()),
         my_max_slabs(sanisizer::cast<I<decltype(my_max_slabs)> >(max_slabs)) 

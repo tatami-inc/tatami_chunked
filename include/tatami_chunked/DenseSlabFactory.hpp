@@ -30,22 +30,22 @@ template<typename Value_>
 class DenseSlabFactory {
 public:
     /**
-     * @tparam MaxSlabs_ Integer type of the maximum number of slabs.
+     * @tparam Index_ Integer type of the maximum number of slabs, see the template parameter of the same name in `SlabCacheStats`.
      * @param slab_size Size of the slab, in terms of data elements.
      * @param max_slabs Maximum number of slabs.
      */
-    template<typename MaxSlabs_>
-    DenseSlabFactory(std::size_t slab_size, MaxSlabs_ max_slabs) :
+    template<typename Index_>
+    DenseSlabFactory(std::size_t slab_size, Index_ max_slabs) :
         my_slab_size(slab_size),
         my_pool(sanisizer::product<I<decltype(my_pool.size())> >(max_slabs, slab_size))
     {}
 
     /**
-     * @tparam MaxSlabs_ Integer type of the maximum number of slabs.
+     * @tparam Index_ Integer type of the dimension extent.
      * @param stats Slab cache statistics.
      */
-    template<typename MaxSlabs_>
-    DenseSlabFactory(const SlabCacheStats<MaxSlabs_>& stats) : DenseSlabFactory(stats.slab_size_in_elements, stats.max_slabs_in_cache) {}
+    template<typename Index_>
+    DenseSlabFactory(const SlabCacheStats<Index_>& stats) : DenseSlabFactory(stats.slab_size_in_elements, stats.max_slabs_in_cache) {}
 
     /**
      * @cond

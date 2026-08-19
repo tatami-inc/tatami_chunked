@@ -30,7 +30,7 @@ enum class OracularSubsettedSlabCacheSelectionType : char { FULL, BLOCK, INDEX }
 
 /**
  * @brief Details on the subset to extract in `OracularSubsettedSlabCache`.
- * @tparam Index_ Type of row/column index produced by the oracle.
+ * @tparam Index_ Integer type of the dimension extent and the type of row/column index produced by the oracle.
  */
 template<typename Index_>
 struct OracularSubsettedSlabCacheSelectionDetails {
@@ -159,7 +159,8 @@ void finalize_details(OracularSubsettedSlabCacheSelectionDetails<Index_>& detail
  * @brief Oracle-aware cache for slabs, plus subsets.
  *
  * @tparam Id_ Type of slab identifier, typically integer.
- * @tparam Index_ Type of row/column index produced by the oracle.
+ * @tparam Index_ Integer type of the dimension extent and the type of row/column index produced by the oracle.
+ * This should also be the type of the maximum number of slabs required to span the relevant dimension, see the template parameter of the same name in `SlabCacheStats`.
  * @tparam Slab_ Class for a single slab.
  *
  * Implement an oracle-aware cache for slab subsets.
@@ -196,12 +197,10 @@ private:
 
 public:
     /**
-     * @tparam MaxSlabs_ Integer type of the maximum number of slabs.
      * @param oracle Pointer to an `tatami::Oracle` to be used for predictions.
      * @param max_slabs Maximum number of slabs to store.
      */
-    template<typename MaxSlabs_>
-    OracularSubsettedSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > oracle, MaxSlabs_ max_slabs) :
+    OracularSubsettedSlabCache(std::shared_ptr<const tatami::Oracle<Index_> > oracle, Index_ max_slabs) :
         my_oracle(std::move(oracle)), 
         my_total(my_oracle->total()),
         my_max_slabs(sanisizer::cast<I<decltype(my_max_slabs)> >(max_slabs))
