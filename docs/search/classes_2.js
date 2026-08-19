@@ -12,13 +12,12 @@ var searchData=
   ['converttocompressedsparseoptions_9',['ConvertToCompressedSparseOptions',['https://tatami-inc.github.io/tatami/structtatami_1_1ConvertToCompressedSparseOptions.html',1,'tatami']]],
   ['converttodenseoptions_10',['ConvertToDenseOptions',['https://tatami-inc.github.io/tatami/structtatami_1_1ConvertToDenseOptions.html',1,'tatami']]],
   ['converttofragmentedsparseoptions_11',['ConvertToFragmentedSparseOptions',['https://tatami-inc.github.io/tatami/structtatami_1_1ConvertToFragmentedSparseOptions.html',1,'tatami']]],
-  ['countcompressedsparsenonzerosoptions_12',['CountCompressedSparseNonZerosOptions',['https://tatami-inc.github.io/tatami/structtatami_1_1CountCompressedSparseNonZerosOptions.html',1,'tatami']]],
-  ['customdensechunkedmatrix_13',['CustomDenseChunkedMatrix',['../classtatami__chunked_1_1CustomDenseChunkedMatrix.html',1,'tatami_chunked']]],
-  ['customdensechunkedmatrixmanager_14',['CustomDenseChunkedMatrixManager',['../classtatami__chunked_1_1CustomDenseChunkedMatrixManager.html',1,'tatami_chunked']]],
-  ['customdensechunkedmatrixoptions_15',['CustomDenseChunkedMatrixOptions',['../structtatami__chunked_1_1CustomDenseChunkedMatrixOptions.html',1,'tatami_chunked']]],
-  ['customdensechunkedmatrixworkspace_16',['CustomDenseChunkedMatrixWorkspace',['../classtatami__chunked_1_1CustomDenseChunkedMatrixWorkspace.html',1,'tatami_chunked']]],
-  ['customsparsechunkedmatrix_17',['CustomSparseChunkedMatrix',['../classtatami__chunked_1_1CustomSparseChunkedMatrix.html',1,'tatami_chunked']]],
-  ['customsparsechunkedmatrixmanager_18',['CustomSparseChunkedMatrixManager',['../classtatami__chunked_1_1CustomSparseChunkedMatrixManager.html',1,'tatami_chunked']]],
-  ['customsparsechunkedmatrixoptions_19',['CustomSparseChunkedMatrixOptions',['../structtatami__chunked_1_1CustomSparseChunkedMatrixOptions.html',1,'tatami_chunked']]],
-  ['customsparsechunkedmatrixworkspace_20',['CustomSparseChunkedMatrixWorkspace',['../classtatami__chunked_1_1CustomSparseChunkedMatrixWorkspace.html',1,'tatami_chunked']]]
+  ['customdensechunkedmatrix_12',['CustomDenseChunkedMatrix',['../classtatami__chunked_1_1CustomDenseChunkedMatrix.html',1,'tatami_chunked']]],
+  ['customdensechunkedmatrixmanager_13',['CustomDenseChunkedMatrixManager',['../classtatami__chunked_1_1CustomDenseChunkedMatrixManager.html',1,'tatami_chunked']]],
+  ['customdensechunkedmatrixoptions_14',['CustomDenseChunkedMatrixOptions',['../structtatami__chunked_1_1CustomDenseChunkedMatrixOptions.html',1,'tatami_chunked']]],
+  ['customdensechunkedmatrixworkspace_15',['CustomDenseChunkedMatrixWorkspace',['../classtatami__chunked_1_1CustomDenseChunkedMatrixWorkspace.html',1,'tatami_chunked']]],
+  ['customsparsechunkedmatrix_16',['CustomSparseChunkedMatrix',['../classtatami__chunked_1_1CustomSparseChunkedMatrix.html',1,'tatami_chunked']]],
+  ['customsparsechunkedmatrixmanager_17',['CustomSparseChunkedMatrixManager',['../classtatami__chunked_1_1CustomSparseChunkedMatrixManager.html',1,'tatami_chunked']]],
+  ['customsparsechunkedmatrixoptions_18',['CustomSparseChunkedMatrixOptions',['../structtatami__chunked_1_1CustomSparseChunkedMatrixOptions.html',1,'tatami_chunked']]],
+  ['customsparsechunkedmatrixworkspace_19',['CustomSparseChunkedMatrixWorkspace',['../classtatami__chunked_1_1CustomSparseChunkedMatrixWorkspace.html',1,'tatami_chunked']]]
 ];

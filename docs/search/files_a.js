@@ -1,8 +1,4 @@
 var searchData=
 [
-  ['options_2ehpp_0',['Options.hpp',['https://tatami-inc.github.io/tatami/Options_8hpp.html',1,'']]],
-  ['oracle_2ehpp_1',['Oracle.hpp',['https://tatami-inc.github.io/tatami/Oracle_8hpp.html',1,'']]],
-  ['oracularslabcache_2ehpp_2',['OracularSlabCache.hpp',['../OracularSlabCache_8hpp.html',1,'']]],
-  ['oracularsubsettedslabcache_2ehpp_3',['OracularSubsettedSlabCache.hpp',['../OracularSubsettedSlabCache_8hpp.html',1,'']]],
-  ['oracularvariableslabcache_2ehpp_4',['OracularVariableSlabCache.hpp',['../OracularVariableSlabCache_8hpp.html',1,'']]]
+  ['new_5fextractor_2ehpp_0',['new_extractor.hpp',['https://tatami-inc.github.io/tatami/new__extractor_8hpp.html',1,'']]]
 ];
