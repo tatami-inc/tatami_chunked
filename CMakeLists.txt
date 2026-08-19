@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.24)
 
-project(tatami_chunked
-    VERSION 2.1.0
+project(
+    tatami_chunked
+    VERSION 2.1.1
     DESCRIPTION "tatami bindings for chunked matrices"
-    LANGUAGES CXX)
+    LANGUAGES CXX
+)
 
 set(CMAKE_CXX_STANDARD 17)
 
