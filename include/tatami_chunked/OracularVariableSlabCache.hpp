@@ -3,7 +3,6 @@
 
 #include <unordered_map>
 #include <vector>
-#include <list>
 #include <type_traits>
 #include <optional>
 #include <cstddef>
