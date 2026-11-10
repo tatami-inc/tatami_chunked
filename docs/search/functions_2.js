@@ -1,7 +1,7 @@
 var searchData=
 [
   ['can_5fcast_5findex_5fto_5fcontainer_5fsize_0',['can_cast_Index_to_container_size',['https://tatami-inc.github.io/tatami/namespacetatami.html#a4d15fa0c5213ad27fc0c99c3dd5c02ad',1,'tatami']]],
-  ['cast_5findex_5fto_5fcontainer_5fsize_1',['cast_Index_to_container_size',['https://tatami-inc.github.io/tatami/namespacetatami.html#ac6d0f6694ab914f57229b925641779d4',1,'tatami']]],
+  ['cast_5findex_5fto_5fcontainer_5fsize_1',['cast_Index_to_container_size',['https://tatami-inc.github.io/tatami/namespacetatami.html#a32d5ae83f932e5ef00b12e7caf9a7cdc',1,'tatami']]],
   ['chunkdimensionstats_2',['ChunkDimensionStats',['../structtatami__chunked_1_1ChunkDimensionStats.html#a409cdc30672f71a8346636bc14c8c859',1,'tatami_chunked::ChunkDimensionStats::ChunkDimensionStats(Index_ dimension_extent, Index_ chunk_length)'],['../structtatami__chunked_1_1ChunkDimensionStats.html#a43f0bc21d26d193aaf186f14e9a49640',1,'tatami_chunked::ChunkDimensionStats::ChunkDimensionStats()']]],
   ['column_5fstats_3',['column_stats',['../classtatami__chunked_1_1CustomDenseChunkedMatrixManager.html#a6754b9940e77c0c6912e9f7bbb1f40a3',1,'tatami_chunked::CustomDenseChunkedMatrixManager::column_stats()'],['../classtatami__chunked_1_1CustomSparseChunkedMatrixManager.html#a837fb490184473bd7706b4c677350386',1,'tatami_chunked::CustomSparseChunkedMatrixManager::column_stats()']]],
   ['compress_5fsparse_5ftriplets_4',['compress_sparse_triplets',['https://tatami-inc.github.io/tatami/namespacetatami.html#ab0d27353312d3a07a4415c7438398526',1,'tatami']]],
