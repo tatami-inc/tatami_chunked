@@ -37,7 +37,7 @@ private:
     SlabPool my_cache_data;
     std::unordered_map<Id_, typename std::list<Element>::iterator> my_cache_exists;
 
-    Id_ my_last_id = 0;
+    Id_ my_last_id{}; // this might not be integer, so do not explicitly initialize to zero.
     Slab_* my_last_slab = NULL;
 
 public:
@@ -46,7 +46,9 @@ public:
      * @param max_slabs Maximum number of slabs to store in the cache.
      */
     template<typename Index_>
-    LruSlabCache(Index_ max_slabs) : my_max_slabs(sanisizer::cast<I<decltype(my_max_slabs)> >(max_slabs)) {}
+    LruSlabCache(Index_ max_slabs) : my_max_slabs(sanisizer::cast<I<decltype(my_max_slabs)> >(max_slabs)) {
+        my_cache_exists.reserve(max_slabs);
+    }
 
     /**
      * Deleted as the cache holds persistent iterators.
@@ -94,7 +96,10 @@ public:
      */
     template<class Cfunction_, class Pfunction_>
     const Slab_& find(Id_ id, Cfunction_ create, Pfunction_ populate) {
-        if (id == my_last_id && my_last_slab) {
+        // Avoid a hash lookup if the 'id' is the same as the previous call to find(), e.g., for near-consecutive rows/columns in the same slab.
+        // Note that my_last_slab/id is the same as my_cache_data.back()->first/second, respectively,
+        // but we use separate variables to avoid unnecessarily touching the list data structure.
+        if (my_last_slab && id == my_last_id) {
             return *my_last_slab;
         }
         my_last_id = id;
